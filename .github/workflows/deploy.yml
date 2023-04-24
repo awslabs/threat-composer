@@ -34,4 +34,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-        artifact_name: "github-pages"	
+        with:
+          artifact_name: "github-pages"

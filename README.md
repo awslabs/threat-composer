@@ -1,4 +1,4 @@
-# Monorepo for **threat-composer**
+# **threat-composer**
 
 A key phase of the threat modeling process is the "What can go wrong?" step. Feedback we received is that there are two key challenges in this step, firstly there is little industry guidance on what a 'good' threat statement looks like; Secondly, no canonical list of possible things that can wrong hence it necessitates brainstorming and collaboration between the individuals involved in the threat modeling process often starting from a "blank page".
 
@@ -6,7 +6,7 @@ threat-composer aims to provide prescriptive and flexible threat statement struc
 
 ## Development 
 
-This monorepo hosts the code for threat-composer library, a [create-react-app](https://create-react-app.dev/) demo website, and a CDK app [https://docs.aws.amazon.com/cdk/v2/guide/apps.html] to allow you to deploy the demo website to your AWS account. 
+This monorepo hosts the code for threat-composer UI components, a [create-react-app](https://create-react-app.dev/) website, and a [CDK app](https://docs.aws.amazon.com/cdk/v2/guide/apps.html) to allow you to deploy the demo website to your AWS account.
 
 ### Prerequisites
 
@@ -18,13 +18,15 @@ npm install -g oss-attribution-generator
 
 ### Useful commands
 
+* Build all the projects
+```
+npx nx run-many --target=build --all
+```
+
 * Start Demo App in dev mode
 ```
 npx nx run threat-statement-generator-demo-app:dev
 ```
 
-* Build all the projects
-```
-npx nx run-many --target=build --all
-```
+
 
