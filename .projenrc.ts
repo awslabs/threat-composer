@@ -134,6 +134,7 @@ const infraProject = new pipeline.PDKPipelineTsProject({
   tsconfig: {
     compilerOptions: {
       lib: ['es2019', 'es2020', 'dom'],
+      skipLibCheck: true,
     },
   }
 });

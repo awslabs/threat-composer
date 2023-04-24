@@ -107,6 +107,7 @@ const ThreatStatementEditor: FC = () => {
   const handleExampleClicked = useCallback((statement: TemplateThreatStatement) => {
     setEditingStatement({
       ...statement,
+      id: -1,
     });
     const recommendedEditor = getRecommendedEditor(statement);
     recommendedEditor && setEditor(recommendedEditor);
@@ -119,6 +120,7 @@ const ThreatStatementEditor: FC = () => {
     const statement = threatStatementExamples[randomNumber] as TemplateThreatStatement;
     setEditingStatement({
       ...statement,
+      id: -1,
     });
     const recommendedEditor = getRecommendedEditor(statement);
     recommendedEditor && setEditor(recommendedEditor);
