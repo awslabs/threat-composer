@@ -1,0 +1,13 @@
+.app-layout-main {
+  width: 100%;
+  height: calc(100vh - 56px);
+  display: flex;
+  justify-content: center;
+}
+
+.app-layout-content {
+  max-width: 1024px;
+  max-height: 80vh; 
+  padding: 20px;
+  width: 100%;
+}

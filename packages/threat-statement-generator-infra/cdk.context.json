@@ -1,0 +1,13 @@
+{
+    "repositoryName": "threat_statement_generator_monorepo",
+    "domainNameDev": "",
+    "certificateDev": "",
+    "domainNameProd": "",
+    "certificateProd": "",
+    "hostZoneDev": "",
+    "hostZoneNameDev": "",
+    "hostZoneProd": "",
+    "hostZoneNameProd": "",
+    "lambdaEdgeDev": "",
+    "lambdaEdgeProd": ""
+}

@@ -1,0 +1,29 @@
+.threat-statement-generator-editor-layout-container {
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+
+.threat-statement-generator-editor-layout-text-editor-layout {
+  position: relative;
+}
+
+.threat-statement-generator-editor-layout-text-editor-layout-input {
+  display: inline-block;
+  width: 100%;
+}
+
+.threat-statement-generator-editor-layout-text-editor-layout-clear {
+  position: absolute;
+  float: right;
+  top: 10px;
+  right: 5px;
+}
+
+.threat-statement-generator-editor-layout-text-editor-layout-clear-short {
+  position: absolute;
+  float: right;
+  top: 1px;
+  right: 5px;
+}
+
+

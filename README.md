@@ -1,17 +1,30 @@
-## My Project
+# Monorepo for **threat-composer**
 
-TODO: Fill this README out!
+A key phase of the threat modeling process is the "What can go wrong?" step. Feedback we received is that there are two key challenges in this step, firstly there is little industry guidance on what a 'good' threat statement looks like; Secondly, no canonical list of possible things that can wrong hence it necessitates brainstorming and collaboration between the individuals involved in the threat modeling process often starting from a "blank page".
 
-Be sure to:
+threat-composer aims to provide prescriptive and flexible threat statement structure that allows a user to create a structured threat statement by supplying their own contextual input into the structure, whilst meeting them where they are by allowing them to start from any input that they desire. The tool encourages the user to be more complete and descriptive to help ensure the threat statement allows for both for prioritisation for mitigation and sufficient information to devise mitigation strategies. In addition, the tools aims to aid the brainstorming and collaboration process by including full threat statement examples and per field examples which a customer can use as inspiration or as a starting point for their own custom and contextual threat statements.
 
-* Change the title in this README
-* Edit your repository description on GitHub
+## Development 
 
-## Security
+This monorepo hosts the code for threat-composer library, a [create-react-app](https://create-react-app.dev/) demo website, and a CDK app [https://docs.aws.amazon.com/cdk/v2/guide/apps.html] to allow you to deploy the demo website to your AWS account. 
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+### Prerequisites
 
-## License
+* [git-secrets](https://github.com/awslabs/git-secrets#installing-git-secrets)
+* [oss-attribution-generator](https://www.npmjs.com/package/oss-attribution-generator)
+```
+npm install -g oss-attribution-generator
+```
 
-This project is licensed under the Apache-2.0 License.
+### Useful commands
+
+* Start Demo App in dev mode
+```
+npx nx run threat-statement-generator-demo-app:dev
+```
+
+* Build all the projects
+```
+npx nx run-many --target=build --all
+```
 

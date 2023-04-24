@@ -1,0 +1,37 @@
+name: deploy
+on: 
+  push: 
+    branches:
+      main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - run: pushd /tmp && git clone --depth 1 https://github.com/awslabs/git-secrets.git && cd ./git-secrets && PREFIX=/tmp/git-secrets make install && popd
+      - run: npm install -g typescript
+      - run: npm install -g yarn
+      - run: npm install -g oss-attribution-generator
+      - run: PATH=/tmp/git-secrets/bin:$PATH bash yarn run build
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2.1.1
+        with:
+          name: github-pages
+          path: packages/threat-statement-generator-demo-app/build
+  deploy:
+    needs: build
+    permissions:
+      pages: write    
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+        artifact_name: "github-pages"	

@@ -1,0 +1,82 @@
+.threat-statement-editor-info-model-content-base {
+  color: #fbfbfb;
+  width: 720px;
+  height: 560px;
+  text-align: start;
+}
+
+.threat-statement-editor-info-model-content-base-header {
+  text-align: center;
+  font-size: 32px;
+  line-height: 48px;
+  margin-bottom: 20px;
+}
+
+.threat-statement-editor-info-model-content-base-content {
+  font-size: 20px;
+  line-height: 32px;
+}
+
+.threat-statement-editor-info-model-content-highlight {
+  color: rgb(9, 114, 211);
+  font-weight: bold;
+}
+
+.threat-statement-editor-info-model-content-grey {
+  color: #7d8998;
+}
+
+.threat-statement-generator-info-modal-feature-sets {
+  margin-top: 50px;
+  margin-left: 40px;
+  margin-right: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 50px;
+}
+
+.threat-statement-generator-info-modal-feature-set {
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.threat-statement-generator-info-modal-feature-set-2-per-row {
+  flex: 40%;
+}
+
+.threat-statement-generator-info-modal-feature-set-3-per-row {
+  flex: 28%;
+}
+
+.threat-statement-generator-info-modal-feature-set svg {
+  width: 60px;
+  height: 60px;
+}
+
+.threat-statement-editor-info-model-content ol
+{
+  counter-reset: LIST-ITEMS 0;
+  margin-left: 0; 
+  padding-left: 0; 
+}
+
+.threat-statement-editor-info-model-content li
+{
+  position:relative;
+  margin:0 0 6px 2em; 
+  padding:4px 8px; 
+  list-style:none; 
+}
+
+.threat-statement-editor-info-model-content li:before
+{
+  content: counter( LIST-ITEMS );
+  counter-increment: LIST-ITEMS;
+  padding: 3px 10px;
+  margin-right: 20px;
+  background: rgb(9, 114, 211);
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 16px; 
+  width: 20px;
+}
