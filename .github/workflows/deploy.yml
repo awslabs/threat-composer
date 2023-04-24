@@ -18,9 +18,8 @@ jobs:
       - run: yarn install --immutable && npx projen
       - run: PATH=/tmp/git-secrets/bin:$PATH yarn run build
       - name: Upload artifact
-        uses: actions/upload-artifact@v2.1.1
+        uses: actions/upload-pages-artifact@v1
         with:
-          name: github-pages
           path: packages/threat-statement-generator-demo-app/build
   deploy:
     needs: build
