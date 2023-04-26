@@ -17,34 +17,35 @@ import Input from '@cloudscape-design/components/input';
 import { CancelableEventHandler, BaseKeyDetail } from '@cloudscape-design/components/internal/events';
 import TokenGroup from '@cloudscape-design/components/token-group';
 import { FC, useCallback, useState } from 'react';
-import { TemplateThreatStatement } from '../../../../customTypes';
 
 export interface TagsProps {
-  statement: TemplateThreatStatement;
-  onAddTagToStatement?: (statement: TemplateThreatStatement, tag: string) => void;
-  onRemoveTagFromStatement?: (statement: TemplateThreatStatement, tag: string) => void;
+  tags?: string[];
+  entityId: string;
+  onAddTagToEntity?: (entityId: string, tag: string) => void;
+  onRemoveTagFromEntity?: (entityId: string, tag: string) => void;
 }
 
 const Tags: FC<TagsProps> = ({
-  statement,
-  onAddTagToStatement,
-  onRemoveTagFromStatement,
+  tags,
+  entityId,
+  onAddTagToEntity,
+  onRemoveTagFromEntity,
 }) => {
   const [value, setValue] = useState('');
 
   const handleKeyDown: CancelableEventHandler<BaseKeyDetail> = useCallback(({ detail }) => {
     if (detail.keyCode === 13) {
-      onAddTagToStatement?.(statement, value);
+      onAddTagToEntity?.(entityId, value);
       setValue('');
     }
-  }, [onAddTagToStatement, statement, value]);
+  }, [onAddTagToEntity, entityId, value]);
 
   return (<div className='threat-statement-editor-statement-list-card-tags'>
-    {statement.tags && statement.tags.length > 0 && <TokenGroup
+    {tags && tags.length > 0 && <TokenGroup
       onDismiss={({ detail: { itemIndex } }) => {
-        statement.tags && onRemoveTagFromStatement?.(statement, statement.tags?.[itemIndex]);
+        tags && onRemoveTagFromEntity?.(entityId, tags?.[itemIndex]);
       }}
-      items={statement.tags.map(t => ({
+      items={tags.map(t => ({
         label: t,
         dismissLabel: `Remove ${t}`,
       }))}

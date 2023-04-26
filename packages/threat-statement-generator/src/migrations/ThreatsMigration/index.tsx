@@ -27,7 +27,7 @@ export interface WorkspacesMigrationProps {
  * Migrates the old workspaces list to the new format
  */
 const ThreatsMigration: FC<WorkspacesMigrationProps> = ({ children }) => {
-  const { statementList, setStatementList, editStatement, setEditingStatement } = useThreatsContext();
+  const { statementList, setStatementList, editingStatement, setEditingStatement } = useThreatsContext();
 
   const [migrated, setMigrated] = useLocalStorageState<boolean>(LOCAL_STORAGE_KEY_THREATS_LIST_MIGRATION, {
     defaultValue: false,
@@ -47,7 +47,7 @@ const ThreatsMigration: FC<WorkspacesMigrationProps> = ({ children }) => {
             id: uuidv4(),
           }));
           // @ts-ignore
-          editStatement && !isNaN(editStatement.id) && setEditingStatement(prevT => newList.find(x => x.numericId === prevT.id));
+          editingStatement && !isNaN(editingStatement.id) && setEditingStatement(prevT => newList.find(x => x.numericId === prevT.id));
           return newList;
         });
       }

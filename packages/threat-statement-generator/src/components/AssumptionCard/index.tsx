@@ -16,12 +16,12 @@
 import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
 import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import TextContent from '@cloudscape-design/components/text-content';
-import { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { TemplateThreatStatement } from '../../customTypes';
 import CopyToClipbord from '../CopyToClipboard';
 import GenericCard from '../GenericCard';
 
-export interface ThreatStatementCardProps {
+export interface AssumptionCardProps {
   statement: TemplateThreatStatement;
   onCopy?: (id: string) => void;
   onRemove?: (id: string) => void;
@@ -30,7 +30,7 @@ export interface ThreatStatementCardProps {
   onRemoveTagFromStatement?: (statement: TemplateThreatStatement, tag: string) => void;
 }
 
-const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
+const AssumptionCard: FC<AssumptionCardProps> = ({
   statement,
   onCopy,
   onRemove,
@@ -38,32 +38,9 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
   onAddTagToStatement,
   onRemoveTagFromStatement,
 }) => {
-  const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(({ detail }) => {
-    switch (detail.id) {
-      case 'copyToCurrentWorkspace':
-        onCopy?.(statement.id);
-        break;
-      default:
-        console.log('Unknown action', detail.id);
-    }
-  }, [onCopy, statement.id]);
-
-  const moreActions = useMemo(() => {
-    return (
-      <ButtonDropdown
-        items={[
-          { id: 'copyToCurrentWorkspace', text: 'Duplicate' },
-        ]}
-        ariaLabel="More actions"
-        variant="icon"
-        onItemClick={handleMoreActions}
-      />);
-  }, [onCopy, onRemove, onEditInWizard, statement.id]);
-
   return (<GenericCard
     header={`Threat ${statement.numericId}`}
     entityId={statement.id}
-    moreActions={moreActions}
     onAddTagToEntity={(_entityId, tag) => onAddTagToStatement?.(statement, tag)}
     onRemoveTagFromEntity={(_entityId, tag) => onRemoveTagFromStatement?.(statement, tag)}
   >
@@ -75,4 +52,4 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
   </GenericCard>);
 };
 
-export default ThreatStatementCard;
+export default AssumptionCard;

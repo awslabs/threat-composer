@@ -13,31 +13,28 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { EntityBase, EntityLinkBase } from './entities';
+import { useContext, createContext } from 'react';
+import { Assumption } from '../../customTypes';
+export type View = 'list' | 'editor';
 
-export interface Assumption extends EntityBase {
-  /**
-   * The text content of the Assumption.
-   */
-  content: string;
-  /**
-   * A flag determining the assumption is still valid or not.
-   */
-  valid?: boolean;
+export interface AssumptionsContextApi {
+  assumptionList: Assumption[];
+  setAssumptionList: (assumptions: Assumption[]) => void;
+  addAssumption: (idToCopy?: string) => void;
+  removeAssumption: (id: string) => void;
+  saveAssumption: (assumption: Assumption) => void;
+  removeAllAssumptions: () => void;
 }
 
-export interface AssumptionLink extends EntityLinkBase {
-  /**
-   * Specifies whether the assumption is linked to a mitigation or a threat.
-   */
-  type: 'Mitigation' | 'Threat';
-  /**
-   * The assumption being linked.
-   */
-  assumptionId: string;
-  /**
-   * The linked entity Id.
-   */
-  linkedId: string;
-}
+const initialState: AssumptionsContextApi = {
+  assumptionList: [],
+  setAssumptionList: () => { },
+  addAssumption: () => { },
+  removeAssumption: () => { },
+  saveAssumption: () => { },
+  removeAllAssumptions: () => { },
+};
 
+export const AssumptionsContext = createContext<AssumptionsContextApi>(initialState);
+
+export const useAssumptionsContext = () => useContext(AssumptionsContext);

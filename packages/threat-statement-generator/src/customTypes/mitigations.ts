@@ -24,6 +24,14 @@ export interface Mitigation {
 }
 
 export interface MitigationLink extends EntityLinkBase {
+  /**
+   * The mitigation being linked.
+   */
+  mitigationId: string;
+  /**
+   * The linked entity Id.
+   */
+  linkedId: string;
 }
 
 export type MitigationList = Mitigation[];

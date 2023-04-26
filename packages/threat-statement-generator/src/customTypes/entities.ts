@@ -38,8 +38,4 @@ export interface EntityBase {
 }
 
 export interface EntityLinkBase {
-  /**
-   * The id of linked entity.
-   */
-  id: string;
 }

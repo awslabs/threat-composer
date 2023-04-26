@@ -13,31 +13,26 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { EntityBase, EntityLinkBase } from './entities';
+import { useContext, createContext } from 'react';
+import { MitigationLink } from '../../customTypes';
+export type View = 'list' | 'editor';
 
-export interface Assumption extends EntityBase {
-  /**
-   * The text content of the Assumption.
-   */
-  content: string;
-  /**
-   * A flag determining the assumption is still valid or not.
-   */
-  valid?: boolean;
+export interface MitigationLinksContextApi {
+  mitigationLinkList: MitigationLink[];
+  setMitigationLinkList: (list: MitigationLink[]) => void;
+  removeMitigationLink: (mitigationId: string, linkedEntityId: string) => void;
+  saveMitigationLink: (entity: MitigationLink) => void;
+  removeMitigationLinks: () => void;
 }
 
-export interface AssumptionLink extends EntityLinkBase {
-  /**
-   * Specifies whether the assumption is linked to a mitigation or a threat.
-   */
-  type: 'Mitigation' | 'Threat';
-  /**
-   * The assumption being linked.
-   */
-  assumptionId: string;
-  /**
-   * The linked entity Id.
-   */
-  linkedId: string;
-}
+const initialState: MitigationLinksContextApi = {
+  mitigationLinkList: [],
+  setMitigationLinkList: () => { },
+  removeMitigationLink: () => { },
+  saveMitigationLink: () => { },
+  removeMitigationLinks: () => { },
+};
 
+export const MitigationLinksContext = createContext<MitigationLinksContextApi>(initialState);
+
+export const useAssumptionsContext = () => useContext(MitigationLinksContext);
