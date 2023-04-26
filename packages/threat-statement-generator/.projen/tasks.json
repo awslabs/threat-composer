@@ -123,6 +123,9 @@
       "steps": [
         {
           "exec": "rsync -arv --prune-empty-dirs --include=*/ --include=*.css --include=*.png --exclude=* ./src/* ./lib"
+        },
+        {
+          "exec": "yarn run storybook:build"
         }
       ]
     },
@@ -133,6 +136,22 @@
     "pre-compile": {
       "name": "pre-compile",
       "description": "Prepare the project for compilation"
+    },
+    "storybook": {
+      "name": "storybook",
+      "steps": [
+        {
+          "exec": "storybook dev -p 6006"
+        }
+      ]
+    },
+    "storybook:build": {
+      "name": "storybook:build",
+      "steps": [
+        {
+          "exec": "storybook build -o storybook.out"
+        }
+      ]
     },
     "test": {
       "name": "test",

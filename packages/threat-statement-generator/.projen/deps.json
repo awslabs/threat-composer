@@ -1,7 +1,57 @@
 {
   "dependencies": [
     {
+      "name": "@babel/preset-env",
+      "version": "^7.21.4",
+      "type": "build"
+    },
+    {
+      "name": "@babel/preset-react",
+      "version": "^7.18.6",
+      "type": "build"
+    },
+    {
+      "name": "@babel/preset-typescript",
+      "version": "^7.21.4",
+      "type": "build"
+    },
+    {
       "name": "@cloudscape-design/jest-preset",
+      "type": "build"
+    },
+    {
+      "name": "@storybook/addon-essentials",
+      "version": "^7.0.6",
+      "type": "build"
+    },
+    {
+      "name": "@storybook/addon-interactions",
+      "version": "^7.0.6",
+      "type": "build"
+    },
+    {
+      "name": "@storybook/addon-links",
+      "version": "^7.0.6",
+      "type": "build"
+    },
+    {
+      "name": "@storybook/blocks",
+      "version": "^7.0.6",
+      "type": "build"
+    },
+    {
+      "name": "@storybook/react-webpack5",
+      "version": "^7.0.6",
+      "type": "build"
+    },
+    {
+      "name": "@storybook/react",
+      "version": "^7.0.6",
+      "type": "build"
+    },
+    {
+      "name": "@storybook/testing-library",
+      "version": "^0.0.14-next.2",
       "type": "build"
     },
     {
@@ -54,6 +104,11 @@
       "type": "build"
     },
     {
+      "name": "eslint-plugin-storybook",
+      "version": "^0.6.11",
+      "type": "build"
+    },
+    {
       "name": "eslint",
       "version": "^8",
       "type": "build"
@@ -81,6 +136,11 @@
       "type": "build"
     },
     {
+      "name": "prop-types",
+      "version": "^15.8.1",
+      "type": "build"
+    },
+    {
       "name": "react-dom",
       "version": "18.0.0",
       "type": "build"
@@ -88,6 +148,11 @@
     {
       "name": "react",
       "version": "18.0.0",
+      "type": "build"
+    },
+    {
+      "name": "storybook",
+      "version": "^7.0.6",
       "type": "build"
     },
     {

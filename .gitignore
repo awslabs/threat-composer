@@ -45,3 +45,4 @@ jspm_packages/
 !/nx.json
 .temp/
 oss-attribution/
+storybook.out/
