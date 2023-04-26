@@ -32,14 +32,14 @@ const threatStatementFormat: ThreatStatementFormat = {
     ],
   },
   23: {
-    template: 'A [threat_source] [prerequisites] can [threat_action], resulting in a reduction of [impacted_goal]',
+    template: 'A [threat_source] [prerequisites] can [threat_action], resulting in reduced [impacted_goal]',
     suggestions: [
       '[threat_impact] Consider if there is any initial impact of the threat leading up to the dimineshing of the desirable goal',
       '[impacted_assets] Consider which assets are being impacted. It is important to understand the impact of the risk, and to help with prioritisation',
     ],
   },
   31: {
-    template: 'A [threat_source] [prerequisites] can [threat_action], which leads to [threat_impact], resulting in a reduction of [impacted_goal]',
+    template: 'A [threat_source] [prerequisites] can [threat_action], which leads to [threat_impact], resulting in reduced [impacted_goal]',
     suggestions: [
       '[impacted_assets] Consider which assets are being impacted. It is important to understand the impact of the risk, and to help with prioritisation',
     ],
@@ -58,13 +58,13 @@ const threatStatementFormat: ThreatStatementFormat = {
     ],
   },
   55: {
-    template: 'A [threat_source] [prerequisites] can [threat_action], resulting in a reduction of [impacted_goal] of [impacted_assets]',
+    template: 'A [threat_source] [prerequisites] can [threat_action], resulting in reduced [impacted_goal] of [impacted_assets]',
     suggestions: [
       '[threat_impact] Consider if there is any initial impact of the threat leading up to the desirable goal being diminished in specified assets',
     ],
   },
   63: {
-    template: 'A [threat_source] [prerequisites] can [threat_action], which leads to [threat_impact], resulting in a reduction of [impacted_goal] of [impacted_assets]',
+    template: 'A [threat_source] [prerequisites] can [threat_action], which leads to [threat_impact], resulting in reduced [impacted_goal] of [impacted_assets]',
     suggestions: [],
   },
 };
