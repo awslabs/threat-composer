@@ -17,15 +17,15 @@ import Autosuggest, { AutosuggestProps } from '@cloudscape-design/components/aut
 import { BaseKeyDetail, CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import TokenGroup, { TokenGroupProps } from '@cloudscape-design/components/token-group';
 import { FC, useCallback, useState, forwardRef } from 'react';
+import { useThreatsContext } from '../../contexts/ThreatsContext/context';
 import EditorLayout from '../EditorLayout';
 import ExampleList from '../ExampleList';
-import { useGeneratorContext } from '../GeneratorContext';
 import { EditorProps } from '../ThreatStatementEditor/types';
 
 const EditorImpactedAssets: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, EditorProps>(({
   statement, setStatement, fieldData,
 }, _ref) => {
-  const { perFieldExamples, previousInputs } = useGeneratorContext();
+  const { perFieldExamples, previousInputs } = useThreatsContext();
   const [value, setValue] = useState<string>('');
   const handleAddAsset = useCallback((asset: string) => {
     setStatement(prevStatement => prevStatement && ({

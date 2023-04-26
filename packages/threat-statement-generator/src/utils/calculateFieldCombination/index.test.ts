@@ -19,7 +19,8 @@ import { TemplateThreatStatement } from '../../customTypes';
 describe('calculateFieldCombination', () => {
   test('should return the field combination score', async () => {
     const statement: TemplateThreatStatement = {
-      id: -1,
+      id: 'TEST_01',
+      numericId: -1,
       threatSource: 'threat actor',
       threatAction: 'perform a threat action',
     };

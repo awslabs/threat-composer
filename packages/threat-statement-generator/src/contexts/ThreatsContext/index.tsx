@@ -13,89 +13,30 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useContext, createContext, PropsWithChildren, useState, useCallback, useEffect, useMemo } from 'react';
+import { FC, PropsWithChildren, useState, useCallback, useEffect, useMemo } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
-import { PerFieldExample, TemplateThreatStatement, Workspace } from '../../customTypes';
+import { v4 as uuidV4 } from 'uuid';
+import { PerFieldExamplesType, ThreatsContext, DEFAULT_PER_FIELD_EXAMPLES } from './context';
+import { LOCAL_STORAGE_KEY_STATEMENT_LIST, LOCAL_STORAGE_KEY_EDITING_STATEMENT } from '../../configs/localStorageKeys';
+import { PerFieldExample, TemplateThreatStatement } from '../../customTypes';
 import threatStatementExamplesData from '../../data/threatStatementExamples.json';
+import ThreatsMigration from '../../migrations/ThreatsMigration';
 import downloadObjectAsJson from '../../utils/downloadObjectAsJson';
 import renderThreatStatement from '../../utils/renderThreatStatement';
-import InfoModal from '../InfoModal';
-
 export type View = 'list' | 'editor';
-export const LOCAL_STORAGE_KEY_NEW_VISIT_FLAG = 'ThreatStatementGenerator.newVisitFlag';
-export const LOCAL_STORAGE_KEY_EDITING_STATEMENT = 'ThreatStatementGenerator.editingStatement';
-export const LOCAL_STORAGE_KEY_STATEMENT_LIST = 'ThreatStatementGenerator.threatStatementList';
 export const EXPORT_FILE_NAME = 'threatStatementList';
 
-export type PER_FIELD_EXAMPLES_TYPE = {
-  threat_source: string[];
-  prerequisites: PerFieldExample[];
-  threat_action: PerFieldExample[];
-  threat_impact: PerFieldExample[];
-  impacted_goal: string[][];
-  impacted_assets: string[];
+export interface ThreatsContextProviderProps {
+  workspaceId: string | null;
 }
 
-export interface GeneratorContextProviderProps {
-  workspace: Workspace | null;
-}
-
-export interface GeneratorContextApi {
-  view: View;
-  editingStatement: TemplateThreatStatement | null;
-  statementList: TemplateThreatStatement[];
-  threatStatementExamples: TemplateThreatStatement[];
-  perFieldExamples: PER_FIELD_EXAMPLES_TYPE;
-  previousInputs: PER_FIELD_EXAMPLES_TYPE;
-  setView: React.Dispatch<React.SetStateAction<View>>;
-  setEditingStatement: React.Dispatch<React.SetStateAction<TemplateThreatStatement | null>>;
-  addStatement: (idToCopy?: number) => void;
-  removeStatement: (id: number) => void;
-  editStatement: (id: number) => void;
-  saveStatement: (statement: TemplateThreatStatement) => void;
-  importStatementList: (newStatements: TemplateThreatStatement[]) => void;
-  exportStatementList: (exportedStatementList: TemplateThreatStatement[]) => void;
-  showInfoModal: () => void;
-  removeAllStatements: () => void;
-}
-
-const DEFAULT_PER_FIELD_EXAMPLES = {
-  threat_source: [],
-  prerequisites: [],
-  threat_action: [],
-  threat_impact: [],
-  impacted_goal: [],
-  impacted_assets: [],
-};
-
-const getLocalStorageKey = (workspace: Workspace | null) => {
-  if (workspace) {
-    return `${LOCAL_STORAGE_KEY_STATEMENT_LIST}_${workspace.id}`;
+const getLocalStorageKey = (workspaceId: string | null) => {
+  if (workspaceId) {
+    return `${LOCAL_STORAGE_KEY_STATEMENT_LIST}_${workspaceId}`;
   }
 
   return LOCAL_STORAGE_KEY_STATEMENT_LIST;
 };
-
-const initialState: GeneratorContextApi = {
-  view: 'list',
-  editingStatement: null,
-  statementList: [],
-  threatStatementExamples: threatStatementExamplesData,
-  perFieldExamples: DEFAULT_PER_FIELD_EXAMPLES,
-  previousInputs: DEFAULT_PER_FIELD_EXAMPLES,
-  setView: () => { },
-  setEditingStatement: () => { },
-  addStatement: () => { },
-  removeStatement: () => { },
-  saveStatement: () => { },
-  editStatement: () => { },
-  importStatementList: () => { },
-  exportStatementList: () => { },
-  removeAllStatements: () => { },
-  showInfoModal: () => { },
-};
-
-const GeneratorContext = createContext<GeneratorContextApi>(initialState);
 
 const addNewValueToStringArray = (arr: string[], newValue?: string) => {
   return newValue && !arr.includes(newValue) ? [...arr, newValue] : arr;
@@ -133,9 +74,9 @@ const addNewValueToPerFieldExampleArray = (
   ] : arr;
 };
 
-const GeneratorContextProvider: FC<PropsWithChildren<GeneratorContextProviderProps>> = ({
+const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>> = ({
   children,
-  workspace: currentWorkspace,
+  workspaceId: currentWorkspaceId,
 }) => {
   const [view, setView] = useState<View>('list');
 
@@ -143,15 +84,9 @@ const GeneratorContextProvider: FC<PropsWithChildren<GeneratorContextProviderPro
     defaultValue: null,
   });
 
-  const [statementList, setStatementList] = useLocalStorageState<TemplateThreatStatement[]>(getLocalStorageKey(currentWorkspace), {
+  const [statementList, setStatementList] = useLocalStorageState<TemplateThreatStatement[]>(getLocalStorageKey(currentWorkspaceId), {
     defaultValue: [],
   });
-
-  const [hasVisitBefore, setHasVisitBefore] = useLocalStorageState<boolean>(LOCAL_STORAGE_KEY_NEW_VISIT_FLAG, {
-    defaultValue: false,
-  });
-
-  const [infoModalVisible, setInfoModalVisible] = useState(false);
 
   const threatStatementExamples = useMemo(() => {
     return threatStatementExamplesData.map(e => ({
@@ -160,8 +95,8 @@ const GeneratorContextProvider: FC<PropsWithChildren<GeneratorContextProviderPro
     }));
   }, []);
 
-  const perFieldExamples: PER_FIELD_EXAMPLES_TYPE = useMemo(() => {
-    return threatStatementExamples.reduce((agg: PER_FIELD_EXAMPLES_TYPE, st: TemplateThreatStatement, index: number) => {
+  const perFieldExamples: PerFieldExamplesType = useMemo(() => {
+    return threatStatementExamples.reduce((agg: PerFieldExamplesType, st: TemplateThreatStatement, index: number) => {
       return {
         threat_source: addNewValueToStringArray(agg.threat_source, st.threatSource),
         prerequisites: addNewValueToPerFieldExampleArray(agg.prerequisites, 'prerequisites', st, index),
@@ -173,10 +108,10 @@ const GeneratorContextProvider: FC<PropsWithChildren<GeneratorContextProviderPro
     }, DEFAULT_PER_FIELD_EXAMPLES);
   }, [threatStatementExamples]);
 
-  const previousInputs: PER_FIELD_EXAMPLES_TYPE = useMemo(() => {
+  const previousInputs: PerFieldExamplesType = useMemo(() => {
     return statementList
       .map(ts => ts as TemplateThreatStatement)
-      .reduce((agg: PER_FIELD_EXAMPLES_TYPE, st: TemplateThreatStatement, index: number) => {
+      .reduce((agg: PerFieldExamplesType, st: TemplateThreatStatement, index: number) => {
         return {
           threat_source: addNewValueToStringArray(agg.threat_source, st.threatSource),
           prerequisites: addNewValueToPerFieldExampleArray(agg.prerequisites, 'prerequisites', st, index),
@@ -188,31 +123,33 @@ const GeneratorContextProvider: FC<PropsWithChildren<GeneratorContextProviderPro
       }, DEFAULT_PER_FIELD_EXAMPLES);
   }, [statementList]);
 
-  const handleAddStatement = useCallback((idToCopy?: number) => {
+  const handleAddStatement = useCallback((idToCopy?: string) => {
     if (idToCopy) {
       const copiedStatement = statementList.find(st => st.id === idToCopy);
       if (copiedStatement) {
         const { id: _id, ...rest } = copiedStatement;
         const newStatement = {
-          id: -1,
           ...rest,
+          id: uuidV4(),
+          numericId: -1,
         };
 
         setEditingStatement(newStatement);
       }
     } else {
       const newStatement: TemplateThreatStatement = {
-        id: -1,
+        id: uuidV4(),
+        numericId: -1,
       };
       setEditingStatement(newStatement);
     }
   }, [statementList, setEditingStatement]);
 
-  const handlRemoveStatement = useCallback((id: number) => {
+  const handlRemoveStatement = useCallback((id: string) => {
     setStatementList((prevList) => prevList.filter(x => x.id !== id));
   }, [setStatementList]);
 
-  const handleEditStatement = useCallback((id: number) => {
+  const handleEditStatement = useCallback((id: string) => {
     const statement = statementList.find(s => s.id === id);
     if (statement) {
       setEditingStatement(statement as TemplateThreatStatement);
@@ -221,24 +158,24 @@ const GeneratorContextProvider: FC<PropsWithChildren<GeneratorContextProviderPro
 
   const handleSaveStatement = useCallback((statement: TemplateThreatStatement) => {
     setStatementList((prevList) => {
-      let id = statement.id;
+      let numericId = statement.numericId;
 
-      if (id === -1) {
+      if (numericId === -1) {
         const maxId = prevList.reduce((max: number, cur: TemplateThreatStatement) => {
 
-          if (cur.id > max) {
-            return cur.id;
+          if (cur.numericId > max) {
+            return cur.numericId;
           }
 
           return max;
         }, 0);
-        id = maxId + 1;
+        numericId = maxId + 1;
       }
 
       let updatedStatement: TemplateThreatStatement = {
         ...statement,
-        id: id,
-        displayOrder: id,
+        numericId,
+        displayOrder: numericId,
       };
 
       updatedStatement = {
@@ -249,11 +186,9 @@ const GeneratorContextProvider: FC<PropsWithChildren<GeneratorContextProviderPro
         threatImpact: updatedStatement.threatImpact?.trim(),
       };
 
-      if (statement.id > 0) {
-        const foundIndex = prevList.findIndex(st => st.id === statement.id);
-        if (foundIndex >= 0) {
-          return [...prevList.slice(0, foundIndex), updatedStatement, ...prevList.slice(foundIndex + 1)];
-        }
+      const foundIndex = prevList.findIndex(st => st.id === statement.id);
+      if (foundIndex >= 0) {
+        return [...prevList.slice(0, foundIndex), updatedStatement, ...prevList.slice(foundIndex + 1)];
       }
 
       return [...prevList, updatedStatement];
@@ -273,13 +208,6 @@ const GeneratorContextProvider: FC<PropsWithChildren<GeneratorContextProviderPro
   }, []);
 
   useEffect(() => {
-    if (!hasVisitBefore) {
-      handleAddStatement();
-      window.setTimeout(() => setHasVisitBefore(true), 1000);
-    }
-  }, [handleAddStatement]);
-
-  useEffect(() => {
     if (editingStatement) {
       setView('editor');
     } else {
@@ -287,22 +215,16 @@ const GeneratorContextProvider: FC<PropsWithChildren<GeneratorContextProviderPro
     }
   }, [editingStatement, setView]);
 
-  useEffect(() => {
-    if (!hasVisitBefore) {
-      setInfoModalVisible(true);
-    }
-  }, [hasVisitBefore]);
-
-  return (<GeneratorContext.Provider value={{
+  return (<ThreatsContext.Provider value={{
     view,
     editingStatement,
     statementList,
+    setStatementList,
     threatStatementExamples,
     perFieldExamples,
     previousInputs,
     setView,
     setEditingStatement,
-    showInfoModal: () => setInfoModalVisible(true),
     addStatement: handleAddStatement,
     removeStatement: handlRemoveStatement,
     editStatement: handleEditStatement,
@@ -311,13 +233,11 @@ const GeneratorContextProvider: FC<PropsWithChildren<GeneratorContextProviderPro
     exportStatementList: handleExportStatementList,
     removeAllStatements: handleRemoveAllStatements,
   }}>
-    {children}
-    {infoModalVisible && <InfoModal
-      visible={infoModalVisible}
-      setVisible={setInfoModalVisible}
-    />}
-  </GeneratorContext.Provider>);
+    <ThreatsMigration>
+      {children}
+    </ThreatsMigration>
+  </ThreatsContext.Provider>);
 };
 
-export const useGeneratorContext = () => useContext(GeneratorContext);
-export default GeneratorContextProvider;
+
+export default ThreatsContextProvider;

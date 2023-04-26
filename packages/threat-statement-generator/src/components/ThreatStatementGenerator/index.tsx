@@ -14,17 +14,17 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC } from 'react';
-import GeneratorContextProvider, { useGeneratorContext } from '../GeneratorContext';
+import ThreatsContextProvider from '../../contexts/ThreatsContext';
+import { useThreatsContext } from '../../contexts/ThreatsContext/context';
+import WorkspacesContextProvider from '../../contexts/WorkspacesContext';
 import ThreatStatementEditor from '../ThreatStatementEditor';
 import ThreatStatementList from '../ThreatStatementList';
 
-import WorkspacesContextProvider from '../WorkspacesContext';
 import './index.css';
-
 import '@cloudscape-design/global-styles/index.css';
 
 const ThreatStatementGeneratorInner: FC = () => {
-  const { view } = useGeneratorContext();
+  const { view } = useThreatsContext();
   return view === 'list' ? <ThreatStatementList /> : <ThreatStatementEditor />;
 };
 
@@ -35,9 +35,9 @@ const ThreatStatementGeneratorInner: FC = () => {
 const ThreatStatementGenerator: FC = () => {
   return (<div className='threat-statement-generator-main'>
     <WorkspacesContextProvider>
-      {(workspace) => <GeneratorContextProvider workspace={workspace}>
+      {(workspaceId) => <ThreatsContextProvider workspaceId={workspaceId || null}>
         <ThreatStatementGeneratorInner />
-      </GeneratorContextProvider>}
+      </ThreatsContextProvider>}
     </WorkspacesContextProvider>
   </div>);
 };

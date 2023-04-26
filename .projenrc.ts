@@ -105,9 +105,17 @@ const uiProject = new TypeScriptProject({
       module: "commonjs",
       emitDecoratorMetadata: true,
       moduleResolution: TypeScriptModuleResolution.NODE,
-    }
+    },
+  },
+  tsconfigDev: {
+    compilerOptions: {
+    },
+    include: [
+      "src",
+    ]
   }
 });
+
 
 uiProject.addTask('storybook', {
   exec: 'storybook dev -p 6006'

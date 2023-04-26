@@ -1,7 +1,7 @@
 [
   {
-    "id": 2,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000001",
+    "numericId": -1,
     "threatSource": "internal actor",
     "prerequisites": "with authorized access to the AWS accounts",
     "threatAction": "modify the configuration of the AWS services and/or resources within the trust boundary",
@@ -20,8 +20,8 @@
     ]
   },
   {
-    "id": 3,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000003",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "with possession of a similar domain name",
     "threatAction": "trick our users into interacting with an illegitimate endpoint",
@@ -43,8 +43,8 @@
     ]
   },
   {
-    "id": 4,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000004",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who has access to the user's web browser",
     "threatAction": "spoof an authenticated user",
@@ -66,8 +66,8 @@
     ]
   },
   {
-    "id": 5,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000005",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who is able brute force Amazon Cognito usernames and passwords",
     "threatAction": "spoof an authenticated user",
@@ -86,8 +86,8 @@
     ]
   },
   {
-    "id": 6,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000006",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who can register a vehicle",
     "threatAction": "claim they did not do so",
@@ -108,8 +108,8 @@
     ]
   },
   {
-    "id": 7,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000007",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who can register a vehicle",
     "threatAction": "claim they did when they did not",
@@ -130,8 +130,8 @@
     ]
   },
   {
-    "id": 8,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000008",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who can pretend to be a valid user",
     "threatAction": "interact with the exposed API",
@@ -153,8 +153,8 @@
     ]
   },
   {
-    "id": 10,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_0000010",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "with access to the private key for the public API Gateway TLS certificate",
     "threatAction": "set up their own API endpoint",
@@ -176,8 +176,8 @@
     ]
   },
   {
-    "id": 11,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_0000011",
+    "numericId": -1,
     "threatSource": "external threat actor",
     "prerequisites": "",
     "threatAction": "modify the configuration of the API exposed via API Gateway",
@@ -196,8 +196,8 @@
     ]
   },
   {
-    "id": 12,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000012",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who has sufficiently privileged IAM Principal in the AWS account",
     "threatAction": "modify the configuration of the API Gateway deployment",
@@ -214,8 +214,8 @@
     ]
   },
   {
-    "id": 13,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000013",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who is authenticated and authorized",
     "threatAction": "deny taking a mutating action via the API",
@@ -240,8 +240,8 @@
     ]
   },
   {
-    "id": 14,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000014",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "with access to logs",
     "threatAction": "access sensitive data that was not excluded or redacted",
@@ -266,8 +266,8 @@
     ]
   },
   {
-    "id": 15,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000015",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who is authorized to make API requests",
     "threatAction": "read information they should not be authorized to read",
@@ -291,8 +291,8 @@
     ]
   },
   {
-    "id": 16,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000016",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "",
     "threatAction": "coordinate a distributed denial of service attack against the exposed API",
@@ -316,8 +316,8 @@
     ]
   },
   {
-    "id": 17,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000017",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "",
     "threatAction": "deny service to the API by calling it as many times as possible from a single IP address",
@@ -341,8 +341,8 @@
     ]
   },
   {
-    "id": 18,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000018",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who is in a person-in-the-middle position",
     "threatAction": "manipulate API parameter input",
@@ -364,8 +364,8 @@
     ]
   },
   {
-    "id": 19,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000019",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "",
     "threatAction": "leverages an error in authorization logic",
@@ -387,8 +387,8 @@
     ]
   },
   {
-    "id": 20,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000020",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who is able to spoof the identity of the AWS Lambda function",
     "threatAction": "communicate with the Amazon S3 bucket directly",
@@ -407,8 +407,8 @@
     ]
   },
   {
-    "id": 21,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000021",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "",
     "threatAction": "leverage vulnerabilities in the code we wrote for our AWS Lambda function",
@@ -430,8 +430,8 @@
     ]
   },
   {
-    "id": 22,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000022",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "",
     "threatAction": "leverage vulnerabilities in the dependencies we use for our Lambda function code",
@@ -450,8 +450,8 @@
     ]
   },
   {
-    "id": 23,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000023",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who is able to spoof the identity of a legitimate developer",
     "threatAction": "tamper with our function code running in the AWS Lambda function",
@@ -468,8 +468,8 @@
     ]
   },
   {
-    "id": 24,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000024",
+    "numericId": -1,
     "threatSource": "internal actor",
     "prerequisites": "with access to modify the AWS Lambda function configuration",
     "threatAction": "disable Lambda CloudWatch logs",
@@ -486,8 +486,8 @@
     ]
   },
   {
-    "id": 25,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000025",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who is able to access the AWS Lambda function logs",
     "threatAction": "may find sensitive data captured within the logs",
@@ -511,8 +511,8 @@
     ]
   },
   {
-    "id": 26,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000026",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "with a network path to the exposed API",
     "threatAction": "submit a large number of resource intensive requests",
@@ -533,8 +533,8 @@
     ]
   },
   {
-    "id": 27,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000027",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who is able to influence the behaviour of the AWS Lambda function",
     "threatAction": "take advantage of a potentially over-scoped AWS Lambda execution role",
@@ -553,8 +553,8 @@
     ]
   },
   {
-    "id": 28,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000028",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who can assume an IAM Role which has sufficient permissions",
     "threatAction": "tamper with data stored in the DynamoDB tables",
@@ -575,8 +575,8 @@
     ]
   },
   {
-    "id": 29,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000029",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who is able to access the DynamoDB tables",
     "threatAction": "access sensitive data",
@@ -599,8 +599,8 @@
     ]
   },
   {
-    "id": 30,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000030",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "with access to a IAM Principal with modify access to the DynamoDB tables",
     "threatAction": "delete the data",
@@ -623,8 +623,8 @@
     ]
   },
   {
-    "id": 31,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000031",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who is able to access Amazon S3 access logs",
     "threatAction": "may find sensitive data captured within the logs",
@@ -643,8 +643,8 @@
     ]
   },
   {
-    "id": 32,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000032",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "",
     "threatAction": "cause data in the Amazon S3 bucket to be deleted",
@@ -665,8 +665,8 @@
     ]
   },
   {
-    "id": 33,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000033",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "with control of network traffic between users and the API Gateway endpoint",
     "threatAction": "tamper with valid and authenticated requests to the API",
@@ -688,8 +688,8 @@
     ]
   },
   {
-    "id": 34,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000034",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who knows the source IP of a legitimate user and can direct high volumes of Internet traffic (e.g. from a botnet)",
     "threatAction": "flood the legitimate user's internet link",
@@ -710,8 +710,8 @@
     ]
   },
   {
-    "id": 35,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000035",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who can modify communications between API Gateway and Lambda",
     "threatAction": "tamper with valid communications",
@@ -735,8 +735,8 @@
     ]
   },
   {
-    "id": 36,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000036",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who can observe communications between API Gateway and Lambda ",
     "threatAction": "access sensitive data",
@@ -760,8 +760,8 @@
     ]
   },
   {
-    "id": 37,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000037",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who can prevent communications between API Gateway deployment and AWS Lambda function",
     "threatAction": "interrupt access",
@@ -785,8 +785,8 @@
     ]
   },
   {
-    "id": 38,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000038",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "who can tamper with data in transit between the Amazon S3 bucket and legitimate users",
     "threatAction": "modify that data",
@@ -807,8 +807,8 @@
     ]
   },
   {
-    "id": 39,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000039",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "with access to data in transit between the user and the Amazon S3 bucket",
     "threatAction": "read that data",
@@ -829,8 +829,8 @@
     ]
   },
   {
-    "id": 40,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000040",
+    "numericId": -1,
     "threatSource": "internal actor",
     "prerequisites": "with the required permissions in the AWS account ",
     "threatAction": "access the data stored in the Amazon S3 bucket",
@@ -851,8 +851,8 @@
     ]
   },
   {
-    "id": 41,
-    "isUsingTemplate": true,
+    "id": "EXAMPLE_000041",
+    "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "with knowledge of, and a network path to the API Gateway endpoint",
     "threatAction": "perform reconnaissance and intrusion activities against the exposed attack surface",

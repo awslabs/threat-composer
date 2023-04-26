@@ -13,15 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import type { Meta, StoryObj } from '@storybook/react';
-import ThreatStatementGenerator from '.';
+export const LOCAL_STORAGE_KEY_NEW_VISIT_FLAG = 'ThreatStatementGenerator.newVisitFlag';
 
-const meta: Meta<typeof ThreatStatementGenerator> = {
-  title: 'ThreatStatementGenerator',
-  component: ThreatStatementGenerator,
-};
+export const LOCAL_STORAGE_KEY_CURRENT_WORKSPACE = 'ThreatStatementGenerator.currentWorkspace';
+export const LOCAL_STORAGE_KEY_WORKSPACE_LIST = 'ThreatStatementGenerator.workspaceList';
 
-export default meta;
-type Story = StoryObj<typeof ThreatStatementGenerator>;
+export const LOCAL_STORAGE_KEY_EDITING_STATEMENT = 'ThreatStatementGenerator.editingStatement';
+export const LOCAL_STORAGE_KEY_STATEMENT_LIST = 'ThreatStatementGenerator.threatStatementList';
 
-export const Default: Story = {};
+export const LOCAL_STORAGE_KEY_WORKSPACE_LIST_MIGRATION = 'ThreatStatementGenerator.workspaceListMigration';
+export const LOCAL_STORAGE_KEY_THREATS_LIST_MIGRATION = 'ThreatStatementGenerator.threatListMigration';

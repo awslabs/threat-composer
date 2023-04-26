@@ -30,9 +30,9 @@ import Tooltip from '../Tooltip';
 
 export interface ThreatStatementCardProps {
   statement: TemplateThreatStatement;
-  onCopy?: (id: number) => void;
-  onRemove?: (id: number) => void;
-  onEditInWizard?: (id: number) => void;
+  onCopy?: (id: string) => void;
+  onRemove?: (id: string) => void;
+  onEditInWizard?: (id: string) => void;
   onAddTagToStatement?: (statement: TemplateThreatStatement, tag: string) => void;
   onRemoveTagFromStatement?: (statement: TemplateThreatStatement, tag: string) => void;
 }
@@ -80,7 +80,7 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
           onAddTagToStatement={onAddTagToStatement}
           onRemoveTagFromStatement={onRemoveTagFromStatement}
         />}
-      >Threat {statement.id}</Header>}
+      >Threat {statement.numericId}</Header>}
     >
       <TextContent>
         <CopyToClipbord>

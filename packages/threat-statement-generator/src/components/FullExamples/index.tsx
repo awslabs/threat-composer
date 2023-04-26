@@ -20,11 +20,11 @@ import PropertyFilter, { PropertyFilterProps } from '@cloudscape-design/componen
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useState, useMemo, useCallback, useImperativeHandle, forwardRef } from 'react';
+import { useThreatsContext } from '../../contexts/ThreatsContext/context';
 import { TemplateThreatStatement } from '../../customTypes';
 import STRIDE from '../../data/stride';
 import intersectArrays from '../../utils/intersectArrays';
 import shuffle from '../../utils/shuffle';
-import { useGeneratorContext } from '../GeneratorContext';
 
 export interface FullExamplesProps {
   onClick: (example: TemplateThreatStatement) => void;
@@ -62,7 +62,7 @@ const parseToken = (statements: TemplateThreatStatement[], token: PropertyFilter
 const FullExamples: FC<FullExamplesProps & { ref?: React.ForwardedRef<any> }> = forwardRef(({
   onClick,
 }, ref) => {
-  const { threatStatementExamples } = useGeneratorContext();
+  const { threatStatementExamples } = useThreatsContext();
   const [expanded, setExpanded] = useState(false);
   const [query, setQuery] = useState<PropertyFilterProps.Query>({
     tokens: [],

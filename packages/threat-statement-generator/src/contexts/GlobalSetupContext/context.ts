@@ -13,15 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import type { Meta, StoryObj } from '@storybook/react';
-import ThreatStatementGenerator from '.';
+import { useContext, createContext } from 'react';
 
-const meta: Meta<typeof ThreatStatementGenerator> = {
-  title: 'ThreatStatementGenerator',
-  component: ThreatStatementGenerator,
+export interface GlobalSetupContextApi {
+  showInfoModal: () => void;
+}
+
+const initialState: GlobalSetupContextApi = {
+  showInfoModal: () => { },
 };
 
-export default meta;
-type Story = StoryObj<typeof ThreatStatementGenerator>;
+export const GlobalSetupContext = createContext<GlobalSetupContextApi>(initialState);
 
-export const Default: Story = {};
+export const useGlobalSetupContext = () => useContext(GlobalSetupContext);

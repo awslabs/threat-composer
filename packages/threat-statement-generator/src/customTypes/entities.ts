@@ -13,15 +13,33 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import type { Meta, StoryObj } from '@storybook/react';
-import ThreatStatementGenerator from '.';
+export interface EntityBase {
+  /**
+   * The unique Id of the entity
+   */
+  id: string;
+  /**
+   * The numeric id of the entity.
+   * The numericId will be displayed for users to easy identify the entity.
+   */
+  numericId: number;
+  /**
+   * The display order of the entity in the list.
+  */
+  displayOrder?: number;
+  /**
+   * The metadata.
+   */
+  metadata?: { key: string; value: string | string[] }[];
+  /**
+   * The tags.
+   */
+  tags?: string[];
+}
 
-const meta: Meta<typeof ThreatStatementGenerator> = {
-  title: 'ThreatStatementGenerator',
-  component: ThreatStatementGenerator,
-};
-
-export default meta;
-type Story = StoryObj<typeof ThreatStatementGenerator>;
-
-export const Default: Story = {};
+export interface EntityLinkBase {
+  /**
+   * The id of linked entity.
+   */
+  id: string;
+}

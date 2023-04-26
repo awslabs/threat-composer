@@ -18,15 +18,15 @@ import ColumnLayout from '@cloudscape-design/components/column-layout';
 import Input, { InputProps } from '@cloudscape-design/components/input';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useCallback, useEffect, useRef, forwardRef } from 'react';
+import { useThreatsContext } from '../../contexts/ThreatsContext/context';
 import EditorLayout from '../EditorLayout';
 import ExampleList from '../ExampleList';
-import { useGeneratorContext } from '../GeneratorContext';
 import { EditorProps } from '../ThreatStatementEditor/types';
 
 const EditorThreatSource: FC<EditorProps> = forwardRef<InputProps.Ref, EditorProps>(({
   statement, setStatement, fieldData,
 }, ref) => {
-  const { perFieldExamples, previousInputs } = useGeneratorContext();
+  const { perFieldExamples, previousInputs } = useThreatsContext();
 
   const valueRef = useRef<string | undefined>(statement.threatSource);
   useEffect(() => {

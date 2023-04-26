@@ -24,12 +24,13 @@ import Select, { SelectProps } from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
+import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext/context';
+import { useThreatsContext } from '../../contexts/ThreatsContext/context';
+import { useWorkspacesContext } from '../../contexts/WorkspacesContext/context';
 import { TemplateThreatStatement } from '../../customTypes';
 import AddWorkspace from '../EditWorkspace';
 import FileImport from '../FileImport';
-import { useGeneratorContext } from '../GeneratorContext';
 import ThreatStatementCard from '../ThreatStatementCard';
-import { useWorkspacesContext } from '../WorkspacesContext';
 
 const ThreatStatementList: FC = () => {
   const {
@@ -41,8 +42,11 @@ const ThreatStatementList: FC = () => {
     saveStatement,
     importStatementList,
     removeAllStatements,
+  } = useThreatsContext();
+
+  const {
     showInfoModal,
-  } = useGeneratorContext();
+  } = useGlobalSetupContext();
 
   const {
     currentWorkspace,

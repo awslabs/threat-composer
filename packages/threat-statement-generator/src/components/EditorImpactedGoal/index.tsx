@@ -17,9 +17,9 @@ import Autosuggest, { AutosuggestProps } from '@cloudscape-design/components/aut
 import { BaseKeyDetail, CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import TokenGroup, { TokenGroupProps } from '@cloudscape-design/components/token-group';
 import { FC, useCallback, useState, forwardRef } from 'react';
+import { useThreatsContext } from '../../contexts/ThreatsContext/context';
 import EditorLayout from '../EditorLayout';
 import ExampleList from '../ExampleList';
-import { useGeneratorContext } from '../GeneratorContext';
 import { EditorProps } from '../ThreatStatementEditor/types';
 
 const EditorImpactedGoal: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, EditorProps>(({
@@ -28,7 +28,7 @@ const EditorImpactedGoal: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, Edi
   fieldData,
 }, _ref) => {
   const [value, setValue] = useState<string>('');
-  const { perFieldExamples } = useGeneratorContext();
+  const { perFieldExamples } = useThreatsContext();
 
   const handleAddImpactedGoal = useCallback((impactedGoal: string) => {
     setStatement(prevStatement => prevStatement && ({

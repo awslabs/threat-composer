@@ -16,16 +16,16 @@
 import Button from '@cloudscape-design/components/button';
 import Textarea, { TextareaProps } from '@cloudscape-design/components/textarea';
 import { FC, forwardRef, useCallback, useRef, RefObject, useImperativeHandle } from 'react';
+import { useThreatsContext } from '../../contexts/ThreatsContext/context';
 import EditorLayout from '../EditorLayout';
 import ExampleList from '../ExampleList';
-import { useGeneratorContext } from '../GeneratorContext';
 import { EditorProps } from '../ThreatStatementEditor/types';
 
 const EditorThreatImpact: FC<EditorProps> = forwardRef<TextareaProps.Ref, EditorProps>(({
   statement, setStatement, fieldData,
 }, ref) => {
   const inputRef = useRef<TextareaProps.Ref>();
-  const { perFieldExamples } = useGeneratorContext();
+  const { perFieldExamples } = useThreatsContext();
 
   useImperativeHandle(ref, () => {
     return {

@@ -20,10 +20,10 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import Toggle from '@cloudscape-design/components/toggle';
 import { useCallback, useMemo, useState } from 'react';
+import { useThreatsContext } from '../../contexts/ThreatsContext/context';
 import { PerFieldExample } from '../../customTypes';
 import renderArrayField from '../../utils/renderArrayField';
 import shuffle from '../../utils/shuffle';
-import { useGeneratorContext } from '../GeneratorContext';
 
 import './index.css';
 
@@ -42,7 +42,7 @@ const ExampleList = <T extends string | PerFieldExample | string[]>({
 }: ExampleListProps<T>) => {
   const [showMoreExamples, setShowMoreExamples] = useState(false);
   const [showFullExample, setShowFullExample] = useState(false);
-  const { threatStatementExamples } = useGeneratorContext();
+  const { threatStatementExamples } = useThreatsContext();
   const [filterText, setFilterText] = useState('');
 
   const randomDislayList = useMemo(() => {

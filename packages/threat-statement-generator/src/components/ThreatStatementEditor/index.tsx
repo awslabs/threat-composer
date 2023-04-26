@@ -17,7 +17,10 @@ import Grid from '@cloudscape-design/components/grid';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import React, { FC, useCallback, useMemo, useState, useRef, useEffect, ReactNode } from 'react';
+import { v4 as uuidV4 } from 'uuid';
 import { EditorProps } from './types';
+import { useThreatsContext } from '../../contexts/ThreatsContext/context';
+import { useWorkspacesContext } from '../../contexts/WorkspacesContext/context';
 import { TemplateThreatStatement } from '../../customTypes';
 import { ThreatFieldTypes } from '../../customTypes/threatFieldTypes';
 import threatFieldData from '../../data/threatFieldData';
@@ -36,10 +39,8 @@ import EditorThreatSource from '../EditorThreatSource';
 import FieldSelector from '../FieldSelector';
 import FinalStatement from '../FinalStatement';
 import FullExamples from '../FullExamples';
-import { useGeneratorContext } from '../GeneratorContext';
 import Header from '../Header';
 import Metrics from '../Metrics';
-import { useWorkspacesContext } from '../WorkspacesContext';
 
 const defaultThreatStatementFormat = threatStatementFormat[63];
 
@@ -55,7 +56,7 @@ const editorMapping: { [key in ThreatFieldTypes]: React.ComponentType<EditorProp
 const ThreatStatementEditor: FC = () => {
   const inputRef = useRef<{ focus(): void }>();
   const fullExamplesRef = useRef<{ collapse(): void }>();
-  const { editingStatement, setEditingStatement, saveStatement, addStatement } = useGeneratorContext();
+  const { editingStatement, setEditingStatement, saveStatement, addStatement } = useThreatsContext();
   const { currentWorkspace, workspaceList } = useWorkspacesContext();
   const [editor, setEditor] = useState<ThreatFieldTypes | undefined>(getRecommendedEditor(editingStatement));
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -107,7 +108,8 @@ const ThreatStatementEditor: FC = () => {
   const handleExampleClicked = useCallback((statement: TemplateThreatStatement) => {
     setEditingStatement({
       ...statement,
-      id: -1,
+      numericId: -1,
+      id: uuidV4(),
     });
     const recommendedEditor = getRecommendedEditor(statement);
     recommendedEditor && setEditor(recommendedEditor);
@@ -120,7 +122,8 @@ const ThreatStatementEditor: FC = () => {
     const statement = threatStatementExamples[randomNumber] as TemplateThreatStatement;
     setEditingStatement({
       ...statement,
-      id: -1,
+      numericId: -1,
+      id: uuidV4(),
     });
     const recommendedEditor = getRecommendedEditor(statement);
     recommendedEditor && setEditor(recommendedEditor);
@@ -130,11 +133,11 @@ const ThreatStatementEditor: FC = () => {
   const saveButtonText = useMemo(() => {
     if (!currentWorkspace && workspaceList.length === 0) {
       // For most of use cases, if there is only the default workspace, use list to reduce cognitive load.
-      return editingStatement?.id === -1 ? 'Add to list' : 'Save';
+      return editingStatement?.numericId === -1 ? 'Add to list' : 'Save';
     }
 
     const workspace = currentWorkspace?.name || 'default';
-    return editingStatement?.id === -1 ? `Add to workspace ${workspace}` : `Save to workspace ${workspace}`;
+    return editingStatement?.numericId === -1 ? `Add to workspace ${workspace}` : `Save to workspace ${workspace}`;
 
   }, [currentWorkspace, workspaceList, editingStatement]);
 

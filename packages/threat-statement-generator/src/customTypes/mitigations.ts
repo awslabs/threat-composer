@@ -13,15 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import type { Meta, StoryObj } from '@storybook/react';
-import ThreatStatementGenerator from '.';
+import { AssumptionLink } from './assumptions';
+import { EntityLinkBase } from './entities';
 
-const meta: Meta<typeof ThreatStatementGenerator> = {
-  title: 'ThreatStatementGenerator',
-  component: ThreatStatementGenerator,
-};
+export interface Mitigation {
+  id: number;
+  content: string;
 
-export default meta;
-type Story = StoryObj<typeof ThreatStatementGenerator>;
+  assumptionList?: AssumptionLink[];
+}
 
-export const Default: Story = {};
+export interface MitigationLink extends EntityLinkBase {
+}
+
+export type MitigationList = Mitigation[];

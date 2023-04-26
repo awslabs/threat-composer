@@ -24,13 +24,13 @@ import a from 'indefinite';
 import { ReactNode, FC, useMemo, useState, useEffect, useCallback } from 'react';
 import ExpandableToken from './components/ExpandableToken';
 import Token from './components/Token';
+import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext/context';
 import { TemplateThreatStatement } from '../../customTypes';
 import { threatFieldTypeMapping, ThreatFieldTypes } from '../../customTypes/threatFieldTypes';
 import threatFieldData from '../../data/threatFieldData';
 import threatStatementFormat from '../../data/threatStatementFormat';
 import getFieldContentByToken from '../../utils/getFieldContentByToken';
 import getRecommendedEditor from '../../utils/getRecommandedEditor';
-import { useGeneratorContext } from '../GeneratorContext';
 import Suggestions from '../Suggestions';
 import Tooltip from '../Tooltip';
 
@@ -66,7 +66,7 @@ const FieldSelector: FC<FieldSelectorProps> = ({
     setExpandedImpactedGoal(false);
   }, [statement]);
 
-  const { showInfoModal } = useGeneratorContext();
+  const { showInfoModal } = useGlobalSetupContext();
 
   const selector = useMemo(() => {
     const output: ReactNode[] = [];
