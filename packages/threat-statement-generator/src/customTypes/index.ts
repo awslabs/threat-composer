@@ -18,3 +18,4 @@ export * from './mitigations';
 export * from './threats';
 export * from './threatFieldTypes';
 export * from './workspaces';
+export * from './entities';

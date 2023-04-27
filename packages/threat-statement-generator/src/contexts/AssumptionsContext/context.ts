@@ -20,7 +20,6 @@ export type View = 'list' | 'editor';
 export interface AssumptionsContextApi {
   assumptionList: Assumption[];
   setAssumptionList: (assumptions: Assumption[]) => void;
-  addAssumption: (idToCopy?: string) => void;
   removeAssumption: (id: string) => void;
   saveAssumption: (assumption: Assumption) => void;
   removeAllAssumptions: () => void;
@@ -29,7 +28,6 @@ export interface AssumptionsContextApi {
 const initialState: AssumptionsContextApi = {
   assumptionList: [],
   setAssumptionList: () => { },
-  addAssumption: () => { },
   removeAssumption: () => { },
   saveAssumption: () => { },
   removeAllAssumptions: () => { },

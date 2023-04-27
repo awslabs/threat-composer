@@ -14,27 +14,25 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { Assumption } from '../../customTypes';
+import { Mitigation } from '../../customTypes';
 export type View = 'list' | 'editor';
 
 export interface MitigationsContextApi {
-  assumptionList: Assumption[];
-  setAssumptionList: (assumptions: Assumption[]) => void;
-  addAssumption: (idToCopy?: string) => void;
-  removeAssumption: (id: string) => void;
-  saveAssumption: (assumption: Assumption) => void;
-  removeAllAssumptions: () => void;
+  mitigationList: Mitigation[];
+  setMitigationList: (entity: Mitigation[]) => void;
+  removeMitigation: (id: string) => void;
+  saveMitigation: (entity: Mitigation) => void;
+  removeAllMitigations: () => void;
 }
 
 const initialState: MitigationsContextApi = {
-  assumptionList: [],
-  setAssumptionList: () => { },
-  addAssumption: () => { },
-  removeAssumption: () => { },
-  saveAssumption: () => { },
-  removeAllAssumptions: () => { },
+  mitigationList: [],
+  setMitigationList: () => { },
+  removeMitigation: () => { },
+  saveMitigation: () => { },
+  removeAllMitigations: () => { },
 };
 
-export const AssumptionsContext = createContext<MitigationsContextApi>(initialState);
+export const MitigationsContext = createContext<MitigationsContextApi>(initialState);
 
-export const useAssumptionsContext = () => useContext(AssumptionsContext);
+export const useMitigationContext = () => useContext(MitigationsContext);

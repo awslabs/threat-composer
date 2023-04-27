@@ -14,12 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { AssumptionLink } from './assumptions';
-import { EntityLinkBase } from './entities';
+import { ContentEntityBase, EntityLinkBase } from './entities';
 
-export interface Mitigation {
-  id: number;
-  content: string;
-
+export interface Mitigation extends ContentEntityBase {
   assumptionList?: AssumptionLink[];
 }
 

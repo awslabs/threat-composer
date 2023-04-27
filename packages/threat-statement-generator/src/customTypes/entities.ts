@@ -37,5 +37,12 @@ export interface EntityBase {
   tags?: string[];
 }
 
+export interface ContentEntityBase extends EntityBase {
+  /**
+   * The text content of the Assumption.
+   */
+  content: string;
+}
+
 export interface EntityLinkBase {
 }

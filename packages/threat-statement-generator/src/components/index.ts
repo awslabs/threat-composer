@@ -13,5 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export { default as ThreatStatementGenerator } from './ThreatStatementGenerator';
-export * from './ThreatStatementGenerator';
+export { default as ThreatStatementEditor } from './threats/ThreatStatementEditor';
+export { default as ThreatStatementList } from './threats/ThreatStatementList';
+export { default as AssumptionList } from './assumptions/AssumptionList';
+export { default as MitigationList } from './mitigations/MitigationList';

@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC, PropsWithChildren, useCallback } from 'react';
+import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { v4 as uuidV4 } from 'uuid';
 import { AssumptionsContext } from './context';
@@ -40,31 +40,9 @@ const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProvide
     defaultValue: [],
   });
 
-  const handleAddAssumption = useCallback((idToCopy?: string) => {
-    if (idToCopy) {
-      const copied = assumptionList.find(st => st.id === idToCopy);
-      if (copied) {
-        const { id: _id, numericId: _numericId, ...rest } = copied;
-        const newAssumption = {
-          ...rest,
-          id: uuidV4(),
-          numericId: -1,
-        };
-
-        return newAssumption;
-      }
-    }
-
-    return {
-      id: uuidV4(),
-      numericId: -1,
-    };
-  }, [assumptionList]);
-
   const handlRemoveAssumption = useCallback((id: string) => {
     setAssumptionList((prevList) => prevList.filter(x => x.id !== id));
   }, [setAssumptionList]);
-
 
   const handleSaveAssumption = useCallback((assumption: Assumption) => {
     setAssumptionList((prevList) => {
@@ -84,6 +62,7 @@ const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProvide
 
       let updated: Assumption = {
         ...assumption,
+        id: assumption.id === 'new' ? uuidV4() : assumption.id,
         numericId,
         displayOrder: numericId,
       };
@@ -104,7 +83,6 @@ const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProvide
   return (<AssumptionsContext.Provider value={{
     assumptionList,
     setAssumptionList,
-    addAssumption: handleAddAssumption,
     removeAssumption: handlRemoveAssumption,
     saveAssumption: handleSaveAssumption,
     removeAllAssumptions: handleRemoveAllAssumptions,

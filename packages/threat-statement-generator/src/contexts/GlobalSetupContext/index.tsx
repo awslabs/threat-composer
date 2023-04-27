@@ -16,7 +16,7 @@
 import React, { FC, PropsWithChildren, useState, useEffect } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { GlobalSetupContext } from './context';
-import InfoModal from '../../components/InfoModal';
+import InfoModal from '../../components/global/InfoModal';
 import { LOCAL_STORAGE_KEY_NEW_VISIT_FLAG } from '../../configs/localStorageKeys';
 
 const GlobalSetupContextProvider: FC<PropsWithChildren<{}>> = ({

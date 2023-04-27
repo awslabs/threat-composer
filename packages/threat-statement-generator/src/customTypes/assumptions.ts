@@ -13,13 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { EntityBase, EntityLinkBase } from './entities';
+import { ContentEntityBase, EntityLinkBase } from './entities';
 
-export interface Assumption extends EntityBase {
-  /**
-   * The text content of the Assumption.
-   */
-  content: string;
+export interface Assumption extends ContentEntityBase {
   /**
    * A flag determining the assumption is still valid or not.
    */

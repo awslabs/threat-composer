@@ -22,6 +22,10 @@ export const LOCAL_STORAGE_KEY_EDITING_STATEMENT = 'ThreatStatementGenerator.edi
 export const LOCAL_STORAGE_KEY_STATEMENT_LIST = 'ThreatStatementGenerator.threatStatementList';
 
 export const LOCAL_STORAGE_KEY_ASSUMPTION_LIST = 'ThreatStatementGenerator.AssumptionList';
+export const LOCAL_STORAGE_KEY_MITIGATION_LIST = 'ThreatStatementGenerator.MitigationList';
+
+export const LOCAL_STORAGE_KEY_ASSUMPTION_LINK_LIST = 'ThreatStatementGenerator.AssumptionLinkList';
+export const LOCAL_STORAGE_KEY_MITIGATION_LINK_LIST = 'ThreatStatementGenerator.MitigationLinkList';
 
 export const LOCAL_STORAGE_KEY_WORKSPACE_LIST_MIGRATION = 'ThreatStatementGenerator.workspaceListMigration';
 export const LOCAL_STORAGE_KEY_THREATS_LIST_MIGRATION = 'ThreatStatementGenerator.threatListMigration';

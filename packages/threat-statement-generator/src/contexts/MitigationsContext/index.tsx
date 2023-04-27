@@ -13,65 +13,44 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC, PropsWithChildren, useCallback } from 'react';
+import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { v4 as uuidV4 } from 'uuid';
-import { AssumptionsContext } from './context';
-import { LOCAL_STORAGE_KEY_ASSUMPTION_LIST } from '../../configs/localStorageKeys';
-import { Assumption } from '../../customTypes';
+import { MitigationsContext } from './context';
+import { LOCAL_STORAGE_KEY_MITIGATION_LIST } from '../../configs/localStorageKeys';
+import { Mitigation } from '../../customTypes';
 
-export interface AssumptionsContextProviderProps {
+export interface MitigationsContextProviderProps {
   workspaceId: string | null;
 }
 
 const getLocalStorageKey = (workspaceId: string | null) => {
   if (workspaceId) {
-    return `${LOCAL_STORAGE_KEY_ASSUMPTION_LIST}_${workspaceId}`;
+    return `${LOCAL_STORAGE_KEY_MITIGATION_LIST}_${workspaceId}`;
   }
 
-  return LOCAL_STORAGE_KEY_ASSUMPTION_LIST;
+  return LOCAL_STORAGE_KEY_MITIGATION_LIST;
 };
 
-const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProviderProps>> = ({
+const MitigationsContextProvider: FC<PropsWithChildren<MitigationsContextProviderProps>> = ({
   children,
   workspaceId: currentWorkspaceId,
 }) => {
-  const [assumptionList, setAssumptionList] = useLocalStorageState<Assumption[]>(getLocalStorageKey(currentWorkspaceId), {
+  const [mitigationList, setMitigationList] = useLocalStorageState<Mitigation[]>(getLocalStorageKey(currentWorkspaceId), {
     defaultValue: [],
   });
 
-  const handleAddAssumption = useCallback((idToCopy?: string) => {
-    if (idToCopy) {
-      const copied = assumptionList.find(st => st.id === idToCopy);
-      if (copied) {
-        const { id: _id, numericId: _numericId, ...rest } = copied;
-        const newAssumption = {
-          ...rest,
-          id: uuidV4(),
-          numericId: -1,
-        };
-
-        return newAssumption;
-      }
-    }
-
-    return {
-      id: uuidV4(),
-      numericId: -1,
-    };
-  }, [assumptionList]);
-
-  const handlRemoveAssumption = useCallback((id: string) => {
-    setAssumptionList((prevList) => prevList.filter(x => x.id !== id));
-  }, [setAssumptionList]);
+  const handlRemoveMitigation = useCallback((id: string) => {
+    setMitigationList((prevList) => prevList.filter(x => x.id !== id));
+  }, [setMitigationList]);
 
 
-  const handleSaveAssumption = useCallback((assumption: Assumption) => {
-    setAssumptionList((prevList) => {
-      let numericId = assumption.numericId;
+  const handleSaveMitigation = useCallback((mitigation: Mitigation) => {
+    setMitigationList((prevList) => {
+      let numericId = mitigation.numericId;
 
       if (numericId === -1) {
-        const maxId = prevList.reduce((max: number, cur: Assumption) => {
+        const maxId = prevList.reduce((max: number, cur: Mitigation) => {
 
           if (cur.numericId > max) {
             return cur.numericId;
@@ -82,9 +61,10 @@ const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProvide
         numericId = maxId + 1;
       }
 
-      let updated: Assumption = {
-        ...assumption,
+      let updated: Mitigation = {
+        ...mitigation,
         numericId,
+        id: mitigation.id === 'new' ? uuidV4() : mitigation.id,
         displayOrder: numericId,
       };
 
@@ -95,23 +75,22 @@ const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProvide
 
       return [...prevList, updated];
     });
-  }, [setAssumptionList]);
+  }, [setMitigationList]);
 
-  const handleRemoveAllAssumptions = useCallback(() => {
-    setAssumptionList([]);
+  const handleRemoveAllMitigations = useCallback(() => {
+    setMitigationList([]);
   }, []);
 
-  return (<AssumptionsContext.Provider value={{
-    assumptionList,
-    setAssumptionList,
-    addAssumption: handleAddAssumption,
-    removeAssumption: handlRemoveAssumption,
-    saveAssumption: handleSaveAssumption,
-    removeAllAssumptions: handleRemoveAllAssumptions,
+  return (<MitigationsContext.Provider value={{
+    mitigationList,
+    setMitigationList,
+    removeMitigation: handlRemoveMitigation,
+    saveMitigation: handleSaveMitigation,
+    removeAllMitigations: handleRemoveAllMitigations,
   }}>
     {children}
-  </AssumptionsContext.Provider>);
+  </MitigationsContext.Provider>);
 };
 
 
-export default AssumptionsContextProvider;
+export default MitigationsContextProvider;
