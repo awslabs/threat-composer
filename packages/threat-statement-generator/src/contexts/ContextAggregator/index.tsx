@@ -13,37 +13,31 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC, PropsWithChildren } from 'react';
-import AssumptionLinksContextProvider from '../AssumptionLinksContext';
-import AssumptionsContextProvider from '../AssumptionsContext';
+import { FC, PropsWithChildren } from 'react';
+import { ComposerMode } from '../../customTypes';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
-import MitigationLinksContextProvider from '../MitigationLinksContext';
-import MitigationsContextProvider from '../MitigationsContext';
-import ThreatsContextProvider from '../ThreatsContext';
+import WorkspaceContextAggregator from '../WorkspaceContextAggregator';
 import WorkspacesContextProvider from '../WorkspacesContext';
 
-const ContextAggregator: FC<PropsWithChildren<{}>> = ({
+export interface ContextAggregatorProps {
+  composerMode?: ComposerMode;
+}
+
+const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
   children,
+  composerMode = 'ThreatsOnly',
 }) => {
-  return (<div className='threat-statement-generator-main'>
-    <GlobalSetupContextProvider>
+  return (
+    <GlobalSetupContextProvider composerMode={composerMode}>
       <WorkspacesContextProvider>
-        {(workspaceId) => (
-          <AssumptionsContextProvider workspaceId={workspaceId}>
-            <AssumptionLinksContextProvider workspaceId={workspaceId}>
-              <MitigationsContextProvider workspaceId={workspaceId}>
-                <MitigationLinksContextProvider workspaceId={workspaceId}>
-                  <ThreatsContextProvider workspaceId={workspaceId || null}>
-                    {children}
-                  </ThreatsContextProvider>
-                </MitigationLinksContextProvider>
-              </MitigationsContextProvider>
-            </AssumptionLinksContextProvider>
-          </AssumptionsContextProvider>
-        )}
+        {(workspaceId) => (<WorkspaceContextAggregator
+          workspaceId={workspaceId}
+          requiredGlobalSetupContext={false}
+        >
+          {children}
+        </WorkspaceContextAggregator>)}
       </WorkspacesContextProvider>
-    </GlobalSetupContextProvider>
-  </div>);
+    </GlobalSetupContextProvider>);
 };
 
 export default ContextAggregator;

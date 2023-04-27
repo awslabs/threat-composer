@@ -14,20 +14,20 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import React, { FC } from 'react';
-import MitigationListComponent from '../../components/mitigations/MitigationList';
+import ThreatStatementEditor from '../../components/threats/ThreatStatementEditor';
 import WorkspaceContextAggregator from '../../contexts/WorkspaceContextAggregator';
 
-export interface MitigationListProps {
+export interface ThreatEditorProps {
   workspaceId?: string;
 }
 
-const MitigationList: FC<MitigationListProps> = ({ workspaceId }) => {
+const ThreatEditor: FC<ThreatEditorProps> = ({ workspaceId }) => {
   return (<WorkspaceContextAggregator
     workspaceId={workspaceId || null}
     composerMode='Full'
   >
-    <MitigationListComponent />
+    <ThreatStatementEditor />
   </WorkspaceContextAggregator>);
 };
 
-export default MitigationList;
+export default ThreatEditor;

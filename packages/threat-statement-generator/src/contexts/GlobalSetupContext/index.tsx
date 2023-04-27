@@ -13,14 +13,23 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC, PropsWithChildren, useState, useEffect } from 'react';
+import { FC, PropsWithChildren, useState, useEffect } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { GlobalSetupContext } from './context';
 import InfoModal from '../../components/global/InfoModal';
 import { LOCAL_STORAGE_KEY_NEW_VISIT_FLAG } from '../../configs/localStorageKeys';
+import { ComposerMode } from '../../customTypes';
 
-const GlobalSetupContextProvider: FC<PropsWithChildren<{}>> = ({
+import './index.css';
+import '@cloudscape-design/global-styles/index.css';
+
+export interface GlobalSetupContextProviderProps {
+  composerMode?: ComposerMode;
+}
+
+const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProviderProps>> = ({
   children,
+  composerMode = 'ThreatsOnly',
 }) => {
   const [hasVisitBefore, setHasVisitBefore] = useLocalStorageState<boolean>(LOCAL_STORAGE_KEY_NEW_VISIT_FLAG, {
     defaultValue: false,
@@ -35,15 +44,18 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<{}>> = ({
     }
   }, [hasVisitBefore]);
 
-  return (<GlobalSetupContext.Provider value={{
-    showInfoModal: () => setInfoModalVisible(true),
-  }}>
-    {children}
-    {infoModalVisible && <InfoModal
-      visible={infoModalVisible}
-      setVisible={setInfoModalVisible}
-    />}
-  </GlobalSetupContext.Provider>);
+  return (<div className='threat-statement-generator-main'>
+    <GlobalSetupContext.Provider value={{
+      hasVisitBefore,
+      showInfoModal: () => setInfoModalVisible(true),
+      composerMode,
+    }}>
+      {children}
+      {infoModalVisible && <InfoModal
+        visible={infoModalVisible}
+        setVisible={setInfoModalVisible}
+      />}
+    </GlobalSetupContext.Provider></div>);
 };
 
 export default GlobalSetupContextProvider;

@@ -23,6 +23,7 @@ import threatStatementExamplesData from '../../data/threatStatementExamples.json
 import ThreatsMigration from '../../migrations/ThreatsMigration';
 import downloadObjectAsJson from '../../utils/downloadObjectAsJson';
 import renderThreatStatement from '../../utils/renderThreatStatement';
+import { useGlobalSetupContext } from '../GlobalSetupContext/context';
 export type View = 'list' | 'editor';
 export const EXPORT_FILE_NAME = 'threatStatementList';
 
@@ -87,6 +88,8 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
   const [statementList, setStatementList] = useLocalStorageState<TemplateThreatStatement[]>(getLocalStorageKey(currentWorkspaceId), {
     defaultValue: [],
   });
+
+  const { composerMode, hasVisitBefore } = useGlobalSetupContext();
 
   const threatStatementExamples = useMemo(() => {
     return threatStatementExamplesData.map(e => ({
@@ -208,12 +211,21 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
   }, []);
 
   useEffect(() => {
-    if (editingStatement) {
-      setView('editor');
-    } else {
-      setView('list');
+    if (composerMode === 'ThreatsOnly') {
+      if (editingStatement) {
+        setView('editor');
+      } else {
+        setView('list');
+      }
     }
-  }, [editingStatement, setView]);
+  }, [composerMode, editingStatement, setView]);
+
+  useEffect(() => {
+    if ((composerMode === 'EditorOnly' && !editingStatement)
+      || (composerMode === 'ThreatsOnly' && !hasVisitBefore && !editingStatement)) {
+      handleAddStatement();
+    }
+  }, [composerMode, editingStatement, hasVisitBefore]);
 
   return (<ThreatsContext.Provider value={{
     view,

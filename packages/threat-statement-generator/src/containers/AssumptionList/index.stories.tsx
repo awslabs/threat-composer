@@ -13,8 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import type { Meta } from '@storybook/react';
-import React from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
 import AssumptionList from '.';
 
 const meta: Meta<typeof AssumptionList> = {
@@ -23,7 +22,7 @@ const meta: Meta<typeof AssumptionList> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof AssumptionList>;
 
-export const Default = () => {
-  return (<AssumptionList />);
+export const Default: Story = {
 };

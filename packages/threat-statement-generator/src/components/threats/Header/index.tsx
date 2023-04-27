@@ -17,9 +17,10 @@ import Button from '@cloudscape-design/components/button';
 import HeaderComponent from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo } from 'react';
-import { TemplateThreatStatement } from '../../../customTypes';
+import { ComposerMode, TemplateThreatStatement } from '../../../customTypes';
 
 export interface HeaderProps {
+  composerMode: ComposerMode;
   saveButtonText: string;
   statement: TemplateThreatStatement;
   onCancel?: () => void;
@@ -27,7 +28,13 @@ export interface HeaderProps {
   onStartOver?: () => void;
 }
 
-const Header: FC<HeaderProps> = ({ statement, saveButtonText, onComplete, onCancel, onStartOver }) => {
+const Header: FC<HeaderProps> = ({
+  statement,
+  saveButtonText,
+  onComplete,
+  onCancel,
+  onStartOver,
+}) => {
   const actions = useMemo(() => {
     return (
       <SpaceBetween direction="horizontal" size="xs">

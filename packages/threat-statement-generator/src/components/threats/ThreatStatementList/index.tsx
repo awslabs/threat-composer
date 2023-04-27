@@ -14,23 +14,19 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
-import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
 import Container from '@cloudscape-design/components/container';
 import Grid from '@cloudscape-design/components/grid';
 import Header from '@cloudscape-design/components/header';
-import { CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import Multiselect from '@cloudscape-design/components/multiselect';
-import Select, { SelectProps } from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
 import { TemplateThreatStatement } from '../../../customTypes';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
-import AddWorkspace from '../../workspaces/EditWorkspace';
-import FileImport from '../../workspaces/FileImport';
+import GenericListMoreActions from '../../generic/GenericListMoreActions';
+import WorkspaceSelector from '../../workspaces/WorkspaceSelector';
 import ThreatStatementCard from '../ThreatStatementCard';
 
 const ThreatStatementList: FC = () => {
@@ -47,21 +43,10 @@ const ThreatStatementList: FC = () => {
 
   const {
     showInfoModal,
+    composerMode,
   } = useGlobalSetupContext();
 
-  const {
-    currentWorkspace,
-    workspaceList,
-    addWorkspace,
-    removeWorkspace,
-    renameWorkspace,
-    switchWorkspace,
-  } = useWorkspacesContext();
-
   const [filteringText, setFilteringText] = useState('');
-  const [fileImportModalVisible, setFileImportModalVisible] = useState(false);
-  const [addWorkspaceModalVisible, setAddWorkspaceModalVisible] = useState(false);
-  const [editWorkspaceModalVisible, setEditWorkspaceModalVisible] = useState(false);
 
   const [
     selectedImpactedGoal,
@@ -120,30 +105,6 @@ const ThreatStatementList: FC = () => {
     return output;
   }, [filteringText, statementList, selectedImpactedAssets, selectedImpactedGoal, selectedTags]);
 
-  const workspacesOptions = useMemo(() => {
-    const options: (SelectProps.Option | SelectProps.OptionGroup)[] = [
-      {
-        label: 'Default',
-        value: 'Default',
-      },
-    ];
-
-    workspaceList && workspaceList.length > 0 && options.push({
-      label: 'Workspaces',
-      options: workspaceList.map(w => ({
-        label: w.name,
-        value: w.id,
-      })),
-    });
-
-    options.push({
-      label: 'Add new workspace',
-      value: '[AddNewWorkspace]',
-    });
-
-    return options;
-  }, [workspaceList]);
-
   const hasNoFilter = useMemo(() => {
     return (filteringText === ''
       && selectedImpactedAssets.length === 0
@@ -151,105 +112,43 @@ const ThreatStatementList: FC = () => {
       && selectedTags.length === 0);
   }, [filteringText, selectedImpactedAssets, selectedImpactedGoal, selectedTags]);
 
-  const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(({ detail }) => {
-    switch (detail.id) {
-      case 'import':
-        setFileImportModalVisible(true);
-        break;
-      case 'exportAll':
-        exportStatementList(statementList);
-        break;
-      case 'exportFilteredList':
-        exportStatementList(filteredStatementList);
-        break;
-      case 'removeAll':
-        removeAllStatements();
-        break;
-      case 'delete':
-        currentWorkspace && removeWorkspace(currentWorkspace.id);
-        switchWorkspace(null);
-        break;
-      case 'renameWorkspace':
-        setEditWorkspaceModalVisible(true);
-        break;
-      default:
-        console.log('Unknown action', detail.id);
-    }
-  }, [statementList,
-    filteredStatementList,
-    removeWorkspace,
-    currentWorkspace,
-    removeAllStatements]);
-
-  const handleSelectWorkspace: NonCancelableEventHandler<SelectProps.ChangeDetail> = useCallback(({ detail }) => {
-    const selectedItem = detail.selectedOption;
-    if (selectedItem.value === 'Default') {
-      switchWorkspace(null);
-    } else if (selectedItem.value === '[AddNewWorkspace]') {
-      setAddWorkspaceModalVisible(true);
-    } else {
-      selectedItem.value && selectedItem.label && switchWorkspace({
-        id: selectedItem.value,
-        name: selectedItem.label,
-      });
-    }
-  }, [switchWorkspace]);
-
   const actions = useMemo(() => {
     return (
-      <SpaceBetween direction="horizontal" size="xs">
-        <Select
-          controlId='WorkspacesSelect'
-          selectedOption={{
-            value: currentWorkspace?.id || 'Default',
-            label: `Workspace: ${currentWorkspace?.name || 'Default'}`,
+      <>{composerMode !== 'Full' ?
+        (<WorkspaceSelector
+          embededMode={true}
+          enabledExportAll={statementList.length > 0}
+          onExportAll={() => {
+            exportStatementList(statementList);
           }}
-          options={workspacesOptions}
-          onChange={handleSelectWorkspace}
-        />
-        <Button variant="primary" onClick={() => addStatement()}>
-          Add new statement
-        </Button>
-        <ButtonDropdown
-          items={[
-            { id: 'import', text: 'Import' },
-            {
-              id: 'exportAll',
-              text: 'Export all statements',
-              disabled: statementList.length === 0,
-            },
-            {
-              id: 'exportFilteredList',
-              text: 'Export filtered statement list',
-              disabled: hasNoFilter,
-            },
-            {
-              id: 'removeAll',
-              text: 'Remove all statements',
-              disabled: statementList.length === 0,
-            },
-            {
-              id: 'delete',
-              text: 'Delete workspace',
-              disabled: !currentWorkspace,
-            },
-            {
-              id: 'renameWorkspace',
-              text: 'Rename workspace',
-              disabled: !currentWorkspace,
-            },
-          ]}
-          ariaLabel="More actions"
-          variant="icon"
-          onItemClick={handleMoreActions}
-        />
-      </SpaceBetween>);
+          enabledRemoveAll={statementList.length > 0}
+          onRemoveAll={() => {
+            removeAllStatements();
+          }}
+          enabledExportFiltered={!hasNoFilter}
+          onExportFiltered={() => {
+            exportStatementList(filteredStatementList);
+          }}
+          onImport={(list) => importStatementList(list)}
+        >
+          <Button variant="primary" onClick={() => addStatement()}>
+            Add new statement
+          </Button>
+        </WorkspaceSelector>) :
+        (<SpaceBetween direction='horizontal' size='s'>
+          <Button variant="primary" onClick={() => addStatement()}>
+            Add new statement
+          </Button>
+          <GenericListMoreActions
+            enabledRemoveAll={statementList.length > 0}
+            onRemoveAll={removeAllStatements}
+          />
+        </SpaceBetween>)}
+      </>);
   }, [filteredStatementList,
-    handleSelectWorkspace,
     exportStatementList,
     addStatement,
     statementList,
-    currentWorkspace,
     hasNoFilter]);
 
   const allImpactedGoal = useMemo(() => {
@@ -287,7 +186,7 @@ const ThreatStatementList: FC = () => {
       <Container header={
         <Header
           actions={actions}
-          info={<Button variant='icon' iconName='status-info' onClick={showInfoModal}/>}
+          info={<Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
         >Threat Statement List</Header>
       }>
         <SpaceBetween direction='vertical' size='s'>
@@ -382,22 +281,6 @@ const ThreatStatementList: FC = () => {
         onRemoveTagFromStatement={handleRemoveTagFromStatement}
       />))}
     </SpaceBetween>
-    {fileImportModalVisible && <FileImport
-      visible={fileImportModalVisible}
-      setVisible={setFileImportModalVisible}
-      onImport={importStatementList} />}
-    {addWorkspaceModalVisible && <AddWorkspace
-      visible={addWorkspaceModalVisible}
-      setVisible={setAddWorkspaceModalVisible}
-      onConfirm={addWorkspace}
-    />}
-    {editWorkspaceModalVisible && currentWorkspace && <AddWorkspace
-      visible={editWorkspaceModalVisible}
-      setVisible={setEditWorkspaceModalVisible}
-      editMode
-      value={currentWorkspace.name}
-      onConfirm={(newWorkspaceName) => renameWorkspace(currentWorkspace.id, newWorkspaceName)}
-    />}
   </div>);
 };
 

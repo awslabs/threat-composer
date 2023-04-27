@@ -13,21 +13,4 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC } from 'react';
-import MitigationListComponent from '../../components/mitigations/MitigationList';
-import WorkspaceContextAggregator from '../../contexts/WorkspaceContextAggregator';
-
-export interface MitigationListProps {
-  workspaceId?: string;
-}
-
-const MitigationList: FC<MitigationListProps> = ({ workspaceId }) => {
-  return (<WorkspaceContextAggregator
-    workspaceId={workspaceId || null}
-    composerMode='Full'
-  >
-    <MitigationListComponent />
-  </WorkspaceContextAggregator>);
-};
-
-export default MitigationList;
+export type ComposerMode = 'ThreatsOnly' | 'EditorOnly' | 'Full';

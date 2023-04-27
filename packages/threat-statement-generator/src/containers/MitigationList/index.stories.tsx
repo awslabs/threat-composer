@@ -13,17 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import type { Meta } from '@storybook/react';
-import React from 'react';
-import AssumptionList from '.';
+import type { Meta, StoryObj } from '@storybook/react';
+import MitigationList from '.';
 
-const meta: Meta<typeof AssumptionList> = {
+const meta: Meta<typeof MitigationList> = {
   title: 'fullMode/MitigationList',
-  component: AssumptionList,
+  component: MitigationList,
 };
 
 export default meta;
+type Story = StoryObj<typeof MitigationList>;
 
-export const Default = () => {
-  return (<AssumptionList />);
+export const Default: Story = {
 };

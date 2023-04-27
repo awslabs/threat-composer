@@ -19,6 +19,7 @@ import TextContent from '@cloudscape-design/components/text-content';
 import React, { FC, useCallback, useMemo, useState, useRef, useEffect, ReactNode } from 'react';
 import { v4 as uuidV4 } from 'uuid';
 import { EditorProps } from './types';
+import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
 import { TemplateThreatStatement } from '../../../customTypes';
@@ -62,6 +63,8 @@ const ThreatStatementEditor: FC = () => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [displayStatement, setDisplayStatement] = useState<ReactNode[] | undefined>([]);
   const [customTemplateEditorVisible, setCustomTemplateEditorVisible] = useState(false);
+
+  const { composerMode } = useGlobalSetupContext();
 
   const Component = useMemo(() => {
     return editor && editorMapping[editor];
@@ -163,13 +166,18 @@ const ThreatStatementEditor: FC = () => {
   return (
     <>
       <SpaceBetween direction='vertical' size='l'>
-        <Header statement={editingStatement}
+        {composerMode !== 'EditorOnly' && <Header
+          composerMode={composerMode}
+          statement={editingStatement}
           saveButtonText={saveButtonText}
           onCancel={handleCancel}
           onStartOver={handleStartOver}
-          onComplete={handleComplete} />
+          onComplete={handleComplete} />}
         <FinalStatement statement={editingStatement} displayStatement={displayStatement} />
-        <FieldSelector setEditor={setEditor}
+        <FieldSelector
+          composerMode={composerMode}
+          onStartOver={handleStartOver}
+          setEditor={setEditor}
           statement={editingStatement}
           currentEditor={editor}
           suggestions={suggestions}

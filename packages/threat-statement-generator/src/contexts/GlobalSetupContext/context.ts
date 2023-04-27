@@ -14,13 +14,18 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
+import { ComposerMode } from '../../customTypes';
 
 export interface GlobalSetupContextApi {
+  hasVisitBefore: boolean;
   showInfoModal: () => void;
+  composerMode: ComposerMode;
 }
 
 const initialState: GlobalSetupContextApi = {
+  hasVisitBefore: false,
   showInfoModal: () => { },
+  composerMode: 'ThreatsOnly',
 };
 
 export const GlobalSetupContext = createContext<GlobalSetupContextApi>(initialState);

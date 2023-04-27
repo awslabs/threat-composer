@@ -16,44 +16,33 @@
 import { FC } from 'react';
 import ThreatStatementEditor from '../../components/threats/ThreatStatementEditor';
 import ThreatStatementList from '../../components/threats/ThreatStatementList';
-import AssumptionLinksContextProvider from '../../contexts/AssumptionLinksContext';
-import AssumptionsContextProvider from '../../contexts/AssumptionsContext';
-import MitigationLinksContextProvider from '../../contexts/MitigationLinksContext';
-import MitigationsContextProvider from '../../contexts/MitigationsContext';
-import ThreatsContextProvider from '../../contexts/ThreatsContext';
+import ContextAggregator from '../../contexts/ContextAggregator';
+import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../contexts/ThreatsContext/context';
-import WorkspacesContextProvider from '../../contexts/WorkspacesContext';
-
-import './index.css';
-import '@cloudscape-design/global-styles/index.css';
+import { ComposerMode } from '../../customTypes';
 
 const ThreatStatementGeneratorInner: FC = () => {
   const { view } = useThreatsContext();
-  return view === 'list' ? <ThreatStatementList /> : <ThreatStatementEditor />;
+  const { composerMode } = useGlobalSetupContext();
+  return view === 'list' && composerMode !== 'EditorOnly' ? <ThreatStatementList /> : <ThreatStatementEditor />;
 };
+
+export interface ThreatStatementGeneratorInnerProps {
+  composerMode?: ComposerMode;
+}
 
 /**
  * Main component for Threat Statement Generator.
  * This component can be imported and used in other react app.
  */
-const ThreatStatementGenerator: FC = () => {
-  return (<div className='threat-statement-generator-main'>
-    <WorkspacesContextProvider>
-      {(workspaceId) => (
-        <AssumptionsContextProvider workspaceId={workspaceId}>
-          <AssumptionLinksContextProvider workspaceId={workspaceId}>
-            <MitigationsContextProvider workspaceId={workspaceId}>
-              <MitigationLinksContextProvider workspaceId={workspaceId}>
-                <ThreatsContextProvider workspaceId={workspaceId || null}>
-                  <ThreatStatementGeneratorInner />
-                </ThreatsContextProvider>
-              </MitigationLinksContextProvider>
-            </MitigationsContextProvider>
-          </AssumptionLinksContextProvider>
-        </AssumptionsContextProvider>
-      )}
-    </WorkspacesContextProvider>
-  </div>);
+const ThreatStatementGenerator: FC<ThreatStatementGeneratorInnerProps> = ({
+  composerMode,
+}) => {
+  return (
+    <ContextAggregator composerMode={composerMode}>
+      <ThreatStatementGeneratorInner />
+    </ContextAggregator>
+  );
 };
 
 export default ThreatStatementGenerator;

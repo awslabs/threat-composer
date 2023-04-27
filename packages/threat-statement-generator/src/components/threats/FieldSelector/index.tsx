@@ -25,7 +25,7 @@ import { ReactNode, FC, useMemo, useState, useEffect, useCallback } from 'react'
 import ExpandableToken from './components/ExpandableToken';
 import Token from './components/Token';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
-import { TemplateThreatStatement } from '../../../customTypes';
+import { ComposerMode, TemplateThreatStatement } from '../../../customTypes';
 import { threatFieldTypeMapping, ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
 import threatStatementFormat from '../../../data/threatStatementFormat';
@@ -39,15 +39,19 @@ import './index.css';
 const defaultThreatStatementFormat = threatStatementFormat[63];
 
 export interface FieldSelectorProps {
+  composerMode: ComposerMode;
   currentEditor?: ThreatFieldTypes;
   setEditor: (type: ThreatFieldTypes) => void;
   statement: TemplateThreatStatement;
   suggestions?: string[];
   onGiveExampleClick: () => void;
   setCustomTemplateEditorVisible: (visible: boolean) => void;
+  onStartOver?: () => void;
 }
 
 const FieldSelector: FC<FieldSelectorProps> = ({
+  composerMode,
+  onStartOver,
   setEditor,
   currentEditor,
   statement,
@@ -154,6 +158,7 @@ const FieldSelector: FC<FieldSelectorProps> = ({
     header={<Header
       info={<Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
       actions={<SpaceBetween direction='horizontal' size='s'>
+        {composerMode === 'EditorOnly' && <Button onClick={onStartOver}>Start over</Button>}
         <Button onClick={onGiveExampleClick}>Give me a random example</Button>
         <ButtonDropdown items={[
           { id: 'customTemplate', text: 'Custom Template' },

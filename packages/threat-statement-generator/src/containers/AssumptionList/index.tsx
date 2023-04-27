@@ -15,12 +15,19 @@
  ******************************************************************************************************************** */
 import React, { FC } from 'react';
 import AssumptionListComponent from '../../components/assumptions/AssumptionList';
-import ContextAggregator from '../../contexts/ContextAggregator';
+import WorkspaceContextAggregator from '../../contexts/WorkspaceContextAggregator';
 
-const AssumptionList: FC = () => {
-  return (<ContextAggregator>
-    <AssumptionListComponent />
-  </ContextAggregator>);
+export interface AssumptionListProps {
+  workspaceId?: string;
+}
+
+const AssumptionList: FC<AssumptionListProps> = ({ workspaceId }) => {
+  return (<WorkspaceContextAggregator
+    workspaceId={workspaceId || null}
+    composerMode='Full'
+  >
+    <AssumptionListComponent/>
+  </WorkspaceContextAggregator>);
 };
 
 export default AssumptionList;

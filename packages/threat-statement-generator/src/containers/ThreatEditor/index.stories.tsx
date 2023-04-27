@@ -13,21 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC } from 'react';
-import MitigationListComponent from '../../components/mitigations/MitigationList';
-import WorkspaceContextAggregator from '../../contexts/WorkspaceContextAggregator';
+import type { Meta, StoryObj } from '@storybook/react';
+import ThreatEditor from '.';
 
-export interface MitigationListProps {
-  workspaceId?: string;
-}
-
-const MitigationList: FC<MitigationListProps> = ({ workspaceId }) => {
-  return (<WorkspaceContextAggregator
-    workspaceId={workspaceId || null}
-    composerMode='Full'
-  >
-    <MitigationListComponent />
-  </WorkspaceContextAggregator>);
+const meta: Meta<typeof ThreatEditor> = {
+  title: 'fullMode/ThreatEditor',
+  component: ThreatEditor,
 };
 
-export default MitigationList;
+export default meta;
+type Story = StoryObj<typeof ThreatEditor>;
+
+export const Default: Story = {
+};

@@ -24,4 +24,14 @@ const meta: Meta<typeof ThreatStatementGenerator> = {
 export default meta;
 type Story = StoryObj<typeof ThreatStatementGenerator>;
 
-export const Default: Story = {};
+export const ThreatsOnly: Story = {
+  args: {
+    composerMode: 'ThreatsOnly',
+  },
+};
+
+export const EditorOnly: Story = {
+  args: {
+    composerMode: 'EditorOnly',
+  },
+};
