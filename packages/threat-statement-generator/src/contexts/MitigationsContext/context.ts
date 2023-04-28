@@ -35,4 +35,4 @@ const initialState: MitigationsContextApi = {
 
 export const MitigationsContext = createContext<MitigationsContextApi>(initialState);
 
-export const useMitigationContext = () => useContext(MitigationsContext);
+export const useMitigationsContext = () => useContext(MitigationsContext);

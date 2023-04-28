@@ -149,7 +149,8 @@ const ThreatStatementList: FC = () => {
     exportStatementList,
     addStatement,
     statementList,
-    hasNoFilter]);
+    hasNoFilter,
+    composerMode]);
 
   const allImpactedGoal = useMemo(() => {
     return statementList

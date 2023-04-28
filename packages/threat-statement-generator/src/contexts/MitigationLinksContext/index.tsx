@@ -18,7 +18,7 @@ import useLocalStorageState from 'use-local-storage-state';
 import { MitigationLinksContext } from './context';
 import { LOCAL_STORAGE_KEY_MITIGATION_LINK_LIST } from '../../configs/localStorageKeys';
 import { MitigationLink } from '../../customTypes';
-import { useMitigationContext } from '../MitigationsContext/context';
+import { useMitigationsContext } from '../MitigationsContext/context';
 
 export interface MitigationLinksContextProviderProps {
   workspaceId: string | null;
@@ -42,7 +42,7 @@ const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContex
 
   const {
     mitigationList,
-  } = useMitigationContext();
+  } = useMitigationsContext();
 
   const handlRemoveMitigationLink = useCallback((mitigationId: string, linkedEntityId: string) => {
     setMitigationLinkList((prevList) => prevList.filter(x => !(

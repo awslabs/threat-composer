@@ -17,3 +17,4 @@ export { default as ThreatStatementEditor } from './threats/ThreatStatementEdito
 export { default as ThreatStatementList } from './threats/ThreatStatementList';
 export { default as AssumptionList } from './assumptions/AssumptionList';
 export { default as MitigationList } from './mitigations/MitigationList';
+export { default as WorkspaceSelector } from './workspaces/WorkspaceSelector';

@@ -16,23 +16,31 @@
 import { FC, PropsWithChildren } from 'react';
 import { ComposerMode } from '../../customTypes';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
-import WorkspaceContextAggregator from '../WorkspaceContextAggregator';
-import WorkspacesContextProvider from '../WorkspacesContext';
+import WorkspaceContextAggregator, { WorkspaceContextAggregatorProps } from '../WorkspaceContextAggregator';
+import WorkspacesContextProvider, { WorkspacesContextProviderProps } from '../WorkspacesContext';
 
 export interface ContextAggregatorProps {
   composerMode?: ComposerMode;
+  onWorkspaceChanged?: WorkspacesContextProviderProps['onWorkspaceChanged'];
+  onThreatEditorView?: WorkspaceContextAggregatorProps['onThreatEditorView'];
+  onThreatListView?: WorkspaceContextAggregatorProps['onThreatListView'];
 }
 
 const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
   children,
+  onWorkspaceChanged,
   composerMode = 'ThreatsOnly',
+  onThreatEditorView,
+  onThreatListView,
 }) => {
   return (
     <GlobalSetupContextProvider composerMode={composerMode}>
-      <WorkspacesContextProvider>
+      <WorkspacesContextProvider onWorkspaceChanged={onWorkspaceChanged}>
         {(workspaceId) => (<WorkspaceContextAggregator
           workspaceId={workspaceId}
           requiredGlobalSetupContext={false}
+          onThreatEditorView={onThreatEditorView}
+          onThreatListView={onThreatListView}
         >
           {children}
         </WorkspaceContextAggregator>)}

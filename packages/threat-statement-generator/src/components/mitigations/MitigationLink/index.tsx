@@ -18,7 +18,7 @@ import Autosuggest from '@cloudscape-design/components/autosuggest';
 import ExpandableSection from '@cloudscape-design/components/expandable-section';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useMitigationLinksContext } from '../../../contexts/MitigationLinksContext/context';
-import { useMitigationContext } from '../../../contexts/MitigationsContext/context';
+import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { Mitigation } from '../../../customTypes';
 
 export interface MitigationLinkProps {
@@ -28,7 +28,7 @@ export interface MitigationLinkProps {
 const MitigationLinkComponent: FC<MitigationLinkProps> = ({
   linkedEntityId,
 }) => {
-  const { mitigationList } = useMitigationContext();
+  const { mitigationList } = useMitigationsContext();
 
   const {
     getLinkedMitigations,

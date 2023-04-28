@@ -17,6 +17,7 @@ import Button from '@cloudscape-design/components/button';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import Textarea from '@cloudscape-design/components/textarea';
 import { FC, useCallback, useState } from 'react';
+import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { ContentEntityBase } from '../../../customTypes';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import GenericCard from '../GenericCard';
@@ -31,7 +32,7 @@ const GenericEntityCreationCard: FC<GenericEntityCreationCardProps> = ({
   onSave,
 }) => {
   const [editingEntity, setEditingEntity] = useState<ContentEntityBase>({
-    id: 'new',
+    id: DEFAULT_NEW_ENTITY_ID,
     numericId: -1,
     content: '',
   });
@@ -48,7 +49,7 @@ const GenericEntityCreationCard: FC<GenericEntityCreationCardProps> = ({
 
   return (<GenericCard
     header={header}
-    entityId='new'
+    entityId={DEFAULT_NEW_ENTITY_ID}
     onAddTagToEntity={(_entityId, tag) => handleAddTagToEntity?.(tag)}
     onRemoveTagFromEntity={(_entityId, tag) => handleRemoveTagFromEntity?.(tag)}
   >

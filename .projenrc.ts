@@ -116,7 +116,6 @@ const uiProject = new TypeScriptProject({
   }
 });
 
-
 uiProject.addTask('storybook', {
   exec: 'storybook dev -p 6006'
 });
@@ -141,10 +140,12 @@ const demoAppProject = new ReactTypeScriptProject({
   deps: [
     "@cloudscape-design/components",
     "@cloudscape-design/global-styles",
+    "react-router-dom",
     uiProject.package.packageName,
   ],
   devDeps: [
     "@cloudscape-design/jest-preset",
+    "@types/react-router-dom",
     "merge",
   ],
   jestOptions: {

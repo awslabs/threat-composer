@@ -20,30 +20,38 @@ import AssumptionsContextProvider from '../AssumptionsContext';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import MitigationLinksContextProvider from '../MitigationLinksContext';
 import MitigationsContextProvider from '../MitigationsContext';
-import ThreatsContextProvider from '../ThreatsContext';
+import ThreatsContextProvider, { ThreatsContextProviderProps } from '../ThreatsContext';
 
 export interface WorkspaceContextAggregatorProps {
   workspaceId: string | null;
   composerMode?: ComposerMode;
   requiredGlobalSetupContext?: boolean;
+  onThreatEditorView?: ThreatsContextProviderProps['onThreatEditorView'];
+  onThreatListView?: ThreatsContextProviderProps['onThreatListView'];
 }
 
 const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggregatorProps>> = ({
   children,
   workspaceId,
+  onThreatEditorView,
+  onThreatListView,
 }) => {
   return (
-    <AssumptionsContextProvider workspaceId={workspaceId}>
-      <AssumptionLinksContextProvider workspaceId={workspaceId}>
-        <MitigationsContextProvider workspaceId={workspaceId}>
-          <MitigationLinksContextProvider workspaceId={workspaceId}>
-            <ThreatsContextProvider workspaceId={workspaceId || null}>
+    <ThreatsContextProvider
+      workspaceId={workspaceId || null}
+      onThreatEditorView={onThreatEditorView}
+      onThreatListView={onThreatListView}
+    >
+      <MitigationsContextProvider workspaceId={workspaceId}>
+        <MitigationLinksContextProvider workspaceId={workspaceId}>
+          <AssumptionsContextProvider workspaceId={workspaceId}>
+            <AssumptionLinksContextProvider workspaceId={workspaceId}>
               {children}
-            </ThreatsContextProvider>
-          </MitigationLinksContextProvider>
-        </MitigationsContextProvider>
-      </AssumptionLinksContextProvider>
-    </AssumptionsContextProvider>
+            </AssumptionLinksContextProvider>
+          </AssumptionsContextProvider >
+        </MitigationLinksContextProvider>
+      </MitigationsContextProvider>
+    </ThreatsContextProvider>
   );
 };
 
@@ -52,15 +60,16 @@ const WorkspaceContextAggregator: FC<PropsWithChildren<WorkspaceContextAggregato
   workspaceId,
   composerMode,
   requiredGlobalSetupContext = true,
+  ...rest
 }) => {
   return requiredGlobalSetupContext ? (
     <GlobalSetupContextProvider composerMode={composerMode}>
-      <WorkspaceContextInnerAggregator workspaceId={workspaceId}>
+      <WorkspaceContextInnerAggregator workspaceId={workspaceId} {...rest}>
         {children}
       </WorkspaceContextInnerAggregator>
     </GlobalSetupContextProvider>
   ) : (
-    <WorkspaceContextInnerAggregator workspaceId={workspaceId}>
+    <WorkspaceContextInnerAggregator workspaceId={workspaceId} {...rest}>
       {children}
     </WorkspaceContextInnerAggregator>
   );

@@ -17,6 +17,8 @@ import { FC, PropsWithChildren, useState, useCallback, useEffect, useMemo } from
 import useLocalStorageState from 'use-local-storage-state';
 import { v4 as uuidV4 } from 'uuid';
 import { PerFieldExamplesType, ThreatsContext, DEFAULT_PER_FIELD_EXAMPLES } from './context';
+import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
+import { EXPORT_FILE_NAME } from '../../configs/export';
 import { LOCAL_STORAGE_KEY_STATEMENT_LIST, LOCAL_STORAGE_KEY_EDITING_STATEMENT } from '../../configs/localStorageKeys';
 import { PerFieldExample, TemplateThreatStatement } from '../../customTypes';
 import threatStatementExamplesData from '../../data/threatStatementExamples.json';
@@ -24,11 +26,13 @@ import ThreatsMigration from '../../migrations/ThreatsMigration';
 import downloadObjectAsJson from '../../utils/downloadObjectAsJson';
 import renderThreatStatement from '../../utils/renderThreatStatement';
 import { useGlobalSetupContext } from '../GlobalSetupContext/context';
+
 export type View = 'list' | 'editor';
-export const EXPORT_FILE_NAME = 'threatStatementList';
 
 export interface ThreatsContextProviderProps {
   workspaceId: string | null;
+  onThreatListView?: () => void;
+  onThreatEditorView?: (threatId: string) => void;
 }
 
 const getLocalStorageKey = (workspaceId: string | null) => {
@@ -78,6 +82,8 @@ const addNewValueToPerFieldExampleArray = (
 const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>> = ({
   children,
   workspaceId: currentWorkspaceId,
+  onThreatListView,
+  onThreatEditorView,
 }) => {
   const [view, setView] = useState<View>('list');
 
@@ -138,6 +144,7 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
         };
 
         setEditingStatement(newStatement);
+        onThreatEditorView?.(newStatement.id);
       }
     } else {
       const newStatement: TemplateThreatStatement = {
@@ -145,8 +152,9 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
         numericId: -1,
       };
       setEditingStatement(newStatement);
+      onThreatEditorView?.(newStatement.id);
     }
-  }, [statementList, setEditingStatement]);
+  }, [statementList, setEditingStatement, onThreatEditorView]);
 
   const handlRemoveStatement = useCallback((id: string) => {
     setStatementList((prevList) => prevList.filter(x => x.id !== id));
@@ -217,6 +225,16 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
       } else {
         setView('list');
       }
+    } else if (composerMode === 'Full') {
+      if (editingStatement) {
+        if (editingStatement.numericId === -1) {
+          onThreatEditorView?.(DEFAULT_NEW_ENTITY_ID);
+        } else {
+          onThreatEditorView?.(editingStatement.id);
+        }
+      } else {
+        onThreatListView?.();
+      }
     }
   }, [composerMode, editingStatement, setView]);
 
@@ -225,7 +243,7 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
       || (composerMode === 'ThreatsOnly' && !hasVisitBefore && !editingStatement)) {
       handleAddStatement();
     }
-  }, [composerMode, editingStatement, hasVisitBefore]);
+  }, [composerMode, editingStatement, hasVisitBefore, onThreatEditorView, onThreatEditorView]);
 
   return (<ThreatsContext.Provider value={{
     view,

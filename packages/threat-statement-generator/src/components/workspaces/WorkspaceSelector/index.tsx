@@ -18,10 +18,10 @@ import { CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-d
 import Select, { SelectProps } from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo, useState, useCallback, PropsWithChildren } from 'react';
+import { DEFAULT_WORKSPACE_ID, DEFAULT_WORKSPACE_LABEL } from '../../../configs/constants';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
 import AddWorkspace from '../../workspaces/EditWorkspace';
 import FileImport from '../../workspaces/FileImport';
-
 export interface WorkspaceSelectorProps {
   embededMode: boolean;
   enabledExportAll?: boolean;
@@ -60,8 +60,8 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
   const workspacesOptions = useMemo(() => {
     const options: (SelectProps.Option | SelectProps.OptionGroup)[] = [
       {
-        label: 'Default',
-        value: 'Default',
+        label: DEFAULT_WORKSPACE_LABEL,
+        value: DEFAULT_WORKSPACE_ID,
       },
     ];
 
@@ -83,7 +83,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
 
   const handleSelectWorkspace: NonCancelableEventHandler<SelectProps.ChangeDetail> = useCallback(({ detail }) => {
     const selectedItem = detail.selectedOption;
-    if (selectedItem.value === 'Default') {
+    if (selectedItem.value === DEFAULT_WORKSPACE_ID) {
       switchWorkspace(null);
     } else if (selectedItem.value === '[AddNewWorkspace]') {
       setAddWorkspaceModalVisible(true);
@@ -132,8 +132,8 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
       <Select
         controlId='WorkspacesSelect'
         selectedOption={{
-          value: currentWorkspace?.id || 'Default',
-          label: `Workspace: ${currentWorkspace?.name || 'Default'}`,
+          value: currentWorkspace?.id || DEFAULT_WORKSPACE_ID,
+          label: `Workspace: ${currentWorkspace?.name || DEFAULT_WORKSPACE_LABEL}`,
         }}
         options={workspacesOptions}
         onChange={handleSelectWorkspace}

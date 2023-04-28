@@ -19,6 +19,7 @@ import TextContent from '@cloudscape-design/components/text-content';
 import React, { FC, useCallback, useMemo, useState, useRef, useEffect, ReactNode } from 'react';
 import { v4 as uuidV4 } from 'uuid';
 import { EditorProps } from './types';
+import { DEFAULT_WORKSPACE_LABEL } from '../../../configs/constants';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
@@ -139,7 +140,7 @@ const ThreatStatementEditor: FC = () => {
       return editingStatement?.numericId === -1 ? 'Add to list' : 'Save';
     }
 
-    const workspace = currentWorkspace?.name || 'default';
+    const workspace = currentWorkspace?.name || DEFAULT_WORKSPACE_LABEL;
     return editingStatement?.numericId === -1 ? `Add to workspace ${workspace}` : `Save to workspace ${workspace}`;
 
   }, [currentWorkspace, workspaceList, editingStatement]);

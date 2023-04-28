@@ -13,19 +13,26 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useCallback, ReactElement } from 'react';
+import { FC, useCallback, ReactElement, useEffect } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { v4 as uuidv4 } from 'uuid';
 import { WorkspacesContext } from './context';
+import { DEFAULT_WORKSPACE_ID } from '../../configs/constants';
 import { LOCAL_STORAGE_KEY_CURRENT_WORKSPACE, LOCAL_STORAGE_KEY_WORKSPACE_LIST } from '../../configs/localStorageKeys';
 import { Workspace } from '../../customTypes';
 import WorkspacesMigration from '../../migrations/WorkspacesMigration';
 
 export interface WorkspacesContextProviderProps {
-  children: (workspaceId: string | null) => ReactElement<{ workspaceId: string | null }>;
+  workspaceId?: string;
+  onWorkspaceChanged?: (workspaceId: string) => void;
+  children: (workspace: string | null) => ReactElement<{ workspaceId: string | null }>;
 }
 
-const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = ({ children }) => {
+const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = ({
+  children,
+  workspaceId,
+  onWorkspaceChanged,
+}) => {
   const [currentWorkspace, setCurrentWorkspace] = useLocalStorageState<Workspace | null>(LOCAL_STORAGE_KEY_CURRENT_WORKSPACE, {
     defaultValue: null,
   });
@@ -34,9 +41,25 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = ({ childre
     defaultValue: [],
   });
 
+  useEffect(() => {
+    if (workspaceId) {
+      if (workspaceId === DEFAULT_WORKSPACE_ID && currentWorkspace !== null) {
+        setCurrentWorkspace(null);
+      } else if (workspaceId !== currentWorkspace?.id) {
+        const foundWorkspace = workspaceList.find(x => x.id === workspaceId);
+        if (foundWorkspace) {
+          setCurrentWorkspace(foundWorkspace);
+        } else {
+          setCurrentWorkspace(null);
+        }
+      }
+    }
+  }, [workspaceId, workspaceList, currentWorkspace]);
+
   const handleSwitchWorkspace = useCallback((workspace: Workspace | null) => {
     setCurrentWorkspace(workspace);
-  }, []);
+    onWorkspaceChanged?.(workspace?.id || DEFAULT_WORKSPACE_ID);
+  }, [workspaceId, onWorkspaceChanged]);
 
   const handleAddWorkspace = useCallback((workspaceName: string) => {
     const newWorkspace = {

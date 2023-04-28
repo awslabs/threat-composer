@@ -83,8 +83,6 @@ export interface ThreatStatementDisplayToken {
   content: string;
 };
 
-export type ThreatStatementList = TemplateThreatStatement[];
-
 export interface ThreatFieldData {
   fieldId: number;
   fieldPosition: number;

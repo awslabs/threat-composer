@@ -47,8 +47,8 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
   return (<div className='threat-statement-generator-main'>
     <GlobalSetupContext.Provider value={{
       hasVisitBefore,
-      showInfoModal: () => setInfoModalVisible(true),
       composerMode,
+      showInfoModal: () => setInfoModalVisible(true),
     }}>
       {children}
       {infoModalVisible && <InfoModal

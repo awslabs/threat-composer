@@ -33,8 +33,6 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
   const { assumptionList } = useAssumptionsContext();
   const [searchValue, setSearchValue] = React.useState('');
 
-  console.log(assumptionList);
-
   const filteredAssumptions = useMemo(() => {
     if (!searchValue) {
       return assumptionList;

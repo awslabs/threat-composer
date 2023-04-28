@@ -20,7 +20,7 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
-import { useMitigationContext } from '../../../contexts/MitigationsContext/context';
+import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { Mitigation } from '../../../customTypes';
 import GenericEntityCreationCard from '../../generic/GenericEntityCreationCard';
 import MitigationCard from '../MitigationCard';
@@ -30,7 +30,7 @@ const MitigationList: FC = () => {
     mitigationList,
     removeMitigation,
     saveMitigation,
-  } = useMitigationContext();
+  } = useMitigationsContext();
 
   const {
     showInfoModal,

@@ -13,19 +13,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC } from 'react';
-import { ThreatStatementGenerator } from 'threat-statement-generator';
-import AppLayout from '../AppLayout';
+import { generatePath } from 'react-router-dom';
 
-/**
- * Demo app for threat-composer
- */
-const App: FC = () => {
-  return (
-    <AppLayout>
-      <ThreatStatementGenerator/>
-    </AppLayout>
-  );
+const generateUrl = (path: string, searchParms: URLSearchParams, workspaceId: string, threatId?: string) => {
+  const mode = searchParms.get('mode');
+  if (mode) {
+    return `${generatePath(path, {
+      workspaceId,
+      threatId,
+    })}?mode=${mode}`;
+  }
+
+  return generatePath(path, {
+    workspaceId: workspaceId,
+  });
 };
 
-export default App;
+export default generateUrl;

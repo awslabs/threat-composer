@@ -17,9 +17,9 @@ import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { v4 as uuidV4 } from 'uuid';
 import { MitigationsContext } from './context';
+import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
 import { LOCAL_STORAGE_KEY_MITIGATION_LIST } from '../../configs/localStorageKeys';
 import { Mitigation } from '../../customTypes';
-
 export interface MitigationsContextProviderProps {
   workspaceId: string | null;
 }
@@ -64,7 +64,7 @@ const MitigationsContextProvider: FC<PropsWithChildren<MitigationsContextProvide
       let updated: Mitigation = {
         ...mitigation,
         numericId,
-        id: mitigation.id === 'new' ? uuidV4() : mitigation.id,
+        id: mitigation.id === DEFAULT_NEW_ENTITY_ID ? uuidV4() : mitigation.id,
         displayOrder: numericId,
       };
 

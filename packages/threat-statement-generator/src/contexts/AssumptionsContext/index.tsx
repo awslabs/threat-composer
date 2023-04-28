@@ -17,6 +17,7 @@ import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { v4 as uuidV4 } from 'uuid';
 import { AssumptionsContext } from './context';
+import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
 import { LOCAL_STORAGE_KEY_ASSUMPTION_LIST } from '../../configs/localStorageKeys';
 import { Assumption } from '../../customTypes';
 
@@ -62,7 +63,7 @@ const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProvide
 
       let updated: Assumption = {
         ...assumption,
-        id: assumption.id === 'new' ? uuidV4() : assumption.id,
+        id: assumption.id === DEFAULT_NEW_ENTITY_ID ? uuidV4() : assumption.id,
         numericId,
         displayOrder: numericId,
       };

@@ -30,5 +30,3 @@ export interface MitigationLink extends EntityLinkBase {
    */
   linkedId: string;
 }
-
-export type MitigationList = Mitigation[];

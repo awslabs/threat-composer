@@ -13,95 +13,223 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import TopNavigation, { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
-import { applyDensity, applyMode, Density, Mode } from '@cloudscape-design/global-styles';
-import { FC, PropsWithChildren, useState, useMemo } from 'react';
+import AppLayoutComponent, {
+  AppLayoutProps as AppLayoutComponentProps,
+} from '@cloudscape-design/components/app-layout';
+import Box from '@cloudscape-design/components/box';
+import BreadcrumbGroup, { BreadcrumbGroupProps } from '@cloudscape-design/components/breadcrumb-group';
+import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import SideNavigation, { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
+import SplitPanel, { SplitPanelProps as SplitPanelComponentProps } from '@cloudscape-design/components/split-panel';
+import { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
+import { FC, useState, useCallback, createContext, PropsWithChildren, ReactElement, useContext, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import NavHeader, { NavHeaderProps } from './components/NavHeader';
+import { splitPanelI18nStrings } from './constants';
 
-import './index.css';
+export type AppLayoutProps = (NavHeaderProps | { header: ReactElement<TopNavigationProps> })
+& {
+  headerProps?: Partial<TopNavigationProps>;
+}
+&
+({
+  navigationItems: SideNavigationProps.Item[];
+}
+| { navigation: ReactElement<SideNavigationProps> }
+) & { breadcrumbGroup?: ReactElement<BreadcrumbGroupProps> } & {
+  title: string;
+  defaultBreadcrumb?: string;
+} & { breadcrumbGroupHide?: boolean }
+& { availableRoutes?: string[] }
+& AppLayoutComponentProps;
 
-const AppLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
-  const [theme, setTheme] = useState('theme.light');
-  const [density, setDensity] = useState('density.comfortable');
+export type SplitPanelProps = Pick<
+SplitPanelComponentProps,
+'header' | 'closeBehavior' | 'hidePreferencesButton' | 'children'
+>;
 
-  const utilities: TopNavigationProps.Utility[] = useMemo(() => [{
-    type: 'menu-dropdown',
-    iconName: 'settings',
-    ariaLabel: 'Settings',
-    title: 'Settings',
-    items: [{
-      id: 'theme',
-      text: 'Theme',
-      items: [
-        {
-          id: 'theme.light',
-          text: 'Light',
-          disabled: theme === 'theme.light',
-          disabledReason: 'currently selected',
-        },
-        {
-          id: 'theme.dark',
-          text: 'Dark',
-          disabled: theme === 'theme.dark',
-          disabledReason: 'currently selected',
-        },
-      ],
-    }, {
-      id: 'density',
-      text: 'Density',
-      items: [
-        {
-          id: 'density.comfortable',
-          text: 'Comfortable',
-          disabled: density === 'density.comfortable',
-          disabledReason: 'currently selected',
-        },
-        {
-          id: 'density.compact',
-          text: 'Compact',
-          disabled: density === 'density.compact',
-          disabledReason: 'currently selected',
-        },
-      ],
-    }],
-    onItemClick: (e) => {
-      switch (e.detail.id) {
-        case 'theme.light':
-          applyMode(Mode.Light);
-          setTheme('theme.light');
-          break;
-        case 'theme.dark':
-          applyMode(Mode.Dark);
-          setTheme('theme.dark');
-          break;
-        case 'density.comfortable':
-          applyDensity(Density.Comfortable);
-          setDensity('density.comfortable');
-          break;
-        case 'density.compact':
-          applyDensity(Density.Compact);
-          setDensity('density.compact');
-          break;
-        default:
-          break;
-      }
-    },
-  }], [theme, density]);
+export interface AppLayoutContextApi {
+  setContentType: React.Dispatch<React.SetStateAction<AppLayoutComponentProps['contentType']>>;
 
-  return (<>
-    <TopNavigation
-      identity={{
-        href: '#',
-        title: 'threat-composer',
-      }}
-      utilities={utilities}
-      i18nStrings={{ overflowMenuTitleText: 'threat-composer', overflowMenuTriggerText: 'threat-composer' }}
-    />
-    <div className='app-layout-main'>
-      <div className='app-layout-content'>
-        {children}
-      </div>
-    </div>
-  </>);
+  setSplitPanelOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setSplitPanelSize: React.Dispatch<React.SetStateAction<AppLayoutComponentProps['splitPanelSize']>>;
+  setSplitPanelProps: React.Dispatch<React.SetStateAction<SplitPanelProps | undefined>>;
+  setSplitPanelPreferences: React.Dispatch<React.SetStateAction<AppLayoutComponentProps.SplitPanelPreferences>>;
+
+  setNotifications: React.Dispatch<React.SetStateAction<AppLayoutComponentProps['notifications']>>;
+
+  setNavigationOpen: React.Dispatch<React.SetStateAction<boolean>>;
+
+  setTools: React.Dispatch<React.SetStateAction<AppLayoutComponentProps['tools']>>;
+  setToolsHide: React.Dispatch<React.SetStateAction<boolean>>;
+  setToolsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setToolsWidth: React.Dispatch<React.SetStateAction<AppLayoutComponentProps['toolsWidth']>>;
+
+  setActiveBreadcrumbs: React.Dispatch<React.SetStateAction<BreadcrumbGroupProps.Item[]>>;
+}
+
+const initialState = {
+  setContentType: () => { },
+
+  setSplitPanelOpen: () => { },
+  setSplitPanelSize: () => { },
+  setSplitPanelProps: () => { },
+  setSplitPanelPreferences: () => { },
+
+  setNotifications: () => { },
+
+  setNavigationOpen: () => { },
+
+  setTools: () => { },
+  setToolsHide: () => { },
+  setToolsOpen: () => { },
+  setToolsWidth: () => { },
+
+  setActiveBreadcrumbs: () => { },
 };
+
+export const AppLayoutContext = createContext<AppLayoutContextApi>(initialState);
+
+/**
+ * Provides the basic layout for all types of pages, including collapsible side navigation, tools panel, and split panel.
+ */
+const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
+  title,
+  defaultBreadcrumb = 'home',
+  children,
+  headerProps,
+  breadcrumbGroupHide,
+  availableRoutes,
+  ...props
+}) => {
+  const navigate = useNavigate();
+
+  const [contentType, setContentType] = useState(props.contentType);
+
+  const [splitPanelOpen, setSplitPanelOpen] = useState(props.splitPanelOpen ?? false);
+  const [splitPanelSize, setSplitPanelSize] = useState(props.splitPanelSize);
+  const [splitPanelProps, setSplitPanelProps] = useState<SplitPanelProps | undefined>();
+  const [splitPanelPreferences, setSplitPanelPreferences] = useState(
+    props.splitPanelPreferences ?? ({ position: 'bottom' } as AppLayoutComponentProps.SplitPanelPreferences),
+  );
+
+  const [navigationOpen, setNavigationOpen] = useState(props.navigationOpen ?? true);
+
+  const [notifications, setNotifications] = useState(props.notifications);
+
+  const [tools, setTools] = useState(props.tools);
+  const [toolsHide, setToolsHide] = useState(props.toolsHide ?? true);
+  const [toolsOpen, setToolsOpen] = useState(props.toolsOpen ?? false);
+  const [toolsWidth, setToolsWidth] = useState(props.toolsWidth);
+
+  const [activeHref, setActiveHref] = useState('/');
+  const [activeBreadcrumbs, setActiveBreadcrumbs] = useState<BreadcrumbGroupProps.Item[]>([
+    { text: defaultBreadcrumb, href: '/' },
+  ]);
+
+  const onNavigate: CancelableEventHandler<BreadcrumbGroupProps.ClickDetail | SideNavigationProps.FollowDetail> =
+    useCallback(
+      (e) => {
+        if (!e.detail.external) {
+          e.preventDefault();
+          setContentType(undefined);
+
+          setSplitPanelOpen(false);
+          setSplitPanelSize(undefined);
+          setSplitPanelProps(undefined);
+
+          setActiveHref(e.detail.href);
+          navigate(e.detail.href);
+        }
+      },
+      [navigate, setActiveBreadcrumbs, defaultBreadcrumb],
+    );
+
+  const splitPanel = useMemo(() => {
+    return splitPanelProps ? (
+      <SplitPanel i18nStrings={splitPanelI18nStrings} {...splitPanelProps}>
+        {splitPanelProps?.children}
+      </SplitPanel>
+    ) : null;
+  }, [splitPanelProps]);
+
+  return (
+    <AppLayoutContext.Provider
+      value={{
+        setContentType,
+
+        setSplitPanelOpen,
+        setSplitPanelSize,
+        setSplitPanelProps,
+        setSplitPanelPreferences,
+
+        setNotifications,
+
+        setNavigationOpen,
+
+        setTools,
+        setToolsHide,
+        setToolsOpen,
+        setToolsWidth,
+
+        setActiveBreadcrumbs,
+      }}
+    >
+      {'header' in props ? (
+        props.header
+      ) : (
+        <NavHeader
+          title={title}
+          href={props.href}
+          logo={props.logo}
+          {...headerProps}
+        />
+      )}
+      <AppLayoutComponent
+        breadcrumbs={ breadcrumbGroupHide ? undefined :
+          ('breadcrumbGroup' in props ? (
+            props.breadcrumbGroup
+          ) : (
+            <BreadcrumbGroup onFollow={onNavigate} items={activeBreadcrumbs} />
+          ))
+        }
+        navigation={
+          'navigation' in props ? (
+            props.navigation
+          ) : (
+            <SideNavigation
+              header={{ text: title, href: '/' }}
+              activeHref={activeHref}
+              onFollow={onNavigate}
+              items={props.navigationItems}
+            />
+          )
+        }
+        content={
+          !contentType || contentType === 'default' ? <Box padding={{ top: 'l' }}>{children}</Box> : children
+        }
+        {...props}
+        contentType={contentType}
+        splitPanelOpen={splitPanelOpen}
+        splitPanelSize={splitPanelSize}
+        splitPanel={splitPanel}
+        splitPanelPreferences={splitPanelPreferences}
+        onSplitPanelToggle={({ detail }) => setSplitPanelOpen(detail.open)}
+        onSplitPanelResize={({ detail }) => setSplitPanelSize(detail.size)}
+        onSplitPanelPreferencesChange={({ detail }) => setSplitPanelPreferences(detail)}
+        notifications={notifications}
+        navigationOpen={navigationOpen}
+        onNavigationChange={({ detail }) => setNavigationOpen(detail.open)}
+        toolsHide={toolsHide}
+        tools={tools}
+        toolsOpen={toolsOpen}
+        toolsWidth={toolsWidth}
+        onToolsChange={({ detail }) => setToolsOpen(detail.open)}
+      />
+    </AppLayoutContext.Provider>
+  );
+};
+
+export const useAppLayoutContext = () => useContext(AppLayoutContext);
 
 export default AppLayout;

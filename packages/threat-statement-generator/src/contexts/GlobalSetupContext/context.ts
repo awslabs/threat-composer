@@ -24,8 +24,8 @@ export interface GlobalSetupContextApi {
 
 const initialState: GlobalSetupContextApi = {
   hasVisitBefore: false,
-  showInfoModal: () => { },
   composerMode: 'ThreatsOnly',
+  showInfoModal: () => { },
 };
 
 export const GlobalSetupContext = createContext<GlobalSetupContextApi>(initialState);

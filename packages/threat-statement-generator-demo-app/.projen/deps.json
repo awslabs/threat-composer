@@ -34,6 +34,10 @@
       "type": "build"
     },
     {
+      "name": "@types/react-router-dom",
+      "type": "build"
+    },
+    {
       "name": "@typescript-eslint/eslint-plugin",
       "version": "^5",
       "type": "build"
@@ -102,6 +106,10 @@
     },
     {
       "name": "react-dom",
+      "type": "runtime"
+    },
+    {
+      "name": "react-router-dom",
       "type": "runtime"
     },
     {
