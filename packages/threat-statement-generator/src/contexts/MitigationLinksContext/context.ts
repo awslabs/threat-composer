@@ -14,22 +14,26 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { MitigationLink, Mitigation } from '../../customTypes';
+import { MitigationLink } from '../../customTypes';
 export interface MitigationLinksContextApi {
   mitigationLinkList: MitigationLink[];
   setMitigationLinkList: (list: MitigationLink[]) => void;
-  getLinkedMitigations: (linkedEntityId: string) => Mitigation[];
+  getLinkedMitigationLinks: (linkedEntityId: string) => MitigationLink[];
+  getMitigtaionThreatLinks: (mitigationId: string) => MitigationLink[];
   removeMitigationLink: (mitigationId: string, linkedEntityId: string) => void;
   addMitigationLink: (entity: MitigationLink) => void;
+  addMitigationLinks: (entity: MitigationLink[]) => void;
   removeAllMitigationLinks: () => void;
 }
 
 const initialState: MitigationLinksContextApi = {
   mitigationLinkList: [],
   setMitigationLinkList: () => { },
-  getLinkedMitigations: () => [],
+  getLinkedMitigationLinks: () => [],
+  getMitigtaionThreatLinks: () => [],
   removeMitigationLink: () => { },
   addMitigationLink: () => { },
+  addMitigationLinks: () => { },
   removeAllMitigationLinks: () => { },
 };
 

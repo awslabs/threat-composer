@@ -25,6 +25,7 @@ const AssumptionList: FC<AssumptionListProps> = ({ workspaceId }) => {
   return (<WorkspaceContextAggregator
     workspaceId={workspaceId || null}
     composerMode='Full'
+    requiredGlobalSetupContext
   >
     <AssumptionListComponent/>
   </WorkspaceContextAggregator>);

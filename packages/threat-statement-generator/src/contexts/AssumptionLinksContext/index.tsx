@@ -18,7 +18,6 @@ import useLocalStorageState from 'use-local-storage-state';
 import { AssumptionLinksContext } from './context';
 import { LOCAL_STORAGE_KEY_ASSUMPTION_LINK_LIST } from '../../configs/localStorageKeys';
 import { AssumptionLink } from '../../customTypes';
-import { useAssumptionsContext } from '../AssumptionsContext/context';
 
 export interface AssumptionLinksContextProviderProps {
   workspaceId: string | null;
@@ -40,10 +39,6 @@ const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContex
     defaultValue: [],
   });
 
-  const {
-    assumptionList,
-  } = useAssumptionsContext();
-
   const handlRemoveAssumptionLink = useCallback((assumptionId: string, linkedEntityId: string) => {
     setAssumptionLinkList((prevList) => prevList.filter(x => !(
       x.assumptionId === assumptionId && x.linkedId === linkedEntityId
@@ -54,7 +49,8 @@ const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContex
     setAssumptionLinkList((prevList) => {
       const foundIndex = prevList.findIndex(st =>
         st.assumptionId === assumptionLink.assumptionId &&
-          st.linkedId === assumptionLink.linkedId,
+          st.linkedId === assumptionLink.linkedId &&
+          st.type === assumptionLink.type,
       );
       if (foundIndex < 0) {
         return [...prevList, assumptionLink];
@@ -64,10 +60,21 @@ const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContex
     });
   }, [setAssumptionLinkList]);
 
-  const handleGetLinkedAssumptions = useCallback((linkedEntityId: string) => {
-    const matches = assumptionLinkList.filter(x => x.linkedId === linkedEntityId).map(x => x.assumptionId);
-    return assumptionList.filter(x => matches.includes(x.id));
-  }, [assumptionList, assumptionLinkList]);
+  const handleAddAssumptionLinks = useCallback((assumptionLinks: AssumptionLink[]) => {
+    setAssumptionLinkList((prevList) => {
+      const filteredLinks = assumptionLinks.filter(al =>
+        prevList.findIndex(pl => pl.assumptionId === al.assumptionId && pl.linkedId === al.assumptionId && pl.type === al.type) < 0);
+      return [...prevList, ...filteredLinks];
+    });
+  }, [setAssumptionLinkList]);
+
+  const handleGetLinkedAssumptionLinks = useCallback((linkedEntityId: string) => {
+    return assumptionLinkList.filter(x => x.linkedId === linkedEntityId);
+  }, [assumptionLinkList]);
+
+  const handleGetAssumptionEntityLinks = useCallback((assumptionId: string, type: AssumptionLink['type']) => {
+    return assumptionLinkList.filter(x => x.assumptionId === assumptionId && x.type === type);
+  }, [assumptionLinkList]);
 
   const handleRemoveAllAssumptionLinks = useCallback(() => {
     setAssumptionLinkList([]);
@@ -76,9 +83,11 @@ const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContex
   return (<AssumptionLinksContext.Provider value={{
     assumptionLinkList,
     setAssumptionLinkList,
-    getLinkedAssumptions: handleGetLinkedAssumptions,
+    getLinkedAssumptionLinks: handleGetLinkedAssumptionLinks,
+    getAssumptionEntityLinks: handleGetAssumptionEntityLinks,
     removeAssumptionLink: handlRemoveAssumptionLink,
     addAssumptionLink: handleAddAssumptionLink,
+    addAssumptionLinks: handleAddAssumptionLinks,
     removeAllAssumptionLinks: handleRemoveAllAssumptionLinks,
   }}>
     {children}

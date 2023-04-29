@@ -15,44 +15,42 @@
  ******************************************************************************************************************** */
 import { FC, useEffect, useState } from 'react';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
-import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
+import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { AssumptionLink } from '../../../customTypes';
-import AssumptionLinkView from '../AssumptionLinkView';
+import ThreatLinkView from '../../threats/ThreatLinkView';
 
-export interface AssumptionLinkProps {
-  linkedEntityId: string;
-  type: AssumptionLink['type'];
+export interface AssumptionThreatLinkProps {
+  assumptionId: string;
 }
 
-const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
-  linkedEntityId,
-  type,
+const AssumptionThreatLinkComponent: FC<AssumptionThreatLinkProps> = ({
+  assumptionId,
 }) => {
-  const { assumptionList } = useAssumptionsContext();
+  const { statementList } = useThreatsContext();
   const [assumptionLinks, setAssumptionLinks] = useState<AssumptionLink[]>([]);
 
-  const { getLinkedAssumptionLinks } = useAssumptionLinksContext();
+  const { getAssumptionEntityLinks } = useAssumptionLinksContext();
 
   useEffect(() => {
-    const _assumptionLinks = getLinkedAssumptionLinks(linkedEntityId);
+    const _assumptionLinks = getAssumptionEntityLinks(assumptionId, 'Threat');
     setAssumptionLinks(_assumptionLinks || []);
-  }, [getLinkedAssumptionLinks, linkedEntityId]);
+  }, [getAssumptionEntityLinks, assumptionId]);
 
   const {
     addAssumptionLink,
     removeAssumptionLink,
   } = useAssumptionLinksContext();
 
-  return (<AssumptionLinkView
-    assumptionList={assumptionList}
-    linkedAssumptionIds={assumptionLinks.map(al => al.assumptionId) || []}
-    onAddAssumptionLink={(assumptionId) => addAssumptionLink({
-      type,
-      linkedId: linkedEntityId,
+  return (<ThreatLinkView
+    threatList={statementList}
+    linkedThreatIds={assumptionLinks.map(ml => ml.linkedId)}
+    onAddThreatLink={(threatId) => addAssumptionLink({
+      linkedId: threatId,
       assumptionId,
+      type: 'Threat',
     })}
-    onRemoveAssumptionLink={(assumptionId) => removeAssumptionLink(assumptionId, linkedEntityId)}
+    onRemoveThreatLink={(threatId) => removeAssumptionLink(assumptionId, threatId)}
   />);
 };
 
-export default AssumptionLinkComponent;
+export default AssumptionThreatLinkComponent;

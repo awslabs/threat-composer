@@ -21,7 +21,7 @@ export interface MitigationsContextApi {
   mitigationList: Mitigation[];
   setMitigationList: (entity: Mitigation[]) => void;
   removeMitigation: (id: string) => void;
-  saveMitigation: (entity: Mitigation) => void;
+  saveMitigation: (entity: Mitigation) => Mitigation;
   removeAllMitigations: () => void;
 }
 
@@ -29,7 +29,11 @@ const initialState: MitigationsContextApi = {
   mitigationList: [],
   setMitigationList: () => { },
   removeMitigation: () => { },
-  saveMitigation: () => { },
+  saveMitigation: () => ({
+    id: 'new',
+    numericId: -1,
+    content: '',
+  }),
   removeAllMitigations: () => { },
 };
 

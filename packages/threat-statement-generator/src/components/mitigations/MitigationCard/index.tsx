@@ -14,13 +14,16 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
+import ColumnLayout from '@cloudscape-design/components/column-layout';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import Textarea from '@cloudscape-design/components/textarea';
 import { FC, useState, useCallback } from 'react';
 import { Mitigation } from '../../../customTypes';
+import AssumptionLink from '../../assumptions/AssumptionLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import GenericCard from '../../generic/GenericCard';
+import MitigationThreatLink from '../MitigationThreatLink';
 
 export interface MitigationCardProps {
   entity: Mitigation;
@@ -59,6 +62,7 @@ const MitigationCard: FC<MitigationCardProps> = ({
   return (<GenericCard
     header={`Mitigation ${entity.numericId}`}
     entityId={entity.id}
+    tags={entity.tags}
     onCopy={() => onCopy?.(entity.id)}
     onRemove={() => onRemove?.(entity.id)}
     onEdit={() => setEditingMode(true)}
@@ -77,12 +81,21 @@ const MitigationCard: FC<MitigationCardProps> = ({
           <Button variant='primary' onClick={handleSave}>Save</Button>
         </SpaceBetween>
       </SpaceBetween>
-    ):
-      (<TextContent>
-        <CopyToClipbord>
-          {entity.content || ''}
-        </CopyToClipbord>
-      </TextContent>)}
+    ) :
+      (<ColumnLayout columns={2}>
+        <TextContent>
+          <CopyToClipbord>
+            {entity.content || ''}
+          </CopyToClipbord>
+        </TextContent>
+        <SpaceBetween direction='vertical' size='s'>
+          <MitigationThreatLink mitigationId={entity.id} />
+          <AssumptionLink
+            linkedEntityId={entity.id}
+            type='Mitigation'
+          />
+        </SpaceBetween>
+      </ColumnLayout>)}
   </GenericCard>);
 };
 

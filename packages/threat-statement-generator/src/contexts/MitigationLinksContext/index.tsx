@@ -18,7 +18,6 @@ import useLocalStorageState from 'use-local-storage-state';
 import { MitigationLinksContext } from './context';
 import { LOCAL_STORAGE_KEY_MITIGATION_LINK_LIST } from '../../configs/localStorageKeys';
 import { MitigationLink } from '../../customTypes';
-import { useMitigationsContext } from '../MitigationsContext/context';
 
 export interface MitigationLinksContextProviderProps {
   workspaceId: string | null;
@@ -40,10 +39,6 @@ const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContex
     defaultValue: [],
   });
 
-  const {
-    mitigationList,
-  } = useMitigationsContext();
-
   const handlRemoveMitigationLink = useCallback((mitigationId: string, linkedEntityId: string) => {
     setMitigationLinkList((prevList) => prevList.filter(x => !(
       x.mitigationId === mitigationId && x.linkedId === linkedEntityId
@@ -64,10 +59,21 @@ const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContex
     });
   }, [setMitigationLinkList]);
 
-  const handleGetLinkedMitigations = useCallback((linkedEntityId: string) => {
-    const matches = mitigationLinkList.filter(x => x.linkedId === linkedEntityId).map(x => x.mitigationId);
-    return mitigationList.filter(x => matches.includes(x.id));
-  }, [mitigationList, mitigationLinkList]);
+  const handleAddMitigationLinks = useCallback((mitigationLinks: MitigationLink[]) => {
+    setMitigationLinkList((prevList) => {
+      const filteredLinks = mitigationLinks.filter(al =>
+        prevList.findIndex(pl => pl.mitigationId === al.mitigationId && pl.linkedId === al.mitigationId) < 0);
+      return [...prevList, ...filteredLinks];
+    });
+  }, [setMitigationLinkList]);
+
+  const handleGetLinkedMitigationLinks = useCallback((linkedEntityId: string) => {
+    return mitigationLinkList.filter(x => x.linkedId === linkedEntityId);
+  }, [mitigationLinkList]);
+
+  const handleGetMitigationThreatLinks = useCallback((mitigationId: string) => {
+    return mitigationLinkList.filter(x => x.mitigationId === mitigationId);
+  }, [mitigationLinkList]);
 
   const handleRemoveAllMitigationLinks = useCallback(() => {
     setMitigationLinkList([]);
@@ -76,9 +82,11 @@ const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContex
   return (<MitigationLinksContext.Provider value={{
     mitigationLinkList,
     setMitigationLinkList,
-    getLinkedMitigations: handleGetLinkedMitigations,
+    getLinkedMitigationLinks: handleGetLinkedMitigationLinks,
+    getMitigtaionThreatLinks: handleGetMitigationThreatLinks,
     removeMitigationLink: handlRemoveMitigationLink,
     addMitigationLink: handleAddMitigationLink,
+    addMitigationLinks: handleAddMitigationLinks,
     removeAllMitigationLinks: handleRemoveAllMitigationLinks,
   }}>
     {children}

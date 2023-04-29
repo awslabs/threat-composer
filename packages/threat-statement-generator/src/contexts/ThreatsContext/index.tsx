@@ -238,12 +238,18 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
     }
   }, [composerMode, editingStatement, setView]);
 
+  const lenStatementList = statementList.length;
+  const editingStatementExist = !!editingStatement;
+
   useEffect(() => {
-    if ((composerMode === 'EditorOnly' && !editingStatement)
-      || (composerMode === 'ThreatsOnly' && !hasVisitBefore && !editingStatement)) {
+    if ((composerMode === 'EditorOnly' && !editingStatementExist)
+      || (composerMode === 'ThreatsOnly'
+        && !hasVisitBefore
+        && !editingStatementExist
+        && lenStatementList === 0 && !currentWorkspaceId)) {
       handleAddStatement();
     }
-  }, [composerMode, editingStatement, hasVisitBefore, onThreatEditorView, onThreatEditorView]);
+  }, [composerMode, editingStatementExist, hasVisitBefore, lenStatementList, currentWorkspaceId]);
 
   return (<ThreatsContext.Provider value={{
     view,

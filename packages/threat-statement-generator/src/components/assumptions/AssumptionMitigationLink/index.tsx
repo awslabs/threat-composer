@@ -15,44 +15,42 @@
  ******************************************************************************************************************** */
 import { FC, useEffect, useState } from 'react';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
-import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
+import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { AssumptionLink } from '../../../customTypes';
-import AssumptionLinkView from '../AssumptionLinkView';
+import MitigationLinkView from '../../mitigations/MitigationLinkView';
 
-export interface AssumptionLinkProps {
-  linkedEntityId: string;
-  type: AssumptionLink['type'];
+export interface AssumptionThreatLinkProps {
+  assumptionId: string;
 }
 
-const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
-  linkedEntityId,
-  type,
+const AssumptionThreatLinkComponent: FC<AssumptionThreatLinkProps> = ({
+  assumptionId,
 }) => {
-  const { assumptionList } = useAssumptionsContext();
+  const { mitigationList } = useMitigationsContext();
   const [assumptionLinks, setAssumptionLinks] = useState<AssumptionLink[]>([]);
 
-  const { getLinkedAssumptionLinks } = useAssumptionLinksContext();
+  const { getAssumptionEntityLinks } = useAssumptionLinksContext();
 
   useEffect(() => {
-    const _assumptionLinks = getLinkedAssumptionLinks(linkedEntityId);
+    const _assumptionLinks = getAssumptionEntityLinks(assumptionId, 'Mitigation');
     setAssumptionLinks(_assumptionLinks || []);
-  }, [getLinkedAssumptionLinks, linkedEntityId]);
+  }, [getAssumptionEntityLinks, assumptionId]);
 
   const {
     addAssumptionLink,
     removeAssumptionLink,
   } = useAssumptionLinksContext();
 
-  return (<AssumptionLinkView
-    assumptionList={assumptionList}
-    linkedAssumptionIds={assumptionLinks.map(al => al.assumptionId) || []}
-    onAddAssumptionLink={(assumptionId) => addAssumptionLink({
-      type,
-      linkedId: linkedEntityId,
+  return (<MitigationLinkView
+    mitigationList={mitigationList}
+    linkedMitigationIds={assumptionLinks.map(ml => ml.linkedId)}
+    onAddMitigationLink={(mitigationId) => addAssumptionLink({
+      linkedId: mitigationId,
       assumptionId,
+      type: 'Mitigation',
     })}
-    onRemoveAssumptionLink={(assumptionId) => removeAssumptionLink(assumptionId, linkedEntityId)}
+    onRemoveMitigationLink={(mitigationId) => removeAssumptionLink(assumptionId, mitigationId)}
   />);
 };
 
-export default AssumptionLinkComponent;
+export default AssumptionThreatLinkComponent;

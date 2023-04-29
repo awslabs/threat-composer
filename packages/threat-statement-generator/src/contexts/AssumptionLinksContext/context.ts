@@ -14,24 +14,28 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { AssumptionLink, Assumption } from '../../customTypes';
+import { AssumptionLink } from '../../customTypes';
 export type View = 'list' | 'editor';
 
 export interface AssumptionLinksContextApi {
   assumptionLinkList: AssumptionLink[];
   setAssumptionLinkList: (list: AssumptionLink[]) => void;
-  getLinkedAssumptions: (linkedEntityId: string) => Assumption[];
+  getLinkedAssumptionLinks: (linkedEntityId: string) => AssumptionLink[];
+  getAssumptionEntityLinks: (assumptionId: string, type: AssumptionLink['type']) => AssumptionLink[];
   removeAssumptionLink: (assumptionId: string, linkedEntityId: string) => void;
   addAssumptionLink: (entity: AssumptionLink) => void;
+  addAssumptionLinks: (entities: AssumptionLink[]) => void;
   removeAllAssumptionLinks: () => void;
 }
 
 const initialState: AssumptionLinksContextApi = {
   assumptionLinkList: [],
   setAssumptionLinkList: () => { },
-  getLinkedAssumptions: () => [],
+  getLinkedAssumptionLinks: () => [],
+  getAssumptionEntityLinks: () => [],
   removeAssumptionLink: () => { },
   addAssumptionLink: () => { },
+  addAssumptionLinks: () => { },
   removeAllAssumptionLinks: () => { },
 };
 

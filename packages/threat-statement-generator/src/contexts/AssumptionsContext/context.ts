@@ -21,7 +21,7 @@ export interface AssumptionsContextApi {
   assumptionList: Assumption[];
   setAssumptionList: (assumptions: Assumption[]) => void;
   removeAssumption: (id: string) => void;
-  saveAssumption: (assumption: Assumption) => void;
+  saveAssumption: (assumption: Assumption) => Assumption;
   removeAllAssumptions: () => void;
 }
 
@@ -29,7 +29,11 @@ const initialState: AssumptionsContextApi = {
   assumptionList: [],
   setAssumptionList: () => { },
   removeAssumption: () => { },
-  saveAssumption: () => { },
+  saveAssumption: () => ({
+    id: 'new',
+    numericId: -1,
+    content: '',
+  }),
   removeAllAssumptions: () => { },
 };
 

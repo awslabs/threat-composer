@@ -25,6 +25,7 @@ const ThreatEditor: FC<ThreatEditorProps> = ({ workspaceId }) => {
   return (<WorkspaceContextAggregator
     workspaceId={workspaceId || null}
     composerMode='Full'
+    requiredGlobalSetupContext
   >
     <ThreatStatementEditor />
   </WorkspaceContextAggregator>);

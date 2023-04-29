@@ -43,13 +43,14 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
       onThreatListView={onThreatListView}
     >
       <MitigationsContextProvider workspaceId={workspaceId}>
-        <MitigationLinksContextProvider workspaceId={workspaceId}>
-          <AssumptionsContextProvider workspaceId={workspaceId}>
+        <AssumptionsContextProvider workspaceId={workspaceId}>
+          <MitigationLinksContextProvider workspaceId={workspaceId}>
             <AssumptionLinksContextProvider workspaceId={workspaceId}>
               {children}
             </AssumptionLinksContextProvider>
-          </AssumptionsContextProvider >
-        </MitigationLinksContextProvider>
+          </MitigationLinksContextProvider>
+        </AssumptionsContextProvider >
+
       </MitigationsContextProvider>
     </ThreatsContextProvider>
   );

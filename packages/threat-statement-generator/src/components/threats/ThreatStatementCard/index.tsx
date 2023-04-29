@@ -26,6 +26,7 @@ import GenericCard from '../../generic/GenericCard';
 import MitigationLink from '../../mitigations/MitigationLink';
 
 export interface ThreatStatementCardProps {
+  showLinkedEntities?: boolean;
   statement: TemplateThreatStatement;
   onCopy?: (id: string) => void;
   onRemove?: (id: string) => void;
@@ -35,6 +36,7 @@ export interface ThreatStatementCardProps {
 }
 
 const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
+  showLinkedEntities,
   statement,
   onCopy,
   onRemove,
@@ -62,22 +64,25 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
         variant="icon"
         onItemClick={handleMoreActions}
       />);
-  }, [onCopy, onRemove, onEditInWizard, statement.id]);
+  }, []);
 
   return (<GenericCard
     header={`Threat ${statement.numericId}`}
     entityId={statement.id}
+    tags={statement.tags}
     moreActions={moreActions}
+    onRemove={onRemove}
+    onEdit={onEditInWizard}
     onAddTagToEntity={(_entityId, tag) => onAddTagToStatement?.(statement, tag)}
     onRemoveTagFromEntity={(_entityId, tag) => onRemoveTagFromStatement?.(statement, tag)}
   >
-    <ColumnLayout columns={2}>
+    <ColumnLayout columns={showLinkedEntities ? 2 : 1}>
       <TextContent>
         <CopyToClipbord>
           {statement.statement || ''}
         </CopyToClipbord>
       </TextContent>
-      <SpaceBetween direction='vertical' size='s'>
+      {showLinkedEntities && <SpaceBetween direction='vertical' size='s'>
         <AssumptionLink
           linkedEntityId={statement.id}
           type='Threat'
@@ -85,7 +90,7 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
         <MitigationLink
           linkedEntityId={statement.id}
         />
-      </SpaceBetween>
+      </SpaceBetween>}
     </ColumnLayout>
   </GenericCard>);
 };

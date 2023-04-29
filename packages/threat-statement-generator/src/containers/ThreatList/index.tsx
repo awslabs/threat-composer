@@ -25,6 +25,7 @@ const ThreatList: FC<ThreatListProps> = ({ workspaceId }) => {
   return (<WorkspaceContextAggregator
     workspaceId={workspaceId || null}
     composerMode='Full'
+    requiredGlobalSetupContext
   >
     <ThreatStatementListComponent />
   </WorkspaceContextAggregator>);

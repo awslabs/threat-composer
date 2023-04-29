@@ -185,19 +185,21 @@ const ThreatStatementEditor: FC = () => {
           onGiveExampleClick={handleGiveExampleClicked}
           setCustomTemplateEditorVisible={setCustomTemplateEditorVisible}
         />
-        {Component && editor && <Grid
-          gridDefinition={[{ colspan: { default: 12, xs: 9 } }, { colspan: { default: 12, xs: 3 } }]}
-        >
-          <div className='threat-statement-editor-editor-container'>
-            <Component
-              ref={inputRef}
-              statement={editingStatement}
-              setStatement={setEditingStatement}
-              fieldData={threatFieldData[editor]}
-            />
-          </div>
-          <Metrics statement={editingStatement} onClick={(token) => setEditor(token as ThreatFieldTypes)} />
-        </Grid>}
+        {Component && editor && <SpaceBetween direction='vertical' size='l'>
+          <Grid
+            gridDefinition={[{ colspan: { default: 12, xs: 9 } }, { colspan: { default: 12, xs: 3 } }]}
+          >
+            <div className='threat-statement-editor-editor-container'>
+              <Component
+                ref={inputRef}
+                statement={editingStatement}
+                setStatement={setEditingStatement}
+                fieldData={threatFieldData[editor]}
+              />
+            </div>
+            <Metrics statement={editingStatement} onClick={(token) => setEditor(token as ThreatFieldTypes)} />
+          </Grid>
+        </SpaceBetween>}
         <FullExamples ref={fullExamplesRef} onClick={handleExampleClicked} />
       </SpaceBetween>
       {customTemplateEditorVisible && <CustomTemplate

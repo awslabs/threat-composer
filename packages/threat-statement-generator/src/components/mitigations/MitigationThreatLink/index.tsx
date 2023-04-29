@@ -15,41 +15,41 @@
  ******************************************************************************************************************** */
 import { FC, useEffect, useState } from 'react';
 import { useMitigationLinksContext } from '../../../contexts/MitigationLinksContext/context';
-import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
+import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { MitigationLink } from '../../../customTypes';
-import MitigationLinkView from '../MitigationLinkView';
+import ThreatLinkView from '../../threats/ThreatLinkView';
 
-export interface MitigationLinkProps {
-  linkedEntityId: string;
+export interface MitigationThreatLinkProps {
+  mitigationId: string;
 }
 
-const MitigationLinkComponent: FC<MitigationLinkProps> = ({
-  linkedEntityId,
+const MitigationThreatLinkComponent: FC<MitigationThreatLinkProps> = ({
+  mitigationId,
 }) => {
-  const { mitigationList } = useMitigationsContext();
+  const { statementList } = useThreatsContext();
   const [mitigationLinks, setMitigationLinks] = useState<MitigationLink[]>([]);
 
-  const { getLinkedMitigationLinks } = useMitigationLinksContext();
+  const { getMitigtaionThreatLinks } = useMitigationLinksContext();
 
   useEffect(() => {
-    const _mitigationLinks = getLinkedMitigationLinks(linkedEntityId);
+    const _mitigationLinks = getMitigtaionThreatLinks(mitigationId);
     setMitigationLinks(_mitigationLinks || []);
-  }, [getLinkedMitigationLinks, linkedEntityId]);
+  }, [getMitigtaionThreatLinks, mitigationId]);
 
   const {
     addMitigationLink,
     removeMitigationLink,
   } = useMitigationLinksContext();
 
-  return (<MitigationLinkView
-    mitigationList={mitigationList}
-    linkedMitigationIds={mitigationLinks.map(ml => ml.mitigationId)}
-    onAddMitigationLink={(mitigationId) => addMitigationLink({
-      linkedId: linkedEntityId,
+  return (<ThreatLinkView
+    threatList={statementList}
+    linkedThreatIds={mitigationLinks.map(ml => ml.linkedId)}
+    onAddThreatLink={(threatId) => addMitigationLink({
+      linkedId: threatId,
       mitigationId,
     })}
-    onRemoveMitigationLink={(mitigationId) => removeMitigationLink(mitigationId, linkedEntityId)}
+    onRemoveThreatLink={(threatId) => removeMitigationLink(mitigationId, threatId)}
   />);
 };
 
-export default MitigationLinkComponent;
+export default MitigationThreatLinkComponent;

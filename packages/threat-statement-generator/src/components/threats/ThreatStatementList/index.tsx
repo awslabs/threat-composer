@@ -280,6 +280,7 @@ const ThreatStatementList: FC = () => {
         onEditInWizard={editStatement}
         onAddTagToStatement={handleAddTagToStatement}
         onRemoveTagFromStatement={handleRemoveTagFromStatement}
+        showLinkedEntities={composerMode === 'Full'}
       />))}
     </SpaceBetween>
   </div>);

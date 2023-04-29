@@ -46,9 +46,11 @@ const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProvide
   }, [setAssumptionList]);
 
   const handleSaveAssumption = useCallback((assumption: Assumption) => {
+    let newEntity = assumption;
     setAssumptionList((prevList) => {
       let numericId = assumption.numericId;
 
+      // New Assumption
       if (numericId === -1) {
         const maxId = prevList.reduce((max: number, cur: Assumption) => {
 
@@ -68,6 +70,8 @@ const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProvide
         displayOrder: numericId,
       };
 
+      newEntity = { ...updated };
+
       const foundIndex = prevList.findIndex(st => st.id === updated.id);
       if (foundIndex >= 0) {
         return [...prevList.slice(0, foundIndex), updated, ...prevList.slice(foundIndex + 1)];
@@ -75,6 +79,7 @@ const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProvide
 
       return [...prevList, updated];
     });
+    return newEntity;
   }, [setAssumptionList]);
 
   const handleRemoveAllAssumptions = useCallback(() => {

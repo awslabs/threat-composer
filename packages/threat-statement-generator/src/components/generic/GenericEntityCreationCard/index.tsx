@@ -14,29 +14,38 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
+import ColumnLayout from '@cloudscape-design/components/column-layout';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import Textarea from '@cloudscape-design/components/textarea';
-import { FC, useCallback, useState } from 'react';
+import { FC, ReactNode, useCallback } from 'react';
 import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { ContentEntityBase } from '../../../customTypes';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import GenericCard from '../GenericCard';
 
 export interface GenericEntityCreationCardProps {
+  editingEntity: ContentEntityBase;
+  setEditingEntity: React.Dispatch<React.SetStateAction<ContentEntityBase>>;
   header: string;
-  onSave?: (entity: ContentEntityBase) => void;
+  onSave?: () => void;
+  onReset?: () => void;
+  customEditors?: ReactNode;
 }
 
+export const DEFAULT_ENTITY = {
+  id: DEFAULT_NEW_ENTITY_ID,
+  numericId: -1,
+  content: '',
+};
+
 const GenericEntityCreationCard: FC<GenericEntityCreationCardProps> = ({
+  editingEntity,
+  setEditingEntity,
   header,
   onSave,
+  onReset,
+  customEditors,
 }) => {
-  const [editingEntity, setEditingEntity] = useState<ContentEntityBase>({
-    id: DEFAULT_NEW_ENTITY_ID,
-    numericId: -1,
-    content: '',
-  });
-
   const handleAddTagToEntity = useCallback((tag: string) => {
     const updated = addTagToEntity(editingEntity, tag);
     setEditingEntity(updated as ContentEntityBase);
@@ -49,21 +58,26 @@ const GenericEntityCreationCard: FC<GenericEntityCreationCardProps> = ({
 
   return (<GenericCard
     header={header}
+    tags={editingEntity?.tags}
     entityId={DEFAULT_NEW_ENTITY_ID}
     onAddTagToEntity={(_entityId, tag) => handleAddTagToEntity?.(tag)}
     onRemoveTagFromEntity={(_entityId, tag) => handleRemoveTagFromEntity?.(tag)}
   >
     <SpaceBetween direction='vertical' size='s'>
-      <Textarea
-        value={editingEntity.content}
-        onChange={({ detail }) => setEditingEntity({
-          ...editingEntity,
-          content: detail.value,
-        })}
-      />
       <SpaceBetween direction='horizontal' size='s'>
-        <Button variant='primary' onClick={() => onSave?.(editingEntity)}>Save</Button>
+        <Button onClick={onReset}>Reset</Button>
+        <Button variant='primary' disabled={!editingEntity.content} onClick={onSave}>Save</Button>
       </SpaceBetween>
+      <ColumnLayout columns={customEditors ? 2 : 1}>
+        <Textarea
+          value={editingEntity.content}
+          onChange={({ detail }) => setEditingEntity({
+            ...editingEntity,
+            content: detail.value,
+          })}
+        />
+        {customEditors}
+      </ColumnLayout>
     </SpaceBetween>
   </GenericCard>);
 };

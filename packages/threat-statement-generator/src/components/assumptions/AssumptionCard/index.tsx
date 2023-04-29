@@ -14,6 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
+import ColumnLayout from '@cloudscape-design/components/column-layout';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import Textarea from '@cloudscape-design/components/textarea';
@@ -21,6 +22,8 @@ import { FC, useState, useCallback } from 'react';
 import { Assumption } from '../../../customTypes';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import GenericCard from '../../generic/GenericCard';
+import AssumptionMitigationLink from '../AssumptionMitigationLink';
+import AssumptionThreatLink from '../AssumptionThreatLink';
 
 export interface AssumptionCardProps {
   assumption: Assumption;
@@ -59,6 +62,7 @@ const AssumptionCard: FC<AssumptionCardProps> = ({
   return (<GenericCard
     header={`Assumption ${assumption.numericId}`}
     entityId={assumption.id}
+    tags={assumption.tags}
     onCopy={() => onCopy?.(assumption.id)}
     onRemove={() => onRemove?.(assumption.id)}
     onEdit={() => setEditingMode(true)}
@@ -70,19 +74,27 @@ const AssumptionCard: FC<AssumptionCardProps> = ({
         <Textarea
           value={editingValue}
           onChange={({ detail }) => setEditingValue(detail.value)}
-          onBlur={handleCancel}
         />
         <SpaceBetween direction='horizontal' size='s'>
           <Button onClick={handleCancel}>Cancel</Button>
           <Button variant='primary' onClick={handleSave}>Save</Button>
         </SpaceBetween>
       </SpaceBetween>
-    ):
-      (<TextContent>
-        <CopyToClipbord>
-          {assumption.content || ''}
-        </CopyToClipbord>
-      </TextContent>)}
+    ) :
+      (<ColumnLayout columns={2}>
+        <TextContent>
+          <CopyToClipbord>
+            {assumption.content || ''}
+          </CopyToClipbord>
+        </TextContent>
+        <SpaceBetween direction='vertical' size='s'>
+          <AssumptionThreatLink
+            assumptionId={assumption.id}
+          />
+          <AssumptionMitigationLink
+            assumptionId={assumption.id} />
+        </SpaceBetween>
+      </ColumnLayout>)}
   </GenericCard>);
 };
 

@@ -46,6 +46,7 @@ const MitigationsContextProvider: FC<PropsWithChildren<MitigationsContextProvide
 
 
   const handleSaveMitigation = useCallback((mitigation: Mitigation) => {
+    let newEntity = mitigation;
     setMitigationList((prevList) => {
       let numericId = mitigation.numericId;
 
@@ -68,6 +69,8 @@ const MitigationsContextProvider: FC<PropsWithChildren<MitigationsContextProvide
         displayOrder: numericId,
       };
 
+      newEntity = { ...updated };
+
       const foundIndex = prevList.findIndex(st => st.id === updated.id);
       if (foundIndex >= 0) {
         return [...prevList.slice(0, foundIndex), updated, ...prevList.slice(foundIndex + 1)];
@@ -75,6 +78,8 @@ const MitigationsContextProvider: FC<PropsWithChildren<MitigationsContextProvide
 
       return [...prevList, updated];
     });
+
+    return newEntity;
   }, [setMitigationList]);
 
   const handleRemoveAllMitigations = useCallback(() => {

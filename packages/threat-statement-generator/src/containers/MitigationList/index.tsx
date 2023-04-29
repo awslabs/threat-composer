@@ -23,6 +23,7 @@ export interface MitigationListProps {
 
 const MitigationList: FC<MitigationListProps> = ({ workspaceId }) => {
   return (<WorkspaceContextAggregator
+    requiredGlobalSetupContext
     workspaceId={workspaceId || null}
     composerMode='Full'
   >

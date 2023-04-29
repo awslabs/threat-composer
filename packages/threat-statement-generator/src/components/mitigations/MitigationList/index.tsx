@@ -19,11 +19,12 @@ import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
+import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
-import { Mitigation } from '../../../customTypes';
-import GenericEntityCreationCard from '../../generic/GenericEntityCreationCard';
+import { AssumptionLink, Mitigation, MitigationLink } from '../../../customTypes';
 import MitigationCard from '../MitigationCard';
+import MitigationCreationCard from '../MitigationCreationCard';
 
 const MitigationList: FC = () => {
   const {
@@ -35,6 +36,14 @@ const MitigationList: FC = () => {
   const {
     showInfoModal,
   } = useGlobalSetupContext();
+
+  const {
+    addMitigationLinks,
+  } = useMitigationLinksContext();
+
+  const {
+    addAssumptionLinks,
+  } = useAssumptionLinksContext();
 
   const [filteringText, setFilteringText] = useState('');
 
@@ -79,11 +88,39 @@ const MitigationList: FC = () => {
     return output;
   }, [filteringText, mitigationList, selectedTags]);
 
+  const handleSaveNew = useCallback((mitigation: Mitigation,
+    linkedAssumptionIds: string[],
+    linkedThreatIds: string[]) => {
+    const updated = saveMitigation(mitigation);
+
+    const mitigationLinks: MitigationLink[] = [];
+    linkedThreatIds.forEach(id => {
+      mitigationLinks.push({
+        linkedId: id,
+        mitigationId: updated.id,
+      });
+    });
+
+    addMitigationLinks(mitigationLinks);
+
+    const assumptionLinks: AssumptionLink[] = [];
+    linkedAssumptionIds.forEach(id => {
+      assumptionLinks.push({
+        linkedId: updated.id,
+        assumptionId: id,
+        type: 'Mitigation',
+      });
+    });
+
+    addAssumptionLinks(assumptionLinks);
+
+  }, [saveMitigation, addMitigationLinks, addAssumptionLinks]);
+
   return (<div>
     <SpaceBetween direction='vertical' size='s'>
       <Container header={
         <Header
-          info={<Button variant='icon' iconName='status-info' onClick={showInfoModal}/>}
+          info={<Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
         >Mitigation List</Header>
       }>
         <SpaceBetween direction='vertical' size='s'>
@@ -105,9 +142,8 @@ const MitigationList: FC = () => {
         onAddTagToEntity={handleAddTagToEntity}
         onRemoveTagFromEntity={handleRemoveTagFromEntity}
       />))}
-      <GenericEntityCreationCard
-        header='Add new mitigation'
-        onSave={saveMitigation}
+      <MitigationCreationCard
+        onSave={handleSaveNew}
       />
     </SpaceBetween>
   </div>);

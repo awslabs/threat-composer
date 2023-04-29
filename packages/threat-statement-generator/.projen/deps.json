@@ -192,6 +192,10 @@
       "type": "runtime"
     },
     {
+      "name": "browser-image-compression",
+      "type": "runtime"
+    },
+    {
       "name": "indefinite",
       "type": "runtime"
     },
