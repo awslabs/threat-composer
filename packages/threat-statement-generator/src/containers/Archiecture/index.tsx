@@ -13,47 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export interface EntityBase {
-  /**
-   * The unique Id of the entity
-   */
-  id: string;
-  /**
-   * The numeric id of the entity.
-   * The numericId will be displayed for users to easy identify the entity.
-   */
-  numericId: number;
-  /**
-   * The display order of the entity in the list.
-  */
-  displayOrder?: number;
-  /**
-   * The metadata.
-   */
-  metadata?: { key: string; value: string | string[] }[];
-  /**
-   * The tags.
-   */
-  tags?: string[];
+import React, { FC } from 'react';
+import ArchitectureComponent from '../../components/architecture/ArchitectureInfo';
+import WorkspaceContextAggregator from '../../contexts/WorkspaceContextAggregator';
+
+export interface ArchiectureProps {
+  workspaceId?: string;
 }
 
-export interface ContentEntityBase extends EntityBase {
-  /**
-   * The text content of the Assumption.
-   */
-  content: string;
-}
+const Archiecture: FC<ArchiectureProps> = ({ workspaceId }) => {
+  return (<WorkspaceContextAggregator
+    workspaceId={workspaceId || null}
+    composerMode='Full'
+    requiredGlobalSetupContext
+  >
+    <ArchitectureComponent/>
+  </WorkspaceContextAggregator>);
+};
 
-export interface EntityLinkBase {
-}
-
-export interface BaseImageInfo {
-  /**
-   * The base64 encoded image or src of the image
-   */
-  image: string;
-  /**
-   * The description of the archiecture diagram
-   */
-  description?: string;
-}
+export default Archiecture;

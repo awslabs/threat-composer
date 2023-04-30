@@ -20,3 +20,5 @@ export * from './threatFieldTypes';
 export * from './workspaces';
 export * from './entities';
 export * from './composerMode';
+export * from './architecture';
+export * from './dataflow';

@@ -22,7 +22,7 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { TemplateThreatStatement } from '../../../customTypes';
 
-import FileUpload from '../FileUpload';
+import FileUpload from '../../generic/FileUpload';
 
 export interface FileImportProps {
   visible: boolean;
@@ -90,7 +90,8 @@ const FileImport: FC<FileImportProps> = ({
     <SpaceBetween direction="vertical" size="m">
       <Alert statusIconAriaLabel="Warning" type="warning" key="warning">
         Importing a new threat list will override the current threat list in editing.
-        Use <b>Export</b> funtion to export and save current editing threat list.
+        Use <b>Export</b> funtion to export and save current editing threat list, 
+        Or create a new <b>workspace</b>. 
       </Alert>
       <FileUpload accept='application/json' files={selectedFiles} onChange={setSelectedFiles} />
       {loading && <ProgressBar
