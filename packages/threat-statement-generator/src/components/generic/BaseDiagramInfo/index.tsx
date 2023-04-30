@@ -17,7 +17,7 @@ import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import React, { FC, useCallback, useState, useMemo } from 'react';
+import { FC, useCallback, useState, useMemo } from 'react';
 import { BaseImageInfo } from '../../../customTypes';
 import ImageEdit from '../ImageEdit';
 import MarkdownEditor from '../MarkdownEditor';

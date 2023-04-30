@@ -17,4 +17,7 @@ export const ROUTE_THREAT_LIST = '/workspaces/:workspaceId/threats';
 export const ROUTE_THREAT_EDITOR = '/workspaces/:workspaceId/threats/:threatId';
 export const ROUTE_MITIGATION_LIST = '/workspaces/:workspaceId/mitigations';
 export const ROUTE_ASSUMPTION_LIST = '/workspaces/:workspaceId/assumptions';
+export const ROUTE_APPLICATION_INFO = '/workspaces/:workspaceId/application';
+export const ROUTE_ARCHITECTURE_INFO = '/workspaces/:workspaceId/archiecture';
+export const ROUTE_DATAFLOW_INFO = '/workspaces/:workspaceId/dataflow';
 export const ROUTE_DEFAULT = '/workspaces/default';

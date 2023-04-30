@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import Link from '@cloudscape-design/components/link';
 import TextContent from '@cloudscape-design/components/text-content';
-import React, { FC } from 'react';
+import { FC } from 'react';
 import ReactMarkdown from 'react-markdown';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';

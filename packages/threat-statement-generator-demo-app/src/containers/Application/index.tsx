@@ -13,17 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC } from 'react';
-import { useArchitectureInfoContext } from '../../../contexts/ArchitectureContext/context';
-import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
+import { ApplicationInfo as ApplicationComponent } from 'threat-statement-generator';
+import useSetActiveBreadcrumbGroup from '../../hooks/useSetActiveBreadCrumbs';
 
-const ArchitectureInfo: FC = () => {
-  const { architectureInfo, setArchitectureInfo } = useArchitectureInfoContext();
-  return <BaseDiagramInfo
-    headerTitle='Architecture Diagram'
-    entity={architectureInfo}
-    onConfirm={(diagram) => setArchitectureInfo(diagram)}
-  />;
+const Application = () => {
+  useSetActiveBreadcrumbGroup([{
+    href: '',
+    text: 'assumptions',
+  }]);
+
+  return <ApplicationComponent />;
 };
 
-export default ArchitectureInfo;
+export default Application;

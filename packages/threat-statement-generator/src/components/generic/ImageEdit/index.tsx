@@ -19,7 +19,7 @@ import Input from '@cloudscape-design/components/input';
 import RadioGroup from '@cloudscape-design/components/radio-group';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import imageCompression from 'browser-image-compression';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import getBase64 from '../../../utils/getBase64';
 import FileUpload from '../FileUpload';
 
@@ -35,7 +35,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
   const isValueBase64String = value && value.startsWith('data:');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [inputValue, setInputValue] = useState(isValueBase64String ? '' : value);
-  const [imageSource, setImageSource] = React.useState<string>(!value || isValueBase64String ? 'file' : 'url');
+  const [imageSource, setImageSource] = useState<string>(!value || isValueBase64String ? 'file' : 'url');
   const [image, setImage] = useState<string>(isValueBase64String ? value : '');
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
     }
   }, [onChange, imageSource, image, inputValue]);
 
-  const handleImageUpload = useCallback(async (imageFile) => {
+  const handleImageUpload = useCallback(async (imageFile: File) => {
     const options = {
       maxSizeMB: 0.5,
       maxWidthOrHeight: 1024,
@@ -59,6 +59,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
       return base64String;
     } catch (error) {
       console.log(error);
+      return '';
     }
   }, []);
 

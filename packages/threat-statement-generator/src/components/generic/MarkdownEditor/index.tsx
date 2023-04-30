@@ -16,9 +16,8 @@
 import FormField from '@cloudscape-design/components/form-field';
 import Grid from '@cloudscape-design/components/grid';
 import Textarea from '@cloudscape-design/components/textarea';
-import React, { FC, useState } from 'react';
+import { FC } from 'react';
 import MarkdownViewer from '../MarkdownViewer';
-
 
 export interface MarkdownEditorProps {
   onChange: (value: string) => void;

@@ -13,10 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+export { default as ApplicationInfoContext } from './ApplicationContext';
+export { useApplicationInfoContext } from './ApplicationContext/context';
+export { default as ArchitectureInfoContext } from './ArchitectureContext';
+export { useArchitectureInfoContext } from './ArchitectureContext/context';
 export { default as AssumptionLinksContext } from './AssumptionLinksContext';
 export { useAssumptionLinksContext } from './AssumptionLinksContext/context';
 export { default as AssumptionsContext } from './AssumptionsContext';
 export { useAssumptionsContext } from './AssumptionsContext/context';
+export { default as DataflowInfoContext } from './DataflowContext';
+export { useDataflowInfoContext } from './DataflowContext/context';
 export { default as GlobalSetupContext } from './GlobalSetupContext';
 export { useGlobalSetupContext } from './GlobalSetupContext/context';
 export { default as MitigationLinksContext } from './MitigationLinksContext';
