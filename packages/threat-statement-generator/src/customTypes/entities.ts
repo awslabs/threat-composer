@@ -51,7 +51,7 @@ export interface BaseImageInfo {
   /**
    * The base64 encoded image or src of the image
    */
-  image: string;
+  image?: string;
   /**
    * The description of the archiecture diagram
    */

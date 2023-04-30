@@ -13,22 +13,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC } from 'react';
-import ArchitectureComponent from '../../components/architecture/ArchitectureInfo';
-import WorkspaceContextAggregator from '../../contexts/WorkspaceContextAggregator';
+import { useContext, createContext } from 'react';
+import { ArchitectureInfo } from '../../customTypes';
 
-export interface ArchiectureProps {
-  workspaceId?: string;
+export interface DataflowInfoContextApi {
+  dataflowInfo: ArchitectureInfo;
+  setDataflowInfo: React.Dispatch<React.SetStateAction<ArchitectureInfo>>;
 }
 
-const Archiecture: FC<ArchiectureProps> = ({ workspaceId }) => {
-  return (<WorkspaceContextAggregator
-    workspaceId={workspaceId || null}
-    composerMode='Full'
-    requiredGlobalSetupContext
-  >
-    <ArchitectureComponent/>
-  </WorkspaceContextAggregator>);
+const initialState: DataflowInfoContextApi = {
+  dataflowInfo: {},
+  setDataflowInfo: () => { },
 };
 
-export default Archiecture;
+export const DataflowInfoContext = createContext<DataflowInfoContextApi>(initialState);
+
+export const useDataflowInfoContext = () => useContext(DataflowInfoContext);

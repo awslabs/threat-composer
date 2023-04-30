@@ -14,13 +14,20 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
+import { ApplicationInfo } from '../../customTypes';
 
-export interface ArchiectureContextApi {
+export interface ApplicationInfoContextApi {
+  applicationInfo: ApplicationInfo;
+  setApplicationInfo: React.Dispatch<React.SetStateAction<ApplicationInfo>>;
 }
 
-const initialState: ArchiectureContextApi = {
+const initialState: ApplicationInfoContextApi = {
+  applicationInfo: {
+    description: '',
+  },
+  setApplicationInfo: () => { },
 };
 
-export const ArchiectureContextContext = createContext<ArchiectureContextApi>(initialState);
+export const ApplicationInfoContext = createContext<ApplicationInfoContextApi>(initialState);
 
-export const useArchiectureContext = () => useContext(ArchiectureContextContext);
+export const useApplicationInfoContext = () => useContext(ApplicationInfoContext);

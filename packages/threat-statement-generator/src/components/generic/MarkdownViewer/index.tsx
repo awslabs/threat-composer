@@ -13,17 +13,38 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import Link from '@cloudscape-design/components/link';
+import TextContent from '@cloudscape-design/components/text-content';
 import React, { FC } from 'react';
-import { useArchitectureInfoContext } from '../../../contexts/ArchitectureContext/context';
-import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
+import ReactMarkdown from 'react-markdown';
+import frontmatter from 'remark-frontmatter';
+import gfm from 'remark-gfm';
 
-const ArchitectureInfo: FC = () => {
-  const { architectureInfo, setArchitectureInfo } = useArchitectureInfoContext();
-  return <BaseDiagramInfo
-    headerTitle='Architecture Diagram'
-    entity={architectureInfo}
-    onConfirm={(diagram) => setArchitectureInfo(diagram)}
-  />;
+import './index.css';
+
+export interface MarkdownViewerProps {
+  children: string;
+}
+
+const components = {
+  a: (props: any) => (
+    <Link href={props.href as string} target="_black" external>
+      {props.children}
+    </Link>
+  ),
 };
 
-export default ArchitectureInfo;
+/**
+ * MarkdownViewer renders content with Markdown format.
+ */
+const MarkdownViewer: FC<MarkdownViewerProps> = ({ children, ...props }) => {
+  return (
+    <div className='markdown-viewer'>
+      <TextContent {...props}>
+        <ReactMarkdown remarkPlugins={[gfm, frontmatter]} components={components} children={children} />
+      </TextContent>
+    </div>
+  );
+};
+
+export default MarkdownViewer;

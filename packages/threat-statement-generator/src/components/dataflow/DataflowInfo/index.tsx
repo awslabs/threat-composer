@@ -13,8 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { BaseImageInfo } from './entities';
+import React, { FC } from 'react';
+import { useDataflowInfoContext } from '../../../contexts/DataflowContext/context';
+import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
 
-export interface ArchitectureInfo extends BaseImageInfo {
+const ArchitectureInfo: FC = () => {
+  const { dataflowInfo, setDataflowInfo } = useDataflowInfoContext();
+  return <BaseDiagramInfo
+    headerTitle='Dataflow Diagram'
+    entity={dataflowInfo}
+    onConfirm={(diagram) => setDataflowInfo(diagram)}
+  />;
+};
 
-}
+export default ArchitectureInfo;

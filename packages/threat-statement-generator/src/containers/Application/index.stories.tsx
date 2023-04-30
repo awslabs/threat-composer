@@ -13,8 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { BaseImageInfo } from './entities';
+import type { Meta, StoryObj } from '@storybook/react';
+import ApplicationInfo from '.';
 
-export interface ArchitectureInfo extends BaseImageInfo {
+const meta: Meta<typeof ApplicationInfo> = {
+  title: 'fullMode/ApplicationInfo',
+  component: ApplicationInfo,
+};
 
-}
+export default meta;
+type Story = StoryObj<typeof ApplicationInfo>;
+
+export const Default: Story = {
+};

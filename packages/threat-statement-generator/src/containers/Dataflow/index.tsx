@@ -13,8 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { BaseImageInfo } from './entities';
+import React, { FC } from 'react';
+import DataflowComponent from '../../components/dataflow/DataflowInfo';
+import WorkspaceContextAggregator from '../../contexts/WorkspaceContextAggregator';
 
-export interface ArchitectureInfo extends BaseImageInfo {
-
+export interface DataflowProps {
+  workspaceId?: string;
 }
+
+const Dataflow: FC<DataflowProps> = ({ workspaceId }) => {
+  return (<WorkspaceContextAggregator
+    workspaceId={workspaceId || null}
+    composerMode='Full'
+    requiredGlobalSetupContext
+  >
+    <DataflowComponent/>
+  </WorkspaceContextAggregator>);
+};
+
+export default Dataflow;

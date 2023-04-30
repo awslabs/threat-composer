@@ -13,8 +13,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { BaseImageInfo } from './entities';
+import { useContext, createContext } from 'react';
+import { ArchitectureInfo } from '../../customTypes';
 
-export interface ArchitectureInfo extends BaseImageInfo {
-
+export interface ArchitectureInfoContextApi {
+  architectureInfo: ArchitectureInfo;
+  setArchitectureInfo: React.Dispatch<React.SetStateAction<ArchitectureInfo>>;
 }
+
+const initialState: ArchitectureInfoContextApi = {
+  architectureInfo: {},
+  setArchitectureInfo: () => { },
+};
+
+export const ArchitectureInfoContext = createContext<ArchitectureInfoContextApi>(initialState);
+
+export const useArchitectureInfoContext = () => useContext(ArchitectureInfoContext);

@@ -65,6 +65,9 @@ const uiProject = new TypeScriptProject({
     "uuid",
     "react-simply-carousel",
     "browser-image-compression",
+    'remark-gfm',
+    'remark-frontmatter',
+    'react-markdown',
   ],
   devDeps: [
     "@cloudscape-design/jest-preset",

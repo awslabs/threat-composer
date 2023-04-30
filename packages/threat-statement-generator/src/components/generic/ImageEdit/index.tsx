@@ -1,79 +1,100 @@
-import React, { FC, useCallback, useState } from 'react';
+/** *******************************************************************************************************************
+  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License").
+  You may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ ******************************************************************************************************************** */
 import FormField from '@cloudscape-design/components/form-field';
-import Input from "@cloudscape-design/components/input";
+import Header from '@cloudscape-design/components/header';
+import Input from '@cloudscape-design/components/input';
+import RadioGroup from '@cloudscape-design/components/radio-group';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import Button from '@cloudscape-design/components/button';
 import imageCompression from 'browser-image-compression';
-import FileUpload from '../FileUpload';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import getBase64 from '../../../utils/getBase64';
+import FileUpload from '../FileUpload';
 
 export interface ImageUploadProps {
-  onConfirm: (image: string) => Promise<void>;
-  onCancel?: () => void;
+  value: string;
+  onChange: (value: string) => void;
 }
 
 const ImageUpload: FC<ImageUploadProps> = ({
-  onConfirm,
-  onCancel,
- }) => {
+  value,
+  onChange,
+}) => {
+  const isValueBase64String = value && value.startsWith('data:');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [inputValue, setInputValue] = React.useState("");
+  const [inputValue, setInputValue] = useState(isValueBase64String ? '' : value);
+  const [imageSource, setImageSource] = React.useState<string>(!value || isValueBase64String ? 'file' : 'url');
+  const [image, setImage] = useState<string>(isValueBase64String ? value : '');
 
-  const handleImageUpload = useCallback(async () => {
-    if(selectedFiles.length > 0 ) {
-      const imageFile = selectedFiles[0];
-      console.log('originalFile instanceof Blob', imageFile instanceof Blob); // true
-      console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
-    
-      const options = {
-        maxSizeMB: 0.5,
-        maxWidthOrHeight: 1024,
-        useWebWorker: true,
-      }
-
-      try {
-        const compressedFile = await imageCompression(imageFile, options);
-        console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
-        console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
-    
-        const base64String = await getBase64(compressedFile);
-
-        return base64String;
-      } catch (error) {
-        console.log(error);
-      }
+  useEffect(() => {
+    if (imageSource === 'file') {
+      onChange(image);
+    } else if (imageSource === 'url') {
+      onChange(inputValue);
     }
-  }, [selectedFiles]);
+  }, [onChange, imageSource, image, inputValue]);
 
-  const handleReset = useCallback(() => {
-    setSelectedFiles([]);
-    setInputValue('');
+  const handleImageUpload = useCallback(async (imageFile) => {
+    const options = {
+      maxSizeMB: 0.5,
+      maxWidthOrHeight: 1024,
+      useWebWorker: true,
+    };
+
+    try {
+      const compressedFile = await imageCompression(imageFile, options);
+      const base64String = await getBase64(compressedFile);
+      return base64String;
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
-  const handleConfirm = useCallback(async () => {
-    if(selectedFiles.length > 0) {
-      const image = await handleImageUpload();
-      image && await onConfirm(image);
-    }else {
-      onConfirm(inputValue);
+  const handleChange = useCallback(async (_selectedFiles: File[]) => {
+    setSelectedFiles(_selectedFiles);
+    if (_selectedFiles.length > 0) {
+      const _image = await handleImageUpload(_selectedFiles[0]);
+      setImage(_image || '');
     }
+  }, []);
 
-    handleReset();
-  }, [selectedFiles, inputValue]);
-
-  const handleCancel = useCallback(() => {
-    handleReset();
-    onCancel?.();
-  }, [handleReset, onCancel]);
-  
   return <SpaceBetween direction='vertical' size='s'>
-    <FileUpload 
-      label='You can upload an image'
-      accept='image/png, image/gif, image/jpeg' 
-      files={selectedFiles} 
-      onChange={setSelectedFiles}/>
     <FormField
-      label="Or you can specify the image url"
+      label="Image source"
+    >
+      <RadioGroup
+        onChange={({ detail }) => setImageSource(detail.value)}
+        value={imageSource}
+        items={[
+          { value: 'file', label: 'From file upload' },
+          { value: 'url', label: 'Form url' },
+        ]}
+      />
+    </FormField>
+    {imageSource === 'file' && <SpaceBetween direction='vertical' size='s'>
+      {image && <Header variant='h3'>Preview</Header>}
+      {image && <img width={1024} src={image} alt='Preview Architecture Diagram' />}
+      <FileUpload
+        label='Image Upload'
+        accept='image/png, image/gif, image/jpeg'
+        files={selectedFiles}
+        onChange={handleChange} />
+    </SpaceBetween>
+    }
+    {imageSource === 'url' && <FormField
+      label="Image Url"
     >
       <Input
         value={inputValue}
@@ -81,12 +102,8 @@ const ImageUpload: FC<ImageUploadProps> = ({
           setInputValue(event.detail.value)
         }
       />
-    </FormField>
-    <SpaceBetween direction='horizontal' size='s'>
-        <Button onClick={handleCancel}>Cancel</Button>
-        <Button variant='primary' onClick={handleConfirm}>Confirm</Button>
-    </SpaceBetween>
-  </SpaceBetween>
-}
+    </FormField>}
+  </SpaceBetween>;
+};
 
 export default ImageUpload;

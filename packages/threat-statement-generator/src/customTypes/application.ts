@@ -13,8 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { BaseImageInfo } from './entities';
-
-export interface ArchitectureInfo extends BaseImageInfo {
-
+export interface ApplicationInfo {
+  /**
+   * The description of the archiecture diagram
+   */
+  description?: string;
 }

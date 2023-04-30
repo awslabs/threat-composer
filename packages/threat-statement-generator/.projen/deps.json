@@ -200,7 +200,19 @@
       "type": "runtime"
     },
     {
+      "name": "react-markdown",
+      "type": "runtime"
+    },
+    {
       "name": "react-simply-carousel",
+      "type": "runtime"
+    },
+    {
+      "name": "remark-frontmatter",
+      "type": "runtime"
+    },
+    {
+      "name": "remark-gfm",
       "type": "runtime"
     },
     {

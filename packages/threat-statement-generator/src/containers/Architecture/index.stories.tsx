@@ -14,15 +14,15 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import type { Meta, StoryObj } from '@storybook/react';
-import Archiecture from '.';
+import Architecture from '.';
 
-const meta: Meta<typeof Archiecture> = {
-  title: 'fullMode/Archiecture',
-  component: Archiecture,
+const meta: Meta<typeof Architecture> = {
+  title: 'fullMode/Architecture',
+  component: Architecture,
 };
 
 export default meta;
-type Story = StoryObj<typeof Archiecture>;
+type Story = StoryObj<typeof Architecture>;
 
 export const Default: Story = {
 };

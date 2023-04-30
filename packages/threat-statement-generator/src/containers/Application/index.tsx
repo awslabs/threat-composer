@@ -13,8 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { BaseImageInfo } from './entities';
+import React, { FC } from 'react';
+import ApplicationInfoComponent from '../../components/application/ApplicationInfo';
+import WorkspaceContextAggregator from '../../contexts/WorkspaceContextAggregator';
 
-export interface ArchitectureInfo extends BaseImageInfo {
-
+export interface ApplicationInfoProps {
+  workspaceId?: string;
 }
+
+const Architecture: FC<ApplicationInfoProps> = ({ workspaceId }) => {
+  return (<WorkspaceContextAggregator
+    workspaceId={workspaceId || null}
+    composerMode='Full'
+    requiredGlobalSetupContext
+  >
+    <ApplicationInfoComponent/>
+  </WorkspaceContextAggregator>);
+};
+
+export default Architecture;

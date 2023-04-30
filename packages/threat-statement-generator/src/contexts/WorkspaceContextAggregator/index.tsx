@@ -15,8 +15,11 @@
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren } from 'react';
 import { ComposerMode } from '../../customTypes';
+import ApplicationInfoContextProvider from '../ApplicationContext';
+import ArchitectureInfoContextProvider from '../ArchitectureContext';
 import AssumptionLinksContextProvider from '../AssumptionLinksContext';
 import AssumptionsContextProvider from '../AssumptionsContext';
+import DataflowInfoContextProvider from '../DataflowContext';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import MitigationLinksContextProvider from '../MitigationLinksContext';
 import MitigationsContextProvider from '../MitigationsContext';
@@ -46,7 +49,13 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
         <AssumptionsContextProvider workspaceId={workspaceId}>
           <MitigationLinksContextProvider workspaceId={workspaceId}>
             <AssumptionLinksContextProvider workspaceId={workspaceId}>
-              {children}
+              <ApplicationInfoContextProvider workspaceId={workspaceId}>
+                <ArchitectureInfoContextProvider workspaceId={workspaceId}>
+                  <DataflowInfoContextProvider workspaceId={workspaceId}>
+                    {children}
+                  </DataflowInfoContextProvider>
+                </ArchitectureInfoContextProvider>
+              </ApplicationInfoContextProvider>
             </AssumptionLinksContextProvider>
           </MitigationLinksContextProvider>
         </AssumptionsContextProvider >
