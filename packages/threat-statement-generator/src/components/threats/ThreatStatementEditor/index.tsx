@@ -270,7 +270,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
             </div>
             <Metrics statement={editingStatement} onClick={(token) => setEditor(token as ThreatFieldTypes)} />
           </Grid>
-          <div className='threat-statement-editor-editor-linked-container'>
+          {composerMode === 'Full' && <div className='threat-statement-editor-editor-linked-container'>
             <AssumptionLinkComponent
               variant='container'
               linkedAssumptionIds={linkedAssumptionIds}
@@ -278,8 +278,8 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
               onAddAssumptionLink={(id) => setLinkedAssumptionIds(prev => [...prev, id])}
               onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
             />
-          </div>
-          <div className='threat-statement-editor-editor-linked-container'>
+          </div>}
+          {composerMode === 'Full' && <div className='threat-statement-editor-editor-linked-container'>
             <MitigationLinkComponent
               variant='container'
               linkedMitigationIds={linkedMitigationIds}
@@ -287,7 +287,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
               onAddMitigationLink={(id) => setLinkedMitigationIds(prev => [...prev, id])}
               onRemoveMitigationLink={(id) => setLinkedMitigationIds(prev => prev.filter(p => p !== id))}
             />
-          </div>
+          </div>}
         </SpaceBetween>}
         <FullExamples ref={fullExamplesRef} onClick={handleExampleClicked} />
       </SpaceBetween>

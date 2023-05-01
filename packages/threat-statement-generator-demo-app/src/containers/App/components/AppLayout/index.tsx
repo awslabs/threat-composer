@@ -34,7 +34,7 @@ const AppLayout: FC<PropsWithChildren<ApplayoutProps>> = ({
   return (
     <AppLayoutComponent
       {...rest}
-      title='#threat-composer'
+      title='threat-composer'
       href='/'
       navigationItems={navigationItems || []}
       breadcrumbGroupHide={standalone}
