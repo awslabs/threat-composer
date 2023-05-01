@@ -14,12 +14,13 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Autosuggest from '@cloudscape-design/components/autosuggest';
-import ExpandableSection from '@cloudscape-design/components/expandable-section';
+import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
 import TokenGroup from '@cloudscape-design/components/token-group';
 import React, { FC, useMemo } from 'react';
 import { Assumption } from '../../../customTypes';
 
 export interface AssumptionLinkProps {
+  variant?: ExpandableSectionProps['variant'];
   linkedAssumptionIds: string[];
   assumptionList: Assumption[];
   onAddAssumptionLink: (assumptionId: string) => void;
@@ -31,6 +32,7 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
   assumptionList,
   onAddAssumptionLink,
   onRemoveAssumptionLink,
+  variant,
 }) => {
   const [searchValue, setSearchValue] = React.useState('');
 
@@ -48,7 +50,10 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
     return assumptions.filter(x => (x.content.toLowerCase().indexOf(searchValue.toLowerCase()) >= 0));
   }, [searchValue, assumptionList, linkedAssumptionIds]);
 
-  return (<ExpandableSection headerText={`Linked assumptions (${linkedAssumptions.length})`}>
+  return (<ExpandableSection
+    variant={variant}
+    headingTagOverride={variant === 'container' ? 'h3' : undefined}
+    headerText={`Linked assumptions (${linkedAssumptions.length})`}>
     <Autosuggest
       onChange={({ detail }) => setSearchValue(detail.value)}
       value={searchValue}

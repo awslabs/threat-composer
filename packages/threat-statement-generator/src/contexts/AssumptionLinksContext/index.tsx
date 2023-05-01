@@ -31,6 +31,12 @@ const getLocalStorageKey = (workspaceId: string | null) => {
   return LOCAL_STORAGE_KEY_ASSUMPTION_LINK_LIST;
 };
 
+export const isSameAssumptionLink = (entity1: AssumptionLink, entity2: AssumptionLink) => {
+  return entity1.assumptionId === entity2.assumptionId
+    && entity1.linkedId === entity2.linkedId
+    && entity1.type === entity2.type;
+};
+
 const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContextProviderProps>> = ({
   children,
   workspaceId: currentWorkspaceId,
@@ -43,6 +49,13 @@ const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContex
     setAssumptionLinkList((prevList) => prevList.filter(x => !(
       x.assumptionId === assumptionId && x.linkedId === linkedEntityId
     )));
+  }, [setAssumptionLinkList]);
+
+  const handleRemoveAssumptionLinks = useCallback((assumptionLinks: AssumptionLink[]) => {
+    setAssumptionLinkList((prevList) => {
+      return prevList.filter(pl =>
+        assumptionLinks.findIndex(al => isSameAssumptionLink(al, pl)) < 0);
+    });
   }, [setAssumptionLinkList]);
 
   const handleAddAssumptionLink = useCallback((assumptionLink: AssumptionLink) => {
@@ -63,7 +76,7 @@ const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContex
   const handleAddAssumptionLinks = useCallback((assumptionLinks: AssumptionLink[]) => {
     setAssumptionLinkList((prevList) => {
       const filteredLinks = assumptionLinks.filter(al =>
-        prevList.findIndex(pl => pl.assumptionId === al.assumptionId && pl.linkedId === al.assumptionId && pl.type === al.type) < 0);
+        prevList.findIndex(pl => isSameAssumptionLink(al, pl)) < 0);
       return [...prevList, ...filteredLinks];
     });
   }, [setAssumptionLinkList]);
@@ -86,6 +99,7 @@ const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContex
     getLinkedAssumptionLinks: handleGetLinkedAssumptionLinks,
     getAssumptionEntityLinks: handleGetAssumptionEntityLinks,
     removeAssumptionLink: handlRemoveAssumptionLink,
+    removeAssumptionLinks: handleRemoveAssumptionLinks,
     addAssumptionLink: handleAddAssumptionLink,
     addAssumptionLinks: handleAddAssumptionLinks,
     removeAllAssumptionLinks: handleRemoveAllAssumptionLinks,

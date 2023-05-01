@@ -26,11 +26,13 @@ import MarkdownViewer from '../MarkdownViewer';
 export interface BaseDiagramInfoProps {
   entity: BaseImageInfo;
   headerTitle: string;
+  diagramTitle: string;
   onConfirm: (info: BaseImageInfo) => void;
 }
 
 const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
   headerTitle,
+  diagramTitle,
   entity,
   onConfirm,
 }) => {
@@ -43,6 +45,7 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
       image,
       description: content,
     });
+    setEditMode(false);
   }, [image, content, onConfirm]);
 
   const handleEdit = useCallback(() => {
@@ -60,17 +63,17 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
 
   return (<Container header={<Header actions={actions}>{headerTitle}</Header>}>
     {editMode ? (<SpaceBetween direction='vertical' size='s'>
-      <MarkdownEditor label='Diagram Information' value={content} onChange={setContent} />
+      <MarkdownEditor label='Introduction' value={content} onChange={setContent} />
       <Header variant='h3'>Architecture Diagram</Header>
       <ImageEdit value={image} onChange={setImage} />
     </SpaceBetween>) :
       (<SpaceBetween direction='vertical' size='s'>
-        <Header variant='h3' key='diagramInfo'>Diagram Info</Header>
+        <Header variant='h3' key='diagramInfo'>Introduction</Header>
         <MarkdownViewer>
           {entity.description || ''}
         </MarkdownViewer>
-        <Header variant='h3' key='diagram'>Architecture Diagram</Header>
-        {entity.image && <img width={1024} src={entity.image} alt='Architecture Diagram' />}
+        <Header variant='h3' key='diagram'>{diagramTitle}</Header>
+        {entity.image && <img width={1024} src={entity.image} alt={diagramTitle} />}
       </SpaceBetween>)}
   </Container>
   );

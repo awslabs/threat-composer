@@ -28,7 +28,7 @@ export interface ImageUploadProps {
   onChange: (value: string) => void;
 }
 
-const ImageUpload: FC<ImageUploadProps> = ({
+const ImageEdit: FC<ImageUploadProps> = ({
   value,
   onChange,
 }) => {
@@ -74,6 +74,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
   return <SpaceBetween direction='vertical' size='s'>
     <FormField
       label="Image source"
+      key="imageSource"
     >
       <RadioGroup
         onChange={({ detail }) => setImageSource(detail.value)}
@@ -84,9 +85,11 @@ const ImageUpload: FC<ImageUploadProps> = ({
         ]}
       />
     </FormField>
-    {imageSource === 'file' && <SpaceBetween direction='vertical' size='s'>
+    {imageSource === 'file' && <SpaceBetween
+      direction='vertical'
+      size='s'>
       {image && <Header variant='h3'>Preview</Header>}
-      {image && <img width={1024} src={image} alt='Preview Architecture Diagram' />}
+      {image && <img width={1024} src={image} alt='Preview Diagram' />}
       <FileUpload
         label='Image Upload'
         accept='image/png, image/gif, image/jpeg'
@@ -96,7 +99,10 @@ const ImageUpload: FC<ImageUploadProps> = ({
     }
     {imageSource === 'url' && <FormField
       label="Image Url"
+      key="imageUrl"
     >
+      {inputValue && <Header variant='h3'>Preview</Header>}
+      {inputValue && <img width={1024} src={inputValue} alt='Preview Diagram' />}
       <Input
         value={inputValue}
         onChange={event =>
@@ -107,4 +113,4 @@ const ImageUpload: FC<ImageUploadProps> = ({
   </SpaceBetween>;
 };
 
-export default ImageUpload;
+export default ImageEdit;

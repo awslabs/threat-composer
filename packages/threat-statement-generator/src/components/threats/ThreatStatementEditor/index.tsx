@@ -20,7 +20,11 @@ import React, { FC, useCallback, useMemo, useState, useRef, useEffect, ReactNode
 import { v4 as uuidV4 } from 'uuid';
 import { EditorProps } from './types';
 import { DEFAULT_WORKSPACE_LABEL } from '../../../configs/constants';
+import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
+import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
+import { useMitigationLinksContext } from '../../../contexts/MitigationLinksContext/context';
+import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
 import { TemplateThreatStatement } from '../../../customTypes';
@@ -31,6 +35,8 @@ import threatStatementFormat from '../../../data/threatStatementFormat';
 import getRecommendedEditor from '../../../utils/getRecommandedEditor';
 import renderThreatStatement from '../../../utils/renderThreatStatement';
 import scrollToTop from '../../../utils/scrollToTop';
+import AssumptionLinkComponent from '../../assumptions/AssumptionLinkView';
+import MitigationLinkComponent from '../../mitigations/MitigationLinkView';
 import CustomTemplate from '../CustomTemplate';
 import EditorImpactedAssets from '../EditorImpactedAssets';
 import EditorImpactedGoal from '../EditorImpactedGoal';
@@ -44,6 +50,8 @@ import FullExamples from '../FullExamples';
 import Header from '../Header';
 import Metrics from '../Metrics';
 
+import './index.css';
+
 const defaultThreatStatementFormat = threatStatementFormat[63];
 
 const editorMapping: { [key in ThreatFieldTypes]: React.ComponentType<EditorProps & { ref?: React.ForwardedRef<any> }> } = {
@@ -55,17 +63,38 @@ const editorMapping: { [key in ThreatFieldTypes]: React.ComponentType<EditorProp
   impacted_assets: EditorImpactedAssets,
 };
 
-const ThreatStatementEditor: FC = () => {
+const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement }> = ({
+  editingStatement,
+}) => {
+  const { setEditingStatement, saveStatement, addStatement } = useThreatsContext();
   const inputRef = useRef<{ focus(): void }>();
   const fullExamplesRef = useRef<{ collapse(): void }>();
-  const { editingStatement, setEditingStatement, saveStatement, addStatement } = useThreatsContext();
   const { currentWorkspace, workspaceList } = useWorkspacesContext();
   const [editor, setEditor] = useState<ThreatFieldTypes | undefined>(getRecommendedEditor(editingStatement));
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [displayStatement, setDisplayStatement] = useState<ReactNode[] | undefined>([]);
   const [customTemplateEditorVisible, setCustomTemplateEditorVisible] = useState(false);
 
+  const { addAssumptionLinks, getLinkedAssumptionLinks, removeAssumptionLinks } = useAssumptionLinksContext();
+  const { addMitigationLinks, getLinkedMitigationLinks, removeMitigationLinks } = useMitigationLinksContext();
+
+  const prevLinkedAssumptionIds = useMemo(() => {
+    return getLinkedAssumptionLinks(editingStatement.id).map(la => la.assumptionId);
+  }, [getLinkedAssumptionLinks, editingStatement]);
+
+  const prevLinkedMitigationIds = useMemo(() => {
+    return getLinkedMitigationLinks(editingStatement.id).map(lm => lm.mitigationId);
+  }, [getLinkedMitigationLinks, editingStatement]);
+
+  const [linkedAssumptionIds, setLinkedAssumptionIds] = useState<string[]>(editingStatement
+    && editingStatement?.numericId === -1 ? [] : prevLinkedAssumptionIds);
+  const [linkedMitigationIds, setLinkedMitigationIds] = useState<string[]>(editingStatement
+    && editingStatement?.numericId === -1 ? [] : prevLinkedMitigationIds);
+
   const { composerMode } = useGlobalSetupContext();
+
+  const { assumptionList } = useAssumptionsContext();
+  const { mitigationList } = useMitigationsContext();
 
   const Component = useMemo(() => {
     return editor && editorMapping[editor];
@@ -105,9 +134,51 @@ const ThreatStatementEditor: FC = () => {
   }, [addStatement]);
 
   const handleComplete = useCallback(() => {
-    editingStatement && saveStatement(editingStatement);
+    if (editingStatement) {
+      saveStatement(editingStatement);
+      const id = editingStatement.id;
+      if (editingStatement.numericId === -1) {
+        linkedAssumptionIds && linkedAssumptionIds.length > 0 && addAssumptionLinks(linkedAssumptionIds.map(la => ({
+          assumptionId: la,
+          linkedId: id,
+          type: 'Threat',
+        })));
+        linkedMitigationIds && linkedMitigationIds.length > 0 && addMitigationLinks(linkedMitigationIds.map(lm => ({
+          mitigationId: lm,
+          linkedId: id,
+        })));
+      } else {
+        const toAddlinkedAssumptionIds = linkedAssumptionIds.filter(x =>
+          !prevLinkedAssumptionIds.includes(x));
+        const toRemovelinkedAssumptionIds = prevLinkedAssumptionIds.filter(x =>
+          !linkedAssumptionIds.includes(x));
+        toAddlinkedAssumptionIds && toAddlinkedAssumptionIds.length > 0 && addAssumptionLinks(toAddlinkedAssumptionIds.map(la => ({
+          assumptionId: la,
+          linkedId: id,
+          type: 'Threat',
+        })));
+        toRemovelinkedAssumptionIds && toRemovelinkedAssumptionIds.length > 0 && removeAssumptionLinks(toRemovelinkedAssumptionIds.map(la => ({
+          assumptionId: la,
+          linkedId: id,
+          type: 'Threat',
+        })));
+        const toAddlinkedMitigationIds = linkedMitigationIds.filter(x =>
+          !prevLinkedMitigationIds.includes(x));
+        const toRemovelinkedMitigationIds = prevLinkedMitigationIds.filter(x =>
+          !linkedMitigationIds.includes(x));
+        toAddlinkedMitigationIds && toAddlinkedMitigationIds.length > 0 && addMitigationLinks(toAddlinkedMitigationIds.map(lm => ({
+          mitigationId: lm,
+          linkedId: id,
+        })));
+        toRemovelinkedMitigationIds && toRemovelinkedMitigationIds.length > 0 && removeMitigationLinks(toRemovelinkedMitigationIds.map(lm => ({
+          mitigationId: lm,
+          linkedId: id,
+        })));
+      }
+    }
+
     setEditingStatement(null);
-  }, [saveStatement, editingStatement]);
+  }, [saveStatement, editingStatement, linkedAssumptionIds, linkedMitigationIds, prevLinkedAssumptionIds, prevLinkedMitigationIds]);
 
   const handleExampleClicked = useCallback((statement: TemplateThreatStatement) => {
     setEditingStatement({
@@ -199,6 +270,24 @@ const ThreatStatementEditor: FC = () => {
             </div>
             <Metrics statement={editingStatement} onClick={(token) => setEditor(token as ThreatFieldTypes)} />
           </Grid>
+          <div className='threat-statement-editor-editor-linked-container'>
+            <AssumptionLinkComponent
+              variant='container'
+              linkedAssumptionIds={linkedAssumptionIds}
+              assumptionList={assumptionList}
+              onAddAssumptionLink={(id) => setLinkedAssumptionIds(prev => [...prev, id])}
+              onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
+            />
+          </div>
+          <div className='threat-statement-editor-editor-linked-container'>
+            <MitigationLinkComponent
+              variant='container'
+              linkedMitigationIds={linkedMitigationIds}
+              mitigationList={mitigationList}
+              onAddMitigationLink={(id) => setLinkedMitigationIds(prev => [...prev, id])}
+              onRemoveMitigationLink={(id) => setLinkedMitigationIds(prev => prev.filter(p => p !== id))}
+            />
+          </div>
         </SpaceBetween>}
         <FullExamples ref={fullExamplesRef} onClick={handleExampleClicked} />
       </SpaceBetween>
@@ -209,8 +298,13 @@ const ThreatStatementEditor: FC = () => {
         onConfirm={handleCustomTemplateConfirm}
         defaultTemplate={defaultThreatStatementFormat.template}
       />}
-    </>
-  );
+    </>);
+};
+
+const ThreatStatementEditor: FC = () => {
+  const { editingStatement } = useThreatsContext();
+
+  return editingStatement ? <ThreatStatementEditorInner editingStatement={editingStatement} /> : null;
 };
 
 export default ThreatStatementEditor;

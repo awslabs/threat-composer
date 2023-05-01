@@ -14,24 +14,35 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { RouteProps } from 'react-router-dom';
-import { ROUTE_APPLICATION_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST } from '../config/routes';
+import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_DATAFLOW_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST } from '../config/routes';
+import Application from '../containers/Application';
+import Architecture from '../containers/Architecture';
 import AssumptionList from '../containers/AssumptionList';
+import Dataflow from '../containers/Dataflow';
 import MitigationList from '../containers/MitigationList';
 import ThreatStatementEditor from '../containers/ThreatStatementEditor';
 import ThreatStatementList from '../containers/ThreatStatementList';
 
 const routes: RouteProps[] = [
   {
+    path: ROUTE_APPLICATION_INFO,
+    element: <Application />,
+  },
+  {
+    path: ROUTE_ARCHITECTURE_INFO,
+    element: <Architecture />,
+  },
+  {
     path: ROUTE_ASSUMPTION_LIST,
     element: <AssumptionList />,
   },
   {
-    path: ROUTE_MITIGATION_LIST,
-    element: <MitigationList />,
+    path: ROUTE_DATAFLOW_INFO,
+    element: <Dataflow />,
   },
   {
-    path: ROUTE_APPLICATION_INFO,
-    element: < />,
+    path: ROUTE_MITIGATION_LIST,
+    element: <MitigationList />,
   },
   {
     path: ROUTE_THREAT_EDITOR,

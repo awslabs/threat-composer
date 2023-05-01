@@ -13,16 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ApplicationInfo as ApplicationComponent } from 'threat-statement-generator';
+import { ApplicationInfoComponent } from 'threat-statement-generator';
 import useSetActiveBreadcrumbGroup from '../../hooks/useSetActiveBreadCrumbs';
 
 const Application = () => {
   useSetActiveBreadcrumbGroup([{
     href: '',
-    text: 'assumptions',
+    text: 'application info',
   }]);
 
-  return <ApplicationComponent />;
+  return <ApplicationInfoComponent />;
 };
 
 export default Application;

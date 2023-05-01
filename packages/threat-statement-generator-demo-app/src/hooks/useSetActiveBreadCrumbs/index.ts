@@ -41,7 +41,7 @@ const useSetActiveBreadcrumbGroup = (additionPaths?: BreadcrumbGroupProps.Item[]
         href: currentPath + a.href,
       })) || [],
     ]);
-  }, [setActiveBreadcrumbs]);
+  }, [setActiveBreadcrumbs, currentWorkspace]);
 };
 
 export default useSetActiveBreadcrumbGroup;

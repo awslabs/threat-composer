@@ -20,7 +20,8 @@ import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
 const ArchitectureInfo: FC = () => {
   const { architectureInfo, setArchitectureInfo } = useArchitectureInfoContext();
   return <BaseDiagramInfo
-    headerTitle='Architecture Diagram'
+    headerTitle='Architecture'
+    diagramTitle='Architecture Diagram'
     entity={architectureInfo}
     onConfirm={(diagram) => setArchitectureInfo(diagram)}
   />;

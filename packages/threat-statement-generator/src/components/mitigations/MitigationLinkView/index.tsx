@@ -14,12 +14,13 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Autosuggest from '@cloudscape-design/components/autosuggest';
-import ExpandableSection from '@cloudscape-design/components/expandable-section';
+import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
 import TokenGroup from '@cloudscape-design/components/token-group';
 import React, { FC, useMemo } from 'react';
 import { Mitigation } from '../../../customTypes';
 
 export interface MitigationLinkProps {
+  variant?: ExpandableSectionProps['variant'];
   linkedMitigationIds: string[];
   mitigationList: Mitigation[];
   onAddMitigationLink: (mitigationId: string) => void;
@@ -27,6 +28,7 @@ export interface MitigationLinkProps {
 }
 
 const MitigationLinkComponent: FC<MitigationLinkProps> = ({
+  variant,
   linkedMitigationIds,
   mitigationList,
   onAddMitigationLink,
@@ -48,7 +50,10 @@ const MitigationLinkComponent: FC<MitigationLinkProps> = ({
     return mitigations.filter(x => x.content.toLowerCase().indexOf(searchValue.toLowerCase()) >= 0);
   }, [searchValue, mitigationList, linkedMitigationIds]);
 
-  return (<ExpandableSection headerText={`Linked mitigations (${linkedMitigations.length})`}>
+  return (<ExpandableSection
+    variant={variant}
+    headingTagOverride={variant === 'container' ? 'h3' : undefined}
+    headerText={`Linked mitigations (${linkedMitigations.length})`}>
     <Autosuggest
       onChange={({ detail }) => setSearchValue(detail.value)}
       value={searchValue}

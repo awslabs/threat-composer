@@ -31,6 +31,11 @@ const getLocalStorageKey = (workspaceId: string | null) => {
   return LOCAL_STORAGE_KEY_MITIGATION_LINK_LIST;
 };
 
+export const isSameMitigationLink = (entity1: MitigationLink, entity2: MitigationLink) => {
+  return entity1.mitigationId === entity2.mitigationId
+    && entity1.linkedId === entity2.linkedId;
+};
+
 const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContextProviderProps>> = ({
   children,
   workspaceId: currentWorkspaceId,
@@ -43,6 +48,13 @@ const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContex
     setMitigationLinkList((prevList) => prevList.filter(x => !(
       x.mitigationId === mitigationId && x.linkedId === linkedEntityId
     )));
+  }, [setMitigationLinkList]);
+
+  const handleRemoveMitigationLinks = useCallback((mitigationLinks: MitigationLink[]) => {
+    setMitigationLinkList((prevList) => {
+      return prevList.filter(pl =>
+        mitigationLinks.findIndex(ml => isSameMitigationLink(ml, pl)) < 0);
+    });
   }, [setMitigationLinkList]);
 
   const handleAddMitigationLink = useCallback((mitigationLink: MitigationLink) => {
@@ -85,6 +97,7 @@ const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContex
     getLinkedMitigationLinks: handleGetLinkedMitigationLinks,
     getMitigtaionThreatLinks: handleGetMitigationThreatLinks,
     removeMitigationLink: handlRemoveMitigationLink,
+    removeMitigationLinks: handleRemoveMitigationLinks,
     addMitigationLink: handleAddMitigationLink,
     addMitigationLinks: handleAddMitigationLinks,
     removeAllMitigationLinks: handleRemoveAllMitigationLinks,

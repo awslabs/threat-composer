@@ -20,7 +20,8 @@ import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
 const ArchitectureInfo: FC = () => {
   const { dataflowInfo, setDataflowInfo } = useDataflowInfoContext();
   return <BaseDiagramInfo
-    headerTitle='Dataflow Diagram'
+    headerTitle='Dataflow'
+    diagramTitle='Dataflow Diagram'
     entity={dataflowInfo}
     onConfirm={(diagram) => setDataflowInfo(diagram)}
   />;

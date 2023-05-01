@@ -49,7 +49,7 @@ const ApplicationInfo: FC = () => {
   }, [editMode, handleSaveApplicationInfo, handleEdit, setEditMode]);
 
   return (<Container
-    header={<Header actions={actions}>Application Information</Header>}
+    header={<Header actions={actions}>Application Introduction</Header>}
   >{editMode ? (<MarkdownEditor value={content} onChange={setContent} label='Description' />) :
       (<MarkdownViewer>
         {applicationInfo.description || ''}
