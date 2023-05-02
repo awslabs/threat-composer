@@ -19,6 +19,7 @@ monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.react", "^1
 monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.nth-check", "^2.1.1");
 monorepo.addGitIgnore('.temp/');
 monorepo.addGitIgnore('oss-attribution/');
+monorepo.addGitIgnore('storybook.out/');
 
 monorepo.addTask('export:examples', {
   steps: [
@@ -39,7 +40,15 @@ monorepo.addTask('license:checker', {
   exec: "yarn license-checker --summary --production --excludePrivatePackages --onlyAllow 'MIT;Apache-2.0;ISC;'"
 });
 
-monorepo.compileTask.reset('npx nx run-many --target=build --all');
+monorepo.addTask('dev', {
+  exec: 'npx nx run threat-statement-generator-demo-app:dev'
+});
+
+monorepo.addTask('storybook', {
+  exec: 'npx nx run threat-statement-generator:storybook'
+});
+
+monorepo.compileTask.reset('npx nx run-many --target=build --all --skip-nx-cache');
 monorepo.postCompileTask.reset('yarn run generate:attribution && yarn run license:checker');
 
 const uiProject = new TypeScriptProject({
@@ -55,6 +64,10 @@ const uiProject = new TypeScriptProject({
     "indefinite",
     "uuid",
     "react-simply-carousel",
+    "browser-image-compression",
+    'remark-gfm',
+    'remark-frontmatter',
+    'react-markdown',
   ],
   devDeps: [
     "@cloudscape-design/jest-preset",
@@ -65,6 +78,19 @@ const uiProject = new TypeScriptProject({
     "merge",
     "react-dom@^18",
     "react@^18",
+    "@babel/preset-env@^7.21.4",
+    "@babel/preset-react@^7.18.6",
+    "@babel/preset-typescript@^7.21.4",
+    "@storybook/addon-essentials@^7.0.6",
+    "@storybook/addon-interactions@^7.0.6",
+    "@storybook/addon-links@^7.0.6",
+    "@storybook/blocks@^7.0.6",
+    "@storybook/react@^7.0.6",
+    "@storybook/react-webpack5@^7.0.6",
+    "@storybook/testing-library@^0.0.14-next.2",
+    "eslint-plugin-storybook@^0.6.11",
+    "prop-types@^15.8.1",
+    "storybook@^7.0.6",
   ],
   peerDeps: [
     "@types/react-dom@^18",
@@ -83,11 +109,27 @@ const uiProject = new TypeScriptProject({
       module: "commonjs",
       emitDecoratorMetadata: true,
       moduleResolution: TypeScriptModuleResolution.NODE,
-    }
+    },
+  },
+  tsconfigDev: {
+    compilerOptions: {
+    },
+    include: [
+      "src",
+    ]
   }
 });
 
+uiProject.addTask('storybook', {
+  exec: 'storybook dev -p 6006'
+});
+
+uiProject.addTask('storybook:build', {
+  exec: 'storybook build -o storybook.out'
+});
+
 uiProject.postCompileTask.reset('rsync -arv --prune-empty-dirs --include=*/ --include=*.css --include=*.png --exclude=* ./src/* ./lib');
+uiProject.postCompileTask.exec('yarn run storybook:build');
 
 uiProject.eslint?.addPlugins('header');
 uiProject.eslint?.addRules({
@@ -102,10 +144,12 @@ const demoAppProject = new ReactTypeScriptProject({
   deps: [
     "@cloudscape-design/components",
     "@cloudscape-design/global-styles",
+    "react-router-dom",
     uiProject.package.packageName,
   ],
   devDeps: [
     "@cloudscape-design/jest-preset",
+    "@types/react-router-dom",
     "merge",
   ],
   jestOptions: {
@@ -113,12 +157,14 @@ const demoAppProject = new ReactTypeScriptProject({
   },
 });
 
-demoAppProject.testTask.reset('react-scripts test --watchAll=false --passWithNoTests');
-
 demoAppProject.eslint?.addPlugins('header');
 demoAppProject.eslint?.addRules({
   "header/header": [2, "../../header.js"],
 });
+
+demoAppProject.testTask.reset('react-scripts test --watchAll=false --passWithNoTests');
+demoAppProject.postCompileTask.reset(`[ -d ./build/storybook ] || mkdir -p ./build/storybook`);
+demoAppProject.postCompileTask.exec(`cp -r ../threat-statement-generator/storybook.out/ ./build/storybook/`);
 
 const infraProject = new pipeline.PDKPipelineTsProject({
   cdkVersion: "2.62.2",

@@ -120,7 +120,15 @@
     },
     "post-compile": {
       "name": "post-compile",
-      "description": "Runs after successful compilation"
+      "description": "Runs after successful compilation",
+      "steps": [
+        {
+          "exec": "[ -d ./build/storybook ] || mkdir -p ./build/storybook"
+        },
+        {
+          "exec": "cp -r ../threat-statement-generator/storybook.out/ ./build/storybook/"
+        }
+      ]
     },
     "post-upgrade": {
       "name": "post-upgrade",

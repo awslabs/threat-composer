@@ -61,7 +61,7 @@
       "description": "Only compile",
       "steps": [
         {
-          "exec": "npx nx run-many --target=build --all"
+          "exec": "npx nx run-many --target=build --all --skip-nx-cache"
         }
       ]
     },
@@ -71,6 +71,14 @@
       "steps": [
         {
           "exec": "ts-node --project tsconfig.dev.json .projenrc.ts"
+        }
+      ]
+    },
+    "dev": {
+      "name": "dev",
+      "steps": [
+        {
+          "exec": "npx nx run threat-statement-generator-demo-app:dev"
         }
       ]
     },
@@ -160,6 +168,14 @@
     "pre-compile": {
       "name": "pre-compile",
       "description": "Prepare the project for compilation"
+    },
+    "storybook": {
+      "name": "storybook",
+      "steps": [
+        {
+          "exec": "npx nx run threat-statement-generator:storybook"
+        }
+      ]
     },
     "test": {
       "name": "test",

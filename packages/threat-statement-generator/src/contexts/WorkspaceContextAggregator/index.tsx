@@ -1,0 +1,88 @@
+/** *******************************************************************************************************************
+  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License").
+  You may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ ******************************************************************************************************************** */
+import { FC, PropsWithChildren } from 'react';
+import { ComposerMode } from '../../customTypes';
+import ApplicationInfoContextProvider from '../ApplicationContext';
+import ArchitectureInfoContextProvider from '../ArchitectureContext';
+import AssumptionLinksContextProvider from '../AssumptionLinksContext';
+import AssumptionsContextProvider from '../AssumptionsContext';
+import DataflowInfoContextProvider from '../DataflowContext';
+import GlobalSetupContextProvider from '../GlobalSetupContext';
+import MitigationLinksContextProvider from '../MitigationLinksContext';
+import MitigationsContextProvider from '../MitigationsContext';
+import ThreatsContextProvider, { ThreatsContextProviderProps } from '../ThreatsContext';
+
+export interface WorkspaceContextAggregatorProps {
+  workspaceId: string | null;
+  composerMode?: ComposerMode;
+  requiredGlobalSetupContext?: boolean;
+  onThreatEditorView?: ThreatsContextProviderProps['onThreatEditorView'];
+  onThreatListView?: ThreatsContextProviderProps['onThreatListView'];
+}
+
+const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggregatorProps>> = ({
+  children,
+  workspaceId,
+  onThreatEditorView,
+  onThreatListView,
+}) => {
+  return (
+    <ThreatsContextProvider
+      workspaceId={workspaceId || null}
+      onThreatEditorView={onThreatEditorView}
+      onThreatListView={onThreatListView}
+    >
+      <MitigationsContextProvider workspaceId={workspaceId}>
+        <AssumptionsContextProvider workspaceId={workspaceId}>
+          <MitigationLinksContextProvider workspaceId={workspaceId}>
+            <AssumptionLinksContextProvider workspaceId={workspaceId}>
+              <ApplicationInfoContextProvider workspaceId={workspaceId}>
+                <ArchitectureInfoContextProvider workspaceId={workspaceId}>
+                  <DataflowInfoContextProvider workspaceId={workspaceId}>
+                    {children}
+                  </DataflowInfoContextProvider>
+                </ArchitectureInfoContextProvider>
+              </ApplicationInfoContextProvider>
+            </AssumptionLinksContextProvider>
+          </MitigationLinksContextProvider>
+        </AssumptionsContextProvider >
+
+      </MitigationsContextProvider>
+    </ThreatsContextProvider>
+  );
+};
+
+const WorkspaceContextAggregator: FC<PropsWithChildren<WorkspaceContextAggregatorProps>> = ({
+  children,
+  workspaceId,
+  composerMode,
+  requiredGlobalSetupContext = true,
+  ...rest
+}) => {
+  return requiredGlobalSetupContext ? (
+    <GlobalSetupContextProvider composerMode={composerMode}>
+      <WorkspaceContextInnerAggregator workspaceId={workspaceId} {...rest}>
+        {children}
+      </WorkspaceContextInnerAggregator>
+    </GlobalSetupContextProvider>
+  ) : (
+    <WorkspaceContextInnerAggregator workspaceId={workspaceId} {...rest}>
+      {children}
+    </WorkspaceContextInnerAggregator>
+  );
+};
+
+export default WorkspaceContextAggregator;
