@@ -20,9 +20,11 @@ import App from './containers/App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
+const ROUTE_BASE_PATH=process.env.REACT_APP_ROUTE_BASE_PATH;
+
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={ROUTE_BASE_PATH}>
       <App />
     </BrowserRouter>
   </React.StrictMode>,

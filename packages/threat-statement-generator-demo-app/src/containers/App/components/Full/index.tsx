@@ -105,8 +105,6 @@ const Full: FC = () => {
     navigate(generateUrl(ROUTE_THREAT_EDITOR, searchParms, workspaceId, newThreatId));
   }, [navigate, workspaceId, searchParms]);
 
-  console.log(workspaceId);
-
   return (
     <ContextAggregator
       composerMode='Full'
