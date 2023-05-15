@@ -94,7 +94,7 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
     <SpaceBetween direction='vertical' size='s'>
       <ColumnLayout columns={showLinkedEntities ? 2 : 1}>
         <TextContent>
-          <CopyToClipbord>
+          <CopyToClipbord content={statement.statement}>
             {displayStatement}
           </CopyToClipbord>
         </TextContent>
