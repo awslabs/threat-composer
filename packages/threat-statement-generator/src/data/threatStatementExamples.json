@@ -874,5 +874,21 @@
         ]
       }
     ]
+  },
+  {
+    "id": "EXAMPLE_000042",
+    "numericId": -1,
+    "threatSource": "external threat actor",
+    "prerequisites": "with a network path to the database",
+    "threatAction": "brute-force the database credentials",
+    "threatImpact": "the ability to modify data",
+    "impactedGoal": [
+      "integrity"
+    ],
+    "impactedAssets": [
+      "registration status"
+    ],
+    "metadata": [
+    ]
   }
 ]

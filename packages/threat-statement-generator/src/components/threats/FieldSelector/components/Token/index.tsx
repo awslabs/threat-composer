@@ -14,10 +14,13 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren } from 'react';
+import Tooltip from '../../../../generic/Tooltip';
+
 export interface TokenProps {
   onClick: () => void;
   highlighted?: boolean;
   filled?: boolean;
+  tooltip?: string;
 }
 
 const Token: FC<PropsWithChildren<TokenProps>> = ({
@@ -25,14 +28,16 @@ const Token: FC<PropsWithChildren<TokenProps>> = ({
   onClick,
   highlighted,
   filled,
+  tooltip,
 }) => {
-  return (<>
-    <button style={{
-      backgroundColor: highlighted ? '#b5d6f4' : (filled ? '#f2f8fd' : undefined),
-    }} onClick={onClick}>
+  return (<Tooltip tooltip={tooltip}>
+    <button
+      style={{
+        backgroundColor: highlighted ? '#b5d6f4' : (filled ? '#f2f8fd' : undefined),
+      }} onClick={onClick}>
       {children}
     </button>
-  </>
+  </Tooltip>
   );
 };
 

@@ -19,67 +19,67 @@ import { MitigationLink } from './mitigations';
 
 export interface TemplateThreatStatement extends EntityBase {
   /**
-     * Source of the threat.
-     */
+      * Source of the threat.
+      */
   threatSource?: string;
   /**
-     * Prerequisites of the threat.
-     */
+      * Prerequisites of the threat.
+      */
   prerequisites?: string;
   /**
-     * Threat action.
-     */
+      * Threat action.
+      */
   threatAction?: string;
   /**
-     * Impact of the threat.
-     */
+      * Impact of the threat.
+      */
   threatImpact?: string;
   /**
-     * Impacted goal of the threat.
-     */
+      * Impacted goal of the threat.
+      */
   impactedGoal?: string[];
   /**
-     * Impacted assets of the threat.
-     */
+      * Impacted assets of the threat.
+      */
   impactedAssets?: string[];
   /**
-     * The full rendered statement as string;
-     */
+      * The full rendered statement as string;
+      */
   statement?: string;
   /**
-     * A list of
-     */
-  displayedStatement?: ThreatStatementDisplayToken[];
+      * A list of
+      */
+  displayedStatement?: (ThreatStatementDisplayToken | string)[];
   /**
-     * The custom templates applied to the threat statement.
-     */
+      * The custom templates applied to the threat statement.
+      */
   customTemplate?: string;
   /**
-     * A list of mitigations linked to the threat.
-     */
+      * A list of mitigations linked to the threat.
+      */
   mitigationList?: MitigationLink[];
   /**
-     * A list of assumptions linked to the threat.
-     */
+      * A list of assumptions linked to the threat.
+      */
   assumptionList?: AssumptionLink[];
 }
 
 export interface ThreatStatementDisplayToken {
   /**
-       * the html tag type for the content. If not type is specified. <span> will be used.
-       */
+    * the html tag type for the content. If not type is specified. <span> will be used.
+    */
   type?: string;
   /**
-       * the props of the html node.
-       */
+    * the props of the html node.
+    */
   props?: any;
   /**
-       * The tooltip content of the node.
-       */
+    * The tooltip content of the node.
+    */
   tooltip?: string;
   /**
-       * The text content of the node.
-       */
+    * The text content of the node.
+    */
   content: string;
 };
 
@@ -105,13 +105,13 @@ export interface ThreatStatementFormat {
 export interface PerFieldExample {
   example: string;
   /**
-     * The statement Id.
-     * For now, use the array index.
-     * In future, if the examples are downloaded online, should change to use threatStatementId.
-     */
+      * The statement Id.
+      * For now, use the array index.
+      * In future, if the examples are downloaded online, should change to use threatStatementId.
+      */
   fromId: number;
   /**
-     * The stride from the statement.
-     */
+      * The stride from the statement.
+      */
   stride?: string[];
 }

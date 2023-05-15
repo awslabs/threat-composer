@@ -1,3 +1,7 @@
 .threat-statement-editor-editor-linked-container h3>span>span { 
   font-size: 20px !important;
 }
+
+.threat-statement-editor-final-statement-section:hover{ 
+  background-color: rgb(242, 248, 253);
+}

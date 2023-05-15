@@ -13,25 +13,27 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Button from '@cloudscape-design/components/button';
-import { FC, ReactNode } from 'react';
-import Tooltip from '../../../../generic/Tooltip';
-import './index.css';
+import Badge from '@cloudscape-design/components/badge';
+import { FC } from 'react';
 
-export interface ExpandableTokenProps {
-  onClick?: () => void;
-  expanded: boolean;
-  tooltip: ReactNode;
+export interface PriorityBadgeProps {
+  priority?: string;
 }
 
-const ExpandableToken: FC<ExpandableTokenProps> = ({
-  expanded,
-  onClick,
-  tooltip,
-}) => {
-  return (<Tooltip tooltip={tooltip}>
-    <Button iconName={expanded ? 'treeview-collapse' : 'treeview-expand'} variant="icon" onClick={onClick}/>
-  </Tooltip>);
+const PRIORITY_COLOR_MAPPING: any = {
+  High: 'red',
+  Medium: 'blue',
+  Low: 'green',
 };
 
-export default ExpandableToken;
+const PriorityBadge: FC<PriorityBadgeProps> = ({
+  priority,
+}) => {
+  return priority ? (<div style={{
+    display: 'inline-block',
+  }}>
+    <Badge color={PRIORITY_COLOR_MAPPING[priority] || 'grey'}>{priority}</Badge>
+  </div>) : null;
+};
+
+export default PriorityBadge;

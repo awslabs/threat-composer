@@ -4,7 +4,6 @@
 
 .tooltip {
   position: relative;
-  display: inline-block;
 }
 
 .tooltip .tooltiptext {
@@ -17,11 +16,12 @@
   position: absolute;
   z-index: 100;
   line-height: 20px;
+  font-size: 14px;
 }
 
 .tooltip-top {
   width: 110px;
-  bottom: 105%;
+  bottom: 150%;
   left: 50%;
   margin-left: -56px;
 }
