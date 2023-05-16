@@ -14,8 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import FormField from '@cloudscape-design/components/form-field';
-import Select from '@cloudscape-design/components/select';
-import { FC } from 'react';
+import Select, { SelectProps } from '@cloudscape-design/components/select';
+import React, { FC } from 'react';
 
 export const OPTIONS = [
   { label: 'High', value: 'High' },
@@ -23,31 +23,49 @@ export const OPTIONS = [
   { label: 'Low', value: 'Low' },
 ];
 
+export const NO_VALUE = '-';
+
 export interface LevelSelectorProps {
-  label: string;
+  label?: string;
+  placeholder?: string;
   selectedLevel?: string;
-  setSelectedLevel: (level: string | undefined) => void;
+  setSelectedLevel?: (level: string | undefined) => void;
+  allowNoValue?: boolean;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
-const LevelSelector: FC<LevelSelectorProps> = ({
+const LevelSelector: FC<LevelSelectorProps> = React.forwardRef<SelectProps.Ref, LevelSelectorProps>(({
   label,
   selectedLevel,
   setSelectedLevel,
-}) => {
+  allowNoValue,
+  placeholder,
+  onFocus,
+  onBlur,
+}, ref) => {
   return (
     <FormField
       label={label}
     >
       <Select
+        ref={ref}
         selectedOption={OPTIONS.find(x => x.value === selectedLevel) || null}
-        onChange={({ detail }) =>
-          setSelectedLevel(detail.selectedOption.value || undefined)
-        }
-        options={OPTIONS}
+        onChange={({ detail }) => {
+          const selected = detail.selectedOption.value;
+          setSelectedLevel?.(!selected || selected === NO_VALUE ? undefined : selected);
+        }}
+        options={allowNoValue ? [{
+          label: NO_VALUE, value: NO_VALUE,
+        }, ...OPTIONS] : OPTIONS}
         selectedAriaLabel="Selected"
+        onFocus={onFocus}
+        onBlur={onBlur}
+        expandToViewport
+        placeholder={placeholder}
       />
     </FormField>
   );
-};
+});
 
 export default LevelSelector;

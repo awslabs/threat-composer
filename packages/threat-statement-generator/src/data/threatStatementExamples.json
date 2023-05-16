@@ -886,9 +886,15 @@
       "integrity"
     ],
     "impactedAssets": [
-      "registration status"
+      "assets within the trust boundary"
     ],
     "metadata": [
+      {
+        "key": "STRIDE",
+        "value": [
+          "T"
+        ]
+      }
     ]
   }
 ]

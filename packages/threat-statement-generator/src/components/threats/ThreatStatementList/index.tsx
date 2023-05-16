@@ -34,6 +34,18 @@ import ThreatStatementCard from '../ThreatStatementCard';
 
 import './index.css';
 
+const NO_VALUE = '-';
+
+const LevelOptionsWithNoValue = [...LevelOptions, {
+  label: 'Priority Not Set', value: NO_VALUE,
+}];
+
+const STRIDE_OPTION_NO_VALUE = {
+  label: 'STRIDE Not Set', value: NO_VALUE,
+};
+
+const STRIDEOptionsWithNoValue = [...STRIDEOptions, STRIDE_OPTION_NO_VALUE];
+
 const LELEV_MAPPING: any = {
   High: 3,
   Medium: 2,
@@ -147,14 +159,25 @@ const ThreatStatementList: FC = () => {
 
     if (selectedPriorities && selectedPriorities.length > 0) {
       output = output.filter(st => {
-        return st.metadata?.some(t => t.key === 'Priority' && selectedPriorities.includes(t.value as string));
+        const priority = st.metadata?.find(m => m.key === 'Priority');
+        const includedNoValue = selectedPriorities.includes(NO_VALUE);
+        if (includedNoValue && (!priority || !priority.value || priority.value.length === 0)) {
+          return true;
+        }
+
+        return priority?.value && selectedPriorities.includes(priority.value as string);
       });
     }
 
     if (selectedSTRIDEs && selectedSTRIDEs.length > 0) {
       output = output.filter(st => {
-        return st.metadata?.some(t => t.key === 'STRIDE' && selectedSTRIDEs
-          .some(s => (t.value as string[]).includes(s)));
+        const stride = st.metadata?.find(m => m.key === 'STRIDE');
+        const includedNoValue = selectedSTRIDEs.includes(NO_VALUE);
+        if (includedNoValue && (!stride || !stride.value || stride.value.length === 0)) {
+          return true;
+        }
+
+        return stride?.value && (stride.value as string[]).some(t => selectedSTRIDEs.includes(t));
       });
     }
 
@@ -293,18 +316,19 @@ const ThreatStatementList: FC = () => {
                 setSelectedPriorities(detail.selectedOptions?.map(o => o.value || '') || [])
               }
               deselectAriaLabel={e => `Remove ${e.label}`}
-              options={LevelOptions}
+              options={LevelOptionsWithNoValue}
               placeholder="Filtered by priority"
               selectedAriaLabel="Selected"
             />
             <Multiselect
               tokenLimit={0}
-              selectedOptions={STRIDEOptions.filter(x => selectedSTRIDEs.includes(x.value))}
+              selectedOptions={[...STRIDEOptions.filter(x => selectedSTRIDEs.includes(x.value)),
+                ...selectedSTRIDEs.includes(NO_VALUE) ? [STRIDE_OPTION_NO_VALUE] : []]}
               onChange={({ detail }) =>
                 setSelectedSTRIDEs(detail.selectedOptions?.map(o => o.value || '') || [])
               }
               deselectAriaLabel={e => `Remove ${e.label}`}
-              options={STRIDEOptions}
+              options={STRIDEOptionsWithNoValue}
               placeholder="Filtered by STRIDE"
               selectedAriaLabel="Selected"
             />

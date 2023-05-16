@@ -25,6 +25,7 @@ import CopyToClipbord from '../../generic/CopyToClipboard';
 import GenericCard from '../../generic/GenericCard';
 import MitigationLink from '../../mitigations/MitigationLink';
 import MetadataEditor from '../MetadataEditor';
+import PriorityBadge from '../PriorityBadge';
 
 export interface ThreatStatementCardProps {
   showLinkedEntities?: boolean;
@@ -73,7 +74,7 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
     if (statement.displayedStatement) {
       return statement.displayedStatement.map((s, index) => typeof s === 'string' ?
         s : s.type === 'b' ?
-          <b key={index}>{s.content}</b>:
+          <b key={index}>{s.content}</b> :
           s.content);
     }
 
@@ -83,7 +84,7 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
   return (<GenericCard
     header={`Threat ${statement.numericId}`}
     entityId={statement.id}
-    priority={statement.metadata?.find(m => m.key === 'Priority')?.value as string}
+    info={<PriorityBadge editingStatement={statement} onEditMetadata={onEditMetadata} />}
     tags={statement.tags}
     moreActions={moreActions}
     onRemove={onRemove}

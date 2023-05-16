@@ -17,8 +17,8 @@ import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/co
 import Grid from '@cloudscape-design/components/grid';
 import { FC, useMemo } from 'react';
 import { TemplateThreatStatement } from '../../../customTypes';
-import LevelSelector from '../../generic/LevelSelector';
 import STRIDESELECTOR from '../../generic/STRIDESelector';
+import PriorityEdit from '../PriorityEdit';
 
 export interface MetadataEditorProps {
   variant: ExpandableSectionProps['variant'];
@@ -31,10 +31,6 @@ const MetadataEditor: FC<MetadataEditorProps> = ({
   editingStatement,
   onEditMetadata,
 }) => {
-  const priority = useMemo(() => {
-    return (editingStatement.metadata?.find(m => m.key === 'Priority')?.value as string) || undefined;
-  }, [editingStatement.metadata]);
-
   const stride = useMemo(() => {
     return (editingStatement.metadata?.find(m => m.key === 'STRIDE')?.value as string[]) || undefined;
   }, [editingStatement.metadata]);
@@ -47,10 +43,9 @@ const MetadataEditor: FC<MetadataEditorProps> = ({
           { colspan: { default: 12, xs: 9 } },
         ]}
       >
-        <LevelSelector
-          label='Priority'
-          selectedLevel={priority}
-          setSelectedLevel={(selectedLevel) => onEditMetadata(editingStatement, 'Priority', selectedLevel)}
+        <PriorityEdit
+          editingStatement={editingStatement}
+          onEditMetadata={onEditMetadata}
         />
         <STRIDESELECTOR
           label='STRIDE'
