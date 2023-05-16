@@ -13,12 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export { default as ThreatStatementEditor } from './threats/ThreatStatementEditor';
-export { default as ThreatStatementList } from './threats/ThreatStatementList';
-export { default as ApplicationInfoComponent } from './application/ApplicationInfo';
-export { default as ArchitectureInfoComponent } from './architecture/ArchitectureInfo';
-export { default as DataflowInfoComponent } from './dataflow/DataflowInfo';
-export { default as AssumptionList } from './assumptions/AssumptionList';
-export { default as MitigationList } from './mitigations/MitigationList';
-export { default as WorkspaceSelector } from './workspaces/WorkspaceSelector';
-export { default as ThreatModel } from './report/ThreatModel';
+import React, { FC } from 'react';
+import ThreatModel from '../../components/report/ThreatModel';
+import WorkspaceContextAggregator from '../../contexts/WorkspaceContextAggregator';
+
+export interface MitigationListProps {
+  workspaceId?: string;
+}
+
+const MitigationList: FC<MitigationListProps> = ({ workspaceId }) => {
+  return (<WorkspaceContextAggregator
+    requiredGlobalSetupContext
+    workspaceId={workspaceId || null}
+    composerMode='Full'
+  >
+    <ThreatModel />
+  </WorkspaceContextAggregator>);
+};
+
+export default MitigationList;

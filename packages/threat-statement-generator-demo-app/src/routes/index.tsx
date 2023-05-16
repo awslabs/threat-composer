@@ -20,9 +20,9 @@ import Architecture from '../containers/Architecture';
 import AssumptionList from '../containers/AssumptionList';
 import Dataflow from '../containers/Dataflow';
 import MitigationList from '../containers/MitigationList';
+import ThreatModelReport from '../containers/ThreatModelReport';
 import ThreatStatementEditor from '../containers/ThreatStatementEditor';
 import ThreatStatementList from '../containers/ThreatStatementList';
-import ThreatModelReport from '../containers/ThreatModelReport';
 
 const routes: RouteProps[] = [
   {

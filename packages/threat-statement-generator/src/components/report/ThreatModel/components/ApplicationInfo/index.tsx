@@ -13,12 +13,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export { default as ThreatStatementEditor } from './threats/ThreatStatementEditor';
-export { default as ThreatStatementList } from './threats/ThreatStatementList';
-export { default as ApplicationInfoComponent } from './application/ApplicationInfo';
-export { default as ArchitectureInfoComponent } from './architecture/ArchitectureInfo';
-export { default as DataflowInfoComponent } from './dataflow/DataflowInfo';
-export { default as AssumptionList } from './assumptions/AssumptionList';
-export { default as MitigationList } from './mitigations/MitigationList';
-export { default as WorkspaceSelector } from './workspaces/WorkspaceSelector';
-export { default as ThreatModel } from './report/ThreatModel';
+import Header from '@cloudscape-design/components/header';
+import { FC } from 'react';
+import { useApplicationInfoContext } from '../../../../../contexts/ApplicationContext/context';
+import MarkdownViewer from '../../../../generic/MarkdownViewer';
+
+const ApplicationInfo: FC = () => {
+  const { applicationInfo } = useApplicationInfoContext();
+  return (<div>
+    <Header variant='h2'>Application Info</Header>
+    <MarkdownViewer>
+      {applicationInfo.description || ''}
+    </MarkdownViewer>
+  </div>);
+};
+
+export default ApplicationInfo;
