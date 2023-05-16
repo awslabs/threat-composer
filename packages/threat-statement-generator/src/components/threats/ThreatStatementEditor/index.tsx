@@ -36,6 +36,7 @@ import getRecommendedEditor from '../../../utils/getRecommandedEditor';
 import renderThreatStatement from '../../../utils/renderThreatStatement';
 import scrollToTop from '../../../utils/scrollToTop';
 import AssumptionLinkComponent from '../../assumptions/AssumptionLinkView';
+import Tooltip from '../../generic/Tooltip';
 import MitigationLinkComponent from '../../mitigations/MitigationLinkView';
 import CustomTemplate from '../CustomTemplate';
 import EditorImpactedAssets from '../EditorImpactedAssets';
@@ -51,6 +52,7 @@ import Header from '../Header';
 import Metrics from '../Metrics';
 
 import './index.css';
+
 
 const defaultThreatStatementFormat = threatStatementFormat[63];
 
@@ -115,9 +117,15 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
         setEditingStatement(prev => prev && ({
           ...prev,
           statement,
+          displayedStatement,
         }));
       }
-      const displayedHtml = displayedStatement?.map(s => typeof s === 'string' ? s : s.type === 'b' ? <b>{s.content}</b> : s.content);
+      const displayedHtml = displayedStatement?.map((s, index) => typeof s === 'string' ?
+        s : s.type === 'b' ?
+          <Tooltip tooltip={s.tooltip} key={index} ><b className='threat-statement-editor-final-statement-section'>{s.content}</b></Tooltip> :
+          s.type === 'span' ?
+            <Tooltip tooltip={s.tooltip} key={index}><span key={index} className='threat-statement-editor-final-statement-section'>{s.content}</span></Tooltip> :
+            s.content);
 
       setDisplayStatement(displayedHtml);
       setSuggestions(currentSuggestions);
@@ -183,6 +191,9 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
   const handleExampleClicked = useCallback((statement: TemplateThreatStatement) => {
     setEditingStatement({
       ...statement,
+      tags: [],
+      metadata: [],
+      displayOrder: -1,
       numericId: -1,
       id: uuidV4(),
     });
@@ -194,12 +205,17 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
   const handleGiveExampleClicked = useCallback(() => {
     const len = threatStatementExamples.length;
     const randomNumber = Math.floor(Math.random() * len);
-    const statement = threatStatementExamples[randomNumber] as TemplateThreatStatement;
-    setEditingStatement({
-      ...statement,
+    const example = threatStatementExamples[randomNumber] as TemplateThreatStatement;
+    const statement = {
+      ...example,
+      tags: [],
+      metadata: [],
+      displayOrder: -1,
       numericId: -1,
       id: uuidV4(),
-    });
+    };
+
+    setEditingStatement(statement);
     const recommendedEditor = getRecommendedEditor(statement);
     recommendedEditor && setEditor(recommendedEditor);
     scrollToTop();

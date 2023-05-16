@@ -24,10 +24,10 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({
   tooltip,
   children,
 }) => {
-  return <div className="tooltip">
+  return <span className="tooltip">
     {children}
     <span className="tooltiptext tooltip-top">{tooltip}</span>
-  </div>;
+  </span>;
 };
 
 export default Tooltip;

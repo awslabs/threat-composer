@@ -20,18 +20,17 @@ import Header from '@cloudscape-design/components/header';
 import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
-import a from 'indefinite';
 import { ReactNode, FC, useMemo, useState, useEffect, useCallback } from 'react';
 import ExpandableToken from './components/ExpandableToken';
 import Token from './components/Token';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { ComposerMode, TemplateThreatStatement } from '../../../customTypes';
-import { threatFieldTypeMapping, ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
+import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
 import threatStatementFormat from '../../../data/threatStatementFormat';
-import getFieldContentByToken from '../../../utils/getFieldContentByToken';
+
 import getRecommendedEditor from '../../../utils/getRecommandedEditor';
-import Tooltip from '../../generic/Tooltip';
+import parseThreatStatement from '../../../utils/parseThreatStatement';
 import Suggestions from '../Suggestions';
 
 import './index.css';
@@ -73,43 +72,24 @@ const FieldSelector: FC<FieldSelectorProps> = ({
   const { showInfoModal } = useGlobalSetupContext();
 
   const selector = useMemo(() => {
-    const output: ReactNode[] = [];
-    let template = statement.customTemplate || defaultThreatStatementFormat.template;
     let renderShortenImpactedGoal = false;
-    while (true) {
-      const startIndex = template.indexOf('[');
-      if (startIndex < 0) {
-        break;
-      }
-      let before = template.slice(0, startIndex);
 
-      const endIndex = template.indexOf(']');
-      if (endIndex < 0) {
-        break;
-      }
-      const token = template.slice(startIndex + 1, endIndex) as ThreatFieldTypes;
-      const content = getFieldContentByToken(token, statement);
-
-      // For the default template, we can hardcode here.
-      if (before === 'A ') {
-        before = before.replace('A', a(content, { capitalize: true, articleOnly: true }));
-      }
-
-      const value = statement[threatFieldTypeMapping[token]];
-
-      const filled = value && (typeof value === 'string' || (Array.isArray(value) && value.length > 0));
-
+    let template = statement.customTemplate || defaultThreatStatementFormat.template;
+    const outputProcessor = (token: string, content: string, before: string, filled: boolean) => {
+      const output: ReactNode[] = [];
       if (token === 'impacted_goal' && !expandedImpactedGoal && !filled && !statement.customTemplate) {
         // If impacted goal is empty, display shorten message.
         output.push(',');
-        output.push(<Tooltip tooltip={<>Expand <br />{threatFieldData[token]?.tooltip}</>} key={`${token}_expand_button`}>
+        output.push(
           <ExpandableToken
+            key='field_selector_impacted_goal_expand'
+            tooltip={`Expand ${threatFieldData[token]?.tooltip}`}
             expanded={false}
             onClick={() => {
               setExpandedImpactedGoal(true);
               setEditor('impacted_goal');
             }}
-          /></Tooltip>);
+          />);
         renderShortenImpactedGoal = true;
       } else {
         if (renderShortenImpactedGoal) {
@@ -118,30 +98,39 @@ const FieldSelector: FC<FieldSelectorProps> = ({
           output.push(before);
         }
 
-        output.push(<Tooltip tooltip={threatFieldData[token]?.tooltip} key={token}><Token
+        output.push(<Token
+          key={token}
           highlighted={currentEditor === token}
           filled={!!filled}
+          tooltip={threatFieldData[token]?.tooltip}
           onClick={() => setEditor(token as ThreatFieldTypes)}>
           {content}
-        </Token></Tooltip>);
+        </Token>);
 
         token === 'impacted_goal' &&
           !filled &&
-          output.push(<Tooltip tooltip={<>Collapse <br />{threatFieldData[token]?.tooltip}</>} key={`${token}_collapse_button`}>
+          output.push(
             <ExpandableToken
               expanded
+              key='field_selector_impacted_goal_collpase'
+              tooltip={`Collapse ${threatFieldData[token]?.tooltip}`}
               onClick={() => {
                 setExpandedImpactedGoal(false);
                 const nextEditor = getRecommendedEditor(statement);
                 nextEditor && setEditor(nextEditor);
               }}
-            /></Tooltip>);
+            />);
       }
 
-      template = template.slice(endIndex + 1);
-    }
+      return output;
+    };
 
-    return output;
+    return parseThreatStatement({
+      statement,
+      template,
+      outputProcessor,
+    });
+
   }, [statement, setEditor, currentEditor, suggestions, expandedImpactedGoal, setExpandedImpactedGoal]);
 
   const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(({ detail }) => {

@@ -25,6 +25,7 @@ import './index.css';
 
 export interface GenericCardProps {
   header: string;
+  info?: ReactNode;
   entityId: string;
   tags?: string[];
   onCopy?: (id: string) => void;
@@ -37,6 +38,7 @@ export interface GenericCardProps {
 
 const GenericCard: FC<PropsWithChildren<GenericCardProps>> = ({
   header,
+  info,
   entityId,
   tags,
   children,
@@ -59,13 +61,21 @@ const GenericCard: FC<PropsWithChildren<GenericCardProps>> = ({
   return (<div ref={ref}>
     <Container
       header={<Header actions={actions}
-        info={<Tags
-          tags={tags}
-          entityId={entityId}
-          onAddTagToEntity={onAddTagToEntity}
-          onRemoveTagFromEntity={onRemoveTagFromEntity}
-        />}
-      >{header}</Header>}
+      ><div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+          }}
+        >
+          {header}
+          {info}
+          <Tags
+            tags={tags}
+            entityId={entityId}
+            onAddTagToEntity={onAddTagToEntity}
+            onRemoveTagFromEntity={onRemoveTagFromEntity}
+          />
+        </div></Header>}
     >
       {children}
     </Container>

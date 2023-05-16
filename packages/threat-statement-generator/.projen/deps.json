@@ -192,7 +192,17 @@
       "type": "runtime"
     },
     {
+      "name": "@types/d3",
+      "version": "^7",
+      "type": "runtime"
+    },
+    {
       "name": "browser-image-compression",
+      "type": "runtime"
+    },
+    {
+      "name": "d3",
+      "version": "^7",
       "type": "runtime"
     },
     {

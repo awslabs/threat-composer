@@ -136,7 +136,7 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
     if (idToCopy) {
       const copiedStatement = statementList.find(st => st.id === idToCopy);
       if (copiedStatement) {
-        const { id: _id, ...rest } = copiedStatement;
+        const { id: _id, displayOrder, tags, metadata, ...rest } = copiedStatement;
         const newStatement = {
           ...rest,
           id: uuidV4(),

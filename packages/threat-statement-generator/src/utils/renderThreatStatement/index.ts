@@ -13,14 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement } from '../../customTypes';
-import { threatFieldTypeMapping, ThreatFieldTypes } from '../../customTypes/threatFieldTypes';
+import { TemplateThreatStatement, threatFieldTypeMapping, ThreatFieldTypes, ThreatStatementDisplayToken } from '../../customTypes';
 import threatFieldData from '../../data/threatFieldData';
 import threatStatementFormat from '../../data/threatStatementFormat';
 import calculateFieldCombination from '../calculateFieldCombination';
-import correctIndefiniteArticle from '../correctIndefiniteArticle';
 import getFieldContentByToken from '../getFieldContentByToken';
-import renderArrayField from '../renderArrayField';
+import parseThreatStatement from '../parseThreatStatement';
 
 const threatStatementFormatKeys = Object.keys(threatStatementFormat);
 
@@ -28,7 +26,7 @@ export const PLACEHOLDER = '<placeholder>';
 
 const renderThreatStatement = (statement: TemplateThreatStatement): {
   statement: string;
-  displayedStatement?: (string | { type: string; content: string })[];
+  displayedStatement?: (ThreatStatementDisplayToken | string)[];
   suggestions: string[];
 } => {
   const { fieldCombination, filledField } = calculateFieldCombination(statement);
@@ -107,37 +105,46 @@ const renderThreatStatement = (statement: TemplateThreatStatement): {
     format = threatStatementFormat[updatedFieldCombination];
   }
 
-  let output = statement.customTemplate || format?.template || '';
   suggestions.push(...format?.suggestions || []);
 
-  const hasThreatAction = output.indexOf('[threat_action]') >= 0;
+  const outputProcessor = (token: string, content: string, before: string, _filled: boolean) => {
+    const output: {
+      stringOutput: string;
+      displayOutput: string | ThreatStatementDisplayToken;
+    }[] = [];
 
-  output = output.replace('[threat_source]', updatedStatement.threatSource || '');
-  output = output.replace('[prerequisites]', ((!updatedStatement.prerequisites) || updatedStatement.prerequisites === PLACEHOLDER ? '' : updatedStatement.prerequisites));
-  output = output.replace('[threat_impact]', updatedStatement.threatImpact || '');
-  output = output.replace('[impacted_goal]', renderArrayField(updatedStatement.impactedGoal, true));
-  output = output.replace('[impacted_assets]', renderArrayField(updatedStatement.impactedAssets, false));
+    output.push({
+      stringOutput: before,
+      displayOutput: before,
+    });
 
-  const displayedOutputTokens = hasThreatAction && output.split('[threat_action]');
-
-  const displayedOutput = displayedOutputTokens && [
-    correctIndefiniteArticle(displayedOutputTokens[0]),
-    {
+    const displayedOutput = token === 'threat_action' ? {
       type: 'b',
-      content: correctIndefiniteArticle(updatedStatement.threatAction || ''),
-    },
-    ...displayedOutputTokens.length > 1 ? [correctIndefiniteArticle(displayedOutputTokens[1])] : [],
-  ];
+      content: content,
+      tooltip: threatFieldData[token]?.tooltip,
+    } : {
+      type: 'span',
+      content: content,
+      tooltip: threatFieldData[token]?.tooltip,
+    };
 
-  output = output.replace('[threat_action]', updatedStatement.threatAction || '');
-  output = correctIndefiniteArticle(output);
+    output.push({
+      stringOutput: content,
+      displayOutput: displayedOutput,
+    });
 
-  // Replace multiple white spaces with a single one
-  output = output.replace(/\s\s+/g, ' ');
+    return output;
+  };
+
+  const parseOutput = parseThreatStatement({
+    statement: statement,
+    template: statement.customTemplate || format?.template || '',
+    outputProcessor: outputProcessor,
+  });
 
   return {
-    statement: output,
-    displayedStatement: displayedOutput || undefined,
+    statement: parseOutput.map(x => x.stringOutput).join(' ').replace(/\s\s+/g, ' '),
+    displayedStatement: parseOutput.map(x => x.displayOutput),
     suggestions: suggestions.sort(),
   };
 };

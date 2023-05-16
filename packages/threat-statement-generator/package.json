@@ -65,7 +65,9 @@
   "dependencies": {
     "@cloudscape-design/components": "^3.0.182",
     "@cloudscape-design/global-styles": "*",
+    "@types/d3": "^7",
     "browser-image-compression": "^2.0.2",
+    "d3": "^7",
     "indefinite": "^2.4.2",
     "react-markdown": "^8.0.7",
     "react-simply-carousel": "^8.5.5",

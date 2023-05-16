@@ -24,6 +24,8 @@ import AssumptionLink from '../../assumptions/AssumptionLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import GenericCard from '../../generic/GenericCard';
 import MitigationLink from '../../mitigations/MitigationLink';
+import MetadataEditor from '../MetadataEditor';
+import PriorityBadge from '../PriorityBadge';
 
 export interface ThreatStatementCardProps {
   showLinkedEntities?: boolean;
@@ -31,6 +33,7 @@ export interface ThreatStatementCardProps {
   onCopy?: (id: string) => void;
   onRemove?: (id: string) => void;
   onEditInWizard?: (id: string) => void;
+  onEditMetadata: (statement: TemplateThreatStatement, key: string, value: string | string[] | undefined) => void;
   onAddTagToStatement?: (statement: TemplateThreatStatement, tag: string) => void;
   onRemoveTagFromStatement?: (statement: TemplateThreatStatement, tag: string) => void;
 }
@@ -43,6 +46,7 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
   onEditInWizard,
   onAddTagToStatement,
   onRemoveTagFromStatement,
+  onEditMetadata,
 }) => {
   const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(({ detail }) => {
     switch (detail.id) {
@@ -66,9 +70,21 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
       />);
   }, []);
 
+  const displayStatement = useMemo(() => {
+    if (statement.displayedStatement) {
+      return statement.displayedStatement.map((s, index) => typeof s === 'string' ?
+        s : s.type === 'b' ?
+          <b key={index}>{s.content}</b> :
+          s.content);
+    }
+
+    return statement.statement || '';
+  }, [statement]);
+
   return (<GenericCard
     header={`Threat ${statement.numericId}`}
     entityId={statement.id}
+    info={<PriorityBadge editingStatement={statement} onEditMetadata={onEditMetadata} />}
     tags={statement.tags}
     moreActions={moreActions}
     onRemove={onRemove}
@@ -76,22 +92,29 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
     onAddTagToEntity={(_entityId, tag) => onAddTagToStatement?.(statement, tag)}
     onRemoveTagFromEntity={(_entityId, tag) => onRemoveTagFromStatement?.(statement, tag)}
   >
-    <ColumnLayout columns={showLinkedEntities ? 2 : 1}>
-      <TextContent>
-        <CopyToClipbord>
-          {statement.statement || ''}
-        </CopyToClipbord>
-      </TextContent>
-      {showLinkedEntities && <SpaceBetween direction='vertical' size='s'>
-        <AssumptionLink
-          linkedEntityId={statement.id}
-          type='Threat'
-        />
-        <MitigationLink
-          linkedEntityId={statement.id}
-        />
-      </SpaceBetween>}
-    </ColumnLayout>
+    <SpaceBetween direction='vertical' size='s'>
+      <ColumnLayout columns={showLinkedEntities ? 2 : 1}>
+        <TextContent>
+          <CopyToClipbord content={statement.statement}>
+            {displayStatement}
+          </CopyToClipbord>
+        </TextContent>
+        {showLinkedEntities && <SpaceBetween direction='vertical' size='s'>
+          <AssumptionLink
+            linkedEntityId={statement.id}
+            type='Threat'
+          />
+          <MitigationLink
+            linkedEntityId={statement.id}
+          />
+        </SpaceBetween>}
+      </ColumnLayout>
+      <MetadataEditor
+        variant='default'
+        editingStatement={statement}
+        onEditMetadata={onEditMetadata}
+      />
+    </SpaceBetween>
   </GenericCard>);
 };
 

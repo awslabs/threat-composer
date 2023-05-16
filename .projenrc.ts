@@ -14,8 +14,8 @@ const monorepo = new nx_monorepo.NxMonorepoProject({
   ],
 });
 
-monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.@types/react", "^18.0.27");
-monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.react", "^18.2.0");
+monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.@types/react", "18.0.27");
+monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.react", "18.2.0");
 monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.nth-check", "^2.1.1");
 monorepo.addGitIgnore('.temp/');
 monorepo.addGitIgnore('oss-attribution/');
@@ -68,6 +68,8 @@ const uiProject = new TypeScriptProject({
     'remark-gfm',
     'remark-frontmatter',
     'react-markdown',
+    "d3@^7",
+    "@types/d3@^7"
   ],
   devDeps: [
     "@cloudscape-design/jest-preset",

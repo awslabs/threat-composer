@@ -13,25 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Button from '@cloudscape-design/components/button';
-import { FC, ReactNode } from 'react';
-import Tooltip from '../../../../generic/Tooltip';
-import './index.css';
+import { useRef } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
-export interface ExpandableTokenProps {
-  onClick?: () => void;
-  expanded: boolean;
-  tooltip: ReactNode;
-}
-
-const ExpandableToken: FC<ExpandableTokenProps> = ({
-  expanded,
-  onClick,
-  tooltip,
-}) => {
-  return (<Tooltip tooltip={tooltip}>
-    <Button iconName={expanded ? 'treeview-collapse' : 'treeview-expand'} variant="icon" onClick={onClick}/>
-  </Tooltip>);
+const useUniqueId = (defaultId?: string): string => {
+  const { current: uniqueId } = useRef(defaultId ?? uuidv4());
+  return uniqueId;
 };
 
-export default ExpandableToken;
+export default useUniqueId;
