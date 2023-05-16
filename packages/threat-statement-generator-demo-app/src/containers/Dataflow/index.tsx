@@ -14,14 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { DataflowInfoComponent } from 'threat-statement-generator';
-import useSetActiveBreadcrumbGroup from '../../hooks/useSetActiveBreadCrumbs';
 
 const Dataflow = () => {
-  useSetActiveBreadcrumbGroup([{
-    href: '',
-    text: 'dataflow',
-  }]);
-
   return <DataflowInfoComponent />;
 };
 

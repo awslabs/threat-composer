@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
 import { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
-import { FC, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren, ReactNode } from 'react';
 import AppLayoutComponent from '../../../../components/AppLayout';
 
 export interface ApplayoutProps {
@@ -23,12 +23,14 @@ export interface ApplayoutProps {
   navigationItems?: SideNavigationProps.Item[];
   headerProps?: Partial<TopNavigationProps>;
   availableRoutes?: string[];
+  breadcrumbGroup?: ReactNode;
 }
 
 const AppLayout: FC<PropsWithChildren<ApplayoutProps>> = ({
   standalone = true,
   children,
   navigationItems,
+  breadcrumbGroup,
   ...rest
 }) => {
   return (
@@ -36,6 +38,7 @@ const AppLayout: FC<PropsWithChildren<ApplayoutProps>> = ({
       {...rest}
       title='threat-composer'
       href='/'
+      breadcrumbGroup={breadcrumbGroup}
       navigationItems={navigationItems || []}
       breadcrumbGroupHide={standalone}
       navigationHide={standalone} >

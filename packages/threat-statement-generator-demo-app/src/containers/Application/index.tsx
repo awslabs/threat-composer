@@ -14,14 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { ApplicationInfoComponent } from 'threat-statement-generator';
-import useSetActiveBreadcrumbGroup from '../../hooks/useSetActiveBreadCrumbs';
 
 const Application = () => {
-  useSetActiveBreadcrumbGroup([{
-    href: '',
-    text: 'application info',
-  }]);
-
   return <ApplicationInfoComponent />;
 };
 

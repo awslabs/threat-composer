@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { RouteProps } from 'react-router-dom';
-import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_DATAFLOW_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST } from '../config/routes';
+import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_DATAFLOW_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST, ROUTE_VIEW_THREAT_MODEL } from '../config/routes';
 import Application from '../containers/Application';
 import Architecture from '../containers/Architecture';
 import AssumptionList from '../containers/AssumptionList';
@@ -22,6 +22,7 @@ import Dataflow from '../containers/Dataflow';
 import MitigationList from '../containers/MitigationList';
 import ThreatStatementEditor from '../containers/ThreatStatementEditor';
 import ThreatStatementList from '../containers/ThreatStatementList';
+import ThreatModelReport from '../containers/ThreatModelReport';
 
 const routes: RouteProps[] = [
   {
@@ -43,6 +44,10 @@ const routes: RouteProps[] = [
   {
     path: ROUTE_MITIGATION_LIST,
     element: <MitigationList />,
+  },
+  {
+    path: ROUTE_VIEW_THREAT_MODEL,
+    element: <ThreatModelReport />,
   },
   {
     path: ROUTE_THREAT_EDITOR,

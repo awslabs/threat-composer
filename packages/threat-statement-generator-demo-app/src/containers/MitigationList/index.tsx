@@ -14,14 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { MitigationList as MitigationListComponent } from 'threat-statement-generator';
-import useSetActiveBreadcrumbGroup from '../../hooks/useSetActiveBreadCrumbs';
 
 const MitigationList = () => {
-  useSetActiveBreadcrumbGroup([{
-    href: '',
-    text: 'mitigations',
-  }]);
-
   return <MitigationListComponent />;
 };
 

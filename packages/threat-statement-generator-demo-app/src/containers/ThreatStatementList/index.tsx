@@ -14,14 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { ThreatStatementList as ThreatStatementListComponent } from 'threat-statement-generator';
-import useSetActiveBreadcrumbGroup from '../../hooks/useSetActiveBreadCrumbs';
 
 const ThreatStatementList = () => {
-  useSetActiveBreadcrumbGroup([{
-    href: '',
-    text: 'threats',
-  }]);
-
   return <ThreatStatementListComponent />;
 };
 

@@ -22,7 +22,6 @@ import { useApplicationInfoContext } from '../../../contexts/ApplicationContext/
 import MarkdownEditor from '../../generic/MarkdownEditor';
 import MarkdownViewer from '../../generic/MarkdownViewer';
 
-
 const ApplicationInfo: FC = () => {
   const { applicationInfo, setApplicationInfo } = useApplicationInfoContext();
   const [editMode, setEditMode] = useState(false);
