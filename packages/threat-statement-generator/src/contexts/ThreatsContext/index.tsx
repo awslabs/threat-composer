@@ -98,10 +98,14 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
   const { composerMode, hasVisitBefore } = useGlobalSetupContext();
 
   const threatStatementExamples = useMemo(() => {
-    return threatStatementExamplesData.map(e => ({
-      ...e,
-      statement: renderThreatStatement(e).statement,
-    }));
+    return threatStatementExamplesData.map(e => {
+      const { statement, displayedStatement } = renderThreatStatement(e);
+      return {
+        ...e,
+        statement,
+        displayedStatement,
+      };
+    });
   }, []);
 
   const perFieldExamples: PerFieldExamplesType = useMemo(() => {

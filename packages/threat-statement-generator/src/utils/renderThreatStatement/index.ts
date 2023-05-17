@@ -118,18 +118,20 @@ const renderThreatStatement = (statement: TemplateThreatStatement): {
       displayOutput: before,
     });
 
+    const updatedContent = token === 'prerequisites' && content === PLACEHOLDER ? '' : content;
+
     const displayedOutput = token === 'threat_action' ? {
       type: 'b',
-      content: content,
+      content: updatedContent,
       tooltip: threatFieldData[token]?.tooltip,
     } : {
       type: 'span',
-      content: content,
+      content: updatedContent,
       tooltip: threatFieldData[token]?.tooltip,
     };
 
     output.push({
-      stringOutput: content,
+      stringOutput: updatedContent,
       displayOutput: displayedOutput,
     });
 
@@ -137,7 +139,7 @@ const renderThreatStatement = (statement: TemplateThreatStatement): {
   };
 
   const parseOutput = parseThreatStatement({
-    statement: statement,
+    statement: updatedStatement,
     template: statement.customTemplate || format?.template || '',
     outputProcessor: outputProcessor,
   });
