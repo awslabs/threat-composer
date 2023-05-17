@@ -67,7 +67,7 @@ const AppInner: FC<AppInnerProps> = ({
       },
       { type: 'divider' },
       {
-        text: 'View Threat Model',
+        text: 'Threat model',
         href: generateUrl(ROUTE_VIEW_THREAT_MODEL, searchParms, workspaceId),
         type: 'link',
       },
