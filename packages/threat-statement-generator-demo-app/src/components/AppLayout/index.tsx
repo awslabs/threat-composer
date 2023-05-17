@@ -22,7 +22,7 @@ import { CancelableEventHandler } from '@cloudscape-design/components/internal/e
 import SideNavigation, { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
 import SplitPanel, { SplitPanelProps as SplitPanelComponentProps } from '@cloudscape-design/components/split-panel';
 import { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
-import { FC, useState, useCallback, createContext, PropsWithChildren, ReactElement, useContext, useMemo } from 'react';
+import { FC, ReactNode, useState, useCallback, createContext, PropsWithChildren, ReactElement, useContext, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavHeader, { NavHeaderProps } from './components/NavHeader';
 import { splitPanelI18nStrings } from './constants';
@@ -36,7 +36,7 @@ export type AppLayoutProps = (NavHeaderProps | { header: ReactElement<TopNavigat
   navigationItems: SideNavigationProps.Item[];
 }
 | { navigation: ReactElement<SideNavigationProps> }
-) & { breadcrumbGroup?: ReactElement<BreadcrumbGroupProps> } & {
+) & { breadcrumbGroup?: ReactNode } & {
   title: string;
   defaultBreadcrumb?: string;
 } & { breadcrumbGroupHide?: boolean }
@@ -178,12 +178,12 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
       {'header' in props ? (
         props.header
       ) : (
-        <NavHeader
+        props.navigationHide ? <NavHeader
           title={title}
           href={props.href}
           logo={props.logo}
           {...headerProps}
-        />
+        /> : undefined
       )}
       <AppLayoutComponent
         breadcrumbs={ breadcrumbGroupHide ? undefined :

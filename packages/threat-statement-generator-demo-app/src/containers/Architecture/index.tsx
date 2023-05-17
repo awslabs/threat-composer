@@ -14,14 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { ArchitectureInfoComponent } from 'threat-statement-generator';
-import useSetActiveBreadcrumbGroup from '../../hooks/useSetActiveBreadCrumbs';
 
 const Architecture = () => {
-  useSetActiveBreadcrumbGroup([{
-    href: '',
-    text: 'architecture',
-  }]);
-
   return <ArchitectureInfoComponent />;
 };
 

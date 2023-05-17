@@ -20,4 +20,5 @@ export const ROUTE_ASSUMPTION_LIST = '/workspaces/:workspaceId/assumptions';
 export const ROUTE_APPLICATION_INFO = '/workspaces/:workspaceId/application';
 export const ROUTE_ARCHITECTURE_INFO = '/workspaces/:workspaceId/archiecture';
 export const ROUTE_DATAFLOW_INFO = '/workspaces/:workspaceId/dataflow';
+export const ROUTE_VIEW_THREAT_MODEL = '/workspaces/:workspaceId/threatModel';
 export const ROUTE_DEFAULT = '/workspaces/default';

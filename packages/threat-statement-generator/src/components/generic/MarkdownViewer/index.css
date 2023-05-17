@@ -1,4 +1,6 @@
-
+div.markdown-viewer table {
+  border-collapse: collapse;
+}
 
 div.markdown-viewer tr {
   border-top: 1px solid #c6cbd1;

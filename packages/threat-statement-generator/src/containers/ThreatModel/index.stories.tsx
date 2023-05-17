@@ -13,10 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { AssumptionList as AssumptionListComponent } from 'threat-statement-generator';
+import type { Meta, StoryObj } from '@storybook/react';
+import ThreatModel from '.';
 
-const AssumptionList = () => {
-  return <AssumptionListComponent />;
+const meta: Meta<typeof ThreatModel> = {
+  title: 'fullMode/ThreatModelView',
+  component: ThreatModel,
 };
 
-export default AssumptionList;
+export default meta;
+type Story = StoryObj<typeof ThreatModel>;
+
+export const Default: Story = {
+};

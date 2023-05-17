@@ -13,20 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThreatStatementEditor as ThreatStatementEditorComponent, useThreatsContext } from 'threat-statement-generator';
-import useSetActiveBreadcrumbGroup from '../../hooks/useSetActiveBreadCrumbs';
+import { ThreatStatementEditor as ThreatStatementEditorComponent } from 'threat-statement-generator';
 
 const ThreatStatementEditor = () => {
-  const { editingStatement } = useThreatsContext();
-  useSetActiveBreadcrumbGroup([{
-    href: '',
-    text: 'threats',
-  },
-  {
-    href: '',
-    text: ((editingStatement?.numericId !== -1 && editingStatement?.numericId) || 'new').toString(),
-  }]);
-
   return <ThreatStatementEditorComponent />;
 };
 

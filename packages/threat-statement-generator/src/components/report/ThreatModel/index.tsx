@@ -13,10 +13,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { AssumptionList as AssumptionListComponent } from 'threat-statement-generator';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import { FC } from 'react';
+import ApplicationInfo from './components/ApplicationInfo';
+import Architecture from './components/Architecture';
+import Assumptions from './components/Assumptions';
+import Dataflow from './components/Dataflow';
+import Mitigations from './components/Mitigations';
+import Threats from './components/Threats';
 
-const AssumptionList = () => {
-  return <AssumptionListComponent />;
+const ThreatModel: FC = () => {
+  return (<SpaceBetween direction='vertical' size='l'>
+    <ApplicationInfo />
+    <Architecture />
+    <Dataflow />
+    <Assumptions />
+    <Threats />
+    <Mitigations />
+  </SpaceBetween>);
 };
 
-export default AssumptionList;
+export default ThreatModel;

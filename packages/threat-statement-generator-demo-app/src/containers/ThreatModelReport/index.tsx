@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { AssumptionList as AssumptionListComponent } from 'threat-statement-generator';
+import { ThreatModel } from 'threat-statement-generator';
 
-const AssumptionList = () => {
-  return <AssumptionListComponent />;
+const ThreatModelReport = () => {
+  return <ThreatModel />;
 };
 
-export default AssumptionList;
+export default ThreatModelReport;

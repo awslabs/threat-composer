@@ -17,7 +17,7 @@ import { SideNavigationProps } from '@cloudscape-design/components';
 import { FC, useMemo, useCallback, useState } from 'react';
 import { Routes, Route, RouteProps, useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { ContextAggregator, WorkspaceSelector, useThreatsContext } from 'threat-statement-generator';
-import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_DATAFLOW_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST } from '../../../../config/routes';
+import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_DATAFLOW_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST, ROUTE_VIEW_THREAT_MODEL } from '../../../../config/routes';
 import routes from '../../../../routes';
 import generateUrl from '../../../../utils/generateUrl';
 import AppLayout from '../AppLayout';
@@ -65,7 +65,12 @@ const AppInner: FC<AppInnerProps> = ({
         href: generateUrl(ROUTE_MITIGATION_LIST, searchParms, workspaceId),
         type: 'link',
       },
-
+      { type: 'divider' },
+      {
+        text: 'Threat model',
+        href: generateUrl(ROUTE_VIEW_THREAT_MODEL, searchParms, workspaceId),
+        type: 'link',
+      },
     ];
   }, [searchParms, workspaceId]);
 
@@ -73,9 +78,7 @@ const AppInner: FC<AppInnerProps> = ({
     standalone={false}
     navigationItems={navigationItems}
     availableRoutes={routes.map(x => x.path || '')}
-    headerProps={{
-      search: <WorkspaceSelector embededMode={false} onImport={importStatementList} />,
-    }}
+    breadcrumbGroup={<WorkspaceSelector embededMode={false} onImport={importStatementList} />}
   >
     <Routes>
       {routes.map((r: RouteProps, index: number) => <Route key={index} {...r} />)}

@@ -13,10 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { AssumptionList as AssumptionListComponent } from 'threat-statement-generator';
+import React, { FC } from 'react';
+import ThreatModel from '../../components/report/ThreatModel';
+import WorkspaceContextAggregator from '../../contexts/WorkspaceContextAggregator';
 
-const AssumptionList = () => {
-  return <AssumptionListComponent />;
+export interface MitigationListProps {
+  workspaceId?: string;
+}
+
+const MitigationList: FC<MitigationListProps> = ({ workspaceId }) => {
+  return (<WorkspaceContextAggregator
+    requiredGlobalSetupContext
+    workspaceId={workspaceId || null}
+    composerMode='Full'
+  >
+    <ThreatModel />
+  </WorkspaceContextAggregator>);
 };
 
-export default AssumptionList;
+export default MitigationList;

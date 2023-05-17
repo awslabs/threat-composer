@@ -13,10 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { AssumptionList as AssumptionListComponent } from 'threat-statement-generator';
+import Header from '@cloudscape-design/components/header';
+import { FC } from 'react';
+import { useDataflowInfoContext } from '../../../../../contexts/DataflowContext/context';
+import MarkdownViewer from '../../../../generic/MarkdownViewer';
 
-const AssumptionList = () => {
-  return <AssumptionListComponent />;
+const Dataflow: FC = () => {
+  const { dataflowInfo } = useDataflowInfoContext();
+  return (<div>
+    <Header variant='h2'>Dataflow</Header>
+    <Header variant='h3' key='diagramInfo'>Introduction</Header>
+    <MarkdownViewer>
+      {dataflowInfo.description || ''}
+    </MarkdownViewer>
+    <Header variant='h3' key='diagram'>Dataflow Diagram</Header>
+    {dataflowInfo.image && <img width={1024} src={dataflowInfo.image} alt='Dataflow Diagram' />}
+  </div>);
 };
 
-export default AssumptionList;
+export default Dataflow;

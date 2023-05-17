@@ -13,10 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { AssumptionList as AssumptionListComponent } from 'threat-statement-generator';
+import Header from '@cloudscape-design/components/header';
+import { FC } from 'react';
+import { useArchitectureInfoContext } from '../../../../../contexts/ArchitectureContext/context';
+import MarkdownViewer from '../../../../generic/MarkdownViewer';
 
-const AssumptionList = () => {
-  return <AssumptionListComponent />;
+const Architecture: FC = () => {
+  const { architectureInfo } = useArchitectureInfoContext();
+  return (<div>
+    <Header variant='h2'>Architecture</Header>
+    <Header variant='h3' key='diagramInfo'>Introduction</Header>
+    <MarkdownViewer>
+      {architectureInfo.description || ''}
+    </MarkdownViewer>
+    <Header variant='h3' key='diagram'>Architecture Diagram</Header>
+    {architectureInfo.image && <img width={1024} src={architectureInfo.image} alt='Architecture Diagram' />}
+  </div>);
 };
 
-export default AssumptionList;
+export default Architecture;
