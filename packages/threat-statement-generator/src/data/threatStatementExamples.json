@@ -368,8 +368,8 @@
     "numericId": -1,
     "threatSource": "threat actor",
     "prerequisites": "",
-    "threatAction": "leverages an error in authorization logic",
-    "threatImpact": "perform actions they should not be authorized to perform",
+    "threatAction": "leverage an error in authorization logic",
+    "threatImpact": "them performing actions they should not be authorized to perform",
     "impactedGoal": [],
     "impactedAssets": [
       "vehicle registration",
