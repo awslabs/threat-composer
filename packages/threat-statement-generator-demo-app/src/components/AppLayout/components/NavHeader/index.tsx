@@ -32,13 +32,13 @@ export interface NavHeaderProps extends Partial<TopNavigationProps> {
   /**
      * The href that the header links to
      */
-  href?: string;
+  href: string;
 }
 
 /**
  * Top Navigation Header displayed on AppLayout.
  */
-const NavHeader: FC<NavHeaderProps> = ({ title, href = '/', logo, ...props }) => {
+const NavHeader: FC<NavHeaderProps> = ({ title, href, logo, ...props }) => {
   const [theme, setTheme] = useState(Mode.Light);
   const [density, setDensity] = useState(Density.Comfortable);
   const utilities: TopNavigationProps.Utility[] = useMemo(() => {

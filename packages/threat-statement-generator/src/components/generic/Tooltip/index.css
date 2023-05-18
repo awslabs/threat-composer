@@ -21,12 +21,19 @@
 
 .tooltip-top {
   width: 110px;
-  bottom: 150%;
+  bottom: 125%;
   left: 50%;
   margin-left: -56px;
 }
 
-.tooltip .tooltiptext::after {
+.tooltip-bottom {
+  width: 110px;
+  top: 110%;
+  left: 50%;
+  margin-left: -56px;
+}
+
+.tooltip-top.tooltiptext::after {
   content: " ";
   position: absolute;
   top: 100%; /* At the bottom of the tooltip */
@@ -35,4 +42,15 @@
   border-width: 5px;
   border-style: solid;
   border-color: black transparent transparent transparent;
+}
+
+.tooltip-bottom.tooltiptext::after {
+  content: " ";
+  position: absolute;
+  bottom: 100%;  /* At the top of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
 }

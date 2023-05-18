@@ -18,15 +18,17 @@ import './index.css';
 
 export interface TooltipProps {
   tooltip: React.ReactNode;
+  anchor?: 'top' | 'bottom';
 }
 
 const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({
   tooltip,
   children,
+  anchor = 'top',
 }) => {
   return <span className="tooltip">
     {children}
-    <span className="tooltiptext tooltip-top">{tooltip}</span>
+    <span className={`tooltiptext tooltip-${anchor}`}>{tooltip}</span>
   </span>;
 };
 

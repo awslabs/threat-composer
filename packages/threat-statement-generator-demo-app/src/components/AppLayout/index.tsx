@@ -23,9 +23,11 @@ import SideNavigation, { SideNavigationProps } from '@cloudscape-design/componen
 import SplitPanel, { SplitPanelProps as SplitPanelComponentProps } from '@cloudscape-design/components/split-panel';
 import { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
 import { FC, ReactNode, useState, useCallback, createContext, PropsWithChildren, ReactElement, useContext, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import NavHeader, { NavHeaderProps } from './components/NavHeader';
 import { splitPanelI18nStrings } from './constants';
+
+const defaultHref = process.env.PUBLIC_URL || '/';
 
 export type AppLayoutProps = (NavHeaderProps | { header: ReactElement<TopNavigationProps> })
 & {
@@ -103,6 +105,7 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
   ...props
 }) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [contentType, setContentType] = useState(props.contentType);
 
@@ -117,14 +120,19 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
 
   const [notifications, setNotifications] = useState(props.notifications);
 
+  const headerHref = useMemo(() => {
+    const mode = searchParams.get('mode');
+    return mode ? `${defaultHref}/?mode=${mode}` : defaultHref;
+  }, [searchParams]);
+
   const [tools, setTools] = useState(props.tools);
   const [toolsHide, setToolsHide] = useState(props.toolsHide ?? true);
   const [toolsOpen, setToolsOpen] = useState(props.toolsOpen ?? false);
   const [toolsWidth, setToolsWidth] = useState(props.toolsWidth);
 
-  const [activeHref, setActiveHref] = useState('/');
+  const [activeHref, setActiveHref] = useState(headerHref);
   const [activeBreadcrumbs, setActiveBreadcrumbs] = useState<BreadcrumbGroupProps.Item[]>([
-    { text: defaultBreadcrumb, href: '/' },
+    { text: defaultBreadcrumb, href: headerHref },
   ]);
 
   const onNavigate: CancelableEventHandler<BreadcrumbGroupProps.ClickDetail | SideNavigationProps.FollowDetail> =
@@ -180,7 +188,7 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
       ) : (
         props.navigationHide ? <NavHeader
           title={title}
-          href={props.href}
+          href={headerHref}
           logo={props.logo}
           {...headerProps}
         /> : undefined
@@ -198,7 +206,7 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
             props.navigation
           ) : (
             <SideNavigation
-              header={{ text: title, href: '/' }}
+              header={{ text: title, href: headerHref }}
               activeHref={activeHref}
               onFollow={onNavigate}
               items={props.navigationItems}
