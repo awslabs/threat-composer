@@ -13,14 +13,26 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export * from './assumptions';
-export * from './mitigations';
-export * from './threats';
-export * from './threatFieldTypes';
-export * from './workspaces';
-export * from './entities';
-export * from './composerMode';
-export * from './application';
-export * from './architecture';
-export * from './dataflow';
-export * from './dataExchange';
+import sanitizeHtmlString from 'sanitize-html';
+
+const sanitizeHtml: any = (data: any) => {
+  if (data) {
+    if (Array.isArray(data)) {
+      return data.map(d => sanitizeHtml(d));
+    } else if (typeof data === 'string') {
+      return sanitizeHtmlString(data);
+    } else if (typeof data === 'object') {
+      return Object.keys(data).reduce(
+        (attrs, key) => ({
+          ...attrs,
+          [key]: sanitizeHtml(data[key]),
+        }),
+        {},
+      );
+    }
+  }
+
+  return data;
+};
+
+export default sanitizeHtml;

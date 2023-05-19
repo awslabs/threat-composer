@@ -47,7 +47,7 @@ const Mitigations: FC = () => {
             return `**T-${standardizeNumericId(threat.numericId)}**: ${threat.statement}`;
           }
           return null;
-        }).filter(t => !!t).join('; ')
+        }).filter(t => !!t).join('<br/>')
       } | ${
         assumpptionLinks.map(al => {
           const assumption = assumptionList.find(a => a.id === al.assumptionId);
@@ -55,7 +55,7 @@ const Mitigations: FC = () => {
             return `**A-${standardizeNumericId(assumption.numericId)}**: ${assumption.content}`;
           }
           return null;
-        }).filter(a => !!a).join('; ')
+        }).filter(a => !!a).join('<br/>')
       } |`);
     });
     return rows.join('\n');

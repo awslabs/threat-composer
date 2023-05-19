@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { ApplicationInfoContext } from './context';
 import { LOCAL_STORAGE_KEY_APPLICATION_INFO } from '../../configs/localStorageKeys';
@@ -31,19 +31,26 @@ const getLocalStorageKey = (workspaceId: string | null) => {
   return LOCAL_STORAGE_KEY_APPLICATION_INFO;
 };
 
+const DEFAULT_VALUE = {
+  description: '',
+};
+
 const ApplicationContextProvider: FC<PropsWithChildren<ApplicationContextProviderProps>> = ({
   children,
   workspaceId: currentWorkspaceId,
 }) => {
   const [applicationInfo, setApplicationInfo] = useLocalStorageState<ApplicationInfo>(getLocalStorageKey(currentWorkspaceId), {
-    defaultValue: {
-      description: '',
-    },
+    defaultValue: DEFAULT_VALUE,
   });
+
+  const removeApplicationInfo = useCallback(() => {
+    setApplicationInfo(DEFAULT_VALUE);
+  }, []);
 
   return (<ApplicationInfoContext.Provider value={{
     applicationInfo,
     setApplicationInfo,
+    removeApplicationInfo,
   }}>
     {children}
   </ApplicationInfoContext.Provider>);

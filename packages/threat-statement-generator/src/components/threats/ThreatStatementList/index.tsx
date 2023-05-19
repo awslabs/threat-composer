@@ -57,10 +57,8 @@ const ThreatStatementList: FC = () => {
     statementList,
     removeStatement,
     addStatement,
-    exportStatementList,
     editStatement,
     saveStatement,
-    importStatementList,
     removeAllStatements,
   } = useThreatsContext();
 
@@ -215,18 +213,12 @@ const ThreatStatementList: FC = () => {
         (<WorkspaceSelector
           embededMode={true}
           enabledExportAll={statementList.length > 0}
-          onExportAll={() => {
-            exportStatementList(statementList);
-          }}
           enabledRemoveAll={statementList.length > 0}
+          enabledExportFiltered={!hasNoFilter}
+          filteredThreats={filteredStatementList}
           onRemoveAll={() => {
             removeAllStatements();
           }}
-          enabledExportFiltered={!hasNoFilter}
-          onExportFiltered={() => {
-            exportStatementList(filteredStatementList);
-          }}
-          onImport={(list) => importStatementList(list)}
         >
           <Button variant="primary" onClick={() => addStatement()}>
             Add new statement
@@ -242,12 +234,13 @@ const ThreatStatementList: FC = () => {
           />
         </SpaceBetween>)}
       </>);
-  }, [filteredStatementList,
-    exportStatementList,
+  }, [
+    filteredStatementList,
     addStatement,
     statementList,
     hasNoFilter,
-    composerMode]);
+    composerMode,
+  ]);
 
   const allImpactedGoal = useMemo(() => {
     return statementList
@@ -299,11 +292,11 @@ const ThreatStatementList: FC = () => {
             }
           />
           <Grid
-            gridDefinition={[{ colspan: { default: 12, xs: 2 } },
-              { colspan: { default: 12, xs: 2 } },
-              { colspan: { default: 12, xs: 2.5 } },
-              { colspan: { default: 12, xs: 2.5 } },
-              { colspan: { default: 12, xs: 2 } },
+            gridDefinition={[{ colspan: { default: 12, xs: 6, s: 2 } },
+              { colspan: { default: 12, xs: 6, s: 2 } },
+              { colspan: { default: 12, xs: 6, s: 2.5 } },
+              { colspan: { default: 12, xs: 6, s: 2.5 } },
+              { colspan: { default: 12, xs: 5, s: 2 } },
               { colspan: { default: 1 } }]}
           >
             <Multiselect

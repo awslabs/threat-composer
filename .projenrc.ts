@@ -70,7 +70,10 @@ const uiProject = new TypeScriptProject({
     'remark-frontmatter',
     'react-markdown',
     "d3@^7",
-    "@types/d3@^7"
+    "@types/d3@^7",
+    "sanitize-html",
+    "@types/sanitize-html",
+    "rehype-raw"
   ],
   devDeps: [
     "@cloudscape-design/jest-preset",

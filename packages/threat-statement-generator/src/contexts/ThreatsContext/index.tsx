@@ -18,12 +18,10 @@ import useLocalStorageState from 'use-local-storage-state';
 import { v4 as uuidV4 } from 'uuid';
 import { PerFieldExamplesType, ThreatsContext, DEFAULT_PER_FIELD_EXAMPLES } from './context';
 import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
-import { EXPORT_FILE_NAME } from '../../configs/export';
 import { LOCAL_STORAGE_KEY_STATEMENT_LIST, LOCAL_STORAGE_KEY_EDITING_STATEMENT } from '../../configs/localStorageKeys';
 import { PerFieldExample, TemplateThreatStatement } from '../../customTypes';
 import threatStatementExamplesData from '../../data/threatStatementExamples.json';
 import ThreatsMigration from '../../migrations/ThreatsMigration';
-import downloadObjectAsJson from '../../utils/downloadObjectAsJson';
 import renderThreatStatement from '../../utils/renderThreatStatement';
 import { useGlobalSetupContext } from '../GlobalSetupContext/context';
 
@@ -210,14 +208,6 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
     });
   }, [setStatementList]);
 
-  const handleImportStatementList = useCallback((newStatements: TemplateThreatStatement[]) => {
-    setStatementList(newStatements);
-  }, [setStatementList]);
-
-  const handleExportStatementList = useCallback((exportedStatementList: TemplateThreatStatement[]) => {
-    downloadObjectAsJson(exportedStatementList, EXPORT_FILE_NAME);
-  }, []);
-
   const handleRemoveAllStatements = useCallback(() => {
     setStatementList([]);
   }, []);
@@ -269,8 +259,6 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
     removeStatement: handlRemoveStatement,
     editStatement: handleEditStatement,
     saveStatement: handleSaveStatement,
-    importStatementList: handleImportStatementList,
-    exportStatementList: handleExportStatementList,
     removeAllStatements: handleRemoveAllStatements,
   }}>
     <ThreatsMigration>

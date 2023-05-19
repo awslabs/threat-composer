@@ -19,6 +19,7 @@ import { ApplicationInfo } from '../../customTypes';
 export interface ApplicationInfoContextApi {
   applicationInfo: ApplicationInfo;
   setApplicationInfo: React.Dispatch<React.SetStateAction<ApplicationInfo>>;
+  removeApplicationInfo: () => void;
 }
 
 const initialState: ApplicationInfoContextApi = {
@@ -26,6 +27,7 @@ const initialState: ApplicationInfoContextApi = {
     description: '',
   },
   setApplicationInfo: () => { },
+  removeApplicationInfo: () => { },
 };
 
 export const ApplicationInfoContext = createContext<ApplicationInfoContextApi>(initialState);

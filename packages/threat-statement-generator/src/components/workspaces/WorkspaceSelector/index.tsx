@@ -20,33 +20,34 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo, useState, useCallback, PropsWithChildren } from 'react';
 import { DEFAULT_WORKSPACE_ID, DEFAULT_WORKSPACE_LABEL } from '../../../configs/constants';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
+import { TemplateThreatStatement } from '../../../customTypes';
+import useImportExport from '../../../hooks/useExportImport';
 import AddWorkspace from '../../workspaces/EditWorkspace';
 import FileImport from '../../workspaces/FileImport';
+
 export interface WorkspaceSelectorProps {
   embededMode: boolean;
   enabledExportAll?: boolean;
-  onExportAll?: () => void;
-  enabledExportFiltered?: boolean;
-  onExportFiltered?: () => void;
   enabledRemoveAll?: boolean;
+  enabledExportFiltered?: boolean;
+  filteredThreats?: TemplateThreatStatement[];
   onRemoveAll?: () => void;
-  onImport: (obj: any) => void;
 }
 
 const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
   embededMode = true,
   children,
   enabledExportAll,
-  onExportAll,
   enabledExportFiltered,
-  onExportFiltered,
   enabledRemoveAll,
+  filteredThreats,
   onRemoveAll,
-  onImport,
 }) => {
   const [fileImportModalVisible, setFileImportModalVisible] = useState(false);
   const [addWorkspaceModalVisible, setAddWorkspaceModalVisible] = useState(false);
   const [editWorkspaceModalVisible, setEditWorkspaceModalVisible] = useState(false);
+
+  const { importData, exportAll, exportSelectedThreats } = useImportExport();
 
   const {
     currentWorkspace,
@@ -101,10 +102,10 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         setFileImportModalVisible(true);
         break;
       case 'exportAll':
-        onExportAll?.();
+        exportAll();
         break;
       case 'exportFilteredList':
-        onExportFiltered?.();
+        exportSelectedThreats(filteredThreats || []);
         break;
       case 'removeAll':
         onRemoveAll?.();
@@ -120,8 +121,10 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         console.log('Unknown action', detail.id);
     }
   }, [
-    onExportAll,
-    onExportFiltered,
+    setFileImportModalVisible,
+    exportAll,
+    exportSelectedThreats,
+    filteredThreats,
     onRemoveAll,
     removeWorkspace,
     currentWorkspace,
@@ -145,8 +148,8 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
             { id: 'import', text: 'Import' },
             {
               id: 'exportAll',
-              text: 'Export all statements',
-              disabled: !enabledExportAll,
+              text: embededMode ? 'Export all statements' : 'Export data',
+              disabled: embededMode && !enabledExportAll,
             },
           ],
           ...(embededMode ? [{
@@ -179,7 +182,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     {fileImportModalVisible && <FileImport
       visible={fileImportModalVisible}
       setVisible={setFileImportModalVisible}
-      onImport={onImport} />}
+      onImport={importData} />}
     {addWorkspaceModalVisible && <AddWorkspace
       visible={addWorkspaceModalVisible}
       setVisible={setAddWorkspaceModalVisible}

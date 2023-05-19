@@ -13,14 +13,23 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export * from './assumptions';
-export * from './mitigations';
-export * from './threats';
-export * from './threatFieldTypes';
-export * from './workspaces';
-export * from './entities';
-export * from './composerMode';
-export * from './application';
-export * from './architecture';
-export * from './dataflow';
-export * from './dataExchange';
+import { ApplicationInfo } from './application';
+import { ArchitectureInfo } from './architecture';
+import { Assumption, AssumptionLink } from './assumptions';
+import { DataflowInfo } from './dataflow';
+import { Mitigation, MitigationLink } from './mitigations';
+import { TemplateThreatStatement } from './threats';
+import { Workspace } from './workspaces';
+
+export interface DataExchangeFormat {
+  schema: number;
+  workspace?: Workspace;
+  applicationInfo?: ApplicationInfo;
+  architecture?: ArchitectureInfo;
+  dataflow?: DataflowInfo;
+  assumptions?: Assumption[];
+  mitigations?: Mitigation[];
+  assumptionLinks?: AssumptionLink[];
+  mitigationLinks?: MitigationLink[];
+  threats?: TemplateThreatStatement[];
+}

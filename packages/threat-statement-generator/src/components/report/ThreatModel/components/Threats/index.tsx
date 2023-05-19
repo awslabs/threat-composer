@@ -46,7 +46,7 @@ const Threats: FC = () => {
             return `**A-${standardizeNumericId(assumption.numericId)}**: ${assumption.content}`;
           }
           return null;
-        }).filter(al => !!al).join(';')
+        }).filter(al => !!al).join('<br/>')
       } | ${
         mitigationLinks.map(ml => {
           const mitigation = mitigationList.find(m => m.id === ml.mitigationId);
@@ -54,7 +54,7 @@ const Threats: FC = () => {
             return `**M-${standardizeNumericId(mitigation.numericId)}**: ${mitigation.content}`;
           }
           return null;
-        }).filter(ml => !!ml).join(';')
+        }).filter(ml => !!ml).join('<br/>')
       } |`);
     });
     return rows.join('\n');

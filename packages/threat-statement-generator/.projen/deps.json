@@ -197,6 +197,10 @@
       "type": "runtime"
     },
     {
+      "name": "@types/sanitize-html",
+      "type": "runtime"
+    },
+    {
       "name": "browser-image-compression",
       "type": "runtime"
     },
@@ -218,11 +222,19 @@
       "type": "runtime"
     },
     {
+      "name": "rehype-raw",
+      "type": "runtime"
+    },
+    {
       "name": "remark-frontmatter",
       "type": "runtime"
     },
     {
       "name": "remark-gfm",
+      "type": "runtime"
+    },
+    {
+      "name": "sanitize-html",
       "type": "runtime"
     },
     {

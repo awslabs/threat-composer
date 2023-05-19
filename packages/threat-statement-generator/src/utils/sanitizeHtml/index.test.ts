@@ -13,14 +13,36 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export * from './assumptions';
-export * from './mitigations';
-export * from './threats';
-export * from './threatFieldTypes';
-export * from './workspaces';
-export * from './entities';
-export * from './composerMode';
-export * from './application';
-export * from './architecture';
-export * from './dataflow';
-export * from './dataExchange';
+import sanitizeHtml from '.';
+
+const testObj = {
+  num: 1,
+  str1: 'hello',
+  str2: "world<script>alert('hello')</script>",
+};
+
+const result = {
+  num: 1,
+  str1: 'hello',
+  str2: 'world',
+};
+
+describe('sanitizeHtml', () => {
+  test('parses an object to saniztise html string if there is any', () => {
+    expect(sanitizeHtml(testObj)).toEqual(result);
+  });
+
+  test('parses an array of object to saniztise html string if there is any', () => {
+    expect(sanitizeHtml([testObj, testObj])).toEqual([result, result]);
+  });
+
+  test('parses nested object to saniztise html string if there is any', () => {
+    expect(sanitizeHtml({
+      ...testObj,
+      nestedObj: testObj,
+    })).toEqual({
+      ...result,
+      nestedObj: result,
+    });
+  });
+});

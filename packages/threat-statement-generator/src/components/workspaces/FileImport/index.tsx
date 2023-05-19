@@ -20,14 +20,15 @@ import Modal from '@cloudscape-design/components/modal';
 import ProgressBar from '@cloudscape-design/components/progress-bar';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { TemplateThreatStatement } from '../../../customTypes';
+import { DataExchangeFormat } from '../../../customTypes';
+import useImportExport from '../../../hooks/useExportImport';
 
 import FileUpload from '../../generic/FileUpload';
 
 export interface FileImportProps {
   visible: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  onImport: (threatStatementList: TemplateThreatStatement[]) => void;
+  onImport: (data: DataExchangeFormat) => void;
 }
 
 const FileImport: FC<FileImportProps> = ({
@@ -36,9 +37,10 @@ const FileImport: FC<FileImportProps> = ({
   onImport,
 }) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [statementList, setStatementList] = useState<TemplateThreatStatement[]>([]);
+  const [data, setData] = useState<DataExchangeFormat>();
   const [loading, setLoading] = useState(false);
   const [loadingPercentage, setLoadingPercentage] = useState(0);
+  const { parseImportedData } = useImportExport();
 
   const handleImport = useCallback((files: File[]) => {
     if (files.length > 0) {
@@ -48,7 +50,8 @@ const FileImport: FC<FileImportProps> = ({
 
       reader.addEventListener('load', (event) => {
         const result = event.target?.result;
-        setStatementList(JSON.parse(result as string));
+        const importedData = parseImportedData(JSON.parse(result as string));
+        setData(importedData);
         setLoading(false);
       });
 
@@ -64,10 +67,10 @@ const FileImport: FC<FileImportProps> = ({
   }, []);
 
   const handleConfirmImport = useCallback(() => {
-    onImport(statementList);
+    data && onImport(data);
     setSelectedFiles([]);
     setVisible(false);
-  }, [onImport, statementList]);
+  }, [onImport, data]);
 
   useEffect(() => {
     selectedFiles && selectedFiles.length > 0 && handleImport(selectedFiles);
@@ -77,7 +80,7 @@ const FileImport: FC<FileImportProps> = ({
     return (<Box float="right">
       <SpaceBetween direction="horizontal" size="xs">
         <Button variant="link" onClick={() => setVisible(false)}>Cancel</Button>
-        <Button variant="primary" disabled={statementList.length === 0} onClick={() => handleConfirmImport()}>Import</Button>
+        <Button variant="primary" disabled={!data} onClick={() => handleConfirmImport()}>Import</Button>
       </SpaceBetween>
     </Box>);
   }, [setVisible, handleConfirmImport]);
@@ -98,9 +101,9 @@ const FileImport: FC<FileImportProps> = ({
         value={loadingPercentage}
         label="Loading file"
       />}
-      {selectedFiles.length > 0 && statementList.length > 0 && <Alert statusIconAriaLabel="Info" type="info" key="info">
+      {/* {selectedFiles.length > 0 && statementList.length > 0 && <Alert statusIconAriaLabel="Info" type="info" key="info">
         {statementList.length} threat statement loaded
-      </Alert>}
+      </Alert>} */}
     </SpaceBetween>
   </Modal>;
 };

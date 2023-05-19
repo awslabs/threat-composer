@@ -13,22 +13,21 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { useContext, createContext } from 'react';
+import React, { FC } from 'react';
+import WorkspaceSelector from '../../components/workspaces/WorkspaceSelector';
+import ContextAggregator from '../../contexts/ContextAggregator';
+import { ComposerMode } from '../../customTypes';
 
-export interface ImportExportContextApi {
-  exportAll: () => Promise<void>;
-  exportFilteredThreats: () => Promise<void>;
-  printAll: () => Promise<void>;
-  printFilteredThreats: () => Promise<void>;
+export interface WorkspaceSelectorProps {
+  composerMode: string;
 }
 
-const initialState: ImportExportContextApi = {
-  exportAll: () => Promise.resolve(),
-  exportFilteredThreats: () => Promise.resolve(),
-  printAll: () => Promise.resolve(),
-  printFilteredThreats: () => Promise.resolve(),
+const MitigationList: FC<WorkspaceSelectorProps> = ({ composerMode }) => {
+  return (<ContextAggregator composerMode={composerMode as ComposerMode}>
+    <WorkspaceSelector
+      embededMode={false}
+    />
+  </ContextAggregator>);
 };
 
-export const ImportExportContext = createContext<ImportExportContextApi>(initialState);
-
-export const useImportExportContext = () => useContext(ImportExportContext);
+export default MitigationList;

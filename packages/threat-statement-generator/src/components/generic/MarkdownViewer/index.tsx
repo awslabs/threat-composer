@@ -17,6 +17,7 @@ import Link from '@cloudscape-design/components/link';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC } from 'react';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 
@@ -41,7 +42,7 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ children, ...props }) => {
   return (
     <div className='markdown-viewer'>
       <TextContent {...props}>
-        <ReactMarkdown remarkPlugins={[gfm, frontmatter]} components={components} children={children} />
+        <ReactMarkdown remarkPlugins={[gfm, frontmatter]} rehypePlugins={[rehypeRaw]} components={components} children={children} />
       </TextContent>
     </div>
   );
