@@ -122,9 +122,9 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
       }
       const displayedHtml = displayedStatement?.map((s, index) => typeof s === 'string' ?
         s : s.type === 'b' ?
-          <Tooltip tooltip={s.tooltip} key={index} ><b className='threat-statement-editor-final-statement-section'>{s.content}</b></Tooltip> :
+          <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly'? 'bottom' : 'top'}><b className='threat-statement-editor-final-statement-section'>{s.content}</b></Tooltip> :
           s.type === 'span' ?
-            <Tooltip tooltip={s.tooltip} key={index}><span key={index} className='threat-statement-editor-final-statement-section'>{s.content}</span></Tooltip> :
+            <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly'? 'bottom' : 'top'}><span key={index} className='threat-statement-editor-final-statement-section'>{s.content}</span></Tooltip> :
             s.content);
 
       setDisplayStatement(displayedHtml);
@@ -133,7 +133,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
       setSuggestions([]);
       setDisplayStatement([]);
     }
-  }, [editingStatement]);
+  }, [editingStatement, composerMode]);
 
   const handleStartOver = useCallback(() => {
     addStatement();

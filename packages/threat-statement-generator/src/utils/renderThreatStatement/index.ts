@@ -145,7 +145,7 @@ const renderThreatStatement = (statement: TemplateThreatStatement): {
   });
 
   return {
-    statement: parseOutput.map(x => x.stringOutput).join(' ').replace(/\s\s+/g, ' '),
+    statement: parseOutput.map(x => x.stringOutput).join(' ').replace(/\s\s+/g, ' ').replace(/ ,/g, ','),
     displayedStatement: parseOutput.map(x => x.displayOutput),
     suggestions: suggestions.sort(),
   };
