@@ -21,7 +21,7 @@
     "@cloudscape-design/jest-preset": "^2.0.8",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "*",
+    "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^29.4.0",
     "@types/node": "^14",
     "@types/react": "^18.0.27",
@@ -40,13 +40,13 @@
   },
   "dependencies": {
     "@cloudscape-design/components": "^3.0.182",
-    "@cloudscape-design/global-styles": "*",
+    "@cloudscape-design/global-styles": "^1.0.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.10.0",
     "react-scripts": "^5",
     "threat-statement-generator": "^0.0.0",
-    "web-vitals": "*"
+    "web-vitals": "^3.3.1"
   },
   "license": "Apache-2.0",
   "version": "0.0.0",
