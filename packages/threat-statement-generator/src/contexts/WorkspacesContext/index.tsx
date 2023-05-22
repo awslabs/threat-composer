@@ -16,7 +16,7 @@
 import { FC, useCallback, ReactElement, useEffect } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { v4 as uuidv4 } from 'uuid';
-import { WorkspacesContext } from './context';
+import { WorkspacesContext, useWorkspacesContext } from './context';
 import { DEFAULT_WORKSPACE_ID } from '../../configs/constants';
 import { LOCAL_STORAGE_KEY_CURRENT_WORKSPACE, LOCAL_STORAGE_KEY_WORKSPACE_LIST } from '../../configs/localStorageKeys';
 import { Workspace } from '../../customTypes';
@@ -70,7 +70,7 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = ({
     setCurrentWorkspace(newWorkspace);
   }, []);
 
-  const handleRemoveWorkspace = useCallback((id: string) => {
+  const handleRemoveWorkspace = useCallback(async (id: string) => {
     setWorkspaceList(prev => prev.filter(p => p.id !== id));
   }, []);
 
@@ -106,3 +106,7 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = ({
 };
 
 export default WorkspacesContextProvider;
+
+export {
+  useWorkspacesContext,
+};

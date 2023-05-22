@@ -63,6 +63,7 @@
     "react-dom": "^18"
   },
   "dependencies": {
+    "@aws-northstar/ui": "^1.1.0",
     "@cloudscape-design/components": "^3.0.182",
     "@cloudscape-design/global-styles": "^1.0.9",
     "@types/d3": "^7",

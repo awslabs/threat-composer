@@ -13,11 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
-import { DataflowInfoContext } from './context';
+import { DataflowInfoContext, useDataflowInfoContext } from './context';
 import { LOCAL_STORAGE_KEY_DATAFLOW_INFO } from '../../configs/localStorageKeys';
 import { DataflowInfo } from '../../customTypes';
+import removeLocalStorageKey from '../../utils/removeLocalStorageKey';
 
 export interface ApplicationContextProviderProps {
   workspaceId: string | null;
@@ -31,22 +32,41 @@ const getLocalStorageKey = (workspaceId: string | null) => {
   return LOCAL_STORAGE_KEY_DATAFLOW_INFO;
 };
 
+const DEFAULT_VALUE = {
+  description: '',
+};
+
 const ApplicationContextProvider: FC<PropsWithChildren<ApplicationContextProviderProps>> = ({
   children,
   workspaceId: currentWorkspaceId,
 }) => {
-  const [dataflowInfo, setDataflowInfo] = useLocalStorageState<DataflowInfo>(getLocalStorageKey(currentWorkspaceId), {
-    defaultValue: {
-      description: '',
-    },
+  const [dataflowInfo, setDataflowInfo, { removeItem }] = useLocalStorageState<DataflowInfo>(getLocalStorageKey(currentWorkspaceId), {
+    defaultValue: DEFAULT_VALUE,
   });
+
+  const handleRemoveDataflowInfo = useCallback(async () => {
+    removeItem();
+  }, [removeItem]);
+
+  const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
+    window.setTimeout(() => {
+      // tio delete after the workspace is switched. Otherwise the default value is set again.
+      removeLocalStorageKey(getLocalStorageKey(workspaceId));
+    }, 1000);
+  }, []);
 
   return (<DataflowInfoContext.Provider value={{
     dataflowInfo,
     setDataflowInfo,
+    removeDataflowInfo: handleRemoveDataflowInfo,
+    onDeleteWorkspace: handleDeleteWorkspace,
   }}>
     {children}
   </DataflowInfoContext.Provider>);
 };
 
 export default ApplicationContextProvider;
+
+export {
+  useDataflowInfoContext,
+};

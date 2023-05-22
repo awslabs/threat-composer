@@ -22,3 +22,4 @@ export { default as AssumptionList } from './assumptions/AssumptionList';
 export { default as MitigationList } from './mitigations/MitigationList';
 export { default as WorkspaceSelector } from './workspaces/WorkspaceSelector';
 export { default as ThreatModel } from './report/ThreatModel';
+export { default as ThreatModelView } from './report/ThreatModel/components/ThreatModelView';

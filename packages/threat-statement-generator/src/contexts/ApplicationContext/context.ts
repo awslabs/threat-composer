@@ -19,7 +19,8 @@ import { ApplicationInfo } from '../../customTypes';
 export interface ApplicationInfoContextApi {
   applicationInfo: ApplicationInfo;
   setApplicationInfo: React.Dispatch<React.SetStateAction<ApplicationInfo>>;
-  removeApplicationInfo: () => void;
+  removeApplicationInfo: () => Promise<void>;
+  onDeleteWorkspace: (workspaceId: string) => Promise<void>;
 }
 
 const initialState: ApplicationInfoContextApi = {
@@ -27,7 +28,8 @@ const initialState: ApplicationInfoContextApi = {
     description: '',
   },
   setApplicationInfo: () => { },
-  removeApplicationInfo: () => { },
+  removeApplicationInfo: () => Promise.resolve(),
+  onDeleteWorkspace: () => Promise.resolve(),
 };
 
 export const ApplicationInfoContext = createContext<ApplicationInfoContextApi>(initialState);

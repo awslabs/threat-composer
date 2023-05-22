@@ -20,7 +20,7 @@ export interface WorkspacesContextApi {
   workspaceList: Workspace[];
   setWorkspaceList: (workspace: Workspace[]) => void;
   currentWorkspace: Workspace | null;
-  removeWorkspace: (id: string) => void;
+  removeWorkspace: (id: string) => Promise<void>;
   addWorkspace: (workspaceName: string) => void;
   renameWorkspace: (id: string, newWorkspaceName: string) => void;
   switchWorkspace: (workspace: Workspace | null) => void;
@@ -32,7 +32,7 @@ const initialState: WorkspacesContextApi = {
   currentWorkspace: null,
   switchWorkspace: () => { },
   addWorkspace: () => { },
-  removeWorkspace: () => { },
+  removeWorkspace: () => Promise.resolve(),
   renameWorkspace: () => { },
 };
 

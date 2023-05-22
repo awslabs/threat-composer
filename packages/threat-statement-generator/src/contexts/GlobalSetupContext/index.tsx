@@ -15,21 +15,25 @@
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren, useState, useEffect } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
-import { GlobalSetupContext } from './context';
+import { GlobalSetupContext, useGlobalSetupContext } from './context';
 import InfoModal from '../../components/global/InfoModal';
 import { LOCAL_STORAGE_KEY_NEW_VISIT_FLAG } from '../../configs/localStorageKeys';
-import { ComposerMode } from '../../customTypes';
+import { ComposerMode, DataExchangeFormat } from '../../customTypes';
 
 import './index.css';
 import '@cloudscape-design/global-styles/index.css';
 
 export interface GlobalSetupContextProviderProps {
   composerMode?: ComposerMode;
+  onPreview?: (content: DataExchangeFormat) => void;
+  onPreviewClose?: () => void;
 }
 
 const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProviderProps>> = ({
   children,
   composerMode = 'ThreatsOnly',
+  onPreview,
+  onPreviewClose,
 }) => {
   const [hasVisitBefore, setHasVisitBefore] = useLocalStorageState<boolean>(LOCAL_STORAGE_KEY_NEW_VISIT_FLAG, {
     defaultValue: false,
@@ -49,6 +53,8 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
       hasVisitBefore,
       composerMode,
       showInfoModal: () => setInfoModalVisible(true),
+      onPreview,
+      onPreviewClose,
     }}>
       {children}
       {infoModalVisible && <InfoModal
@@ -59,3 +65,7 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
 };
 
 export default GlobalSetupContextProvider;
+
+export {
+  useGlobalSetupContext,
+};

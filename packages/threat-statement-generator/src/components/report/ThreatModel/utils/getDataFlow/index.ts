@@ -13,22 +13,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { generatePath } from 'react-router-dom';
+import { DataExchangeFormat } from '../../../../../customTypes';
 
-const ROUTE_BASE_PATH=process.env.REACT_APP_ROUTE_BASE_PATH || '';
+export const getDataflowContent = (
+  data: DataExchangeFormat,
+) => {
+  const rows: string[] = [];
+  rows.push('## Dataflow');
+  if (data.dataflow) {
+    if (data.dataflow.description) {
+      rows.push('### Introduction');
+      rows.push(data.dataflow.description);
+    }
 
-const generateUrl = (path: string, searchParms: URLSearchParams, workspaceId: string, threatId?: string) => {
-  const mode = searchParms.get('mode');
-  if (mode) {
-    return `${ROUTE_BASE_PATH}${generatePath(path, {
-      workspaceId,
-      threatId,
-    })}?mode=${mode}`;
+    if (data.dataflow.image) {
+      rows.push('### Dataflow Diagram');
+      rows.push(`![Dataflow Diagram](${data.dataflow.image})`);
+    }
   }
 
-  return `${ROUTE_BASE_PATH}${generatePath(path, {
-    workspaceId: workspaceId,
-  })}`;
+  return rows.join('\n');
 };
-
-export default generateUrl;

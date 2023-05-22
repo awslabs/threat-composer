@@ -15,7 +15,9 @@
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
+import FormField from '@cloudscape-design/components/form-field';
 import Header from '@cloudscape-design/components/header';
+import Input from '@cloudscape-design/components/input';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useState, useCallback, useMemo } from 'react';
 import { useApplicationInfoContext } from '../../../contexts/ApplicationContext/context';
@@ -26,14 +28,16 @@ const ApplicationInfo: FC = () => {
   const { applicationInfo, setApplicationInfo } = useApplicationInfoContext();
   const [editMode, setEditMode] = useState(false);
   const [content, setContent] = useState('');
+  const [name, setName] = useState('');
 
   const handleSaveApplicationInfo = useCallback(() => {
     setApplicationInfo(prev => ({
       ...prev,
       description: content,
+      name,
     }));
     setEditMode(false);
-  }, [content, setApplicationInfo, setEditMode]);
+  }, [content, name, setApplicationInfo, setEditMode]);
 
   const handleEdit = useCallback(() => {
     setContent(applicationInfo.description || '');
@@ -48,8 +52,21 @@ const ApplicationInfo: FC = () => {
   }, [editMode, handleSaveApplicationInfo, handleEdit, setEditMode]);
 
   return (<Container
-    header={<Header actions={actions}>Application Introduction</Header>}
-  >{editMode ? (<MarkdownEditor value={content} onChange={setContent} label='Description' />) :
+    header={<Header actions={actions}>{applicationInfo.name || 'Application Introduction'}</Header>}
+  >{editMode ? (<SpaceBetween direction='vertical' size='s'>
+      <FormField
+        label="Application name"
+      >
+        <Input
+          value={name}
+          onChange={event =>
+            setName(event.detail.value)
+          }
+          placeholder='Enter application name'
+        />
+      </FormField>
+      <MarkdownEditor value={content} onChange={setContent} label='Description' />
+    </SpaceBetween>) :
       (<MarkdownViewer>
         {applicationInfo.description || ''}
       </MarkdownViewer>)}

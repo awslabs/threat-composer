@@ -13,7 +13,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Link from '@cloudscape-design/components/link';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -28,11 +27,6 @@ export interface MarkdownViewerProps {
 }
 
 const components = {
-  a: (props: any) => (
-    <Link href={props.href as string} target="_black" external>
-      {props.children}
-    </Link>
-  ),
 };
 
 /**

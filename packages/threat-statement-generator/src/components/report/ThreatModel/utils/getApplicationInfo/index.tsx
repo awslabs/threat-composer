@@ -13,22 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Header from '@cloudscape-design/components/header';
-import { FC } from 'react';
-import { useArchitectureInfoContext } from '../../../../../contexts/ArchitectureContext/context';
-import MarkdownViewer from '../../../../generic/MarkdownViewer';
+import { DataExchangeFormat } from '../../../../../customTypes';
 
-const Architecture: FC = () => {
-  const { architectureInfo } = useArchitectureInfoContext();
-  return (<div>
-    <Header variant='h2'>Architecture</Header>
-    <Header variant='h3' key='diagramInfo'>Introduction</Header>
-    <MarkdownViewer>
-      {architectureInfo.description || ''}
-    </MarkdownViewer>
-    <Header variant='h3' key='diagram'>Architecture Diagram</Header>
-    {architectureInfo.image && <img width={1024} src={architectureInfo.image} alt='Architecture Diagram' />}
-  </div>);
+export const getApplicationInfoContent = (
+  data: DataExchangeFormat,
+) => {
+  const rows: string[] = [];
+  rows.push('## Application Info');
+  if (data.applicationInfo?.description) {
+    rows.push(data.applicationInfo.description);
+  }
+
+  return rows.join('\n');
 };
-
-export default Architecture;

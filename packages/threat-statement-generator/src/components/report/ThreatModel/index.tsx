@@ -13,24 +13,25 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC } from 'react';
-import ApplicationInfo from './components/ApplicationInfo';
-import Architecture from './components/Architecture';
-import Assumptions from './components/Assumptions';
-import Dataflow from './components/Dataflow';
-import Mitigations from './components/Mitigations';
-import Threats from './components/Threats';
+import ThreatModelView from './components/ThreatModelView';
+import { useGlobalSetupContext } from '../../../contexts';
+import useImportExport from '../../../hooks/useExportImport';
 
-const ThreatModel: FC = () => {
-  return (<SpaceBetween direction='vertical' size='l'>
-    <ApplicationInfo />
-    <Architecture />
-    <Dataflow />
-    <Assumptions />
-    <Threats />
-    <Mitigations />
-  </SpaceBetween>);
+export interface ThreatModelProps {
+  onPrintButtonClick?: () => void;
+}
+
+const ThreatModel: FC<ThreatModelProps> = ({
+  onPrintButtonClick,
+}) => {
+  const { getWorkspaceData } = useImportExport();
+  const { composerMode } = useGlobalSetupContext();
+  return <ThreatModelView
+    onPrintButtonClick={onPrintButtonClick}
+    composerMode={composerMode}
+    data={getWorkspaceData()}
+  />;
 };
 
 export default ThreatModel;

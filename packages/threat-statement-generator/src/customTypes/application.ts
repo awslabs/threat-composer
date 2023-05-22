@@ -15,6 +15,10 @@
  ******************************************************************************************************************** */
 export interface ApplicationInfo {
   /**
+   * The name of the application.
+   */
+  name?: string;
+  /**
    * The description of the archiecture diagram
    */
   description?: string;

@@ -19,11 +19,15 @@ import { ArchitectureInfo } from '../../customTypes';
 export interface DataflowInfoContextApi {
   dataflowInfo: ArchitectureInfo;
   setDataflowInfo: React.Dispatch<React.SetStateAction<ArchitectureInfo>>;
+  removeDataflowInfo: () => Promise<void>;
+  onDeleteWorkspace: (workspaceId: string) => Promise<void>;
 }
 
 const initialState: DataflowInfoContextApi = {
   dataflowInfo: {},
   setDataflowInfo: () => { },
+  removeDataflowInfo: () => Promise.resolve(),
+  onDeleteWorkspace: () => Promise.resolve(),
 };
 
 export const DataflowInfoContext = createContext<DataflowInfoContextApi>(initialState);

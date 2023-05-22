@@ -43,11 +43,11 @@ const useImportExport = () => {
   const { assumptionLinkList, setAssumptionLinkList } = useAssumptionLinksContext();
   const { mitigationLinkList, setMitigationLinkList } = useMitigationLinksContext();
 
-  const getWorkspaceData = useCallback(() => {
+  const getWorkspaceData = useCallback((): DataExchangeFormat => {
     if (composerMode === 'Full') {
       return {
         schema: SCHEMA_VERSION,
-        workspace: currentWorkspace,
+        workspace: currentWorkspace || undefined,
         applicationInfo,
         architecture: architectureInfo,
         dataflow: dataflowInfo,

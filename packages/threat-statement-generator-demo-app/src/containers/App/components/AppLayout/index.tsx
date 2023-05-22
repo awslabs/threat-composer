@@ -24,6 +24,9 @@ export interface ApplayoutProps {
   headerProps?: Partial<TopNavigationProps>;
   availableRoutes?: string[];
   breadcrumbGroup?: ReactNode;
+  splitPanel?: ReactNode;
+  splitPanelSize?: number;
+  splitPanelOpen?: boolean;
 }
 
 const AppLayout: FC<PropsWithChildren<ApplayoutProps>> = ({

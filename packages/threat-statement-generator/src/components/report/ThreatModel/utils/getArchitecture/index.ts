@@ -13,22 +13,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Header from '@cloudscape-design/components/header';
-import { FC } from 'react';
-import { useDataflowInfoContext } from '../../../../../contexts/DataflowContext/context';
-import MarkdownViewer from '../../../../generic/MarkdownViewer';
+import { DataExchangeFormat } from '../../../../../customTypes';
 
-const Dataflow: FC = () => {
-  const { dataflowInfo } = useDataflowInfoContext();
-  return (<div>
-    <Header variant='h2'>Dataflow</Header>
-    <Header variant='h3' key='diagramInfo'>Introduction</Header>
-    <MarkdownViewer>
-      {dataflowInfo.description || ''}
-    </MarkdownViewer>
-    <Header variant='h3' key='diagram'>Dataflow Diagram</Header>
-    {dataflowInfo.image && <img width={1024} src={dataflowInfo.image} alt='Dataflow Diagram' />}
-  </div>);
+export const getArchitectureContent = (
+  data: DataExchangeFormat,
+) => {
+  const rows: string[] = [];
+  rows.push('## Architecture');
+  if (data.architecture) {
+    if (data.architecture.description) {
+      rows.push('### Introduction');
+      rows.push(data.architecture.description);
+    }
+
+    if (data.architecture.image) {
+      rows.push('### Architecture Diagram');
+      rows.push(`![Architecture Diagram](${data.architecture.image})`);
+    }
+  }
+
+  return rows.join('\n');
 };
-
-export default Dataflow;

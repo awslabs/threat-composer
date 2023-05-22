@@ -25,7 +25,6 @@ import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/cont
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { TemplateThreatStatement } from '../../../customTypes';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
-import GenericListMoreActions from '../../generic/GenericListMoreActions';
 import { OPTIONS as LevelOptions } from '../../generic/LevelSelector';
 import { OPTIONS as STRIDEOptions } from '../../generic/STRIDESelector';
 import WorkspaceSelector from '../../workspaces/WorkspaceSelector';
@@ -59,7 +58,6 @@ const ThreatStatementList: FC = () => {
     addStatement,
     editStatement,
     saveStatement,
-    removeAllStatements,
   } = useThreatsContext();
 
   const {
@@ -216,9 +214,6 @@ const ThreatStatementList: FC = () => {
           enabledRemoveAll={statementList.length > 0}
           enabledExportFiltered={!hasNoFilter}
           filteredThreats={filteredStatementList}
-          onRemoveAll={() => {
-            removeAllStatements();
-          }}
         >
           <Button variant="primary" onClick={() => addStatement()}>
             Add new statement
@@ -228,10 +223,6 @@ const ThreatStatementList: FC = () => {
           <Button variant="primary" onClick={() => addStatement()}>
             Add new statement
           </Button>
-          <GenericListMoreActions
-            enabledRemoveAll={statementList.length > 0}
-            onRemoveAll={removeAllStatements}
-          />
         </SpaceBetween>)}
       </>);
   }, [

@@ -13,33 +13,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Header from '@cloudscape-design/components/header';
-import SpaceBetween from '@cloudscape-design/components/space-between';
-import { FC, useMemo } from 'react';
-import { useAssumptionsContext } from '../../../../../contexts/AssumptionsContext/context';
+import { DataExchangeFormat } from '../../../../../customTypes';
 import standardizeNumericId from '../../../../../utils/standardizeNumericId';
-import MarkdownViewer from '../../../../generic/MarkdownViewer';
 
-const Assumptions: FC = () => {
-  const { assumptionList } = useAssumptionsContext();
-
-  const content: string = useMemo(() => {
-    const rows: string[] = [];
+export const getAssumptionsContent = (
+  data: DataExchangeFormat,
+) => {
+  const rows: string[] = [];
+  rows.push('## Assumptions');
+  if (data.threats) {
     rows.push('| Assumption Number | Assumption  |');
     rows.push('| --- | --- |');
 
-    assumptionList.forEach(x => {
-      rows.push(`|A-${standardizeNumericId(x.numericId)}|${x.content}|`);
+    data.assumptions?.forEach(x => {
+      const assumptionId = `A-${standardizeNumericId(x.numericId)}`;
+      rows.push(`| <a name="${assumptionId}"></a>${assumptionId} | ${x.content} |`);
     });
-    return rows.join('  \n');
-  }, [assumptionList]);
+  }
 
-  return (<SpaceBetween direction='vertical' size='s'>
-    <Header variant='h2'>Assumptions</Header>
-    <MarkdownViewer>
-      {content}
-    </MarkdownViewer>
-  </SpaceBetween>);
+  return rows.join('\n');
 };
 
-export default Assumptions;

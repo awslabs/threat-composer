@@ -184,6 +184,10 @@
       "type": "peer"
     },
     {
+      "name": "@aws-northstar/ui",
+      "type": "runtime"
+    },
+    {
       "name": "@cloudscape-design/components",
       "type": "runtime"
     },

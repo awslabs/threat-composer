@@ -13,22 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { generatePath } from 'react-router-dom';
-
-const ROUTE_BASE_PATH=process.env.REACT_APP_ROUTE_BASE_PATH || '';
-
-const generateUrl = (path: string, searchParms: URLSearchParams, workspaceId: string, threatId?: string) => {
-  const mode = searchParms.get('mode');
-  if (mode) {
-    return `${ROUTE_BASE_PATH}${generatePath(path, {
-      workspaceId,
-      threatId,
-    })}?mode=${mode}`;
-  }
-
-  return `${ROUTE_BASE_PATH}${generatePath(path, {
-    workspaceId: workspaceId,
-  })}`;
+const removeLocalStorageKey = (key: string) => {
+  window.localStorage.removeItem(key);
 };
 
-export default generateUrl;
+export default removeLocalStorageKey;

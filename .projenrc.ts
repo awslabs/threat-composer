@@ -73,7 +73,8 @@ const uiProject = new TypeScriptProject({
     "@types/d3@^7",
     "sanitize-html",
     "@types/sanitize-html",
-    "rehype-raw"
+    "rehype-raw",
+    "@aws-northstar/ui",
   ],
   devDeps: [
     "@cloudscape-design/jest-preset",

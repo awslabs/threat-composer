@@ -22,7 +22,8 @@ export interface AssumptionsContextApi {
   setAssumptionList: (assumptions: Assumption[]) => void;
   removeAssumption: (id: string) => void;
   saveAssumption: (assumption: Assumption) => Assumption;
-  removeAllAssumptions: () => void;
+  removeAllAssumptions: () => Promise<void>;
+  onDeleteWorkspace: (workspaceId: string) => Promise<void>;
 }
 
 const initialState: AssumptionsContextApi = {
@@ -34,7 +35,8 @@ const initialState: AssumptionsContextApi = {
     numericId: -1,
     content: '',
   }),
-  removeAllAssumptions: () => { },
+  removeAllAssumptions: () => Promise.resolve(),
+  onDeleteWorkspace: () => Promise.resolve(),
 };
 
 export const AssumptionsContext = createContext<AssumptionsContextApi>(initialState);

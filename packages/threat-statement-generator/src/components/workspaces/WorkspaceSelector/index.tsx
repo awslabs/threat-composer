@@ -13,15 +13,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import DeleteConfirmationDialog from '@aws-northstar/ui/components/DeleteConfirmationDialog';
+import Alert from '@cloudscape-design/components/alert';
+import Button from '@cloudscape-design/components/button';
 import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
 import { CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import Select, { SelectProps } from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo, useState, useCallback, PropsWithChildren } from 'react';
 import { DEFAULT_WORKSPACE_ID, DEFAULT_WORKSPACE_LABEL } from '../../../configs/constants';
-import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
+import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext';
+import { useWorkspacesContext } from '../../../contexts/WorkspacesContext';
 import { TemplateThreatStatement } from '../../../customTypes';
 import useImportExport from '../../../hooks/useExportImport';
+import useRemoveData from '../../../hooks/useRemoveData';
 import AddWorkspace from '../../workspaces/EditWorkspace';
 import FileImport from '../../workspaces/FileImport';
 
@@ -31,7 +36,6 @@ export interface WorkspaceSelectorProps {
   enabledRemoveAll?: boolean;
   enabledExportFiltered?: boolean;
   filteredThreats?: TemplateThreatStatement[];
-  onRemoveAll?: () => void;
 }
 
 const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
@@ -41,19 +45,21 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
   enabledExportFiltered,
   enabledRemoveAll,
   filteredThreats,
-  onRemoveAll,
 }) => {
   const [fileImportModalVisible, setFileImportModalVisible] = useState(false);
   const [addWorkspaceModalVisible, setAddWorkspaceModalVisible] = useState(false);
   const [editWorkspaceModalVisible, setEditWorkspaceModalVisible] = useState(false);
+  const [removeWorkspaceModalVisible, setRemoveWorkspaceModalVisible] = useState(false);
+  const [isRemovingWorkspace, setIsRemovingWorkspace] = useState(false);
 
   const { importData, exportAll, exportSelectedThreats } = useImportExport();
+  const { removeData, deleteCurrentWorkspace } = useRemoveData();
+  const { composerMode, onPreview, onPreviewClose } = useGlobalSetupContext();
 
   const {
     currentWorkspace,
     workspaceList,
     addWorkspace,
-    removeWorkspace,
     renameWorkspace,
     switchWorkspace,
   } = useWorkspacesContext();
@@ -96,7 +102,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     }
   }, [switchWorkspace]);
 
-  const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(({ detail }) => {
+  const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(async ({ detail }) => {
     switch (detail.id) {
       case 'import':
         setFileImportModalVisible(true);
@@ -108,11 +114,10 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         exportSelectedThreats(filteredThreats || []);
         break;
       case 'removeAll':
-        onRemoveAll?.();
+        (await removeData?.());
         break;
       case 'delete':
-        currentWorkspace && removeWorkspace(currentWorkspace.id);
-        switchWorkspace(null);
+        currentWorkspace && setRemoveWorkspaceModalVisible(true);
         break;
       case 'renameWorkspace':
         setEditWorkspaceModalVisible(true);
@@ -125,10 +130,23 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     exportAll,
     exportSelectedThreats,
     filteredThreats,
-    onRemoveAll,
-    removeWorkspace,
+    removeData,
+    deleteCurrentWorkspace,
     currentWorkspace,
+    setRemoveWorkspaceModalVisible,
   ]);
+
+  const handleDeleteWorkspace = useCallback(async () => {
+    setIsRemovingWorkspace(true);
+
+    try {
+      await deleteCurrentWorkspace();
+    } catch (e) {
+      console.log('Error in deleting workspace', e);
+    } finally {
+      setIsRemovingWorkspace(false);
+    }
+  }, []);
 
   return (<>
     <SpaceBetween direction="horizontal" size="xs">
@@ -156,13 +174,13 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
             id: 'exportFilteredList',
             text: 'Export filtered statement list',
             disabled: !enabledExportFiltered,
-          },
-          {
-            id: 'removeAll',
-            text: 'Remove all statements',
-            disabled: !enabledRemoveAll,
           }] :
             []),
+          {
+            id: 'removeAll',
+            text: embededMode ? 'Remove all statements' : 'Remove data',
+            disabled: embededMode && !enabledRemoveAll,
+          },
           {
             id: 'delete',
             text: 'Delete workspace',
@@ -180,9 +198,14 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
       />
     </SpaceBetween>
     {fileImportModalVisible && <FileImport
+      composerMode={composerMode}
       visible={fileImportModalVisible}
       setVisible={setFileImportModalVisible}
-      onImport={importData} />}
+      onExport={exportAll}
+      onImport={importData}
+      onPreview={onPreview}
+      onPreviewClose={onPreviewClose}
+    />}
     {addWorkspaceModalVisible && <AddWorkspace
       visible={addWorkspaceModalVisible}
       setVisible={setAddWorkspaceModalVisible}
@@ -195,6 +218,26 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
       value={currentWorkspace.name}
       onConfirm={(newWorkspaceName) => renameWorkspace(currentWorkspace.id, newWorkspaceName)}
     />}
+    {removeWorkspaceModalVisible && currentWorkspace && <DeleteConfirmationDialog
+      variant='friction'
+      visible={removeWorkspaceModalVisible}
+      title='Remove Workspace'
+      onCancelClicked={() => setRemoveWorkspaceModalVisible(false)}
+      onDeleteClicked={handleDeleteWorkspace}
+      loading={isRemovingWorkspace}
+    >
+      <Alert
+        action={<Button
+          onClick={() => exportAll()}
+        >
+          Export data
+        </Button>}
+        type='warning'>
+        Delete <b>workspace {currentWorkspace?.name}</b> permenantly? This action cannot be undone.
+        <br/>
+        You can export the data to a json file as backup.
+      </Alert>
+    </DeleteConfirmationDialog>}
   </>);
 };
 

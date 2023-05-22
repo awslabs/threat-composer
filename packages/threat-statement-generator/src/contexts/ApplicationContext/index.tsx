@@ -15,9 +15,10 @@
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
-import { ApplicationInfoContext } from './context';
+import { ApplicationInfoContext, useApplicationInfoContext } from './context';
 import { LOCAL_STORAGE_KEY_APPLICATION_INFO } from '../../configs/localStorageKeys';
 import { ApplicationInfo } from '../../customTypes';
+import removeLocalStorageKey from '../../utils/removeLocalStorageKey';
 
 export interface ApplicationContextProviderProps {
   workspaceId: string | null;
@@ -39,21 +40,33 @@ const ApplicationContextProvider: FC<PropsWithChildren<ApplicationContextProvide
   children,
   workspaceId: currentWorkspaceId,
 }) => {
-  const [applicationInfo, setApplicationInfo] = useLocalStorageState<ApplicationInfo>(getLocalStorageKey(currentWorkspaceId), {
+  const [applicationInfo, setApplicationInfo, { removeItem }] = useLocalStorageState<ApplicationInfo>(getLocalStorageKey(currentWorkspaceId), {
     defaultValue: DEFAULT_VALUE,
   });
 
-  const removeApplicationInfo = useCallback(() => {
-    setApplicationInfo(DEFAULT_VALUE);
+  const handleRemoveApplicationInfo = useCallback(async () => {
+    removeItem();
+  }, [removeItem]);
+
+  const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
+    window.setTimeout(() => {
+      // tio delete after the workspace is switched. Otherwise the default value is set again.
+      removeLocalStorageKey(getLocalStorageKey(workspaceId));
+    }, 1000);
   }, []);
 
   return (<ApplicationInfoContext.Provider value={{
     applicationInfo,
     setApplicationInfo,
-    removeApplicationInfo,
+    removeApplicationInfo: handleRemoveApplicationInfo,
+    onDeleteWorkspace: handleDeleteWorkspace,
   }}>
     {children}
   </ApplicationInfoContext.Provider>);
 };
 
 export default ApplicationContextProvider;
+
+export {
+  useApplicationInfoContext,
+};

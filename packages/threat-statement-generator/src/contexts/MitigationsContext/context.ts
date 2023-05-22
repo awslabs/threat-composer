@@ -22,7 +22,8 @@ export interface MitigationsContextApi {
   setMitigationList: (entity: Mitigation[]) => void;
   removeMitigation: (id: string) => void;
   saveMitigation: (entity: Mitigation) => Mitigation;
-  removeAllMitigations: () => void;
+  removeAllMitigations: () => Promise<void>;
+  onDeleteWorkspace: (workspaceId: string) => Promise<void>;
 }
 
 const initialState: MitigationsContextApi = {
@@ -34,7 +35,8 @@ const initialState: MitigationsContextApi = {
     numericId: -1,
     content: '',
   }),
-  removeAllMitigations: () => { },
+  removeAllMitigations: () => Promise.resolve(),
+  onDeleteWorkspace: () => Promise.resolve(),
 };
 
 export const MitigationsContext = createContext<MitigationsContextApi>(initialState);

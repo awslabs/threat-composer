@@ -13,11 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
-import { ArchitectureInfoContext } from './context';
+import { ArchitectureInfoContext, useArchitectureInfoContext } from './context';
 import { LOCAL_STORAGE_KEY_ARCHIECTURE_INFO } from '../../configs/localStorageKeys';
 import { ArchitectureInfo } from '../../customTypes';
+import removeLocalStorageKey from '../../utils/removeLocalStorageKey';
 
 export interface ApplicationContextProviderProps {
   workspaceId: string | null;
@@ -31,22 +32,41 @@ const getLocalStorageKey = (workspaceId: string | null) => {
   return LOCAL_STORAGE_KEY_ARCHIECTURE_INFO;
 };
 
+const DEFAULT_VALUE = {
+  description: '',
+};
+
 const ApplicationContextProvider: FC<PropsWithChildren<ApplicationContextProviderProps>> = ({
   children,
   workspaceId: currentWorkspaceId,
 }) => {
-  const [architectureInfo, setArchitectureInfo] = useLocalStorageState<ArchitectureInfo>(getLocalStorageKey(currentWorkspaceId), {
-    defaultValue: {
-      description: '',
-    },
+  const [architectureInfo, setArchitectureInfo, { removeItem }] = useLocalStorageState<ArchitectureInfo>(getLocalStorageKey(currentWorkspaceId), {
+    defaultValue: DEFAULT_VALUE,
   });
+
+  const handleRemoveArchitectureInfo = useCallback(async () => {
+    removeItem();
+  }, [removeItem]);
+
+  const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
+    window.setTimeout(() => {
+      // tio delete after the workspace is switched. Otherwise the default value is set again.
+      removeLocalStorageKey(getLocalStorageKey(workspaceId));
+    }, 1000);
+  }, []);
 
   return (<ArchitectureInfoContext.Provider value={{
     architectureInfo,
     setArchitectureInfo,
+    removeArchitectureInfo: handleRemoveArchitectureInfo,
+    onDeleteWorkspace: handleDeleteWorkspace,
   }}>
     {children}
   </ArchitectureInfoContext.Provider>);
 };
 
 export default ApplicationContextProvider;
+
+export {
+  useArchitectureInfoContext,
+};
