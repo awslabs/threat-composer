@@ -15,8 +15,8 @@
  ******************************************************************************************************************** */
 import { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
 import { FC, useMemo, useCallback, useState } from 'react';
-import { Routes, Route, RouteProps, useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { ContextAggregator, DataExchangeFormat, WorkspaceSelector } from 'threat-statement-generator';
+import { Routes, Route, RouteProps, useParams, useSearchParams, useNavigate, Navigate } from 'react-router-dom';
+import { ContextAggregator, DataExchangeFormat, WorkspaceSelector, useWorkspacesContext } from 'threat-statement-generator';
 import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_DATAFLOW_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST, ROUTE_VIEW_THREAT_MODEL } from '../../../../config/routes';
 import routes from '../../../../routes';
 import generateUrl from '../../../../utils/generateUrl';
@@ -24,6 +24,15 @@ import ThreatModelReport from '../../../ThreatModelReport';
 import AppLayout from '../AppLayout';
 
 const TEMP_PREVIEW_DATA_KEY = 'ThreatStatementGenerator.TempPreviewData';
+
+const AppInner = () => {
+  const [searchParms] = useSearchParams();
+  const { currentWorkspace } = useWorkspacesContext();
+  return (<Routes>
+    {routes.map((r: RouteProps, index: number) => <Route key={index} {...r} />)}
+    <Route path='*' element={<Navigate to={generateUrl(ROUTE_VIEW_THREAT_MODEL, searchParms, currentWorkspace ? currentWorkspace.id : 'default')} />} />
+  </Routes>);
+};
 
 const Full: FC = () => {
   const { workspaceId: initialWorkspaceId } = useParams();
@@ -117,9 +126,7 @@ const Full: FC = () => {
         availableRoutes={routes.map(x => x.path || '')}
         breadcrumbGroup={<WorkspaceSelector embededMode={false} />}
       >
-        <Routes>
-          {routes.map((r: RouteProps, index: number) => <Route key={index} {...r} />)}
-        </Routes>
+        <AppInner />
       </AppLayout>)}
     </ContextAggregator>
   );

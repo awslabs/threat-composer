@@ -22,6 +22,7 @@ export const getThreatsContent = (
 ) => {
   const rows: string[] = [];
   rows.push('## Threats');
+
   rows.push(`| Threat Number | Threat | ${threatsOnly ? '' : 'Assumptions | Mitigations |'} Priority | STRIDE `);
   rows.push(`| --- | --- | ${threatsOnly ? '' : '--- | --- |'} --- | --- |`);
 
@@ -48,7 +49,7 @@ export const getThreatsContent = (
       }).filter(ml => !!ml).join('<br/>');
       const priority = x.metadata?.find(m => m.key === 'Priority')?.value || '';
       const STRIDE = ((x.metadata?.find(m => m.key === 'STRIDE')?.value || []) as string[]).join(', ');
-      rows.push(`| <a name="${threatId}"></a>${threatId} | ${x.statement} | ${threatsOnly ? '' : `| ${assumptionsContent} | ${mitigationsContent} |`} ${priority} | ${STRIDE} |`);
+      rows.push(`| <a name="${threatId}"></a>${threatId} | ${x.statement} | ${threatsOnly ? '' : ` ${assumptionsContent} | ${mitigationsContent} |`} ${priority} | ${STRIDE} |`);
     });
   }
 

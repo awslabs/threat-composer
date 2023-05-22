@@ -29,6 +29,8 @@ import { getDataflowContent } from '../../utils/getDataFlow';
 import { getMitigationsContent } from '../../utils/getMitigations';
 import { getThreatsContent } from '../../utils/getThreats';
 
+import './index.css';
+
 export interface ThreatModelViewProps {
   composerMode: string;
   data: DataExchangeFormat;
@@ -56,33 +58,35 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
     await navigator.clipboard.writeText(content);
   }, [content]);
 
-  return (<SpaceBetween direction='vertical' size='s'>
-    <div className='hidden-print'><Header
-      actions={
-        <SpaceBetween direction="horizontal" size="xs">
-          <Popover
-            dismissButton={false}
-            position="top"
-            size="small"
-            triggerType="custom"
-            content={
-              <StatusIndicator type="success">
-                Content copied
-              </StatusIndicator>
-            }
-          >
-            <Button
-              onClick={handleCopyMarkdown}>
-              Copy as Markdown
-            </Button>
-          </Popover>
-          <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>
-        </SpaceBetween>
-      }
-    >
-    </Header></div>
-    <MarkdownViewer>{content}</MarkdownViewer>
-  </SpaceBetween>);
+  return (<div className='threat-statement-generator-threat-model-view'>
+    <SpaceBetween direction='vertical' size='s'>
+      <div className='hidden-print'><Header
+        actions={
+          <SpaceBetween direction="horizontal" size="xs">
+            <Popover
+              dismissButton={false}
+              position="top"
+              size="small"
+              triggerType="custom"
+              content={
+                <StatusIndicator type="success">
+                  Content copied
+                </StatusIndicator>
+              }
+            >
+              <Button
+                onClick={handleCopyMarkdown}>
+                Copy as Markdown
+              </Button>
+            </Popover>
+            <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>
+          </SpaceBetween>
+        }
+      >
+      </Header></div>
+      <MarkdownViewer>{content}</MarkdownViewer>
+    </SpaceBetween>
+  </div>);
 };
 
 export default ThreatModelView;
