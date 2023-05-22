@@ -25,11 +25,17 @@ import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext/context
 import { useMitigationLinksContext } from '../../contexts/MitigationLinksContext/context';
 import { useMitigationsContext } from '../../contexts/MitigationsContext/context';
 import { useThreatsContext } from '../../contexts/ThreatsContext/context';
-import { DataExchangeFormat, TemplateThreatStatement } from '../../customTypes';
+import { ComposerMode, DataExchangeFormat, TemplateThreatStatement, Workspace } from '../../customTypes';
 import downloadObjectAsJson from '../../utils/downloadObjectAsJson';
 import sanitizeHtml from '../../utils/sanitizeHtml';
 
 const SCHEMA_VERSION = 1.0;
+
+const getExportFileName = (composerMode: ComposerMode, filtered: boolean, currentWorkspace: Workspace | null) => {
+  const date = new Date().toISOString().split('T')[0];
+  const exportFileName = `${EXPORT_FILE_NAME}_Workspace_${currentWorkspace ? currentWorkspace.name.replace(' ', '-') : 'Default'}${composerMode !== 'Full' ? '_ThreatsOnly' : ''}${filtered ? '_Filtered' : ''}_${date}`;
+  return exportFileName;
+};
 
 const useImportExport = () => {
   const { composerMode } = useGlobalSetupContext();
@@ -70,15 +76,13 @@ const useImportExport = () => {
     statementList]);
 
   const exportAll = useCallback(() => {
-    const date = new Date().toISOString().split('T')[0];
-    const exportFileName = `${EXPORT_FILE_NAME}_Workspace_${currentWorkspace ? currentWorkspace.name.replace(' ', '-') : 'Default'}_${date}`;
+    const exportFileName = getExportFileName(composerMode, false, currentWorkspace);
     const exportObject = getWorkspaceData();
     downloadObjectAsJson(exportObject, exportFileName);
-  }, [getWorkspaceData, currentWorkspace]);
+  }, [getWorkspaceData, currentWorkspace, composerMode]);
 
   const exportSelectedThreats = useCallback((selectedStatementList: TemplateThreatStatement[]) => {
-    const date = new Date().toISOString().split('T')[0];
-    const exportFileName = `${EXPORT_FILE_NAME}_Workspace_${currentWorkspace ? currentWorkspace.name.replace(' ', '-') : 'Default'}_Filtered_${date}`;
+    const exportFileName = getExportFileName(composerMode, true, currentWorkspace);
     downloadObjectAsJson({
       schema: SCHEMA_VERSION,
       workspace: currentWorkspace,
