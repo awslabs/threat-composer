@@ -41,6 +41,7 @@ const ApplicationInfo: FC = () => {
 
   const handleEdit = useCallback(() => {
     setContent(applicationInfo.description || '');
+    setName(applicationInfo.name || '');
     setEditMode(true);
   }, [applicationInfo]);
 
