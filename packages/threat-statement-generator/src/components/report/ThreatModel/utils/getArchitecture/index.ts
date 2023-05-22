@@ -32,5 +32,7 @@ export const getArchitectureContent = (
     }
   }
 
+  rows.push('\n');
+
   return rows.join('\n');
 };

@@ -24,5 +24,7 @@ export const getApplicationInfoContent = (
     rows.push(data.applicationInfo.description);
   }
 
+  rows.push('\n');
+
   return rows.join('\n');
 };

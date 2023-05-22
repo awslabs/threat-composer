@@ -32,5 +32,7 @@ export const getDataflowContent = (
     }
   }
 
+  rows.push('\n');
+
   return rows.join('\n');
 };

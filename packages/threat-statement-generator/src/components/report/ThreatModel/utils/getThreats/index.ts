@@ -23,6 +23,8 @@ export const getThreatsContent = (
   const rows: string[] = [];
   rows.push('## Threats');
 
+  rows.push('\n');
+
   rows.push(`| Threat Number | Threat | ${threatsOnly ? '' : 'Assumptions | Mitigations |'} Priority | STRIDE `);
   rows.push(`| --- | --- | ${threatsOnly ? '' : '--- | --- |'} --- | --- |`);
 
@@ -52,6 +54,8 @@ export const getThreatsContent = (
       rows.push(`| <a name="${threatId}"></a>${threatId} | ${x.statement} | ${threatsOnly ? '' : ` ${assumptionsContent} | ${mitigationsContent} |`} ${priority} | ${STRIDE} |`);
     });
   }
+
+  rows.push('\n');
 
   return rows.join('\n');
 };

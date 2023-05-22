@@ -21,15 +21,20 @@ export const getAssumptionsContent = (
 ) => {
   const rows: string[] = [];
   rows.push('## Assumptions');
-  if (data.threats) {
-    rows.push('| Assumption Number | Assumption  |');
-    rows.push('| --- | --- |');
 
+  rows.push('\n');
+
+  rows.push('| Assumption Number | Assumption  |');
+  rows.push('| --- | --- |');
+
+  if (data.assumptions) {
     data.assumptions?.forEach(x => {
       const assumptionId = `A-${standardizeNumericId(x.numericId)}`;
       rows.push(`| <a name="${assumptionId}"></a>${assumptionId} | ${x.content} |`);
     });
   }
+
+  rows.push('\n');
 
   return rows.join('\n');
 };

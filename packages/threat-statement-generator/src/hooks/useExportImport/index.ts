@@ -70,16 +70,20 @@ const useImportExport = () => {
     statementList]);
 
   const exportAll = useCallback(() => {
+    const date = new Date().toISOString().split('T')[0];
+    const exportFileName = `${EXPORT_FILE_NAME}_Workspace_${currentWorkspace ? currentWorkspace.name.replace(' ', '-') : 'Default'}_${date}`;
     const exportObject = getWorkspaceData();
-    downloadObjectAsJson(exportObject, EXPORT_FILE_NAME);
-  }, [getWorkspaceData]);
+    downloadObjectAsJson(exportObject, exportFileName);
+  }, [getWorkspaceData, currentWorkspace]);
 
   const exportSelectedThreats = useCallback((selectedStatementList: TemplateThreatStatement[]) => {
+    const date = new Date().toISOString().split('T')[0];
+    const exportFileName = `${EXPORT_FILE_NAME}_Workspace_${currentWorkspace ? currentWorkspace.name.replace(' ', '-') : 'Default'}_Filtered_${date}`;
     downloadObjectAsJson({
       schema: SCHEMA_VERSION,
       workspace: currentWorkspace,
       threats: selectedStatementList,
-    }, EXPORT_FILE_NAME);
+    }, exportFileName);
   }, [currentWorkspace]);
 
   const parseImportedData = useCallback((data: any): DataExchangeFormat => {

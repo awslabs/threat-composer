@@ -125,10 +125,9 @@ const FileImport: FC<FileImportProps> = ({
         statusIconAriaLabel="Warning"
         type="warning"
         key="warning">
-        <TextContent>Importing a new threat list will override the current threat list in editing.
-          Use <b>Export</b> funtion to export and save current editing threat list,
-          Or create a new <b>workspace</b>. </TextContent>
-        <TextContent>You can export the data to a json file as backup.</TextContent>
+        <TextContent>Importing data will override all the data in current workspace. This action cannot be undone.<br/>
+          You can export the data to a json file as backup or create a new <b>workspace</b>.
+        </TextContent>
       </Alert>
       <FileUpload accept='application/json' files={selectedFiles} onChange={setSelectedFiles} />
       {loading && <ProgressBar

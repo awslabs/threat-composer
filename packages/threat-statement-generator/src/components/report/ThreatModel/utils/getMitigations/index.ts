@@ -22,10 +22,12 @@ export const getMitigationsContent = (
   const rows: string[] = [];
   rows.push('## Mitigations');
 
-  if (data.mitigations) {
-    rows.push('| Mitigation Number | Mitigation | Threats Mitigating | Assumptions');
-    rows.push('| --- | --- | --- | --- |');
+  rows.push('\n');
 
+  rows.push('| Mitigation Number | Mitigation | Threats Mitigating | Assumptions');
+  rows.push('| --- | --- | --- | --- |');
+
+  if (data.mitigations) {
     data.mitigations.forEach(x => {
       const threats = data.mitigationLinks?.filter(ml => ml.mitigationId === x.id) || [];
       const assumpptionLinks = data.assumptionLinks?.filter(al => al.linkedId === x.id) || [];
@@ -52,6 +54,8 @@ export const getMitigationsContent = (
       rows.push(`| <a name="${mitigationId}"></a>${mitigationId} | ${x.content} | ${threatsContent} | ${assumptionsContent} |`);
     });
   }
+
+  rows.push('\n');
 
   return rows.join('\n');
 };
