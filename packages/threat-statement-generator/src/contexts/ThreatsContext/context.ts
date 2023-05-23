@@ -50,9 +50,8 @@ export interface ThreatsContextApi {
   removeStatement: (id: string) => void;
   editStatement: (id: string) => void;
   saveStatement: (statement: TemplateThreatStatement) => void;
-  importStatementList: (newStatements: TemplateThreatStatement[]) => void;
-  exportStatementList: (exportedStatementList: TemplateThreatStatement[]) => void;
-  removeAllStatements: () => void;
+  removeAllStatements: () => Promise<void>;
+  onDeleteWorkspace: (workspaceId: string) => Promise<void>;
 }
 
 const initialState: ThreatsContextApi = {
@@ -69,9 +68,8 @@ const initialState: ThreatsContextApi = {
   removeStatement: () => { },
   saveStatement: () => { },
   editStatement: () => { },
-  importStatementList: () => { },
-  exportStatementList: () => { },
-  removeAllStatements: () => { },
+  removeAllStatements: () => Promise.resolve(),
+  onDeleteWorkspace: () => Promise.resolve(),
 };
 
 export const ThreatsContext = createContext<ThreatsContextApi>(initialState);

@@ -15,9 +15,10 @@
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
-import { AssumptionLinksContext } from './context';
+import { AssumptionLinksContext, useAssumptionLinksContext } from './context';
 import { LOCAL_STORAGE_KEY_ASSUMPTION_LINK_LIST } from '../../configs/localStorageKeys';
 import { AssumptionLink } from '../../customTypes';
+import removeLocalStorageKey from '../../utils/removeLocalStorageKey';
 
 export interface AssumptionLinksContextProviderProps {
   workspaceId: string | null;
@@ -41,7 +42,7 @@ const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContex
   children,
   workspaceId: currentWorkspaceId,
 }) => {
-  const [assumptionLinkList, setAssumptionLinkList] = useLocalStorageState<AssumptionLink[]>(getLocalStorageKey(currentWorkspaceId), {
+  const [assumptionLinkList, setAssumptionLinkList, { removeItem }] = useLocalStorageState<AssumptionLink[]>(getLocalStorageKey(currentWorkspaceId), {
     defaultValue: [],
   });
 
@@ -89,8 +90,15 @@ const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContex
     return assumptionLinkList.filter(x => x.assumptionId === assumptionId && x.type === type);
   }, [assumptionLinkList]);
 
-  const handleRemoveAllAssumptionLinks = useCallback(() => {
-    setAssumptionLinkList([]);
+  const handleRemoveAllAssumptionLinks = useCallback(async () => {
+    removeItem();
+  }, [removeItem]);
+
+  const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
+    window.setTimeout(() => {
+      // tio delete after the workspace is switched. Otherwise the default value is set again.
+      removeLocalStorageKey(getLocalStorageKey(workspaceId));
+    }, 1000);
   }, []);
 
   return (<AssumptionLinksContext.Provider value={{
@@ -103,9 +111,14 @@ const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContex
     addAssumptionLink: handleAddAssumptionLink,
     addAssumptionLinks: handleAddAssumptionLinks,
     removeAllAssumptionLinks: handleRemoveAllAssumptionLinks,
+    onDeleteWorkspace: handleDeleteWorkspace,
   }}>
     {children}
   </AssumptionLinksContext.Provider>);
 };
 
 export default AssumptionLinksContextProvider;
+
+export {
+  useAssumptionLinksContext,
+};

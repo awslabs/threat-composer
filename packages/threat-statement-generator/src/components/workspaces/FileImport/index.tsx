@@ -19,26 +19,37 @@ import Button from '@cloudscape-design/components/button';
 import Modal from '@cloudscape-design/components/modal';
 import ProgressBar from '@cloudscape-design/components/progress-bar';
 import SpaceBetween from '@cloudscape-design/components/space-between';
+import TextContent from '@cloudscape-design/components/text-content';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { TemplateThreatStatement } from '../../../customTypes';
+import { DataExchangeFormat } from '../../../customTypes';
+import useImportExport from '../../../hooks/useExportImport';
 
 import FileUpload from '../../generic/FileUpload';
 
 export interface FileImportProps {
+  composerMode: string;
   visible: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  onImport: (threatStatementList: TemplateThreatStatement[]) => void;
+  onImport: (data: DataExchangeFormat) => void;
+  onExport: () => void;
+  onPreview?: (data: DataExchangeFormat) => void;
+  onPreviewClose?: () => void;
 }
 
 const FileImport: FC<FileImportProps> = ({
+  composerMode,
   visible,
   setVisible,
   onImport,
+  onExport,
+  onPreview,
+  onPreviewClose,
 }) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [statementList, setStatementList] = useState<TemplateThreatStatement[]>([]);
+  const [data, setData] = useState<DataExchangeFormat>();
   const [loading, setLoading] = useState(false);
   const [loadingPercentage, setLoadingPercentage] = useState(0);
+  const { parseImportedData } = useImportExport();
 
   const handleImport = useCallback((files: File[]) => {
     if (files.length > 0) {
@@ -48,7 +59,8 @@ const FileImport: FC<FileImportProps> = ({
 
       reader.addEventListener('load', (event) => {
         const result = event.target?.result;
-        setStatementList(JSON.parse(result as string));
+        const importedData = parseImportedData(JSON.parse(result as string));
+        setData(importedData);
         setLoading(false);
       });
 
@@ -64,42 +76,66 @@ const FileImport: FC<FileImportProps> = ({
   }, []);
 
   const handleConfirmImport = useCallback(() => {
-    onImport(statementList);
+    data && onImport(data);
     setSelectedFiles([]);
     setVisible(false);
-  }, [onImport, statementList]);
+    onPreviewClose?.();
+  }, [onImport, data, onPreviewClose]);
 
   useEffect(() => {
     selectedFiles && selectedFiles.length > 0 && handleImport(selectedFiles);
   }, [selectedFiles]);
 
+  const handlePreview = useCallback(() => {
+    data && onPreview?.(data);
+  }, [data]);
+
   const footer = useMemo(() => {
     return (<Box float="right">
       <SpaceBetween direction="horizontal" size="xs">
-        <Button variant="link" onClick={() => setVisible(false)}>Cancel</Button>
-        <Button variant="primary" disabled={statementList.length === 0} onClick={() => handleConfirmImport()}>Import</Button>
+        <Button variant="link" onClick={() => {
+          setVisible(false);
+          onPreviewClose?.();
+        }}>Cancel</Button>
+        {onPreview && <Button onClick={handlePreview} disabled={!data}>
+          Preview
+        </Button>}
+        <Button variant="primary" disabled={!data} onClick={() => handleConfirmImport()}>Import</Button>
       </SpaceBetween>
     </Box>);
-  }, [setVisible, handleConfirmImport]);
+  }, [setVisible, handleConfirmImport, onPreview, onPreviewClose]);
 
   return <Modal
     visible={visible}
     footer={footer}
-    onDismiss={() => setVisible(false)}
+    onDismiss={() => {
+      setVisible(false);
+      onPreviewClose?.();
+    }}
   >
     <SpaceBetween direction="vertical" size="m">
-      <Alert statusIconAriaLabel="Warning" type="warning" key="warning">
-        Importing a new threat list will override the current threat list in editing.
-        Use <b>Export</b> funtion to export and save current editing threat list,
-        Or create a new <b>workspace</b>.
+      <Alert
+        action={
+          <Button
+            onClick={() => onExport()}
+          >
+            Export data
+          </Button>
+        }
+        statusIconAriaLabel="Warning"
+        type="warning"
+        key="warning">
+        <TextContent>Importing data will override all the data in current workspace. This action cannot be undone.<br/>
+          You can export the data to a json file as backup or create a new <b>workspace</b>.
+        </TextContent>
       </Alert>
       <FileUpload accept='application/json' files={selectedFiles} onChange={setSelectedFiles} />
       {loading && <ProgressBar
         value={loadingPercentage}
         label="Loading file"
       />}
-      {selectedFiles.length > 0 && statementList.length > 0 && <Alert statusIconAriaLabel="Info" type="info" key="info">
-        {statementList.length} threat statement loaded
+      {!onPreview && composerMode !== 'Full' && data && data.threats && data.threats.length > 0 && <Alert statusIconAriaLabel="Info" type="info" key="info">
+        {data.threats.length} threat statement loaded
       </Alert>}
     </SpaceBetween>
   </Modal>;

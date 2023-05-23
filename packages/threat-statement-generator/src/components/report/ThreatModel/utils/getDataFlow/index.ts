@@ -13,19 +13,26 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Header from '@cloudscape-design/components/header';
-import { FC } from 'react';
-import { useApplicationInfoContext } from '../../../../../contexts/ApplicationContext/context';
-import MarkdownViewer from '../../../../generic/MarkdownViewer';
+import { DataExchangeFormat } from '../../../../../customTypes';
 
-const ApplicationInfo: FC = () => {
-  const { applicationInfo } = useApplicationInfoContext();
-  return (<div>
-    <Header variant='h2'>Application Info</Header>
-    <MarkdownViewer>
-      {applicationInfo.description || ''}
-    </MarkdownViewer>
-  </div>);
+export const getDataflowContent = (
+  data: DataExchangeFormat,
+) => {
+  const rows: string[] = [];
+  rows.push('## Dataflow');
+  if (data.dataflow) {
+    if (data.dataflow.description) {
+      rows.push('### Introduction');
+      rows.push(data.dataflow.description);
+    }
+
+    if (data.dataflow.image) {
+      rows.push('### Dataflow Diagram');
+      rows.push(`![Dataflow Diagram](${data.dataflow.image})`);
+    }
+  }
+
+  rows.push('\n');
+
+  return rows.join('\n');
 };
-
-export default ApplicationInfo;

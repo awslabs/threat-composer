@@ -26,7 +26,8 @@ export interface AssumptionLinksContextApi {
   removeAssumptionLinks: (entities: AssumptionLink[]) => void;
   addAssumptionLink: (entity: AssumptionLink) => void;
   addAssumptionLinks: (entities: AssumptionLink[]) => void;
-  removeAllAssumptionLinks: () => void;
+  removeAllAssumptionLinks: () => Promise<void>;
+  onDeleteWorkspace: (workspaceId: string) => Promise<void>;
 }
 
 const initialState: AssumptionLinksContextApi = {
@@ -38,7 +39,8 @@ const initialState: AssumptionLinksContextApi = {
   removeAssumptionLinks: () => { },
   addAssumptionLink: () => { },
   addAssumptionLinks: () => { },
-  removeAllAssumptionLinks: () => { },
+  removeAllAssumptionLinks: () => Promise.resolve(),
+  onDeleteWorkspace: () => Promise.resolve(),
 };
 
 export const AssumptionLinksContext = createContext<AssumptionLinksContextApi>(initialState);

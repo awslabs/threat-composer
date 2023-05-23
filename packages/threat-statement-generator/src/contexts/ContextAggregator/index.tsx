@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren } from 'react';
-import { ComposerMode } from '../../customTypes';
+import { ComposerMode, DataExchangeFormat } from '../../customTypes';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import WorkspaceContextAggregator, { WorkspaceContextAggregatorProps } from '../WorkspaceContextAggregator';
 import WorkspacesContextProvider, { WorkspacesContextProviderProps } from '../WorkspacesContext';
@@ -24,6 +24,8 @@ export interface ContextAggregatorProps {
   onWorkspaceChanged?: WorkspacesContextProviderProps['onWorkspaceChanged'];
   onThreatEditorView?: WorkspaceContextAggregatorProps['onThreatEditorView'];
   onThreatListView?: WorkspaceContextAggregatorProps['onThreatListView'];
+  onPreview?: (content: DataExchangeFormat) => void;
+  onPreviewClose?: () => void;
 }
 
 const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
@@ -32,9 +34,14 @@ const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
   composerMode = 'ThreatsOnly',
   onThreatEditorView,
   onThreatListView,
+  onPreview,
+  onPreviewClose,
 }) => {
   return (
-    <GlobalSetupContextProvider composerMode={composerMode}>
+    <GlobalSetupContextProvider
+      onPreview={onPreview}
+      onPreviewClose={onPreviewClose}
+      composerMode={composerMode}>
       <WorkspacesContextProvider onWorkspaceChanged={onWorkspaceChanged}>
         {(workspaceId) => (<WorkspaceContextAggregator
           workspaceId={workspaceId}

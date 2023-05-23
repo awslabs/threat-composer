@@ -24,37 +24,43 @@ import ThreatModelReport from '../containers/ThreatModelReport';
 import ThreatStatementEditor from '../containers/ThreatStatementEditor';
 import ThreatStatementList from '../containers/ThreatStatementList';
 
+const ROUTE_BASE_PATH = process.env.REACT_APP_ROUTE_BASE_PATH || '';
+
+const getRouteWithBasePath = (route: string) => {
+  return `${ROUTE_BASE_PATH}${route}`;
+};
+
 const routes: RouteProps[] = [
   {
-    path: ROUTE_APPLICATION_INFO,
+    path: getRouteWithBasePath(ROUTE_APPLICATION_INFO),
     element: <Application />,
   },
   {
-    path: ROUTE_ARCHITECTURE_INFO,
+    path: getRouteWithBasePath(ROUTE_ARCHITECTURE_INFO),
     element: <Architecture />,
   },
   {
-    path: ROUTE_ASSUMPTION_LIST,
+    path: getRouteWithBasePath(ROUTE_ASSUMPTION_LIST),
     element: <AssumptionList />,
   },
   {
-    path: ROUTE_DATAFLOW_INFO,
+    path: getRouteWithBasePath(ROUTE_DATAFLOW_INFO),
     element: <Dataflow />,
   },
   {
-    path: ROUTE_MITIGATION_LIST,
+    path: getRouteWithBasePath(ROUTE_MITIGATION_LIST),
     element: <MitigationList />,
   },
   {
-    path: ROUTE_VIEW_THREAT_MODEL,
+    path: getRouteWithBasePath(ROUTE_VIEW_THREAT_MODEL),
     element: <ThreatModelReport />,
   },
   {
-    path: ROUTE_THREAT_EDITOR,
+    path: getRouteWithBasePath(ROUTE_THREAT_EDITOR),
     element: <ThreatStatementEditor />,
   },
   {
-    path: ROUTE_THREAT_LIST,
+    path: getRouteWithBasePath(ROUTE_THREAT_LIST),
     element: <ThreatStatementList />,
   },
 ];

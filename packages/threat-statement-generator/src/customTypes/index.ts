@@ -23,3 +23,4 @@ export * from './composerMode';
 export * from './application';
 export * from './architecture';
 export * from './dataflow';
+export * from './dataExchange';

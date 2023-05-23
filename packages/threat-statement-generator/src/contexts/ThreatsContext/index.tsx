@@ -16,14 +16,13 @@
 import { FC, PropsWithChildren, useState, useCallback, useEffect, useMemo } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { v4 as uuidV4 } from 'uuid';
-import { PerFieldExamplesType, ThreatsContext, DEFAULT_PER_FIELD_EXAMPLES } from './context';
+import { PerFieldExamplesType, ThreatsContext, DEFAULT_PER_FIELD_EXAMPLES, useThreatsContext } from './context';
 import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
-import { EXPORT_FILE_NAME } from '../../configs/export';
 import { LOCAL_STORAGE_KEY_STATEMENT_LIST, LOCAL_STORAGE_KEY_EDITING_STATEMENT } from '../../configs/localStorageKeys';
 import { PerFieldExample, TemplateThreatStatement } from '../../customTypes';
 import threatStatementExamplesData from '../../data/threatStatementExamples.json';
 import ThreatsMigration from '../../migrations/ThreatsMigration';
-import downloadObjectAsJson from '../../utils/downloadObjectAsJson';
+import removeLocalStorageKey from '../../utils/removeLocalStorageKey';
 import renderThreatStatement from '../../utils/renderThreatStatement';
 import { useGlobalSetupContext } from '../GlobalSetupContext/context';
 
@@ -87,11 +86,15 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
 }) => {
   const [view, setView] = useState<View>('list');
 
-  const [editingStatement, setEditingStatement] = useLocalStorageState<TemplateThreatStatement | null>(LOCAL_STORAGE_KEY_EDITING_STATEMENT, {
+  const [editingStatement,
+    setEditingStatement,
+    { removeItem: removeEditingStatement }] = useLocalStorageState<TemplateThreatStatement | null>(LOCAL_STORAGE_KEY_EDITING_STATEMENT, {
     defaultValue: null,
   });
 
-  const [statementList, setStatementList] = useLocalStorageState<TemplateThreatStatement[]>(getLocalStorageKey(currentWorkspaceId), {
+  const [statementList,
+    setStatementList,
+    { removeItem: removeStatementList }] = useLocalStorageState<TemplateThreatStatement[]>(getLocalStorageKey(currentWorkspaceId), {
     defaultValue: [],
   });
 
@@ -210,17 +213,18 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
     });
   }, [setStatementList]);
 
-  const handleImportStatementList = useCallback((newStatements: TemplateThreatStatement[]) => {
-    setStatementList(newStatements);
-  }, [setStatementList]);
+  const handleRemoveAllStatements = useCallback(async () => {
+    removeStatementList();
+    removeEditingStatement();
+  }, [removeEditingStatement, removeStatementList]);
 
-  const handleExportStatementList = useCallback((exportedStatementList: TemplateThreatStatement[]) => {
-    downloadObjectAsJson(exportedStatementList, EXPORT_FILE_NAME);
-  }, []);
-
-  const handleRemoveAllStatements = useCallback(() => {
-    setStatementList([]);
-  }, []);
+  const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
+    setEditingStatement(null);
+    window.setTimeout(() => {
+      // tio delete after the workspace is switched. Otherwise the default value is set again.
+      removeLocalStorageKey(getLocalStorageKey(workspaceId));
+    }, 1000);
+  }, [removeStatementList, removeEditingStatement]);
 
   useEffect(() => {
     if (composerMode === 'ThreatsOnly') {
@@ -269,9 +273,8 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
     removeStatement: handlRemoveStatement,
     editStatement: handleEditStatement,
     saveStatement: handleSaveStatement,
-    importStatementList: handleImportStatementList,
-    exportStatementList: handleExportStatementList,
     removeAllStatements: handleRemoveAllStatements,
+    onDeleteWorkspace: handleDeleteWorkspace,
   }}>
     <ThreatsMigration>
       {children}
@@ -279,5 +282,8 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
   </ThreatsContext.Provider>);
 };
 
-
 export default ThreatsContextProvider;
+
+export {
+  useThreatsContext,
+};

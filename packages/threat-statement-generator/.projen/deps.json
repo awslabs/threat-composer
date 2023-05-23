@@ -184,6 +184,10 @@
       "type": "peer"
     },
     {
+      "name": "@aws-northstar/ui",
+      "type": "runtime"
+    },
+    {
       "name": "@cloudscape-design/components",
       "type": "runtime"
     },
@@ -194,6 +198,10 @@
     {
       "name": "@types/d3",
       "version": "^7",
+      "type": "runtime"
+    },
+    {
+      "name": "@types/sanitize-html",
       "type": "runtime"
     },
     {
@@ -218,11 +226,19 @@
       "type": "runtime"
     },
     {
+      "name": "rehype-raw",
+      "type": "runtime"
+    },
+    {
       "name": "remark-frontmatter",
       "type": "runtime"
     },
     {
       "name": "remark-gfm",
+      "type": "runtime"
+    },
+    {
+      "name": "sanitize-html",
       "type": "runtime"
     },
     {

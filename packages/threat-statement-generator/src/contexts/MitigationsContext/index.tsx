@@ -16,10 +16,12 @@
 import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { v4 as uuidV4 } from 'uuid';
-import { MitigationsContext } from './context';
+import { MitigationsContext, useMitigationsContext } from './context';
 import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
 import { LOCAL_STORAGE_KEY_MITIGATION_LIST } from '../../configs/localStorageKeys';
 import { Mitigation } from '../../customTypes';
+import removeLocalStorageKey from '../../utils/removeLocalStorageKey';
+
 export interface MitigationsContextProviderProps {
   workspaceId: string | null;
 }
@@ -36,7 +38,7 @@ const MitigationsContextProvider: FC<PropsWithChildren<MitigationsContextProvide
   children,
   workspaceId: currentWorkspaceId,
 }) => {
-  const [mitigationList, setMitigationList] = useLocalStorageState<Mitigation[]>(getLocalStorageKey(currentWorkspaceId), {
+  const [mitigationList, setMitigationList, { removeItem }] = useLocalStorageState<Mitigation[]>(getLocalStorageKey(currentWorkspaceId), {
     defaultValue: [],
   });
 
@@ -82,8 +84,15 @@ const MitigationsContextProvider: FC<PropsWithChildren<MitigationsContextProvide
     return newEntity;
   }, [setMitigationList]);
 
-  const handleRemoveAllMitigations = useCallback(() => {
-    setMitigationList([]);
+  const handleRemoveAllMitigations = useCallback(async () => {
+    removeItem();
+  }, [removeItem]);
+
+  const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
+    window.setTimeout(() => {
+      // tio delete after the workspace is switched. Otherwise the default value is set again.
+      removeLocalStorageKey(getLocalStorageKey(workspaceId));
+    }, 1000);
   }, []);
 
   return (<MitigationsContext.Provider value={{
@@ -92,10 +101,14 @@ const MitigationsContextProvider: FC<PropsWithChildren<MitigationsContextProvide
     removeMitigation: handlRemoveMitigation,
     saveMitigation: handleSaveMitigation,
     removeAllMitigations: handleRemoveAllMitigations,
+    onDeleteWorkspace: handleDeleteWorkspace,
   }}>
     {children}
   </MitigationsContext.Provider>);
 };
 
-
 export default MitigationsContextProvider;
+
+export {
+  useMitigationsContext,
+};

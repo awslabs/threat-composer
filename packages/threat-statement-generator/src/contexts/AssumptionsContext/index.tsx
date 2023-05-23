@@ -16,10 +16,11 @@
 import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { v4 as uuidV4 } from 'uuid';
-import { AssumptionsContext } from './context';
+import { AssumptionsContext, useAssumptionsContext } from './context';
 import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
 import { LOCAL_STORAGE_KEY_ASSUMPTION_LIST } from '../../configs/localStorageKeys';
 import { Assumption } from '../../customTypes';
+import removeLocalStorageKey from '../../utils/removeLocalStorageKey';
 
 export interface AssumptionsContextProviderProps {
   workspaceId: string | null;
@@ -37,7 +38,7 @@ const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProvide
   children,
   workspaceId: currentWorkspaceId,
 }) => {
-  const [assumptionList, setAssumptionList] = useLocalStorageState<Assumption[]>(getLocalStorageKey(currentWorkspaceId), {
+  const [assumptionList, setAssumptionList, { removeItem }] = useLocalStorageState<Assumption[]>(getLocalStorageKey(currentWorkspaceId), {
     defaultValue: [],
   });
 
@@ -82,8 +83,15 @@ const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProvide
     return newEntity;
   }, [setAssumptionList]);
 
-  const handleRemoveAllAssumptions = useCallback(() => {
-    setAssumptionList([]);
+  const handleRemoveAllAssumptions = useCallback(async () => {
+    removeItem();
+  }, [removeItem]);
+
+  const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
+    window.setTimeout(() => {
+      // tio delete after the workspace is switched. Otherwise the default value is set again.
+      removeLocalStorageKey(getLocalStorageKey(workspaceId));
+    }, 1000);
   }, []);
 
   return (<AssumptionsContext.Provider value={{
@@ -92,10 +100,14 @@ const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProvide
     removeAssumption: handlRemoveAssumption,
     saveAssumption: handleSaveAssumption,
     removeAllAssumptions: handleRemoveAllAssumptions,
+    onDeleteWorkspace: handleDeleteWorkspace,
   }}>
     {children}
   </AssumptionsContext.Provider>);
 };
 
-
 export default AssumptionsContextProvider;
+
+export {
+  useAssumptionsContext,
+};

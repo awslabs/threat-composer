@@ -15,18 +15,20 @@
  ******************************************************************************************************************** */
 import { generatePath } from 'react-router-dom';
 
+const ROUTE_BASE_PATH=process.env.REACT_APP_ROUTE_BASE_PATH || '';
+
 const generateUrl = (path: string, searchParms: URLSearchParams, workspaceId: string, threatId?: string) => {
   const mode = searchParms.get('mode');
   if (mode) {
-    return `${generatePath(path, {
+    return `${ROUTE_BASE_PATH}${generatePath(path, {
       workspaceId,
       threatId,
     })}?mode=${mode}`;
   }
 
-  return generatePath(path, {
+  return `${ROUTE_BASE_PATH}${generatePath(path, {
     workspaceId: workspaceId,
-  });
+  })}`;
 };
 
 export default generateUrl;

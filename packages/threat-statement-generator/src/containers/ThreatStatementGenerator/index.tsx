@@ -19,7 +19,7 @@ import ThreatStatementList from '../../components/threats/ThreatStatementList';
 import ContextAggregator from '../../contexts/ContextAggregator';
 import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../contexts/ThreatsContext/context';
-import { ComposerMode } from '../../customTypes';
+import { ComposerMode, DataExchangeFormat } from '../../customTypes';
 
 const ThreatStatementGeneratorInner: FC = () => {
   const { view } = useThreatsContext();
@@ -29,6 +29,8 @@ const ThreatStatementGeneratorInner: FC = () => {
 
 export interface ThreatStatementGeneratorInnerProps {
   composerMode?: ComposerMode;
+  onPreview?: (content: DataExchangeFormat) => void;
+  onPreviewClose?: () => void;
 }
 
 /**
@@ -37,9 +39,14 @@ export interface ThreatStatementGeneratorInnerProps {
  */
 const ThreatStatementGenerator: FC<ThreatStatementGeneratorInnerProps> = ({
   composerMode,
+  onPreview,
+  onPreviewClose,
 }) => {
   return (
-    <ContextAggregator composerMode={composerMode}>
+    <ContextAggregator
+      onPreview={onPreview}
+      onPreviewClose={onPreviewClose}
+      composerMode={composerMode} >
       <ThreatStatementGeneratorInner />
     </ContextAggregator>
   );

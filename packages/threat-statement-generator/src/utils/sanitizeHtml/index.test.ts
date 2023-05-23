@@ -13,22 +13,36 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Header from '@cloudscape-design/components/header';
-import { FC } from 'react';
-import { useDataflowInfoContext } from '../../../../../contexts/DataflowContext/context';
-import MarkdownViewer from '../../../../generic/MarkdownViewer';
+import sanitizeHtml from '.';
 
-const Dataflow: FC = () => {
-  const { dataflowInfo } = useDataflowInfoContext();
-  return (<div>
-    <Header variant='h2'>Dataflow</Header>
-    <Header variant='h3' key='diagramInfo'>Introduction</Header>
-    <MarkdownViewer>
-      {dataflowInfo.description || ''}
-    </MarkdownViewer>
-    <Header variant='h3' key='diagram'>Dataflow Diagram</Header>
-    {dataflowInfo.image && <img width={1024} src={dataflowInfo.image} alt='Dataflow Diagram' />}
-  </div>);
+const testObj = {
+  num: 1,
+  str1: 'hello',
+  str2: "world<script>alert('hello')</script>",
 };
 
-export default Dataflow;
+const result = {
+  num: 1,
+  str1: 'hello',
+  str2: 'world',
+};
+
+describe('sanitizeHtml', () => {
+  test('parses an object to saniztise html string if there is any', () => {
+    expect(sanitizeHtml(testObj)).toEqual(result);
+  });
+
+  test('parses an array of object to saniztise html string if there is any', () => {
+    expect(sanitizeHtml([testObj, testObj])).toEqual([result, result]);
+  });
+
+  test('parses nested object to saniztise html string if there is any', () => {
+    expect(sanitizeHtml({
+      ...testObj,
+      nestedObj: testObj,
+    })).toEqual({
+      ...result,
+      nestedObj: result,
+    });
+  });
+});

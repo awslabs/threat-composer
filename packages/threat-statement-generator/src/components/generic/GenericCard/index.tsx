@@ -13,11 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { DeleteConfirmationDialog } from '@aws-northstar/ui';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { FC, PropsWithChildren, useMemo, useRef, ReactNode } from 'react';
+import { FC, PropsWithChildren, useMemo, useRef, ReactNode, useState } from 'react';
 import Tags from './components/Tags';
 import Tooltip from '../Tooltip';
 
@@ -49,10 +50,11 @@ const GenericCard: FC<PropsWithChildren<GenericCardProps>> = ({
   moreActions,
 }) => {
   const ref = useRef<any>(null);
+  const [removeDialogVisible, setRemoveDialogVisible] = useState(false);
 
   const actions = useMemo(() => {
     return (<SpaceBetween direction='horizontal' size='s'>
-      {onRemove && <Tooltip tooltip='Remove From Workspace'><Button onClick={() => onRemove?.(entityId)} variant='icon' iconName='remove' /></Tooltip>}
+      {onRemove && <Tooltip tooltip='Remove From Workspace'><Button onClick={() => setRemoveDialogVisible(true)} variant='icon' iconName='remove' /></Tooltip>}
       {onEdit && <Tooltip tooltip='Edit'><Button onClick={() => onEdit?.(entityId)} variant='icon' iconName='edit' /></Tooltip>}
       {moreActions}
     </SpaceBetween>);
@@ -79,6 +81,14 @@ const GenericCard: FC<PropsWithChildren<GenericCardProps>> = ({
     >
       {children}
     </Container>
+    {removeDialogVisible && <DeleteConfirmationDialog
+      variant='confirmation'
+      title={`Remove ${header}?`}
+      visible={removeDialogVisible}
+      onCancelClicked={() => setRemoveDialogVisible(false)}
+      onDeleteClicked={() => onRemove?.(entityId)}
+      deleteButtonText='Remove'
+    ></DeleteConfirmationDialog>}
   </div>);
 };
 

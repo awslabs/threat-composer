@@ -15,9 +15,10 @@
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
-import { MitigationLinksContext } from './context';
+import { MitigationLinksContext, useMitigationLinksContext } from './context';
 import { LOCAL_STORAGE_KEY_MITIGATION_LINK_LIST } from '../../configs/localStorageKeys';
 import { MitigationLink } from '../../customTypes';
+import removeLocalStorageKey from '../../utils/removeLocalStorageKey';
 
 export interface MitigationLinksContextProviderProps {
   workspaceId: string | null;
@@ -40,7 +41,7 @@ const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContex
   children,
   workspaceId: currentWorkspaceId,
 }) => {
-  const [mitigationLinkList, setMitigationLinkList] = useLocalStorageState<MitigationLink[]>(getLocalStorageKey(currentWorkspaceId), {
+  const [mitigationLinkList, setMitigationLinkList, { removeItem }] = useLocalStorageState<MitigationLink[]>(getLocalStorageKey(currentWorkspaceId), {
     defaultValue: [],
   });
 
@@ -87,8 +88,15 @@ const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContex
     return mitigationLinkList.filter(x => x.mitigationId === mitigationId);
   }, [mitigationLinkList]);
 
-  const handleRemoveAllMitigationLinks = useCallback(() => {
-    setMitigationLinkList([]);
+  const handleRemoveAllMitigationLinks = useCallback(async () => {
+    removeItem();
+  }, [removeItem]);
+
+  const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
+    window.setTimeout(() => {
+      // tio delete after the workspace is switched. Otherwise the default value is set again.
+      removeLocalStorageKey(getLocalStorageKey(workspaceId));
+    }, 1000);
   }, []);
 
   return (<MitigationLinksContext.Provider value={{
@@ -101,9 +109,14 @@ const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContex
     addMitigationLink: handleAddMitigationLink,
     addMitigationLinks: handleAddMitigationLinks,
     removeAllMitigationLinks: handleRemoveAllMitigationLinks,
+    onDeleteWorkspace: handleDeleteWorkspace,
   }}>
     {children}
   </MitigationLinksContext.Provider>);
 };
 
 export default MitigationLinksContextProvider;
+
+export {
+  useMitigationLinksContext,
+};

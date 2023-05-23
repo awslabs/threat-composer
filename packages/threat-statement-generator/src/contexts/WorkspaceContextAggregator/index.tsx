@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren } from 'react';
-import { ComposerMode } from '../../customTypes';
+import { ComposerMode, DataExchangeFormat } from '../../customTypes';
 import ApplicationInfoContextProvider from '../ApplicationContext';
 import ArchitectureInfoContextProvider from '../ArchitectureContext';
 import AssumptionLinksContextProvider from '../AssumptionLinksContext';
@@ -31,6 +31,8 @@ export interface WorkspaceContextAggregatorProps {
   requiredGlobalSetupContext?: boolean;
   onThreatEditorView?: ThreatsContextProviderProps['onThreatEditorView'];
   onThreatListView?: ThreatsContextProviderProps['onThreatListView'];
+  onPreview?: (content: DataExchangeFormat) => void;
+  onPreviewClose?: () => void;
 }
 
 const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggregatorProps>> = ({
@@ -70,10 +72,12 @@ const WorkspaceContextAggregator: FC<PropsWithChildren<WorkspaceContextAggregato
   workspaceId,
   composerMode,
   requiredGlobalSetupContext = true,
+  onPreview,
+  onPreviewClose,
   ...rest
 }) => {
   return requiredGlobalSetupContext ? (
-    <GlobalSetupContextProvider composerMode={composerMode}>
+    <GlobalSetupContextProvider composerMode={composerMode} onPreview={onPreview} onPreviewClose={onPreviewClose}>
       <WorkspaceContextInnerAggregator workspaceId={workspaceId} {...rest}>
         {children}
       </WorkspaceContextInnerAggregator>

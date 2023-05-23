@@ -24,7 +24,8 @@ export interface MitigationLinksContextApi {
   removeMitigationLinks: (entity: MitigationLink[]) => void;
   addMitigationLink: (entity: MitigationLink) => void;
   addMitigationLinks: (entity: MitigationLink[]) => void;
-  removeAllMitigationLinks: () => void;
+  removeAllMitigationLinks: () => Promise<void>;
+  onDeleteWorkspace: (workspaceId: string) => Promise<void>;
 }
 
 const initialState: MitigationLinksContextApi = {
@@ -36,7 +37,8 @@ const initialState: MitigationLinksContextApi = {
   removeMitigationLinks: () => { },
   addMitigationLink: () => { },
   addMitigationLinks: () => { },
-  removeAllMitigationLinks: () => { },
+  removeAllMitigationLinks: () => Promise.resolve(),
+  onDeleteWorkspace: () => Promise.resolve(),
 };
 
 export const MitigationLinksContext = createContext<MitigationLinksContextApi>(initialState);

@@ -19,11 +19,15 @@ import { ArchitectureInfo } from '../../customTypes';
 export interface ArchitectureInfoContextApi {
   architectureInfo: ArchitectureInfo;
   setArchitectureInfo: React.Dispatch<React.SetStateAction<ArchitectureInfo>>;
+  removeArchitectureInfo: () => Promise<void>;
+  onDeleteWorkspace: (workspaceId: string) => Promise<void>;
 }
 
 const initialState: ArchitectureInfoContextApi = {
   architectureInfo: {},
   setArchitectureInfo: () => { },
+  removeArchitectureInfo: () => Promise.resolve(),
+  onDeleteWorkspace: () => Promise.resolve(),
 };
 
 export const ArchitectureInfoContext = createContext<ArchitectureInfoContextApi>(initialState);
