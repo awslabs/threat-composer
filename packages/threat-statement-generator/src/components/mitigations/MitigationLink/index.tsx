@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { useMitigationLinksContext } from '../../../contexts/MitigationLinksContext/context';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { MitigationLink } from '../../../customTypes';
@@ -26,7 +26,7 @@ export interface MitigationLinkProps {
 const MitigationLinkComponent: FC<MitigationLinkProps> = ({
   linkedEntityId,
 }) => {
-  const { mitigationList } = useMitigationsContext();
+  const { mitigationList, saveMitigation } = useMitigationsContext();
   const [mitigationLinks, setMitigationLinks] = useState<MitigationLink[]>([]);
 
   const { getLinkedMitigationLinks } = useMitigationLinksContext();
@@ -41,13 +41,30 @@ const MitigationLinkComponent: FC<MitigationLinkProps> = ({
     removeMitigationLink,
   } = useMitigationLinksContext();
 
+  const handleAddMitigationLink = useCallback((mitigationIdOrNewMitigation: string) => {
+    if (mitigationList.find(m => m.id === mitigationIdOrNewMitigation)) {
+      addMitigationLink({
+        linkedId: linkedEntityId,
+        mitigationId: mitigationIdOrNewMitigation,
+      });
+    } else {
+      const newMitigation = saveMitigation({
+        numericId: -1,
+        content: mitigationIdOrNewMitigation,
+        id: 'new',
+      });
+      addMitigationLink({
+        linkedId: linkedEntityId,
+        mitigationId: newMitigation.id,
+      });
+    }
+  }, [linkedEntityId, mitigationList, addMitigationLink, saveMitigation]);
+
+
   return (<MitigationLinkView
     mitigationList={mitigationList}
     linkedMitigationIds={mitigationLinks.map(ml => ml.mitigationId)}
-    onAddMitigationLink={(mitigationId) => addMitigationLink({
-      linkedId: linkedEntityId,
-      mitigationId,
-    })}
+    onAddMitigationLink={handleAddMitigationLink}
     onRemoveMitigationLink={(mitigationId) => removeMitigationLink(mitigationId, linkedEntityId)}
   />);
 };

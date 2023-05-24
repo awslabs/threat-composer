@@ -96,7 +96,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
   const { composerMode } = useGlobalSetupContext();
 
   const { assumptionList, saveAssumption } = useAssumptionsContext();
-  const { mitigationList } = useMitigationsContext();
+  const { mitigationList, saveMitigation } = useMitigationsContext();
 
   const Component = useMemo(() => {
     return editor && editorMapping[editor];
@@ -259,7 +259,23 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
       setLinkedAssumptionIds(prev => [...prev, newAssumption.id]);
     }
 
-  }, [setLinkedAssumptionIds, assumptionList]);
+  }, [setLinkedAssumptionIds, assumptionList, saveAssumption]);
+
+
+  const handleAddMitigationLink = useCallback((mitigationIdOrNewMitigation: string) => {
+    if (mitigationList.find(a => a.id === mitigationIdOrNewMitigation)) {
+      setLinkedMitigationIds(prev => [...prev, mitigationIdOrNewMitigation]);
+    } else {
+      const newMitigation = saveMitigation({
+        id: 'new',
+        numericId: -1,
+        content: mitigationIdOrNewMitigation,
+      });
+      setLinkedMitigationIds(prev => [...prev, newMitigation.id]);
+    }
+
+  }, [setLinkedMitigationIds, mitigationList, saveMitigation]);
+
 
   if (!editingStatement) {
     return <TextContent>Not threat statement editing in place</TextContent>;
@@ -314,7 +330,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
               variant='container'
               linkedMitigationIds={linkedMitigationIds}
               mitigationList={mitigationList}
-              onAddMitigationLink={(id) => setLinkedMitigationIds(prev => [...prev, id])}
+              onAddMitigationLink={handleAddMitigationLink}
               onRemoveMitigationLink={(id) => setLinkedMitigationIds(prev => prev.filter(p => p !== id))}
             />
           </div>}

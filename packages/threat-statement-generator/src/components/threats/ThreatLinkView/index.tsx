@@ -61,7 +61,7 @@ const ThreatLinkComponent: FC<ThreatLinkProps> = ({
       }}
       filteringType='manual'
       enteredTextLabel={value => `Use: "${value}"`}
-      placeholder="Enter threat"
+      placeholder="Search threat"
       empty="No matches found"
     />
     <div
