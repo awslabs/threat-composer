@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, useCallback } from 'react';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
 import { AssumptionLink } from '../../../customTypes';
@@ -28,7 +28,7 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
   linkedEntityId,
   type,
 }) => {
-  const { assumptionList } = useAssumptionsContext();
+  const { assumptionList, saveAssumption } = useAssumptionsContext();
   const [assumptionLinks, setAssumptionLinks] = useState<AssumptionLink[]>([]);
 
   const { getLinkedAssumptionLinks } = useAssumptionLinksContext();
@@ -43,14 +43,31 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
     removeAssumptionLink,
   } = useAssumptionLinksContext();
 
+  const handleAddAssumptionLink = useCallback((assumptionIdOrNewAssumption: string) => {
+    if (assumptionList.find(a => a.id === assumptionIdOrNewAssumption)) {
+      addAssumptionLink({
+        type,
+        linkedId: linkedEntityId,
+        assumptionId: assumptionIdOrNewAssumption,
+      });
+    } else {
+      const newAssumption = saveAssumption({
+        numericId: -1,
+        content: assumptionIdOrNewAssumption,
+        id: 'new',
+      });
+      addAssumptionLink({
+        type,
+        linkedId: linkedEntityId,
+        assumptionId: newAssumption.id,
+      });
+    }
+  }, [assumptionList, linkedEntityId, addAssumptionLink, saveAssumption]);
+
   return (<AssumptionLinkView
     assumptionList={assumptionList}
     linkedAssumptionIds={assumptionLinks.map(al => al.assumptionId) || []}
-    onAddAssumptionLink={(assumptionId) => addAssumptionLink({
-      type,
-      linkedId: linkedEntityId,
-      assumptionId,
-    })}
+    onAddAssumptionLink={handleAddAssumptionLink}
     onRemoveAssumptionLink={(assumptionId) => removeAssumptionLink(assumptionId, linkedEntityId)}
   />);
 };

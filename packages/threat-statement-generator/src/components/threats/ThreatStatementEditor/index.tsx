@@ -95,7 +95,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
 
   const { composerMode } = useGlobalSetupContext();
 
-  const { assumptionList } = useAssumptionsContext();
+  const { assumptionList, saveAssumption } = useAssumptionsContext();
   const { mitigationList } = useMitigationsContext();
 
   const Component = useMemo(() => {
@@ -122,9 +122,9 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
       }
       const displayedHtml = displayedStatement?.map((s, index) => typeof s === 'string' ?
         s : s.type === 'b' ?
-          <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly'? 'bottom' : 'top'}><b className='threat-statement-editor-final-statement-section'>{s.content}</b></Tooltip> :
+          <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly' ? 'bottom' : 'top'}><b className='threat-statement-editor-final-statement-section'>{s.content}</b></Tooltip> :
           s.type === 'span' ?
-            <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly'? 'bottom' : 'top'}><span key={index} className='threat-statement-editor-final-statement-section'>{s.content}</span></Tooltip> :
+            <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly' ? 'bottom' : 'top'}><span key={index} className='threat-statement-editor-final-statement-section'>{s.content}</span></Tooltip> :
             s.content);
 
       setDisplayStatement(displayedHtml);
@@ -247,6 +247,20 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
     }
   }, [editingStatement]);
 
+  const handleAddAssumptionLink = useCallback((assumptionIdOrNewAssumption: string) => {
+    if (assumptionList.find(a => a.id === assumptionIdOrNewAssumption)) {
+      setLinkedAssumptionIds(prev => [...prev, assumptionIdOrNewAssumption]);
+    } else {
+      const newAssumption = saveAssumption({
+        id: 'new',
+        numericId: -1,
+        content: assumptionIdOrNewAssumption,
+      });
+      setLinkedAssumptionIds(prev => [...prev, newAssumption.id]);
+    }
+
+  }, [setLinkedAssumptionIds, assumptionList]);
+
   if (!editingStatement) {
     return <TextContent>Not threat statement editing in place</TextContent>;
   }
@@ -291,7 +305,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
               variant='container'
               linkedAssumptionIds={linkedAssumptionIds}
               assumptionList={assumptionList}
-              onAddAssumptionLink={(id) => setLinkedAssumptionIds(prev => [...prev, id])}
+              onAddAssumptionLink={handleAddAssumptionLink}
               onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
             />
           </div>}
