@@ -23,7 +23,6 @@ import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useAssumptionLinksContext } from '../../../contexts';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
-import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { Assumption, AssumptionLink } from '../../../customTypes';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import AssumptionCard from '../AssumptionCard';
@@ -39,10 +38,6 @@ const ThreatStatementList: FC = () => {
   const {
     addAssumptionLinks,
   } = useAssumptionLinksContext();
-
-  const {
-    showInfoModal,
-  } = useGlobalSetupContext();
 
   const [filteringText, setFilteringText] = useState('');
 
@@ -126,9 +121,7 @@ const ThreatStatementList: FC = () => {
   return (<div>
     <SpaceBetween direction='vertical' size='s'>
       <Container header={
-        <Header
-          info={<Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
-        >Assumption List</Header>
+        <Header>Assumption List</Header>
       }>
         <SpaceBetween direction='vertical' size='s'>
           <TextFilter
@@ -141,8 +134,6 @@ const ThreatStatementList: FC = () => {
           />
           <Grid
             gridDefinition={[{ colspan: { default: 12, xs: 3 } },
-              { colspan: { default: 12, xs: 3 } },
-              { colspan: { default: 12, xs: 3 } },
               { colspan: { default: 1 } }]}
           >
             <Multiselect

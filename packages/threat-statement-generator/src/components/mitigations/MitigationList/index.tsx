@@ -15,12 +15,13 @@
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
+import Grid from '@cloudscape-design/components/grid';
 import Header from '@cloudscape-design/components/header';
+import Multiselect from '@cloudscape-design/components/multiselect';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
-import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { AssumptionLink, Mitigation, MitigationLink } from '../../../customTypes';
 import MitigationCard from '../MitigationCard';
@@ -34,10 +35,6 @@ const MitigationList: FC = () => {
   } = useMitigationsContext();
 
   const {
-    showInfoModal,
-  } = useGlobalSetupContext();
-
-  const {
     addMitigationLinks,
   } = useMitigationLinksContext();
 
@@ -49,7 +46,25 @@ const MitigationList: FC = () => {
 
   const [
     selectedTags,
+    setSelectedTags,
   ] = useState<string[]>([]);
+
+  const hasNoFilter = useMemo(() => {
+    return (filteringText === ''
+      && selectedTags.length === 0);
+  }, [filteringText, selectedTags]);
+
+  const handleClearFilter = useCallback(() => {
+    setFilteringText('');
+    setSelectedTags([]);
+  }, []);
+
+  const allTags = useMemo(() => {
+    return mitigationList
+      .reduce((all: string[], cur) => {
+        return [...all, ...cur.tags?.filter(ia => !all.includes(ia)) || []];
+      }, []);
+  }, [mitigationList]);
 
   const handleAddTagToEntity = useCallback((assumption: Mitigation, tag: string) => {
     const updated: Mitigation = {
@@ -119,9 +134,7 @@ const MitigationList: FC = () => {
   return (<div>
     <SpaceBetween direction='vertical' size='s'>
       <Container header={
-        <Header
-          info={<Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
-        >Mitigation List</Header>
+        <Header>Mitigation List</Header>
       }>
         <SpaceBetween direction='vertical' size='s'>
           <TextFilter
@@ -132,6 +145,41 @@ const MitigationList: FC = () => {
               setFilteringText(detail.filteringText)
             }
           />
+          <Grid
+            gridDefinition={[{ colspan: { default: 12, xs: 3 } },
+              { colspan: { default: 1 } }]}
+          >
+            <Multiselect
+              tokenLimit={0}
+              selectedOptions={selectedTags.map(ia => ({
+                label: ia,
+                value: ia,
+              }))}
+              onChange={({ detail }) =>
+                setSelectedTags(detail.selectedOptions?.map(o => o.value || '') || [])
+              }
+              deselectAriaLabel={e => `Remove ${e.label}`}
+              options={allTags.map(g => ({
+                label: g,
+                value: g,
+              }))}
+              placeholder="Filtered by tags"
+              selectedAriaLabel="Selected"
+            />
+            <Button onClick={handleClearFilter}
+              variant='icon'
+              iconSvg={<svg
+                focusable="false"
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                tabIndex={-1}
+              >
+                <path d="M19.79 5.61C20.3 4.95 19.83 4 19 4H6.83l7.97 7.97 4.99-6.36zM2.81 2.81 1.39 4.22 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.17l5.78 5.78 1.41-1.41L2.81 2.81z"></path>
+              </svg>}
+              ariaLabel='Clear filters'
+              disabled={hasNoFilter}
+            />
+          </Grid>
         </SpaceBetween>
       </Container>
       {filteredList?.map(entity => (<MitigationCard

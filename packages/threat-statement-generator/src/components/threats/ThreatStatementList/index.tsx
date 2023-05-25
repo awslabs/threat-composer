@@ -250,7 +250,7 @@ const ThreatStatementList: FC = () => {
       <Container header={
         <Header
           actions={actions}
-          info={<Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
+          info={composerMode === 'Full' ? undefined : <Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
         >Threat Statement List</Header>
       }>
         <SpaceBetween direction='vertical' size='s'>
