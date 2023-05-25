@@ -60,7 +60,6 @@ const MitigationLinkComponent: FC<MitigationLinkProps> = ({
     }
   }, [linkedEntityId, mitigationList, addMitigationLink, saveMitigation]);
 
-
   return (<MitigationLinkView
     mitigationList={mitigationList}
     linkedMitigationIds={mitigationLinks.map(ml => ml.mitigationId)}

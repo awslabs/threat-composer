@@ -19,20 +19,37 @@ import Textarea from '@cloudscape-design/components/textarea';
 import { FC } from 'react';
 import MarkdownViewer from '../MarkdownViewer';
 
+const parentHeaderLevelMapping: any = {
+  h1: '##',
+  h2: '###',
+  h3: '####',
+  h4: '#####',
+};
+
 export interface MarkdownEditorProps {
   onChange: (value: string) => void;
   value: string;
   label: string;
+  description?: string;
+  parentHeaderLevel?: 'h1' | 'h2' | 'h3';
+  rows?: number;
 }
 
 const MarkdownEditor: FC<MarkdownEditorProps> = ({
   value,
   onChange,
   label,
+  description,
+  parentHeaderLevel,
+  rows = 20,
 }) => {
   return (
     <FormField
       label={label}
+      description={description}
+      constraintText={`Styling with Markdown is supported. ${parentHeaderLevel
+        ? `Use ${parentHeaderLevelMapping[parentHeaderLevel]} as sub headers to match the rendered header level for this section` : '' }
+      `}
       stretch
     >
       <Grid gridDefinition={[{ colspan: { default: 12, xxs: 6 } },
@@ -42,7 +59,7 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
           onChange={event =>
             onChange(event.detail.value)
           }
-          rows={20}
+          rows={rows}
         /><MarkdownViewer>
           {value}
         </MarkdownViewer>

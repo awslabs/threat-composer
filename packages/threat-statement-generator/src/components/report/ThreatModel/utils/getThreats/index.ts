@@ -25,8 +25,8 @@ export const getThreatsContent = (
 
   rows.push('\n');
 
-  rows.push(`| Threat Number | Threat | ${threatsOnly ? '' : 'Assumptions | Mitigations |'} Priority | STRIDE `);
-  rows.push(`| --- | --- | ${threatsOnly ? '' : '--- | --- |'} --- | --- |`);
+  rows.push(`| Threat Number | Threat | ${threatsOnly ? '' : 'Assumptions | Mitigations |'} Priority | STRIDE | Comments |`);
+  rows.push(`| --- | --- | ${threatsOnly ? '' : '--- | --- |'} --- | --- | --- |`);
 
   if (data.threats) {
     data.threats.forEach(x => {
@@ -51,7 +51,8 @@ export const getThreatsContent = (
       }).filter(ml => !!ml).join('<br/>');
       const priority = x.metadata?.find(m => m.key === 'Priority')?.value || '';
       const STRIDE = ((x.metadata?.find(m => m.key === 'STRIDE')?.value || []) as string[]).join(', ');
-      rows.push(`| <a name="${threatId}"></a>${threatId} | ${x.statement} | ${threatsOnly ? '' : ` ${assumptionsContent} | ${mitigationsContent} |`} ${priority} | ${STRIDE} |`);
+      const comments = x.metadata?.find(m => m.key === 'Comments')?.value || '';
+      rows.push(`| <a name="${threatId}"></a>${threatId} | ${x.statement} | ${threatsOnly ? '' : ` ${assumptionsContent} | ${mitigationsContent} |`} ${priority} | ${STRIDE} | ${comments} |`);
     });
   }
 

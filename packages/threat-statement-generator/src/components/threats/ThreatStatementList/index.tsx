@@ -24,6 +24,7 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { TemplateThreatStatement } from '../../../customTypes';
+import useEditMetadata from '../../../hooks/useEditMetadata';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import { OPTIONS as LevelOptions } from '../../generic/LevelSelector';
 import { OPTIONS as STRIDEOptions } from '../../generic/STRIDESelector';
@@ -93,28 +94,7 @@ const ThreatStatementList: FC = () => {
     setSelectedSTRIDEs,
   ] = useState<string[]>([]);
 
-  const handleEditMetadata = useCallback((statement: TemplateThreatStatement, key: string, value: string | string[] | undefined) => {
-    const updatedStatement = {
-      ...statement,
-      metadata: [...statement.metadata || []],
-    };
-    if (value) {
-      const prevIndex = updatedStatement.metadata.findIndex(x => x.key === key);
-      if (prevIndex >= 0) {
-        updatedStatement.metadata = [
-          ...updatedStatement.metadata.slice(0, prevIndex),
-          ...[{ key, value }],
-          ...updatedStatement.metadata.slice(prevIndex + 1),
-        ];
-      } else {
-        updatedStatement.metadata.push({ key, value });
-      }
-    } else {
-      updatedStatement.metadata = updatedStatement.metadata.filter(m => m.key !== key);
-    }
-
-    saveStatement(updatedStatement);
-  }, [saveStatement]);
+  const handleEditMetadata = useEditMetadata(saveStatement);
 
   const handleAddTagToStatement = useCallback((statement: TemplateThreatStatement, tag: string) => {
     const updatedStatement = addTagToEntity(statement, tag);

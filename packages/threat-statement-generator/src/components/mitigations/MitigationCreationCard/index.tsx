@@ -31,7 +31,7 @@ const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => 
   const [linkedAssumptionIds, setLinkedAssumptionIds] = useState<string[]>([]);
   const [linkedThreatIds, setLinkedThreatIds] = useState<string[]>([]);
 
-  const { assumptionList } = useAssumptionsContext();
+  const { assumptionList, saveAssumption } = useAssumptionsContext();
   const { statementList } = useThreatsContext();
 
   const handleSave = useCallback(() => {
@@ -47,6 +47,19 @@ const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => 
     setLinkedThreatIds([]);
   }, []);
 
+  const handleAddAssumptionLink = useCallback((assumptionIdOrNewAssumption: string) => {
+    if (assumptionList.find(a => a.id === assumptionIdOrNewAssumption)) {
+      setLinkedAssumptionIds(prev => [...prev, assumptionIdOrNewAssumption]);
+    } else {
+      const newAssumption = saveAssumption({
+        numericId: -1,
+        content: assumptionIdOrNewAssumption,
+        id: 'new',
+      });
+      setLinkedAssumptionIds(prev => [...prev, newAssumption.id]);
+    }
+  }, [assumptionList, saveAssumption, setLinkedAssumptionIds]);
+
   return (<GenericEntityCreationCard
     editingEntity={editingEntity}
     setEditingEntity={setEditingEntity}
@@ -57,7 +70,7 @@ const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => 
       <AssumptionLinkView
         linkedAssumptionIds={linkedAssumptionIds}
         assumptionList={assumptionList}
-        onAddAssumptionLink={(id) => setLinkedAssumptionIds(prev => [...prev, id])}
+        onAddAssumptionLink={handleAddAssumptionLink}
         onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
       />
       <ThreatLinkView

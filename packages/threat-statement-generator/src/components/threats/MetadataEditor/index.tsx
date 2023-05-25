@@ -17,6 +17,7 @@ import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/co
 import Grid from '@cloudscape-design/components/grid';
 import { FC, useMemo } from 'react';
 import { TemplateThreatStatement } from '../../../customTypes';
+import CommentsEdit from '../../generic/CommentsEdit';
 import STRIDESELECTOR from '../../generic/STRIDESelector';
 import PriorityEdit from '../PriorityEdit';
 
@@ -41,6 +42,7 @@ const MetadataEditor: FC<MetadataEditorProps> = ({
         gridDefinition={[
           { colspan: { default: 12, xs: 3 } },
           { colspan: { default: 12, xs: 9 } },
+          { colspan: { default: 12, xs: 12 } },
         ]}
       >
         <PriorityEdit
@@ -51,6 +53,10 @@ const MetadataEditor: FC<MetadataEditorProps> = ({
           label='STRIDE'
           selected={stride}
           setSelected={(selected) => onEditMetadata(editingStatement, 'STRIDE', selected)}
+        />
+        <CommentsEdit
+          entity={editingStatement}
+          onEditEntity={onEditMetadata}
         />
       </Grid>
     </ExpandableSection>
