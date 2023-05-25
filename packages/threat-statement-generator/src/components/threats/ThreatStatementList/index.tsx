@@ -21,12 +21,14 @@ import Multiselect from '@cloudscape-design/components/multiselect';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
+import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { TemplateThreatStatement } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import { OPTIONS as LevelOptions } from '../../generic/LevelSelector';
+import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
 import { OPTIONS as STRIDEOptions } from '../../generic/STRIDESelector';
 import WorkspaceSelector from '../../workspaces/WorkspaceSelector';
 import SortByComponent, { SortByOption, DEFAULT_SORT_BY } from '../SortBy';
@@ -62,6 +64,14 @@ const ThreatStatementList: FC = () => {
   } = useThreatsContext();
 
   const {
+    assumptionLinkList,
+  } = useAssumptionLinksContext();
+
+  const {
+    mitigationLinkList,
+  } = useMitigationLinksContext();
+
+  const {
     showInfoModal,
     composerMode,
   } = useGlobalSetupContext();
@@ -93,6 +103,16 @@ const ThreatStatementList: FC = () => {
     selectedSTRIDEs,
     setSelectedSTRIDEs,
   ] = useState<string[]>([]);
+
+  const [
+    selectedLinkedAssumptionFilter,
+    setSelectedLinkedAssumptionFilter,
+  ] = useState(ALL);
+
+  const [
+    selectedLinkedMitigationFilter,
+    setSelectedLinkedMitigationFilter,
+  ] = useState(ALL);
 
   const handleEditMetadata = useEditMetadata(saveStatement);
 
@@ -157,6 +177,22 @@ const ThreatStatementList: FC = () => {
       });
     }
 
+    if (selectedLinkedAssumptionFilter !== ALL) {
+      output = output.filter(st => {
+        return assumptionLinkList.some(al => al.linkedId === st.id) ?
+          selectedLinkedAssumptionFilter === WITH_LINKED_ENTITY :
+          selectedLinkedAssumptionFilter === WITHOUT_NO_LINKED_ENTITY;
+      });
+    }
+
+    if (selectedLinkedMitigationFilter !== ALL) {
+      output = output.filter(st => {
+        return mitigationLinkList.some(al => al.linkedId === st.id) ?
+          selectedLinkedMitigationFilter === WITH_LINKED_ENTITY :
+          selectedLinkedMitigationFilter === WITHOUT_NO_LINKED_ENTITY;
+      });
+    }
+
     if (sortBy.field === 'Priority') {
       output = output.sort((op1, op2) => {
         const priority1 = op1.metadata?.find(m => m.key === 'Priority')?.value as string;
@@ -174,7 +210,12 @@ const ThreatStatementList: FC = () => {
     }
 
     return output;
-  }, [filteringText, statementList, selectedImpactedAssets, selectedImpactedGoal, selectedTags, selectedPriorities, selectedSTRIDEs, sortBy]);
+  }, [filteringText, statementList,
+    assumptionLinkList, mitigationLinkList,
+    selectedImpactedAssets, selectedImpactedGoal,
+    selectedTags, selectedPriorities, selectedSTRIDEs,
+    selectedLinkedAssumptionFilter, selectedLinkedMitigationFilter,
+    sortBy]);
 
   const hasNoFilter = useMemo(() => {
     return (filteringText === ''
@@ -182,8 +223,12 @@ const ThreatStatementList: FC = () => {
       && selectedImpactedGoal.length === 0
       && selectedTags.length === 0
       && selectedPriorities.length === 0
-      && selectedSTRIDEs.length === 0);
-  }, [filteringText, selectedImpactedAssets, selectedImpactedGoal, selectedTags, selectedPriorities, selectedSTRIDEs]);
+      && selectedSTRIDEs.length === 0
+      && selectedLinkedAssumptionFilter === ALL
+      && selectedLinkedMitigationFilter === ALL);
+  }, [filteringText, selectedImpactedAssets, selectedImpactedGoal,
+    selectedTags, selectedPriorities, selectedSTRIDEs,
+    selectedLinkedAssumptionFilter, selectedLinkedMitigationFilter]);
 
   const actions = useMemo(() => {
     return (
@@ -243,7 +288,25 @@ const ThreatStatementList: FC = () => {
     setSelectedTags([]);
     setSelectedPriorities([]);
     setSelectedSTRIDEs([]);
+    setSelectedLinkedAssumptionFilter(ALL);
+    setSelectedLinkedMitigationFilter(ALL);
   }, []);
+
+  const gridDefinition = useMemo(() => {
+    return composerMode === 'Full' ? [{ colspan: { default: 12, xs: 6, s: 2 } },
+      { colspan: { default: 12, xs: 6, s: 2 } },
+      { colspan: { default: 12, xs: 6, s: 3 } },
+      { colspan: { default: 12, xs: 6, s: 3 } },
+      { colspan: { default: 12, xs: 6, s: 2 } },
+      { colspan: { default: 12, xs: 6, s: 5 } },
+      { colspan: { default: 12, xs: 6, s: 5 } },
+      { colspan: { default: 12, xs: 6, s: 2 } }] : [{ colspan: { default: 12, xs: 6, s: 2 } },
+      { colspan: { default: 12, xs: 6, s: 2 } },
+      { colspan: { default: 12, xs: 6, s: 2.5 } },
+      { colspan: { default: 12, xs: 6, s: 2.5 } },
+      { colspan: { default: 12, xs: 5, s: 2 } },
+      { colspan: { default: 1 } }];
+  }, [composerMode]);
 
   return (<div>
     <SpaceBetween direction='vertical' size='s'>
@@ -263,12 +326,7 @@ const ThreatStatementList: FC = () => {
             }
           />
           <Grid
-            gridDefinition={[{ colspan: { default: 12, xs: 6, s: 2 } },
-              { colspan: { default: 12, xs: 6, s: 2 } },
-              { colspan: { default: 12, xs: 6, s: 2.5 } },
-              { colspan: { default: 12, xs: 6, s: 2.5 } },
-              { colspan: { default: 12, xs: 5, s: 2 } },
-              { colspan: { default: 1 } }]}
+            gridDefinition={gridDefinition}
           >
             <Multiselect
               tokenLimit={0}
@@ -347,9 +405,29 @@ const ThreatStatementList: FC = () => {
               placeholder="Filtered by tags"
               selectedAriaLabel="Selected"
             />
-
-
-            <Button onClick={handleClearFilter}
+            {composerMode === 'Full' && <LinkedEntityFilter
+              label='Linked assumptions'
+              entityDisplayName='assumptions'
+              selected={selectedLinkedAssumptionFilter}
+              setSelected={setSelectedLinkedAssumptionFilter}
+            />}
+            {composerMode === 'Full' && <LinkedEntityFilter
+              label='Linked mitigations'
+              entityDisplayName='mitigations'
+              selected={selectedLinkedMitigationFilter}
+              setSelected={setSelectedLinkedMitigationFilter}
+            />}
+            {composerMode === 'Full' ? (<div style={{
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+            }}>
+              <div><Button onClick={handleClearFilter}
+                disabled={hasNoFilter}
+              >
+                Clear filters
+              </Button></div>
+            </div>) : <Button onClick={handleClearFilter}
               variant='icon'
               iconSvg={<svg
                 focusable="false"
@@ -361,7 +439,7 @@ const ThreatStatementList: FC = () => {
               </svg>}
               ariaLabel='Clear filters'
               disabled={hasNoFilter}
-            />
+            />}
           </Grid>
           <Grid
             gridDefinition={[{ colspan: { default: 12, xs: 6 } }]}
