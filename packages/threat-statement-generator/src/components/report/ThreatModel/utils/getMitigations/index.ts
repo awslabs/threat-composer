@@ -24,8 +24,8 @@ export const getMitigationsContent = (
 
   rows.push('\n');
 
-  rows.push('| Mitigation Number | Mitigation | Threats Mitigating | Assumptions');
-  rows.push('| --- | --- | --- | --- |');
+  rows.push('| Mitigation Number | Mitigation | Threats Mitigating | Assumptions | Comments |');
+  rows.push('| --- | --- | --- | --- | --- |');
 
   if (data.mitigations) {
     data.mitigations.forEach(x => {
@@ -50,8 +50,10 @@ export const getMitigationsContent = (
         return null;
       }).filter(a => !!a).join('<br/>');
 
+      const comments = x.metadata?.find(m => m.key === 'Comments')?.value || '';
+
       const mitigationId = `M-${standardizeNumericId(x.numericId)}`;
-      rows.push(`| <a name="${mitigationId}"></a>${mitigationId} | ${x.content} | ${threatsContent} | ${assumptionsContent} |`);
+      rows.push(`| <a name="${mitigationId}"></a>${mitigationId} | ${x.content} | ${threatsContent} | ${assumptionsContent} | ${comments} |`);
     });
   }
 

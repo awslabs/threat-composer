@@ -145,7 +145,7 @@ const FieldSelector: FC<FieldSelectorProps> = ({
 
   return (<Container
     header={<Header
-      info={<Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
+      info={composerMode === 'Full' ? undefined : <Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
       actions={<SpaceBetween direction='horizontal' size='s'>
         {composerMode === 'EditorOnly' && <Button onClick={onStartOver}>Start over</Button>}
         <Button onClick={onGiveExampleClick}>Give me a random example</Button>

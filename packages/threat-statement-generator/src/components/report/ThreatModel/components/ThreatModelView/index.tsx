@@ -24,6 +24,7 @@ import MarkdownViewer from '../../../../generic/MarkdownViewer';
 import { getApplicationInfoContent } from '../../utils/getApplicationInfo';
 import { getApplicationName } from '../../utils/getApplicationName';
 import { getArchitectureContent } from '../../utils/getArchitecture';
+import { getAssetsContent } from '../../utils/getAssets';
 import { getAssumptionsContent } from '../../utils/getAssumptions';
 import { getDataflowContent } from '../../utils/getDataFlow';
 import { getMitigationsContent } from '../../utils/getMitigations';
@@ -51,6 +52,7 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
       getAssumptionsContent(data),
       getThreatsContent(data),
       getMitigationsContent(data),
+      getAssetsContent(data),
     ] : [getThreatsContent(data, true)]).filter(x => !!x).join('\n');
   }, [data, composerMode]);
 

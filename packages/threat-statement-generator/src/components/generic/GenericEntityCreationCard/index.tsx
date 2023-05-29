@@ -19,8 +19,10 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import Textarea from '@cloudscape-design/components/textarea';
 import { FC, ReactNode, useCallback } from 'react';
 import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
-import { ContentEntityBase } from '../../../customTypes';
+import { ContentEntityBase, EntityBase } from '../../../customTypes';
+import useEditMetadata from '../../../hooks/useEditMetadata';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
+import MetadataEditor from '../EntityMetadataEditor';
 import GenericCard from '../GenericCard';
 
 export interface GenericEntityCreationCardProps {
@@ -56,6 +58,8 @@ const GenericEntityCreationCard: FC<GenericEntityCreationCardProps> = ({
     setEditingEntity(updated as ContentEntityBase);
   }, [editingEntity]);
 
+  const handleEditMetadata = useEditMetadata(setEditingEntity as (updated: EntityBase) => void);
+
   return (<GenericCard
     header={header}
     tags={editingEntity?.tags}
@@ -78,6 +82,12 @@ const GenericEntityCreationCard: FC<GenericEntityCreationCardProps> = ({
         />
         {customEditors}
       </ColumnLayout>
+      <MetadataEditor
+        variant='default'
+        entity={editingEntity}
+        onEditEntity={handleEditMetadata}
+        defaultExpanded={true}
+      />
     </SpaceBetween>
   </GenericCard>);
 };

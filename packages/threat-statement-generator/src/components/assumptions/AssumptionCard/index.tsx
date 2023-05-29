@@ -20,7 +20,9 @@ import TextContent from '@cloudscape-design/components/text-content';
 import Textarea from '@cloudscape-design/components/textarea';
 import { FC, useState, useCallback } from 'react';
 import { Assumption } from '../../../customTypes';
+import useEditMetadata from '../../../hooks/useEditMetadata';
 import CopyToClipbord from '../../generic/CopyToClipboard';
+import MetadataEditor from '../../generic/EntityMetadataEditor';
 import GenericCard from '../../generic/GenericCard';
 import AssumptionMitigationLink from '../AssumptionMitigationLink';
 import AssumptionThreatLink from '../AssumptionThreatLink';
@@ -59,6 +61,8 @@ const AssumptionCard: FC<AssumptionCardProps> = ({
     setEditingMode(false);
   }, [assumption]);
 
+  const handleMetadataEdit = useEditMetadata(onEdit);
+
   return (<GenericCard
     header={`Assumption ${assumption.numericId}`}
     entityId={assumption.id}
@@ -69,24 +73,23 @@ const AssumptionCard: FC<AssumptionCardProps> = ({
     onAddTagToEntity={(_entityId, tag) => onAddTagToAssumption?.(assumption, tag)}
     onRemoveTagFromEntity={(_entityId, tag) => onRemoveTagFromAssumption?.(assumption, tag)}
   >
-    {editingMode ? (
-      <SpaceBetween direction='vertical' size='s'>
-        <Textarea
-          value={editingValue}
-          onChange={({ detail }) => setEditingValue(detail.value)}
-        />
-        <SpaceBetween direction='horizontal' size='s'>
-          <Button onClick={handleCancel}>Cancel</Button>
-          <Button variant='primary' onClick={handleSave}>Save</Button>
-        </SpaceBetween>
-      </SpaceBetween>
-    ) :
-      (<ColumnLayout columns={2}>
-        <TextContent>
+    <SpaceBetween direction='vertical' size='s'>
+      <ColumnLayout columns={2}>
+        {editingMode ? (
+          <SpaceBetween direction='vertical' size='s'>
+            <Textarea
+              value={editingValue}
+              onChange={({ detail }) => setEditingValue(detail.value)}
+            />
+            <SpaceBetween direction='horizontal' size='s'>
+              <Button onClick={handleCancel}>Cancel</Button>
+              <Button variant='primary' onClick={handleSave}>Save</Button>
+            </SpaceBetween>
+          </SpaceBetween>) : (<TextContent>
           <CopyToClipbord>
             {assumption.content || ''}
           </CopyToClipbord>
-        </TextContent>
+        </TextContent>)}
         <SpaceBetween direction='vertical' size='s'>
           <AssumptionThreatLink
             assumptionId={assumption.id}
@@ -94,7 +97,13 @@ const AssumptionCard: FC<AssumptionCardProps> = ({
           <AssumptionMitigationLink
             assumptionId={assumption.id} />
         </SpaceBetween>
-      </ColumnLayout>)}
+      </ColumnLayout>
+      <MetadataEditor
+        variant='default'
+        entity={assumption}
+        onEditEntity={handleMetadataEdit}
+      />
+    </SpaceBetween>
   </GenericCard>);
 };
 

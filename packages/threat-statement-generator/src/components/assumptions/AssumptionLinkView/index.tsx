@@ -66,8 +66,8 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
         setSearchValue('');
       }}
       filteringType='manual'
-      enteredTextLabel={value => `Use: "${value}"`}
-      placeholder="Enter assumption"
+      enteredTextLabel={value => `Add new assumption: "${value}"`}
+      placeholder="Search assumption"
       empty="No matches found"
     />
     <TokenGroup

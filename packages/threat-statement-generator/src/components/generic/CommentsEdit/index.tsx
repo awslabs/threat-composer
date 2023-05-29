@@ -13,30 +13,29 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat } from '../../../../../customTypes';
-import standardizeNumericId from '../../../../../utils/standardizeNumericId';
+import { useMemo } from 'react';
+import { EntityBase } from '../../../customTypes';
+import MarkdownEditor from '../MarkdownEditor';
 
-export const getAssumptionsContent = (
-  data: DataExchangeFormat,
-) => {
-  const rows: string[] = [];
-  rows.push('## Assumptions');
+export interface CommentsEditProps<T> {
+  entity: T;
+  onEditEntity: (entity: T, key: string, value: string | string[] | undefined) => void;
+}
 
-  rows.push('\n');
+const CommentsEdit = <T extends EntityBase>({
+  entity,
+  onEditEntity,
+}: CommentsEditProps<T>) => {
+  const comments = useMemo(() => {
+    return (entity.metadata?.find(m => m.key === 'Comments')?.value as string) || '';
+  }, [entity.metadata]);
 
-  rows.push('| Assumption Number | Assumption | Comments |');
-  rows.push('| --- | --- | --- |');
-
-  if (data.assumptions) {
-    data.assumptions?.forEach(x => {
-      const assumptionId = `A-${standardizeNumericId(x.numericId)}`;
-      const comments = x.metadata?.find(m => m.key === 'Comments')?.value || '';
-      rows.push(`| <a name="${assumptionId}"></a>${assumptionId} | ${x.content} | ${comments} |`);
-    });
-  }
-
-  rows.push('\n');
-
-  return rows.join('\n');
+  return (<MarkdownEditor
+    label='Comments'
+    value={comments}
+    onChange={(value) => onEditEntity(entity, 'Comments', value)}
+    rows={3}
+  />);
 };
 
+export default CommentsEdit;

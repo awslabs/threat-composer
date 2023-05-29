@@ -20,8 +20,10 @@ import TextContent from '@cloudscape-design/components/text-content';
 import Textarea from '@cloudscape-design/components/textarea';
 import { FC, useState, useCallback } from 'react';
 import { Mitigation } from '../../../customTypes';
+import useEditMetadata from '../../../hooks/useEditMetadata';
 import AssumptionLink from '../../assumptions/AssumptionLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';
+import MetadataEditor from '../../generic/EntityMetadataEditor';
 import GenericCard from '../../generic/GenericCard';
 import MitigationThreatLink from '../MitigationThreatLink';
 
@@ -59,6 +61,8 @@ const MitigationCard: FC<MitigationCardProps> = ({
     setEditingMode(false);
   }, [entity]);
 
+  const handleMetadataEdit = useEditMetadata(onEdit);
+
   return (<GenericCard
     header={`Mitigation ${entity.numericId}`}
     entityId={entity.id}
@@ -69,25 +73,25 @@ const MitigationCard: FC<MitigationCardProps> = ({
     onAddTagToEntity={(_entityId, tag) => onAddTagToEntity?.(entity, tag)}
     onRemoveTagFromEntity={(_entityId, tag) => onRemoveTagFromEntity?.(entity, tag)}
   >
-    {editingMode ? (
-      <SpaceBetween direction='vertical' size='s'>
-        <Textarea
-          value={editingValue}
-          onChange={({ detail }) => setEditingValue(detail.value)}
-          onBlur={handleCancel}
-        />
-        <SpaceBetween direction='horizontal' size='s'>
-          <Button onClick={handleCancel}>Cancel</Button>
-          <Button variant='primary' onClick={handleSave}>Save</Button>
-        </SpaceBetween>
-      </SpaceBetween>
-    ) :
-      (<ColumnLayout columns={2}>
-        <TextContent>
+    <SpaceBetween direction='vertical' size='s'>
+      <ColumnLayout columns={2}>
+        {editingMode ? (
+          <SpaceBetween direction='vertical' size='s'>
+            <Textarea
+              value={editingValue}
+              onChange={({ detail }) => setEditingValue(detail.value)}
+              onBlur={handleCancel}
+            />
+            <SpaceBetween direction='horizontal' size='s'>
+              <Button onClick={handleCancel}>Cancel</Button>
+              <Button variant='primary' onClick={handleSave}>Save</Button>
+            </SpaceBetween>
+          </SpaceBetween>
+        ) : (<TextContent>
           <CopyToClipbord>
             {entity.content || ''}
           </CopyToClipbord>
-        </TextContent>
+        </TextContent>)}
         <SpaceBetween direction='vertical' size='s'>
           <MitigationThreatLink mitigationId={entity.id} />
           <AssumptionLink
@@ -95,7 +99,13 @@ const MitigationCard: FC<MitigationCardProps> = ({
             type='Mitigation'
           />
         </SpaceBetween>
-      </ColumnLayout>)}
+      </ColumnLayout>
+      <MetadataEditor
+        variant='default'
+        entity={entity}
+        onEditEntity={handleMetadataEdit}
+      />
+    </SpaceBetween>
   </GenericCard>);
 };
 

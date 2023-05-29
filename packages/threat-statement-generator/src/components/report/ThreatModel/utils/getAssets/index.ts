@@ -13,25 +13,42 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat } from '../../../../../customTypes';
+import { DataExchangeFormat, TemplateThreatStatement } from '../../../../../customTypes';
 import standardizeNumericId from '../../../../../utils/standardizeNumericId';
 
-export const getAssumptionsContent = (
+export const getAssetsContent = (
   data: DataExchangeFormat,
 ) => {
   const rows: string[] = [];
-  rows.push('## Assumptions');
+  rows.push('## Impacted Assets');
 
   rows.push('\n');
 
-  rows.push('| Assumption Number | Assumption | Comments |');
+  rows.push('| Assets Number | Asset | Related Threats |');
   rows.push('| --- | --- | --- |');
 
-  if (data.assumptions) {
-    data.assumptions?.forEach(x => {
-      const assumptionId = `A-${standardizeNumericId(x.numericId)}`;
-      const comments = x.metadata?.find(m => m.key === 'Comments')?.value || '';
-      rows.push(`| <a name="${assumptionId}"></a>${assumptionId} | ${x.content} | ${comments} |`);
+  if (data.threats) {
+    const assetThreatMap: {
+      [assetName: string]: TemplateThreatStatement[];
+    } = {};
+
+    data.threats.forEach(t => t.impactedAssets?.forEach(ia => {
+      if (!assetThreatMap[ia]) {
+        assetThreatMap[ia] = [];
+      }
+
+      assetThreatMap[ia].push(t);
+    }));
+
+    Object.keys(assetThreatMap).forEach((at, index) => {
+      const atId = `AS-${standardizeNumericId(index + 1)}`;
+
+      const threatsContent = assetThreatMap[at].map(t => {
+        const threatId = `T-${standardizeNumericId(t.numericId)}`;
+        return `[**${threatId}**](#${threatId}): ${t.statement}`;
+      }).join('<br/>');
+
+      rows.push(`| ${atId} | ${at} | ${threatsContent} |`);
     });
   }
 
@@ -39,4 +56,3 @@ export const getAssumptionsContent = (
 
   return rows.join('\n');
 };
-

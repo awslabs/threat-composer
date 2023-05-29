@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { AssumptionLink } from '../../../customTypes';
@@ -26,7 +26,7 @@ export interface AssumptionThreatLinkProps {
 const AssumptionThreatLinkComponent: FC<AssumptionThreatLinkProps> = ({
   assumptionId,
 }) => {
-  const { mitigationList } = useMitigationsContext();
+  const { mitigationList, saveMitigation } = useMitigationsContext();
   const [assumptionLinks, setAssumptionLinks] = useState<AssumptionLink[]>([]);
 
   const { getAssumptionEntityLinks } = useAssumptionLinksContext();
@@ -41,14 +41,31 @@ const AssumptionThreatLinkComponent: FC<AssumptionThreatLinkProps> = ({
     removeAssumptionLink,
   } = useAssumptionLinksContext();
 
+  const handleAddMitigationLink = useCallback((mitigationIdOrNewMitigation: string) => {
+    if (mitigationList.find(m => m.id === mitigationIdOrNewMitigation)) {
+      addAssumptionLink({
+        linkedId: mitigationIdOrNewMitigation,
+        assumptionId,
+        type: 'Mitigation',
+      });
+    } else {
+      const newMitigation = saveMitigation({
+        numericId: -1,
+        content: mitigationIdOrNewMitigation,
+        id: 'new',
+      });
+      addAssumptionLink({
+        type: 'Mitigation',
+        linkedId: newMitigation.id,
+        assumptionId,
+      });
+    }
+  }, [assumptionId, mitigationList, addAssumptionLink, saveMitigation]);
+
   return (<MitigationLinkView
     mitigationList={mitigationList}
     linkedMitigationIds={assumptionLinks.map(ml => ml.linkedId)}
-    onAddMitigationLink={(mitigationId) => addAssumptionLink({
-      linkedId: mitigationId,
-      assumptionId,
-      type: 'Mitigation',
-    })}
+    onAddMitigationLink={handleAddMitigationLink}
     onRemoveMitigationLink={(mitigationId) => removeAssumptionLink(assumptionId, mitigationId)}
   />);
 };

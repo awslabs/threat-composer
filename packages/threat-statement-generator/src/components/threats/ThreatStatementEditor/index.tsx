@@ -32,6 +32,7 @@ import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
 import threatStatementExamples from '../../../data/threatStatementExamples.json';
 import threatStatementFormat from '../../../data/threatStatementFormat';
+import useEditMetadata from '../../../hooks/useEditMetadata';
 import getRecommendedEditor from '../../../utils/getRecommandedEditor';
 import renderThreatStatement from '../../../utils/renderThreatStatement';
 import scrollToTop from '../../../utils/scrollToTop';
@@ -49,10 +50,10 @@ import FieldSelector from '../FieldSelector';
 import FinalStatement from '../FinalStatement';
 import FullExamples from '../FullExamples';
 import Header from '../Header';
+import MetadataEditor from '../MetadataEditor';
 import Metrics from '../Metrics';
 
 import './index.css';
-
 
 const defaultThreatStatementFormat = threatStatementFormat[63];
 
@@ -95,8 +96,8 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
 
   const { composerMode } = useGlobalSetupContext();
 
-  const { assumptionList } = useAssumptionsContext();
-  const { mitigationList } = useMitigationsContext();
+  const { assumptionList, saveAssumption } = useAssumptionsContext();
+  const { mitigationList, saveMitigation } = useMitigationsContext();
 
   const Component = useMemo(() => {
     return editor && editorMapping[editor];
@@ -122,9 +123,9 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
       }
       const displayedHtml = displayedStatement?.map((s, index) => typeof s === 'string' ?
         s : s.type === 'b' ?
-          <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly'? 'bottom' : 'top'}><b className='threat-statement-editor-final-statement-section'>{s.content}</b></Tooltip> :
+          <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly' ? 'bottom' : 'top'}><b className='threat-statement-editor-final-statement-section'>{s.content}</b></Tooltip> :
           s.type === 'span' ?
-            <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly'? 'bottom' : 'top'}><span key={index} className='threat-statement-editor-final-statement-section'>{s.content}</span></Tooltip> :
+            <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly' ? 'bottom' : 'top'}><span key={index} className='threat-statement-editor-final-statement-section'>{s.content}</span></Tooltip> :
             s.content);
 
       setDisplayStatement(displayedHtml);
@@ -247,6 +248,36 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
     }
   }, [editingStatement]);
 
+  const handleAddAssumptionLink = useCallback((assumptionIdOrNewAssumption: string) => {
+    if (assumptionList.find(a => a.id === assumptionIdOrNewAssumption)) {
+      setLinkedAssumptionIds(prev => [...prev, assumptionIdOrNewAssumption]);
+    } else {
+      const newAssumption = saveAssumption({
+        id: 'new',
+        numericId: -1,
+        content: assumptionIdOrNewAssumption,
+      });
+      setLinkedAssumptionIds(prev => [...prev, newAssumption.id]);
+    }
+
+  }, [setLinkedAssumptionIds, assumptionList, saveAssumption]);
+
+  const handleAddMitigationLink = useCallback((mitigationIdOrNewMitigation: string) => {
+    if (mitigationList.find(a => a.id === mitigationIdOrNewMitigation)) {
+      setLinkedMitigationIds(prev => [...prev, mitigationIdOrNewMitigation]);
+    } else {
+      const newMitigation = saveMitigation({
+        id: 'new',
+        numericId: -1,
+        content: mitigationIdOrNewMitigation,
+      });
+      setLinkedMitigationIds(prev => [...prev, newMitigation.id]);
+    }
+
+  }, [setLinkedMitigationIds, mitigationList, saveMitigation]);
+
+  const handleEditMetadata = useEditMetadata(setEditingStatement);
+
   if (!editingStatement) {
     return <TextContent>Not threat statement editing in place</TextContent>;
   }
@@ -291,7 +322,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
               variant='container'
               linkedAssumptionIds={linkedAssumptionIds}
               assumptionList={assumptionList}
-              onAddAssumptionLink={(id) => setLinkedAssumptionIds(prev => [...prev, id])}
+              onAddAssumptionLink={handleAddAssumptionLink}
               onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
             />
           </div>}
@@ -300,8 +331,15 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
               variant='container'
               linkedMitigationIds={linkedMitigationIds}
               mitigationList={mitigationList}
-              onAddMitigationLink={(id) => setLinkedMitigationIds(prev => [...prev, id])}
+              onAddMitigationLink={handleAddMitigationLink}
               onRemoveMitigationLink={(id) => setLinkedMitigationIds(prev => prev.filter(p => p !== id))}
+            />
+          </div>}
+          {composerMode === 'Full' && <div className='threat-statement-editor-editor-linked-container'>
+            <MetadataEditor
+              variant='container'
+              editingStatement={editingStatement}
+              onEditMetadata={handleEditMetadata}
             />
           </div>}
         </SpaceBetween>}

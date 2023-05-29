@@ -66,8 +66,8 @@ const MitigationLinkComponent: FC<MitigationLinkProps> = ({
         setSearchValue('');
       }}
       filteringType='manual'
-      enteredTextLabel={value => `Use: "${value}"`}
-      placeholder="Enter mitigation"
+      enteredTextLabel={value => `Add new mitigation: "${value}"`}
+      placeholder="Search mitigation"
       empty="No matches found"
     />
     <div

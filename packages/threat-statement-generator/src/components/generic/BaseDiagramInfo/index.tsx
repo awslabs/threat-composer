@@ -36,7 +36,7 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
   entity,
   onConfirm,
 }) => {
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(!entity.description && !entity.image);
   const [image, setImage] = useState<string>('');
   const [content, setContent] = useState('');
 
@@ -63,7 +63,7 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
 
   return (<Container header={<Header actions={actions}>{headerTitle}</Header>}>
     {editMode ? (<SpaceBetween direction='vertical' size='s'>
-      <MarkdownEditor label='Introduction' value={content} onChange={setContent} />
+      <MarkdownEditor label='Introduction' value={content} onChange={setContent} parentHeaderLevel='h3'/>
       <Header variant='h3'>Architecture Diagram</Header>
       <ImageEdit value={image} onChange={setImage} />
     </SpaceBetween>) :

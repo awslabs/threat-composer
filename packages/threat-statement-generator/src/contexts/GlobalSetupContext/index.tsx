@@ -43,10 +43,10 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
 
   useEffect(() => {
     if (!hasVisitBefore) {
-      setInfoModalVisible(true);
+      composerMode !== 'Full' && setInfoModalVisible(true);
       window.setTimeout(() => setHasVisitBefore(true), 1000);
     }
-  }, [hasVisitBefore]);
+  }, [hasVisitBefore, composerMode]);
 
   return (<div className='threat-statement-generator-main'>
     <GlobalSetupContext.Provider value={{

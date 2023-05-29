@@ -26,7 +26,7 @@ import MarkdownViewer from '../../generic/MarkdownViewer';
 
 const ApplicationInfo: FC = () => {
   const { applicationInfo, setApplicationInfo } = useApplicationInfoContext();
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(!applicationInfo.name && !applicationInfo.description );
   const [content, setContent] = useState('');
   const [name, setName] = useState('');
 
@@ -66,7 +66,12 @@ const ApplicationInfo: FC = () => {
           placeholder='Enter application name'
         />
       </FormField>
-      <MarkdownEditor value={content} onChange={setContent} label='Description' />
+      <MarkdownEditor
+        value={content}
+        onChange={setContent}
+        label='Description'
+        parentHeaderLevel='h2'
+      />
     </SpaceBetween>) :
       (<MarkdownViewer>
         {applicationInfo.description || ''}
