@@ -32,6 +32,7 @@ import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
 import threatStatementExamples from '../../../data/threatStatementExamples.json';
 import threatStatementFormat from '../../../data/threatStatementFormat';
+import useEditMetadata from '../../../hooks/useEditMetadata';
 import getRecommendedEditor from '../../../utils/getRecommandedEditor';
 import renderThreatStatement from '../../../utils/renderThreatStatement';
 import scrollToTop from '../../../utils/scrollToTop';
@@ -49,10 +50,10 @@ import FieldSelector from '../FieldSelector';
 import FinalStatement from '../FinalStatement';
 import FullExamples from '../FullExamples';
 import Header from '../Header';
+import MetadataEditor from '../MetadataEditor';
 import Metrics from '../Metrics';
 
 import './index.css';
-
 
 const defaultThreatStatementFormat = threatStatementFormat[63];
 
@@ -261,7 +262,6 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
 
   }, [setLinkedAssumptionIds, assumptionList, saveAssumption]);
 
-
   const handleAddMitigationLink = useCallback((mitigationIdOrNewMitigation: string) => {
     if (mitigationList.find(a => a.id === mitigationIdOrNewMitigation)) {
       setLinkedMitigationIds(prev => [...prev, mitigationIdOrNewMitigation]);
@@ -276,6 +276,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
 
   }, [setLinkedMitigationIds, mitigationList, saveMitigation]);
 
+  const handleEditMetadata = useEditMetadata(setEditingStatement);
 
   if (!editingStatement) {
     return <TextContent>Not threat statement editing in place</TextContent>;
@@ -332,6 +333,13 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
               mitigationList={mitigationList}
               onAddMitigationLink={handleAddMitigationLink}
               onRemoveMitigationLink={(id) => setLinkedMitigationIds(prev => prev.filter(p => p !== id))}
+            />
+          </div>}
+          {composerMode === 'Full' && <div className='threat-statement-editor-editor-linked-container'>
+            <MetadataEditor
+              variant='container'
+              editingStatement={editingStatement}
+              onEditMetadata={handleEditMetadata}
             />
           </div>}
         </SpaceBetween>}

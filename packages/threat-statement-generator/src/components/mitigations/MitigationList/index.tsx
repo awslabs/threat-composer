@@ -139,8 +139,8 @@ const MitigationList: FC = () => {
         <SpaceBetween direction='vertical' size='s'>
           <TextFilter
             filteringText={filteringText}
-            filteringPlaceholder="Find threat statements"
-            filteringAriaLabel="Filter threat statements"
+            filteringPlaceholder="Find mitigations"
+            filteringAriaLabel="Filter mitigations"
             onChange={({ detail }) =>
               setFilteringText(detail.filteringText)
             }

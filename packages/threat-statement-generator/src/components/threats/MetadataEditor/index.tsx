@@ -37,7 +37,7 @@ const MetadataEditor: FC<MetadataEditorProps> = ({
   }, [editingStatement.metadata]);
 
   return (
-    <ExpandableSection headerText={<span className='threat-statement-generator-metadata-editor-header'>Metadata</span>} headingTagOverride='h3' variant={variant}>
+    <ExpandableSection headerText={<span className={variant === 'default' ? 'threat-statement-generator-metadata-editor-header' : undefined}>Metadata</span>} headingTagOverride='h3' variant={variant}>
       <Grid
         gridDefinition={[
           { colspan: { default: 12, xs: 3 } },
