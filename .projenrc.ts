@@ -58,7 +58,7 @@ monorepo.postCompileTask.reset('yarn run generate:attribution && yarn run licens
 const uiProject = new TypeScriptProject({
   parent: monorepo,
   outdir: "packages/threat-composer",
-  defaultReleaseBranch: "mainline",
+  defaultReleaseBranch: "main",
   name: "threat-composer",
   sampleCode: false,
   deps: [
@@ -150,7 +150,7 @@ uiProject.eslint?.addRules({
 const appProject = new ReactTypeScriptProject({
   parent: monorepo,
   outdir: "packages/threat-composer-app",
-  defaultReleaseBranch: "mainline",
+  defaultReleaseBranch: "main",
   name: "threat-composer-app",
   deps: [
     "@cloudscape-design/components",
@@ -179,7 +179,7 @@ appProject.postCompileTask.exec(`cp -r ../threat-composer/storybook.out/ ./build
 
 const infraProject = new PDKPipelineTsProject({
   cdkVersion: "2.81.0",
-  defaultReleaseBranch: "mainline",
+  defaultReleaseBranch: "main",
   devDeps: ["@aws-prototyping-sdk/pipeline@^0.19.2"],
   name: "threat-composer-infra",
   parent: monorepo,

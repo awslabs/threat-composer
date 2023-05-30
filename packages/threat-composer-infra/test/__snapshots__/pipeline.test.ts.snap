@@ -489,7 +489,7 @@ exports[`Snapshot 1`] = `
                   "Version": "1",
                 },
                 "Configuration": {
-                  "BranchName": "mainline",
+                  "BranchName": "main",
                   "PollForSourceChanges": false,
                   "RepositoryName": {
                     "Fn::GetAtt": [
@@ -1105,7 +1105,7 @@ exports[`Snapshot 1`] = `
       "Type": "AWS::CodeCommit::Repository",
       "UpdateReplacePolicy": "Retain",
     },
-    "ApplicationPipelineCodeRepositorypipelinetestApplicationPipelineCodePipeline31AB4045mainlineEventRule30640423": {
+    "ApplicationPipelineCodeRepositorypipelinetestApplicationPipelineCodePipeline31AB4045mainEventRuleF535C809": {
       "Properties": {
         "EventPattern": {
           "detail": {
@@ -1114,7 +1114,7 @@ exports[`Snapshot 1`] = `
               "referenceUpdated",
             ],
             "referenceName": [
-              "mainline",
+              "main",
             ],
           },
           "detail-type": [
