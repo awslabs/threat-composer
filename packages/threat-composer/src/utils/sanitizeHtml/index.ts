@@ -20,7 +20,9 @@ const sanitizeHtml: any = (data: any) => {
     if (Array.isArray(data)) {
       return data.map(d => sanitizeHtml(d));
     } else if (typeof data === 'string') {
-      return sanitizeHtmlString(data);
+      return sanitizeHtmlString(data, {
+        allowedTags: [],
+      });
     } else if (typeof data === 'object') {
       return Object.keys(data).reduce(
         (attrs, key) => ({

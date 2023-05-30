@@ -24,6 +24,7 @@ import './index.css';
 
 export interface MarkdownViewerProps {
   children: string;
+  allowHtml?: boolean;
 }
 
 const components = {
@@ -32,11 +33,15 @@ const components = {
 /**
  * MarkdownViewer renders content with Markdown format.
  */
-const MarkdownViewer: FC<MarkdownViewerProps> = ({ children, ...props }) => {
+const MarkdownViewer: FC<MarkdownViewerProps> = ({
+  allowHtml = false,
+  children,
+  ...props
+}) => {
   return (
     <div className='markdown-viewer'>
       <TextContent {...props}>
-        <ReactMarkdown remarkPlugins={[gfm, frontmatter]} rehypePlugins={[rehypeRaw]} components={components} children={children} />
+        <ReactMarkdown remarkPlugins={[gfm, frontmatter]} rehypePlugins={allowHtml ? [rehypeRaw] : []} components={components} children={children} />
       </TextContent>
     </div>
   );

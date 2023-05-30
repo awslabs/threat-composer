@@ -20,6 +20,7 @@ import Popover from '@cloudscape-design/components/popover';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import { FC, useMemo, useCallback } from 'react';
 import { DataExchangeFormat } from '../../../../../customTypes';
+import sanitizeHtml from '../../../../../utils/sanitizeHtml';
 import MarkdownViewer from '../../../../generic/MarkdownViewer';
 import { getApplicationInfoContent } from '../../utils/getApplicationInfo';
 import { getApplicationName } from '../../utils/getApplicationName';
@@ -44,16 +45,17 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
   onPrintButtonClick,
 }) => {
   const content = useMemo(() => {
+    const sanitizedData = sanitizeHtml(data);
     return (composerMode === 'Full' ? [
-      getApplicationName(data),
-      getApplicationInfoContent(data),
-      getArchitectureContent(data),
-      getDataflowContent(data),
-      getAssumptionsContent(data),
-      getThreatsContent(data),
-      getMitigationsContent(data),
-      getAssetsContent(data),
-    ] : [getThreatsContent(data, true)]).filter(x => !!x).join('\n');
+      getApplicationName(sanitizedData),
+      getApplicationInfoContent(sanitizedData),
+      getArchitectureContent(sanitizedData),
+      getDataflowContent(sanitizedData),
+      getAssumptionsContent(sanitizedData),
+      getThreatsContent(sanitizedData),
+      getMitigationsContent(sanitizedData),
+      getAssetsContent(sanitizedData),
+    ] : [getThreatsContent(sanitizedData, true)]).filter(x => !!x).join('\n');
   }, [data, composerMode]);
 
   const handleCopyMarkdown = useCallback(async () => {
@@ -86,7 +88,7 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
         }
       >
       </Header></div>
-      <MarkdownViewer>{content}</MarkdownViewer>
+      <MarkdownViewer allowHtml>{content}</MarkdownViewer>
     </SpaceBetween>
   </div>);
 };

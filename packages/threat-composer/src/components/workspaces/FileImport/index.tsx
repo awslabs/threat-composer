@@ -124,10 +124,16 @@ const FileImport: FC<FileImportProps> = ({
         }
         statusIconAriaLabel="Warning"
         type="warning"
-        key="warning">
+        key="override-warning">
         <TextContent>Importing data will override all the data in current workspace. This action cannot be undone.<br/>
           You can export the data to a json file as backup or create a new <b>workspace</b>.
         </TextContent>
+      </Alert>
+      <Alert
+        statusIconAriaLabel="Warning"
+        type="warning"
+        key="content-warning">
+        <TextContent>Only import content from trusted source.</TextContent>
       </Alert>
       <FileUpload accept='application/json' files={selectedFiles} onChange={setSelectedFiles} />
       {loading && <ProgressBar
