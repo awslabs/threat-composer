@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const PACKAGE_PATH = path.join(__dirname, '..', 'packages', 'threat-statement-generator');
+const PACKAGE_PATH = path.join(__dirname, '..', 'packages', 'threat-composer');
 const SCRIPT_PATH = path.join(PACKAGE_PATH, 'lib', 'utils', 'renderThreatStatement');
 const DATA_PATH = path.join(PACKAGE_PATH, 'lib', 'data', 'threatStatementExamples.json');
 const OUTPUT_PATH = path.join(__dirname, '.temp');

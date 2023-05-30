@@ -1,5 +1,5 @@
 {
-  "name": "threat-statement-generator-monorepo",
+  "name": "threat-composer-monorepo",
   "scripts": {
     "build": "npx projen build",
     "clobber": "npx projen clobber",
@@ -10,25 +10,27 @@
     "eslint": "npx projen eslint",
     "export:examples": "npx projen export:examples",
     "generate:attribution": "npx projen generate:attribution",
+    "graph": "npx projen graph",
     "license:checker": "npx projen license:checker",
     "package": "npx projen package",
     "post-compile": "npx projen post-compile",
     "post-upgrade": "npx projen post-upgrade",
     "pre-compile": "npx projen pre-compile",
+    "run-many": "npx projen run-many",
     "storybook": "npx projen storybook",
     "test": "npx projen test",
     "upgrade": "npx projen upgrade",
     "upgrade-deps": "npx projen upgrade-deps",
     "watch": "npx projen watch",
-    "projen": "npx projen"
+    "synth-workspace": "yarn projen"
   },
   "devDependencies": {
-    "@nrwl/cli": "^15.6.3",
-    "@nrwl/workspace": "^15.6.3",
+    "@aws-prototyping-sdk/nx-monorepo": "^0.19.2",
+    "@aws-prototyping-sdk/pdk-nag": "^0.19.2",
+    "@aws-prototyping-sdk/pipeline": "^0.19.2",
     "@types/node": "^14",
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
-    "aws-prototyping-sdk": "^0.13.1",
     "eslint": "^8",
     "eslint-config-prettier": "^8.6.0",
     "eslint-import-resolver-node": "^0.3.7",
@@ -38,16 +40,24 @@
     "eslint-plugin-prettier": "^4.2.1",
     "license-checker": "^25.0.1",
     "npm-check-updates": "^16.6.3",
+    "nx": "16.0.0",
     "prettier": "^2.8.3",
     "projen": "^0.67.25",
     "syncpack": "^8.4.11",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5"
   },
+  "peerDependencies": {
+    "nx": "^16"
+  },
   "dependencies": {
     "aws-cdk-lib": "^2.62.2",
     "cdk-nag": "^2.21.79",
     "constructs": "^10.1.236"
+  },
+  "engines": {
+    "node": ">=16",
+    "yarn": ">=1 <2"
   },
   "main": "lib/index.js",
   "license": "Apache-2.0",
@@ -56,13 +66,15 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "packages/threat-statement-generator",
-      "packages/threat-statement-generator-demo-app",
-      "packages/threat-statement-generator-infra"
+      "packages/threat-composer",
+      "packages/threat-composer-app",
+      "packages/threat-composer-infra"
     ]
   },
   "resolutions": {
     "@types/babel__traverse": "7.18.2",
+    "wrap-ansi": "^7.0.0",
+    "@zkochan/js-yaml": "npm:js-yaml@4.1.0",
     "@types/react": "^18.0.27",
     "react": "^18.2.0",
     "nth-check": "^2.1.1",

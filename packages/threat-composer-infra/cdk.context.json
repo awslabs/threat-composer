@@ -1,0 +1,16 @@
+{
+    "repositoryName": "threat_composer_monorepo",
+    "accountPipeline": "",
+    "accountDev": "",
+    "accountProd": "",
+    "domainNameDev": "",
+    "certificateDev": "",
+    "domainNameProd": "",
+    "certificateProd": "",
+    "hostZoneDev": "",
+    "hostZoneNameDev": "",
+    "hostZoneProd": "",
+    "hostZoneNameProd": "",
+    "lambdaEdgeDev": "",
+    "lambdaEdgeProd": ""
+}

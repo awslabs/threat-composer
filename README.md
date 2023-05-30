@@ -16,17 +16,27 @@ This monorepo hosts the code for threat-composer UI components, a [create-react-
 npm install -g oss-attribution-generator
 ```
 
-### Useful commands
-
-* Build all the projects
+### Commands
+*	Install dependencies
 ```
-npx nx run-many --target=build --all
-```
-
-* Start Demo App in dev mode
-```
-npx nx run threat-statement-generator-demo-app:dev
+yarn install --frozen-lockfile & npx projen
 ```
 
+*	Build all the projects
+```
+yarn run build
+```
 
+*	Run Storybook
+```
+yarn run storybook
+```
 
+Runs storybook to navigate all the threat composer UI components
+
+Open http://localhost:6006 to view it in the browser. The page will reload if you make edits. It is recommended to use storybook as development environment.
+
+* Start website in dev mode
+```
+yarn run dev
+```

@@ -1,14 +1,17 @@
-import { nx_monorepo, pipeline } from "aws-prototyping-sdk";
+import { NxMonorepoProject } from "@aws-prototyping-sdk/nx-monorepo";
+import { PDKPipelineTsProject } from "@aws-prototyping-sdk/pipeline"
 import { ApprovalLevel } from "projen/lib/awscdk";
 import { ReactTypeScriptProject } from "projen/lib/web";
 import { TypeScriptProject } from "projen/lib/typescript";
 import { TypeScriptJsxMode, TypeScriptModuleResolution } from "projen/lib/javascript";
 
-const monorepo = new nx_monorepo.NxMonorepoProject({
-  defaultReleaseBranch: "mainline",
-  name: "threat-statement-generator-monorepo",
+const monorepo = new NxMonorepoProject({
+  defaultReleaseBranch: "main",
+  name: "threat-composer-monorepo",
   devDeps: [
-    "aws-prototyping-sdk", 
+    "@aws-prototyping-sdk/nx-monorepo@^0.19.2", 
+    "@aws-prototyping-sdk/pipeline@^0.19.2",
+    "@aws-prototyping-sdk/pdk-nag@^0.19.2",
     "eslint-plugin-header",
     "license-checker",
   ],
@@ -42,21 +45,21 @@ monorepo.addTask('license:checker', {
 });
 
 monorepo.addTask('dev', {
-  exec: 'npx nx run threat-statement-generator-demo-app:dev'
+  exec: 'npx nx run threat-composer-app:dev'
 });
 
 monorepo.addTask('storybook', {
-  exec: 'npx nx run threat-statement-generator:storybook'
+  exec: 'npx nx run threat-composer:storybook'
 });
 
-monorepo.compileTask.reset('npx nx run-many --target=build --all --skip-nx-cache');
+monorepo.compileTask.reset('npx nx run-many --target=build --all --skip-nx-cache --nx-bail');
 monorepo.postCompileTask.reset('yarn run generate:attribution && yarn run license:checker');
 
 const uiProject = new TypeScriptProject({
   parent: monorepo,
-  outdir: "packages/threat-statement-generator",
+  outdir: "packages/threat-composer",
   defaultReleaseBranch: "mainline",
-  name: "threat-statement-generator",
+  name: "threat-composer",
   sampleCode: false,
   deps: [
     "@cloudscape-design/components",
@@ -135,6 +138,7 @@ uiProject.addTask('storybook:build', {
   exec: 'storybook build -o storybook.out'
 });
 
+uiProject.preCompileTask.reset('rm -rf {lib,dist}')
 uiProject.postCompileTask.reset('rsync -arv --prune-empty-dirs --include=*/ --include=*.css --include=*.png --exclude=* ./src/* ./lib');
 uiProject.postCompileTask.exec('yarn run storybook:build');
 
@@ -143,11 +147,11 @@ uiProject.eslint?.addRules({
   "header/header": [2, "../../header.js"],
 });
 
-const demoAppProject = new ReactTypeScriptProject({
+const appProject = new ReactTypeScriptProject({
   parent: monorepo,
-  outdir: "packages/threat-statement-generator-demo-app",
+  outdir: "packages/threat-composer-app",
   defaultReleaseBranch: "mainline",
-  name: "threat-statement-generator-demo-app",
+  name: "threat-composer-app",
   deps: [
     "@cloudscape-design/components",
     "@cloudscape-design/global-styles",
@@ -164,25 +168,25 @@ const demoAppProject = new ReactTypeScriptProject({
   },
 });
 
-demoAppProject.eslint?.addPlugins('header');
-demoAppProject.eslint?.addRules({
+appProject.eslint?.addPlugins('header');
+appProject.eslint?.addRules({
   "header/header": [2, "../../header.js"],
 });
 
-demoAppProject.testTask.reset('react-scripts test --watchAll=false --passWithNoTests');
-demoAppProject.postCompileTask.reset(`[ -d ./build/storybook ] || mkdir -p ./build/storybook`);
-demoAppProject.postCompileTask.exec(`cp -r ../threat-statement-generator/storybook.out/ ./build/storybook/`);
+appProject.testTask.reset('react-scripts test --watchAll=false --passWithNoTests');
+appProject.postCompileTask.reset(`[ -d ./build/storybook ] || mkdir -p ./build/storybook`);
+appProject.postCompileTask.exec(`cp -r ../threat-composer/storybook.out/ ./build/storybook/`);
 
-const infraProject = new pipeline.PDKPipelineTsProject({
-  cdkVersion: "2.62.2",
+const infraProject = new PDKPipelineTsProject({
+  cdkVersion: "2.81.0",
   defaultReleaseBranch: "mainline",
-  devDeps: ["aws-prototyping-sdk"],
-  name: "threat-statement-generator-infra",
+  devDeps: ["@aws-prototyping-sdk/pipeline@^0.19.2"],
+  name: "threat-composer-infra",
   parent: monorepo,
-  outdir: "packages/threat-statement-generator-infra",
+  outdir: "packages/threat-composer-infra",
   requireApproval: ApprovalLevel.NEVER,
   deps: [
-    "@aws-prototyping-sdk/static-website",
+    "@aws-prototyping-sdk/static-website@^0.18.18",
   ],
   tsconfig: {
     compilerOptions: {
@@ -197,7 +201,7 @@ infraProject.eslint?.addRules({
   "header/header": [2, "../../header.js"],
 });
 
-monorepo.addImplicitDependency(demoAppProject, uiProject);
-monorepo.addImplicitDependency(infraProject, demoAppProject);
+monorepo.addImplicitDependency(appProject, uiProject);
+monorepo.addImplicitDependency(infraProject, appProject);
 
 monorepo.synth();

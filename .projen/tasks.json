@@ -2,25 +2,11 @@
   "tasks": {
     "build": {
       "name": "build",
-      "description": "Full release build",
+      "description": "Full release build for all affected projects",
       "steps": [
         {
-          "spawn": "default"
-        },
-        {
-          "spawn": "pre-compile"
-        },
-        {
-          "spawn": "compile"
-        },
-        {
-          "spawn": "post-compile"
-        },
-        {
-          "spawn": "test"
-        },
-        {
-          "spawn": "package"
+          "exec": "yarn nx run-many --target=build --output-style=stream --nx-bail",
+          "receiveArgs": true
         }
       ]
     },
@@ -58,10 +44,10 @@
     },
     "compile": {
       "name": "compile",
-      "description": "Only compile",
+      "description": "Only compile for all affected projects",
       "steps": [
         {
-          "exec": "npx nx run-many --target=build --all --skip-nx-cache"
+          "exec": "npx nx run-many --target=build --all --skip-nx-cache --nx-bail"
         }
       ]
     },
@@ -78,7 +64,7 @@
       "name": "dev",
       "steps": [
         {
-          "exec": "npx nx run threat-statement-generator-demo-app:dev"
+          "exec": "npx nx run threat-composer-app:dev"
         }
       ]
     },
@@ -96,10 +82,11 @@
     },
     "eslint": {
       "name": "eslint",
-      "description": "Runs eslint against the codebase",
+      "description": "Runs eslint against the codebase for all affected projects",
       "steps": [
         {
-          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern . test build-tools projenrc .projenrc.ts"
+          "exec": "yarn nx run-many --target=eslint --output-style=stream --nx-bail",
+          "receiveArgs": true
         }
       ]
     },
@@ -119,6 +106,16 @@
       "steps": [
         {
           "exec": "git secrets --scan && generate-attribution && mv oss-attribution/attribution.txt LICENSE-THIRD-PARTY"
+        }
+      ]
+    },
+    "graph": {
+      "name": "graph",
+      "description": "Generate dependency graph for monorepo",
+      "steps": [
+        {
+          "exec": "yarn nx graph",
+          "receiveArgs": true
         }
       ]
     },
@@ -150,11 +147,17 @@
     },
     "package": {
       "name": "package",
-      "description": "Creates the distribution package"
+      "description": "Creates the distribution package for all affected projects",
+      "steps": [
+        {
+          "exec": "yarn nx run-many --target=package --output-style=stream --nx-bail",
+          "receiveArgs": true
+        }
+      ]
     },
     "post-compile": {
       "name": "post-compile",
-      "description": "Runs after successful compilation",
+      "description": "Runs after successful compilation for all affected projects",
       "steps": [
         {
           "exec": "yarn run generate:attribution && yarn run license:checker"
@@ -167,19 +170,41 @@
     },
     "pre-compile": {
       "name": "pre-compile",
-      "description": "Prepare the project for compilation"
+      "description": "Prepare the project for compilation for all affected projects",
+      "steps": [
+        {
+          "exec": "yarn nx run-many --target=pre-compile --output-style=stream --nx-bail",
+          "receiveArgs": true
+        }
+      ]
+    },
+    "run-many": {
+      "name": "run-many",
+      "description": "Run task against multiple workspace projects",
+      "steps": [
+        {
+          "exec": "yarn nx run-many",
+          "receiveArgs": true
+        }
+      ]
     },
     "storybook": {
       "name": "storybook",
       "steps": [
         {
-          "exec": "npx nx run threat-statement-generator:storybook"
+          "exec": "npx nx run threat-composer:storybook"
         }
       ]
     },
     "test": {
       "name": "test",
-      "description": "Run tests"
+      "description": "Run tests for all affected projects",
+      "steps": [
+        {
+          "exec": "yarn nx run-many --target=test --output-style=stream --nx-bail",
+          "receiveArgs": true
+        }
+      ]
     },
     "upgrade": {
       "name": "upgrade",
@@ -192,19 +217,19 @@
           "exec": "yarn upgrade npm-check-updates"
         },
         {
-          "exec": "npm-check-updates --dep dev --upgrade --target=minor"
+          "exec": "npm-check-updates --dep dev --upgrade --target=minor --reject='nx'"
         },
         {
-          "exec": "npm-check-updates --dep optional --upgrade --target=minor"
+          "exec": "npm-check-updates --dep optional --upgrade --target=minor --reject='nx'"
         },
         {
-          "exec": "npm-check-updates --dep peer --upgrade --target=minor"
+          "exec": "npm-check-updates --dep peer --upgrade --target=minor --reject='nx'"
         },
         {
-          "exec": "npm-check-updates --dep prod --upgrade --target=minor"
+          "exec": "npm-check-updates --dep prod --upgrade --target=minor --reject='nx'"
         },
         {
-          "exec": "npm-check-updates --dep bundle --upgrade --target=minor"
+          "exec": "npm-check-updates --dep bundle --upgrade --target=minor --reject='nx'"
         },
         {
           "exec": "yarn install --check-files"
@@ -224,25 +249,26 @@
       "name": "upgrade-deps",
       "steps": [
         {
-          "exec": "npx npm-check-updates --deep --rejectVersion 0.0.0 -u"
+          "exec": "yarn npm-check-updates --deep --rejectVersion 0.0.0 -u"
         },
         {
-          "exec": "npx syncpack fix-mismatches"
+          "exec": "yarn syncpack fix-mismatches"
         },
         {
           "exec": "yarn install"
         },
         {
-          "exec": "npx projen"
+          "exec": "yarn projen"
         }
       ]
     },
     "watch": {
       "name": "watch",
-      "description": "Watch & compile in the background",
+      "description": "Watch & compile in the background for all affected projects",
       "steps": [
         {
-          "exec": "tsc --build -w"
+          "exec": "yarn nx run-many --target=watch --output-style=stream --skip-nx-cache --nx-ignore-cycles --nx-bail",
+          "receiveArgs": true
         }
       ]
     }

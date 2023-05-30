@@ -6,7 +6,6 @@
 /.gitattributes linguist-generated
 /.gitignore linguist-generated
 /.npmignore linguist-generated
-/.nx/plugins/nx-monorepo-plugin.js linguist-generated
 /.nxignore linguist-generated
 /.prettierignore linguist-generated
 /.prettierrc.json linguist-generated
@@ -19,6 +18,7 @@
 /LICENSE linguist-generated
 /nx.json linguist-generated
 /package.json linguist-generated
+/project.json linguist-generated
 /tsconfig.dev.json linguist-generated
 /tsconfig.json linguist-generated
 /yarn.lock linguist-generated

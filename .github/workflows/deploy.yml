@@ -20,7 +20,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: packages/threat-statement-generator-demo-app/build
+          path: packages/threat-composer-app/build
   deploy:
     needs: build
     permissions:
