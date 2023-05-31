@@ -2,13 +2,120 @@
 
 exports[`Snapshot 1`] = `
 {
+  "Mappings": {
+    "DefaultCrNodeVersionMap": {
+      "af-south-1": {
+        "value": "nodejs16.x",
+      },
+      "ap-east-1": {
+        "value": "nodejs16.x",
+      },
+      "ap-northeast-1": {
+        "value": "nodejs16.x",
+      },
+      "ap-northeast-2": {
+        "value": "nodejs16.x",
+      },
+      "ap-northeast-3": {
+        "value": "nodejs16.x",
+      },
+      "ap-south-1": {
+        "value": "nodejs16.x",
+      },
+      "ap-south-2": {
+        "value": "nodejs16.x",
+      },
+      "ap-southeast-1": {
+        "value": "nodejs16.x",
+      },
+      "ap-southeast-2": {
+        "value": "nodejs16.x",
+      },
+      "ap-southeast-3": {
+        "value": "nodejs16.x",
+      },
+      "ca-central-1": {
+        "value": "nodejs16.x",
+      },
+      "cn-north-1": {
+        "value": "nodejs16.x",
+      },
+      "cn-northwest-1": {
+        "value": "nodejs16.x",
+      },
+      "eu-central-1": {
+        "value": "nodejs16.x",
+      },
+      "eu-central-2": {
+        "value": "nodejs16.x",
+      },
+      "eu-north-1": {
+        "value": "nodejs16.x",
+      },
+      "eu-south-1": {
+        "value": "nodejs16.x",
+      },
+      "eu-south-2": {
+        "value": "nodejs16.x",
+      },
+      "eu-west-1": {
+        "value": "nodejs16.x",
+      },
+      "eu-west-2": {
+        "value": "nodejs16.x",
+      },
+      "eu-west-3": {
+        "value": "nodejs16.x",
+      },
+      "me-central-1": {
+        "value": "nodejs16.x",
+      },
+      "me-south-1": {
+        "value": "nodejs16.x",
+      },
+      "sa-east-1": {
+        "value": "nodejs16.x",
+      },
+      "us-east-1": {
+        "value": "nodejs16.x",
+      },
+      "us-east-2": {
+        "value": "nodejs16.x",
+      },
+      "us-gov-east-1": {
+        "value": "nodejs16.x",
+      },
+      "us-gov-west-1": {
+        "value": "nodejs16.x",
+      },
+      "us-iso-east-1": {
+        "value": "nodejs14.x",
+      },
+      "us-iso-west-1": {
+        "value": "nodejs14.x",
+      },
+      "us-isob-east-1": {
+        "value": "nodejs14.x",
+      },
+      "us-west-1": {
+        "value": "nodejs16.x",
+      },
+      "us-west-2": {
+        "value": "nodejs16.x",
+      },
+    },
+  },
   "Outputs": {
     "ApplicationPipelineCodeRepositoryGRCUrl52F51C17": {
       "Value": {
         "Fn::Join": [
           "",
           [
-            "codecommit::ap-southeast-2://",
+            "codecommit::",
+            {
+              "Ref": "AWS::Region",
+            },
+            "://",
             {
               "Fn::GetAtt": [
                 "ApplicationPipelineCodeRepositoryA734F3FA",
@@ -173,7 +280,9 @@ exports[`Snapshot 1`] = `
                   },
                 },
                 "StringEquals": {
-                  "aws:SourceAccount": "453442707336",
+                  "aws:SourceAccount": {
+                    "Ref": "AWS::AccountId",
+                  },
                 },
               },
               "Effect": "Allow",
@@ -219,7 +328,11 @@ exports[`Snapshot 1`] = `
                       {
                         "Ref": "AWS::Partition",
                       },
-                      ":iam::453442707336:root",
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":root",
                     ],
                   ],
                 },
@@ -695,7 +808,15 @@ exports[`Snapshot 1`] = `
                       {
                         "Ref": "AWS::Partition",
                       },
-                      ":logs:ap-southeast-2:453442707336:log-group:/aws/codebuild/",
+                      ":logs:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":log-group:/aws/codebuild/",
                       {
                         "Ref": "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectEE7ED66A",
                       },
@@ -710,7 +831,15 @@ exports[`Snapshot 1`] = `
                       {
                         "Ref": "AWS::Partition",
                       },
-                      ":logs:ap-southeast-2:453442707336:log-group:/aws/codebuild/",
+                      ":logs:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":log-group:/aws/codebuild/",
                       {
                         "Ref": "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectEE7ED66A",
                       },
@@ -737,7 +866,15 @@ exports[`Snapshot 1`] = `
                     {
                       "Ref": "AWS::Partition",
                     },
-                    ":codebuild:ap-southeast-2:453442707336:report-group/",
+                    ":codebuild:",
+                    {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":report-group/",
                     {
                       "Ref": "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectEE7ED66A",
                     },
@@ -858,7 +995,15 @@ exports[`Snapshot 1`] = `
                     {
                       "Ref": "AWS::Partition",
                     },
-                    ":codepipeline:ap-southeast-2:453442707336:",
+                    ":codepipeline:",
+                    {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":",
                     {
                       "Ref": "ApplicationPipelineCodePipeline92ED701F",
                     },
@@ -1000,7 +1145,11 @@ exports[`Snapshot 1`] = `
                       {
                         "Ref": "AWS::Partition",
                       },
-                      ":iam::453442707336:root",
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":root",
                     ],
                   ],
                 },
@@ -1143,7 +1292,15 @@ exports[`Snapshot 1`] = `
                   {
                     "Ref": "AWS::Partition",
                   },
-                  ":codepipeline:ap-southeast-2:453442707336:",
+                  ":codepipeline:",
+                  {
+                    "Ref": "AWS::Region",
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":",
                   {
                     "Ref": "ApplicationPipelineCodePipeline92ED701F",
                   },
@@ -1248,7 +1405,15 @@ exports[`Snapshot 1`] = `
                       {
                         "Ref": "AWS::Partition",
                       },
-                      ":logs:ap-southeast-2:453442707336:log-group:/aws/codebuild/",
+                      ":logs:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":log-group:/aws/codebuild/",
                       {
                         "Ref": "ApplicationPipelineUpdatePipelineSelfMutation66D95DA8",
                       },
@@ -1263,7 +1428,15 @@ exports[`Snapshot 1`] = `
                       {
                         "Ref": "AWS::Partition",
                       },
-                      ":logs:ap-southeast-2:453442707336:log-group:/aws/codebuild/",
+                      ":logs:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":log-group:/aws/codebuild/",
                       {
                         "Ref": "ApplicationPipelineUpdatePipelineSelfMutation66D95DA8",
                       },
@@ -1290,7 +1463,15 @@ exports[`Snapshot 1`] = `
                     {
                       "Ref": "AWS::Partition",
                     },
-                    ":codebuild:ap-southeast-2:453442707336:report-group/",
+                    ":codebuild:",
+                    {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":report-group/",
                     {
                       "Ref": "ApplicationPipelineUpdatePipelineSelfMutation66D95DA8",
                     },
@@ -1311,7 +1492,18 @@ exports[`Snapshot 1`] = `
                 },
               },
               "Effect": "Allow",
-              "Resource": "arn:*:iam::453442707336:role/*",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:*:iam::",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":role/*",
+                  ],
+                ],
+              },
             },
             {
               "Action": "cloudformation:DescribeStacks",
@@ -1399,7 +1591,9 @@ exports[`Snapshot 1`] = `
       ],
       "Properties": {
         "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-453442707336-ap-southeast-2",
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
           "S3Key": "350185a1069fa20a23a583e20c77f6844218bd73097902362dc94f1a108f5d89.zip",
         },
         "Description": {

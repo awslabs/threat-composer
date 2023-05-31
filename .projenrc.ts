@@ -21,6 +21,7 @@ monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.@types/reac
 monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.react", "^18.2.0");
 monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.nth-check", "^2.1.1");
 monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.yaml", "^2.2.2");
+monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.js-yaml", "^3.13.1");
 monorepo.addGitIgnore('.temp/');
 monorepo.addGitIgnore('oss-attribution/');
 monorepo.addGitIgnore('storybook.out/');

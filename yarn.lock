@@ -6171,8 +6171,7 @@
     js-yaml "^3.10.0"
     tslib "^2.4.0"
 
-"@zkochan/js-yaml@0.0.6", "@zkochan/js-yaml@npm:js-yaml@4.1.0", js-yaml@4.1.0, js-yaml@^4.0.0, js-yaml@^4.1.0:
-  name "@zkochan/js-yaml"
+"@zkochan/js-yaml@0.0.6", "@zkochan/js-yaml@npm:js-yaml@4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.1.0.tgz#c1fb65f8f5017901cdd2c951864ba18458a10602"
   integrity sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==
@@ -7286,7 +7285,7 @@ ccount@^2.0.0:
   resolved "https://registry.yarnpkg.com/ccount/-/ccount-2.0.1.tgz#17a3bf82302e0870d6da43a01311a8bc02a3ecf5"
   integrity sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==
 
-cdk-nag@*, cdk-nag@2.21.79, cdk-nag@^2.21.79:
+cdk-nag@*, cdk-nag@^2.21.79:
   version "2.21.79"
   resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.21.79.tgz#78c6ad44b9a2e0e479db02cc5fa81cac64e7fea9"
   integrity sha512-m9GmdnFe9wh6GQRLSSKQS89qae6JA/ODzZgjDMuizRbhJ2KhnvO6d1EVLeRV1WH36+eUv5DhlXbBmFbQCuvzfg==
@@ -12259,28 +12258,13 @@ js-sdsl@^4.1.4:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
-js-yaml@3.14.0:
-  version "3.14.0"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.14.0.tgz#a7a34170f26a21bb162424d8adacb4113a69e482"
-  integrity sha512-/4IbIeHcD9VMHFqDR/gQ7EdZdLimOvW2DdcxFjdyyZ9NsbS+ccrXqVWDtab/lRl5AlUqmpBx8EhPaWR+OtY17A==
-  dependencies:
-    argparse "^1.0.7"
-    esprima "^4.0.0"
-
-js-yaml@3.14.1, js-yaml@^3.10.0, js-yaml@^3.13.1:
+js-yaml@3.14.0, js-yaml@3.14.1, js-yaml@4.1.0, js-yaml@^3.10.0, js-yaml@^3.13.1, js-yaml@^4.0.0, js-yaml@^4.1.0, "js-yaml@npm:@zkochan/js-yaml@0.0.6":
   version "3.14.1"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.14.1.tgz#dae812fdb3825fa306609a8717383c50c36a0537"
   integrity sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
-
-"js-yaml@npm:@zkochan/js-yaml@0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@zkochan/js-yaml/-/js-yaml-0.0.6.tgz#975f0b306e705e28b8068a07737fa46d3fc04826"
-  integrity sha512-nzvgl3VfhcELQ8LyVrYOru+UtAy1nrygk2+AGbTm8a5YcO6o8lSjAT+pfg3vJWxIoZKOUhrK6UU7xW/+00kQrg==
-  dependencies:
-    argparse "^2.0.1"
 
 jscodeshift@^0.14.0:
   version "0.14.0"
