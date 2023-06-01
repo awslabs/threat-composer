@@ -33,7 +33,7 @@ const useContentValidation = (
     const newValue = event.detail.value;
     setTempValue(newValue);
     if (REGEX_CONTENT_NOT_HTML_TAG.test(newValue)) {
-      setErrorText('Html tag is not allowed.');
+      setErrorText('Html tags not supported');
     } else {
       setErrorText('');
       onChange?.(event);
