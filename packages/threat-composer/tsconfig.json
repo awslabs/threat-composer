@@ -31,7 +31,6 @@
     "stripInternal": true,
     "target": "ES2019",
     "jsx": "react-jsx",
-    "jsxImportSource": "@emotion/react",
     "skipLibCheck": true,
     "emitDecoratorMetadata": true,
     "moduleResolution": "node"

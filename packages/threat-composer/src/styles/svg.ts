@@ -13,20 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import type { Meta, StoryObj } from '@storybook/react';
-import InfoModal from '.';
+import * as ui from '@cloudscape-design/design-tokens';
+import { css } from '@emotion/react';
 
-const meta: Meta<typeof InfoModal> = {
-  title: 'Others/InfoModal',
-  component: InfoModal,
-};
-
-export default meta;
-  type Story = StoryObj<typeof InfoModal>;
-
-export const Default: Story = {
-  args: {
-    visible: true,
-    setVisible: console.log,
+const svg = css({
+  '&>path': {
+    stroke: ui.colorTextInteractiveDefault,
+    fill: ui.colorTextInteractiveDefault,
   },
-};
+});
+
+export default svg;

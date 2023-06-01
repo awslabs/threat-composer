@@ -17,3 +17,4 @@ export * from './constants';
 export * from './export';
 export * from './localStorageKeys';
 export * from './content';
+export * from './styles';

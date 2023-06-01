@@ -13,11 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import { SpaceBetween } from '@cloudscape-design/components';
 import Button from '@cloudscape-design/components/button';
 import Header from '@cloudscape-design/components/header';
 import Popover from '@cloudscape-design/components/popover';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
+import * as ui from '@cloudscape-design/design-tokens';
+import { css } from '@emotion/react';
 import { FC, useMemo, useCallback } from 'react';
 import { DataExchangeFormat } from '../../../../../customTypes';
 import sanitizeHtml from '../../../../../utils/sanitizeHtml';
@@ -31,7 +34,27 @@ import { getDataflowContent } from '../../utils/getDataFlow';
 import { getMitigationsContent } from '../../utils/getMitigations';
 import { getThreatsContent } from '../../utils/getThreats';
 
-import './index.css';
+const styles = css({
+  '& h1': {
+    marginTop: ui.spaceScaledS,
+    marginBottom: ui.spaceScaledS,
+  },
+
+  '& h2': {
+    marginTop: ui.spaceScaledL,
+    marginBottom: ui.spaceScaledS,
+  },
+
+  '& h3': {
+    marginTop: ui.spaceScaledS,
+    marginBottom: ui.spaceScaledS,
+  },
+
+  '& h4': {
+    marginTop: ui.spaceScaledS,
+    marginBottom: ui.spaceScaledS,
+  },
+});
 
 export interface ThreatModelViewProps {
   composerMode: string;
@@ -62,7 +85,7 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
     await navigator.clipboard.writeText(content);
   }, [content]);
 
-  return (<div className='threat-statement-generator-threat-model-view'>
+  return (<div css={styles}>
     <SpaceBetween direction='vertical' size='s'>
       <div className='hidden-print'><Header
         actions={

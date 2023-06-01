@@ -117,8 +117,6 @@ const uiProject = new TypeScriptProject({
   tsconfig: {
     compilerOptions: {
       jsx: TypeScriptJsxMode.REACT_JSX,
-      // @ts-ignore
-      jsxImportSource: "@emotion/react",
       skipLibCheck: true,
       lib: ["dom", "dom.iterable", "es2015", "es2020", "esnext"],
       module: "commonjs",

@@ -13,20 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import type { Meta, StoryObj } from '@storybook/react';
-import InfoModal from '.';
+import { MOBILE_BREAKPOINT } from '../../configs';
 
-const meta: Meta<typeof InfoModal> = {
-  title: 'Others/InfoModal',
-  component: InfoModal,
+const getMobileMediaQuery = () => {
+  return `@media (max-width: ${MOBILE_BREAKPOINT}px)`;
 };
 
-export default meta;
-  type Story = StoryObj<typeof InfoModal>;
-
-export const Default: Story = {
-  args: {
-    visible: true,
-    setVisible: console.log,
-  },
-};
+export default getMobileMediaQuery;

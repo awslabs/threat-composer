@@ -13,7 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import React, { FC, PropsWithChildren } from 'react';
+import { useMobileMediaQuery } from '../../../hooks/useMediaQuery';
 import './index.css';
 
 export interface TooltipProps {
@@ -26,10 +28,12 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({
   children,
   anchor = 'top',
 }) => {
-  return <span className="tooltip">
+  const isMobileView = useMobileMediaQuery();
+  console.log('isMobileView', isMobileView);
+  return isMobileView ? <>{children}</> : (<span className="tooltip">
     {children}
     <span className={`tooltiptext tooltip-${anchor}`}>{tooltip}</span>
-  </span>;
+  </span>);
 };
 
 export default Tooltip;

@@ -14,15 +14,15 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
 import Button from '@cloudscape-design/components/button';
 import ExpandableSection from '@cloudscape-design/components/expandable-section';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
+import { css } from '@emotion/react';
 import { FC, useMemo, useCallback, useState } from 'react';
-
 import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
+import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
 
 const styles = {
   suggestionGroups: css({
@@ -32,23 +32,22 @@ const styles = {
     display: 'table-row',
   }),
   suggestionButtonWrapper: css({
-    display: 'table-cell',
-    "& > button > span": {
-      whiteSpace: "nowrap",
+    'display': 'table-cell',
+    '& > button > span': {
+      whiteSpace: 'nowrap',
     },
-    "@media (min-width: 420px)": {
-      display: 'block'
-    }
+    [getMobileMediaQuery()]: {
+      display: 'block',
+    },
   }),
   suggestion: css({
     display: 'table-cell',
     alignSelf: 'center',
-    "@media (min-width: 420px)": {
-      display: 'block'
-    }
-  })
+    [getMobileMediaQuery()]: {
+      display: 'block',
+    },
+  }),
 };
-
 export interface SuggestionsProps {
   suggestions?: string[];
   setEditor: (type: ThreatFieldTypes) => void;
