@@ -65,6 +65,7 @@ const uiProject = new TypeScriptProject({
   deps: [
     "@cloudscape-design/components",
     "@cloudscape-design/global-styles",
+    "@cloudscape-design/design-tokens",
     "use-local-storage-state",
     "indefinite",
     "uuid",
@@ -74,11 +75,10 @@ const uiProject = new TypeScriptProject({
     'remark-frontmatter',
     'react-markdown',
     "d3@^7",
-    "@types/d3@^7",
     "sanitize-html",
-    "@types/sanitize-html",
     "rehype-raw",
     "@aws-northstar/ui",
+    "@emotion/react"
   ],
   devDeps: [
     "@cloudscape-design/jest-preset",
@@ -86,6 +86,8 @@ const uiProject = new TypeScriptProject({
     "@types/react-dom@^18",
     "@types/react@^18",
     "@types/uuid",
+    "@types/sanitize-html",
+    "@types/d3@^7",
     "merge",
     "react-dom@^18",
     "react@^18",
@@ -115,6 +117,8 @@ const uiProject = new TypeScriptProject({
   tsconfig: {
     compilerOptions: {
       jsx: TypeScriptJsxMode.REACT_JSX,
+      // @ts-ignore
+      jsxImportSource: "@emotion/react",
       skipLibCheck: true,
       lib: ["dom", "dom.iterable", "es2015", "es2020", "esnext"],
       module: "commonjs",

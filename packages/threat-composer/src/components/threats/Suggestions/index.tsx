@@ -13,15 +13,41 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
 import Button from '@cloudscape-design/components/button';
 import ExpandableSection from '@cloudscape-design/components/expandable-section';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useMemo, useCallback, useState } from 'react';
+
 import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
 
-import './index.css';
+const styles = {
+  suggestionGroups: css({
+    display: 'table',
+  }),
+  suggestionGroup: css({
+    display: 'table-row',
+  }),
+  suggestionButtonWrapper: css({
+    display: 'table-cell',
+    "& > button > span": {
+      whiteSpace: "nowrap",
+    },
+    "@media (min-width: 420px)": {
+      display: 'block'
+    }
+  }),
+  suggestion: css({
+    display: 'table-cell',
+    alignSelf: 'center',
+    "@media (min-width: 420px)": {
+      display: 'block'
+    }
+  })
+};
 
 export interface SuggestionsProps {
   suggestions?: string[];
@@ -52,13 +78,13 @@ const Suggestions: FC<SuggestionsProps> = ({ suggestions, setEditor }) => {
 
   const renderSuggestionGroup = useCallback((groups: { [groupName: string]: string[] }, token: string) => {
     const group = groups[token];
-    return (<div key={token} className='threat-statement-generator-editor-container-token-selector-suggestion-group'>
-      <div className='threat-statement-generator-editor-container-token-selector-suggestion-button-wrapper'>
+    return (<div key={token} css={styles.suggestionGroup}>
+      <div css={styles.suggestionButtonWrapper}>
         <Button variant='link' onClick={() => setEditor(token as ThreatFieldTypes)}>
           {token !== 'GENERAL' && group && threatFieldData[token]?.displayTitle}
         </Button>
       </div>
-      <div className='threat-statement-generator-editor-container-token-selector-suggestion'>
+      <div css={styles.suggestion}>
         <SpaceBetween direction='vertical' size='xxxs'>
           {group.map((r, index) => <div key={index}>- {r}</div>)}
         </SpaceBetween>
@@ -69,7 +95,7 @@ const Suggestions: FC<SuggestionsProps> = ({ suggestions, setEditor }) => {
   if (suggestions && suggestions.length > 0 && suggestionGroups) {
     return (<ExpandableSection headerText={`Suggestions (${suggestions.length})`} defaultExpanded={true}>
       <TextContent>
-        <div className='threat-statement-generator-editor-container-token-selector-suggestion-groups'>
+        <div css={styles.suggestionGroups}>
           {Object.keys(suggestionGroups)
             .slice(0, showMoresuggestions ? Object.keys(suggestionGroups).length : 2)
             .map((token) => renderSuggestionGroup(suggestionGroups, token))}

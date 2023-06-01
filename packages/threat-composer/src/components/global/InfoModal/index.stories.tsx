@@ -13,24 +13,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Button from '@cloudscape-design/components/button';
-import { FC, ReactNode } from 'react';
-import Tooltip from '../../../../generic/Tooltip';
-
-export interface ExpandableTokenProps {
-  onClick?: () => void;
-  expanded: boolean;
-  tooltip: ReactNode;
-}
-
-const ExpandableToken: FC<ExpandableTokenProps> = ({
-  expanded,
-  onClick,
-  tooltip,
-}) => {
-  return (<Tooltip tooltip={tooltip}>
-    <Button iconName={expanded ? 'treeview-collapse' : 'treeview-expand'} variant="icon" onClick={onClick}/>
-  </Tooltip>);
-};
-
-export default ExpandableToken;
+  import type { Meta, StoryObj } from '@storybook/react';
+  import InfoModal from '.';
+  
+  const meta: Meta<typeof InfoModal> = {
+    title: 'Others/InfoModal',
+    component: InfoModal,
+  };
+  
+  export default meta;
+  type Story = StoryObj<typeof InfoModal>;
+  
+  export const Default: Story = {
+    args: {
+      visible: true,
+      setVisible: console.log,
+    },
+  };

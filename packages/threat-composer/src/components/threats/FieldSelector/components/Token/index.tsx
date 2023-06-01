@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import * as awsui from '@cloudscape-design/design-tokens';
 import { FC, PropsWithChildren } from 'react';
 import Tooltip from '../../../../generic/Tooltip';
 
@@ -33,9 +34,17 @@ const Token: FC<PropsWithChildren<TokenProps>> = ({
   return (<Tooltip tooltip={tooltip}>
     <button
       style={{
-        backgroundColor: highlighted ? '#b5d6f4' : (filled ? '#f2f8fd' : undefined),
+        textAlign: 'left',
+        textDecoration: 'none',
+        borderRadius: '4px',
+        height: 'fit-content',
+        padding: '4px',
+        color: awsui.colorTextBodyDefault,
+        backgroundColor: highlighted ?
+          awsui.colorBackgroundToggleCheckedDisabled :
+          (filled ? awsui.colorBackgroundItemSelected : awsui.colorBackgroundButtonPrimaryDisabled),
       }} onClick={onClick}>
-      {children}
+      <span>{children}</span>
     </button>
   </Tooltip>
   );
