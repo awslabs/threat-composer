@@ -53,6 +53,12 @@ export class ApplicationStack extends Stack {
     const lambdaEdge = this.node.tryGetContext(
       `lambdaEdge${Stage.of(this)?.stageName}`
     ) as string;
+    const cidrType = this.node.tryGetContext(
+      `cidrType${Stage.of(this)?.stageName}`
+    ) as string;
+    const cidrRanges = this.node.tryGetContext(
+      `cidrRanges${Stage.of(this)?.stageName}`
+    ) as string;
 
     let distributionProps: DistributionProps = {
       defaultBehavior: {
@@ -91,12 +97,21 @@ export class ApplicationStack extends Stack {
       };
     }
 
-    const websiteProps = {
+    const websiteProps: StaticWebsiteProps = {
       websiteContentPath: path.join(
         PACKAGES_ROOT,
         "threat-composer-app",
         "build"
       ),
+      webAclProps: {
+        cidrAllowList: {
+          cidrType: cidrType === "IPV4" ? "IPV4" : "IPV6",
+          cidrRanges: cidrRanges
+            .split(",")
+            .map((x) => x.trim())
+            .filter((x) => !!x),
+        },
+      },
       distributionProps:
         (domainName && certificate) || lambdaEdge
           ? distributionProps
