@@ -15,6 +15,7 @@
  ******************************************************************************************************************** */
 import { DataExchangeFormat } from '../../../../../customTypes';
 import standardizeNumericId from '../../../../../utils/standardizeNumericId';
+import parseTableCellContent from '../parseTableCellContent';
 
 export const getThreatsContent = (
   data: DataExchangeFormat,
@@ -51,8 +52,8 @@ export const getThreatsContent = (
       }).filter(ml => !!ml).join('<br/>');
       const priority = x.metadata?.find(m => m.key === 'Priority')?.value || '';
       const STRIDE = ((x.metadata?.find(m => m.key === 'STRIDE')?.value || []) as string[]).join(', ');
-      const comments = x.metadata?.find(m => m.key === 'Comments')?.value || '';
-      rows.push(`| <a name="${threatId}"></a>${threatId} | ${x.statement} | ${threatsOnly ? '' : ` ${assumptionsContent} | ${mitigationsContent} |`} ${priority} | ${STRIDE} | ${comments} |`);
+      const comments = (x.metadata?.find(m => m.key === 'Comments')?.value as string) || '';
+      rows.push(`| <a name="${threatId}"></a>${threatId} | ${parseTableCellContent(x.statement || '')} | ${threatsOnly ? '' : ` ${parseTableCellContent(assumptionsContent)} | ${parseTableCellContent(mitigationsContent)} |`} ${priority} | ${STRIDE} | ${parseTableCellContent(comments)} |`);
     });
   }
 

@@ -13,7 +13,4 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export * from './constants';
-export * from './export';
-export * from './localStorageKeys';
-export * from './content';
+export const REGEX_CONTENT_NOT_HTML_TAG = /(<.*?>)/gi;

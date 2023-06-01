@@ -20,10 +20,10 @@ import FormField from '@cloudscape-design/components/form-field';
 import Header from '@cloudscape-design/components/header';
 import Modal from '@cloudscape-design/components/modal';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import Textarea from '@cloudscape-design/components/textarea';
 import React, { FC, useMemo, useState } from 'react';
 import { TemplateThreatStatement } from '../../../customTypes';
 import renderThreatStatement from '../../../utils/renderThreatStatement';
+import Textarea from '../../generic/Textarea';
 
 export interface CustomTemplateProps {
   visible: boolean;
@@ -74,12 +74,12 @@ const CustomTemplate: FC<CustomTemplateProps> = ({ visible, setVisible, statemen
         <p><b>Renderer Statement:</b></p>
         <p>{renderedStatement}</p>
       </Box>
-      <FormField
+      <Textarea
+        value={value}
+        onChange={({ detail }) => setValue(detail.value)}
         label="Template"
         constraintText="Tokens like [threat_source], [prerequisites], [threat_action], [threat_impact], [impacted_goal] or [impacted_assets] will be replaced by actual content. "
-      >
-        <Textarea value={value} onChange={({ detail }) => setValue(detail.value)} />
-      </FormField>
+      />
     </SpaceBetween>
   </Modal>);
 };

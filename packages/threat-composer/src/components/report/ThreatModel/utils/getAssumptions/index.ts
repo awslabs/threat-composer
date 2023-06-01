@@ -15,6 +15,7 @@
  ******************************************************************************************************************** */
 import { DataExchangeFormat } from '../../../../../customTypes';
 import standardizeNumericId from '../../../../../utils/standardizeNumericId';
+import parseTableCellContent from '../parseTableCellContent';
 
 export const getAssumptionsContent = (
   data: DataExchangeFormat,
@@ -30,8 +31,8 @@ export const getAssumptionsContent = (
   if (data.assumptions) {
     data.assumptions?.forEach(x => {
       const assumptionId = `A-${standardizeNumericId(x.numericId)}`;
-      const comments = x.metadata?.find(m => m.key === 'Comments')?.value || '';
-      rows.push(`| <a name="${assumptionId}"></a>${assumptionId} | ${x.content} | ${comments} |`);
+      const comments = (x.metadata?.find(m => m.key === 'Comments')?.value as string) || '';
+      rows.push(`| <a name="${assumptionId}"></a>${assumptionId} | ${parseTableCellContent(x.content)} | ${parseTableCellContent(comments)} |`);
     });
   }
 

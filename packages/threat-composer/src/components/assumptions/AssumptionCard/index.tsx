@@ -17,13 +17,13 @@ import Button from '@cloudscape-design/components/button';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
-import Textarea from '@cloudscape-design/components/textarea';
 import { FC, useState, useCallback } from 'react';
 import { Assumption } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import MetadataEditor from '../../generic/EntityMetadataEditor';
 import GenericCard from '../../generic/GenericCard';
+import Textarea from '../../generic/Textarea';
 import AssumptionMitigationLink from '../AssumptionMitigationLink';
 import AssumptionThreatLink from '../AssumptionThreatLink';
 
