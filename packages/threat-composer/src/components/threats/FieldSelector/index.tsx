@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
 import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
 import Container from '@cloudscape-design/components/container';
@@ -20,6 +21,7 @@ import Header from '@cloudscape-design/components/header';
 import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
+import { css } from '@emotion/react';
 import { ReactNode, FC, useMemo, useState, useEffect, useCallback } from 'react';
 import ExpandableToken from './components/ExpandableToken';
 import Token from './components/Token';
@@ -32,8 +34,6 @@ import threatStatementFormat from '../../../data/threatStatementFormat';
 import getRecommendedEditor from '../../../utils/getRecommandedEditor';
 import parseThreatStatement from '../../../utils/parseThreatStatement';
 import Suggestions from '../Suggestions';
-
-import './index.css';
 
 const defaultThreatStatementFormat = threatStatementFormat[63];
 
@@ -48,6 +48,11 @@ export interface FieldSelectorProps {
   onStartOver?: () => void;
 }
 
+const styles = {
+  selector: css({
+    lineHeight: '2.5',
+  }),
+};
 const FieldSelector: FC<FieldSelectorProps> = ({
   composerMode,
   onStartOver,
@@ -159,7 +164,7 @@ const FieldSelector: FC<FieldSelectorProps> = ({
       description='Start by clicking ANY field you like and work from there...'>Let's write a threat statement!</Header>}>
     <SpaceBetween direction='vertical' size='s'>
       <TextContent>
-        <div className='threat-statement-generator-editor-container-token-selector'>
+        <div css={styles.selector}>
           {selector}
         </div>
       </TextContent>

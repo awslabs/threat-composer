@@ -16,11 +16,17 @@
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 
-const svg = css({
-  '&>path': {
-    stroke: awsui.colorTextInteractiveDefault,
-    fill: awsui.colorTextInteractiveDefault,
-  },
-});
+const styles = {
+  print: css({
+    '@media print': {
+      color: `${awsui.colorBackgroundHomeHeader} !important`,
+    },
+  }),
+  hiddenPrint: css({
+    '@media print': {
+      display: 'none !important;',
+    },
+  }),
+};
 
-export default svg;
+export default styles;

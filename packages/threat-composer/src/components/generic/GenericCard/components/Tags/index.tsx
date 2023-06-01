@@ -16,7 +16,7 @@
 /** @jsxImportSource @emotion/react */
 import { CancelableEventHandler, BaseKeyDetail } from '@cloudscape-design/components/internal/events';
 import TokenGroup from '@cloudscape-design/components/token-group';
-import * as ui from '@cloudscape-design/design-tokens';
+import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { FC, useCallback, useState } from 'react';
 import getMobileMediaQuery from '../../../../../utils/getMobileMediaQuery';
@@ -36,10 +36,10 @@ const styles = {
     },
   }),
   input: css({
-    marginLeft: ui.spaceScaledS,
+    marginLeft: awsui.spaceScaledS,
     [getMobileMediaQuery()]: {
       marginLeft: '0px',
-      marginTop: ui.spaceScaledS,
+      marginTop: awsui.spaceScaledS,
     },
   }),
 };

@@ -19,7 +19,7 @@ import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import * as ui from '@cloudscape-design/design-tokens';
+import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { FC, PropsWithChildren, useMemo, useRef, ReactNode, useState } from 'react';
 import Tags from './components/Tags';
@@ -45,18 +45,18 @@ const styles = {
     alignItems: 'center',
     [getMobileMediaQuery()]: {
       display: 'block',
-      marginTop: ui.spaceScaledS,
+      marginTop: awsui.spaceScaledS,
     },
   }),
   tags: css({
-    marginRight: ui.spaceScaledS,
-    marginLeft: ui.spaceScaledS,
+    marginRight: awsui.spaceScaledS,
+    marginLeft: awsui.spaceScaledS,
     [getMobileMediaQuery()]: {
       marginLeft: '0px',
     },
   }),
   info: css({
-    marginLeft: ui.spaceScaledS,
+    marginLeft: awsui.spaceScaledS,
     [getMobileMediaQuery()]: {
       marginLeft: '0px',
     },

@@ -165,7 +165,7 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
           'navigation' in props ? (
             props.navigation
           ) : (
-            <div className='hidden-print'>
+            <div>
               <SideNavigation
                 header={{ text: title, href: headerHref }}
                 activeHref={activeHref}

@@ -13,19 +13,40 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import TextContent from '@cloudscape-design/components/text-content';
+import * as awsui from '@cloudscape-design/design-tokens';
+import { css } from '@emotion/react';
 import { FC } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 
-import './index.css';
-
 export interface MarkdownViewerProps {
   children: string;
   allowHtml?: boolean;
 }
+
+const styles = css({
+  '& table': {
+    borderCollapse: 'collapse',
+  },
+  '& tr': {
+    borderTop: `1px solid ${awsui.colorChartsLineGrid}`,
+  },
+  '& th': {
+    padding: '6px 13px',
+    border: `1px solid ${awsui.colorChartsLineGrid}`,
+  },
+  '& td': {
+    padding: '6px 13px',
+    border: `1px solid ${awsui.colorChartsLineGrid}`,
+  },
+  'table tr:nth-child(2n)': {
+    background: awsui.colorBackgroundCellShaded,
+  },
+});
 
 const components = {
 };
@@ -39,7 +60,7 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({
   ...props
 }) => {
   return (
-    <div className='markdown-viewer'>
+    <div css={styles}>
       <TextContent {...props}>
         <ReactMarkdown remarkPlugins={[gfm, frontmatter]} rehypePlugins={allowHtml ? [rehypeRaw] : []} components={components} children={children} />
       </TextContent>

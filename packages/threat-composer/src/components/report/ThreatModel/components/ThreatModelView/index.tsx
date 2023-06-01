@@ -19,10 +19,11 @@ import Button from '@cloudscape-design/components/button';
 import Header from '@cloudscape-design/components/header';
 import Popover from '@cloudscape-design/components/popover';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
-import * as ui from '@cloudscape-design/design-tokens';
+import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { FC, useMemo, useCallback } from 'react';
 import { DataExchangeFormat } from '../../../../../customTypes';
+import printStyles from '../../../../../styles/print';
 import sanitizeHtml from '../../../../../utils/sanitizeHtml';
 import MarkdownViewer from '../../../../generic/MarkdownViewer';
 import { getApplicationInfoContent } from '../../utils/getApplicationInfo';
@@ -35,24 +36,28 @@ import { getMitigationsContent } from '../../utils/getMitigations';
 import { getThreatsContent } from '../../utils/getThreats';
 
 const styles = css({
+  '@media print': {
+    color: `${awsui.colorBackgroundHomeHeader} !important`,
+  },
+
   '& h1': {
-    marginTop: ui.spaceScaledS,
-    marginBottom: ui.spaceScaledS,
+    marginTop: awsui.spaceScaledS,
+    marginBottom: awsui.spaceScaledS,
   },
 
   '& h2': {
-    marginTop: ui.spaceScaledL,
-    marginBottom: ui.spaceScaledS,
+    marginTop: awsui.spaceScaledL,
+    marginBottom: awsui.spaceScaledS,
   },
 
   '& h3': {
-    marginTop: ui.spaceScaledS,
-    marginBottom: ui.spaceScaledS,
+    marginTop: awsui.spaceScaledS,
+    marginBottom: awsui.spaceScaledS,
   },
 
   '& h4': {
-    marginTop: ui.spaceScaledS,
-    marginBottom: ui.spaceScaledS,
+    marginTop: awsui.spaceScaledS,
+    marginBottom: awsui.spaceScaledS,
   },
 });
 
@@ -87,7 +92,7 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
 
   return (<div css={styles}>
     <SpaceBetween direction='vertical' size='s'>
-      <div className='hidden-print'><Header
+      <div css={printStyles.hiddenPrint}><Header
         actions={
           <SpaceBetween direction="horizontal" size="xs">
             <Popover

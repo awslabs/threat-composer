@@ -29,7 +29,6 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({
   anchor = 'top',
 }) => {
   const isMobileView = useMobileMediaQuery();
-  console.log('isMobileView', isMobileView);
   return isMobileView ? <>{children}</> : (<span className="tooltip">
     {children}
     <span className={`tooltiptext tooltip-${anchor}`}>{tooltip}</span>

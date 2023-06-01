@@ -16,7 +16,7 @@
 /** @jsxImportSource @emotion/react */
 import Box from '@cloudscape-design/components/box';
 import SegmentedControl from '@cloudscape-design/components/segmented-control';
-import * as ui from '@cloudscape-design/design-tokens';
+import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { FC } from 'react';
 import svgStyles from '../../../styles/svg';
@@ -37,7 +37,7 @@ const styles = {
   root: css({
     display: 'flex',
     alignItems: 'center',
-    gap: ui.spaceScaledS,
+    gap: awsui.spaceScaledS,
   }),
 };
 
