@@ -15,6 +15,7 @@
  ******************************************************************************************************************** */
 import { DataExchangeFormat, TemplateThreatStatement } from '../../../../../customTypes';
 import standardizeNumericId from '../../../../../utils/standardizeNumericId';
+import parseTableCellContent from '../parseTableCellContent';
 
 export const getAssetsContent = (
   data: DataExchangeFormat,
@@ -45,10 +46,10 @@ export const getAssetsContent = (
 
       const threatsContent = assetThreatMap[at].map(t => {
         const threatId = `T-${standardizeNumericId(t.numericId)}`;
-        return `[**${threatId}**](#${threatId}): ${t.statement}`;
+        return `[**${threatId}**](#${threatId}): ${(t.statement)}`;
       }).join('<br/>');
 
-      rows.push(`| ${atId} | ${at} | ${threatsContent} |`);
+      rows.push(`| ${atId} | ${parseTableCellContent(at)} | ${parseTableCellContent(threatsContent)} |`);
     });
   }
 

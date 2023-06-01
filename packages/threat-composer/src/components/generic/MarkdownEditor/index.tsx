@@ -13,11 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import FormField from '@cloudscape-design/components/form-field';
+import Box from '@cloudscape-design/components/box';
 import Grid from '@cloudscape-design/components/grid';
-import Textarea from '@cloudscape-design/components/textarea';
 import { FC } from 'react';
 import MarkdownViewer from '../MarkdownViewer';
+import Textarea from '../Textarea';
 
 const parentHeaderLevelMapping: any = {
   h1: '##',
@@ -44,27 +44,29 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
   rows = 20,
 }) => {
   return (
-    <FormField
-      label={label}
-      description={description}
-      constraintText={`Styling with Markdown is supported. ${parentHeaderLevel
-        ? `Use ${parentHeaderLevelMapping[parentHeaderLevel]} as sub headers to match the rendered header level for this section` : '' }
-      `}
-      stretch
-    >
-      <Grid gridDefinition={[{ colspan: { default: 12, xxs: 6 } },
+    <Grid
+      gridDefinition={[{ colspan: { default: 12, xxs: 6 } },
         { colspan: { default: 12, xxs: 6 } }]}>
-        <Textarea
-          value={value}
-          onChange={event =>
-            onChange(event.detail.value)
-          }
-          rows={rows}
-        /><MarkdownViewer>
+      <Textarea
+        label={label}
+        description={description}
+        constraintText={`Styling with Markdown is supported. ${parentHeaderLevel
+          ? `Use ${parentHeaderLevelMapping[parentHeaderLevel]} as sub headers to match the rendered header level for this section` : ''}
+      `}
+        stretch
+        value={value}
+        onChange={event =>
+          onChange(event.detail.value)
+        }
+        rows={rows}
+      />
+      <Box margin='l'>
+        <MarkdownViewer>
           {value}
         </MarkdownViewer>
-      </Grid>
-    </FormField>);
+      </Box>
+    </Grid >
+  );
 };
 
 export default MarkdownEditor;

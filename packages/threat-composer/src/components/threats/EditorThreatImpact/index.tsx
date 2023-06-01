@@ -14,9 +14,10 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
-import Textarea, { TextareaProps } from '@cloudscape-design/components/textarea';
+import { TextareaProps } from '@cloudscape-design/components/textarea';
 import { FC, forwardRef, useCallback, useRef, RefObject, useImperativeHandle } from 'react';
-import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
+import { useThreatsContext } from '../../../contexts/ThreatsContext';
+import Textarea from '../../generic/Textarea';
 import EditorLayout from '../EditorLayout';
 import ExampleList from '../ExampleList';
 import { EditorProps } from '../ThreatStatementEditor/types';

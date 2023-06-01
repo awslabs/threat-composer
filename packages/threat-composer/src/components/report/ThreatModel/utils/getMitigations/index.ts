@@ -15,6 +15,7 @@
  ******************************************************************************************************************** */
 import { DataExchangeFormat } from '../../../../../customTypes';
 import standardizeNumericId from '../../../../../utils/standardizeNumericId';
+import parseTableCellContent from '../parseTableCellContent';
 
 export const getMitigationsContent = (
   data: DataExchangeFormat,
@@ -50,10 +51,10 @@ export const getMitigationsContent = (
         return null;
       }).filter(a => !!a).join('<br/>');
 
-      const comments = x.metadata?.find(m => m.key === 'Comments')?.value || '';
+      const comments = (x.metadata?.find(m => m.key === 'Comments')?.value as string) || '';
 
       const mitigationId = `M-${standardizeNumericId(x.numericId)}`;
-      rows.push(`| <a name="${mitigationId}"></a>${mitigationId} | ${x.content} | ${threatsContent} | ${assumptionsContent} | ${comments} |`);
+      rows.push(`| <a name="${mitigationId}"></a>${mitigationId} | ${parseTableCellContent(x.content)} | ${parseTableCellContent(threatsContent)} | ${parseTableCellContent(assumptionsContent)} | ${parseTableCellContent(comments)} |`);
     });
   }
 

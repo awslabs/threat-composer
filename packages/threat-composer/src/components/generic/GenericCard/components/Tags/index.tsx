@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Input from '@cloudscape-design/components/input';
 import { CancelableEventHandler, BaseKeyDetail } from '@cloudscape-design/components/internal/events';
 import TokenGroup from '@cloudscape-design/components/token-group';
 import { FC, useCallback, useState } from 'react';
+import Input from '../../../../generic/Input';
 
 export interface TagsProps {
   tags?: string[];

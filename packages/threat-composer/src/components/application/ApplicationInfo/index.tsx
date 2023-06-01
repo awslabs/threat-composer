@@ -17,10 +17,10 @@ import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import FormField from '@cloudscape-design/components/form-field';
 import Header from '@cloudscape-design/components/header';
-import Input from '@cloudscape-design/components/input';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useState, useCallback, useMemo } from 'react';
 import { useApplicationInfoContext } from '../../../contexts/ApplicationContext/context';
+import Input from '../../generic/Input';
 import MarkdownEditor from '../../generic/MarkdownEditor';
 import MarkdownViewer from '../../generic/MarkdownViewer';
 
