@@ -133,7 +133,7 @@ const FileImport: FC<FileImportProps> = ({
         statusIconAriaLabel="Warning"
         type="warning"
         key="content-warning">
-        <TextContent>Only import content from trusted source.</TextContent>
+        <TextContent>Only import content from trusted sources.</TextContent>
       </Alert>
       <FileUpload accept='application/json' files={selectedFiles} onChange={setSelectedFiles} />
       {loading && <ProgressBar

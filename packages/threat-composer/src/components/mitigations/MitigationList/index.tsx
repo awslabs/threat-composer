@@ -75,7 +75,7 @@ const MitigationList: FC = () => {
         [tag],
     };
     saveMitigation(updated);
-  }, []);
+  }, [saveMitigation]);
 
   const handleRemoveTagFromEntity = useCallback((assumption: Mitigation, tag: string) => {
     const updated: Mitigation = {
@@ -83,7 +83,7 @@ const MitigationList: FC = () => {
       tags: assumption.tags?.filter(t => t !== tag),
     };
     saveMitigation(updated);
-  }, []);
+  }, [saveMitigation]);
 
   const filteredList = useMemo(() => {
     let output = mitigationList;
