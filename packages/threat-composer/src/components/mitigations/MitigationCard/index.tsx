@@ -80,7 +80,6 @@ const MitigationCard: FC<MitigationCardProps> = ({
             <Textarea
               value={editingValue}
               onChange={({ detail }) => setEditingValue(detail.value)}
-              onBlur={handleCancel}
             />
             <SpaceBetween direction='horizontal' size='s'>
               <Button onClick={handleCancel}>Cancel</Button>
