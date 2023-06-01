@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Box from '@cloudscape-design/components/box';
-import FormField from '@cloudscape-design/components/form-field';
 import Grid from '@cloudscape-design/components/grid';
 import { FC } from 'react';
 import MarkdownViewer from '../MarkdownViewer';
