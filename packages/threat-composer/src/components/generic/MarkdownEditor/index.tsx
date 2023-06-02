@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import Box from '@cloudscape-design/components/box';
 import Grid from '@cloudscape-design/components/grid';
 import { FC } from 'react';
@@ -45,8 +46,8 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
 }) => {
   return (
     <Grid
-      gridDefinition={[{ colspan: { default: 12, xxs: 6 } },
-        { colspan: { default: 12, xxs: 6 } }]}>
+      gridDefinition={[{ colspan: { default: 12, xs: 6 } },
+        { colspan: { default: 12, xs: 6 } }]}>
       <Textarea
         label={label}
         description={description}

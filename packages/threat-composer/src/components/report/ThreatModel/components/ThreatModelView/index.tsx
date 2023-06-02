@@ -40,6 +40,11 @@ const styles = css({
     color: `${awsui.colorBackgroundHomeHeader} !important`,
   },
 
+  'img': {
+    maxWidth: '1024px',
+    width: '100%',
+  },
+
   '& h1': {
     marginTop: awsui.spaceScaledS,
     marginBottom: awsui.spaceScaledS,

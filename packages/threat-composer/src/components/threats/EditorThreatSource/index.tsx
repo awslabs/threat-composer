@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
 import Input, { InputProps } from '@cloudscape-design/components/input';
@@ -20,6 +21,7 @@ import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useCallback, useEffect, useRef, forwardRef } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import EditorLayout from '../EditorLayout';
+import styles from '../EditorLayout/styles';
 import ExampleList from '../ExampleList';
 import { EditorProps } from '../ThreatStatementEditor/types';
 
@@ -44,8 +46,8 @@ const EditorThreatSource: FC<EditorProps> = forwardRef<InputProps.Ref, EditorPro
     title={fieldData.displayTitle}
     description={fieldData.description}
   >
-    <div className='threat-statement-generator-editor-layout-text-editor-layout'>
-      <div className='threat-statement-generator-editor-layout-text-editor-layout-input'>
+    <div css={styles.textEditorLayout}>
+      <div css={styles.input}>
         <Input
           ref={ref}
           spellcheck
@@ -54,7 +56,7 @@ const EditorThreatSource: FC<EditorProps> = forwardRef<InputProps.Ref, EditorPro
           placeholder='Enter threat source'
         />
       </div>
-      {statement.threatSource && <div className='threat-statement-generator-editor-layout-text-editor-layout-clear-short'>
+      {statement.threatSource && <div css={styles.inputClearSmall}>
         <Button variant='icon' iconName='close' onClick={() => handleChange('')} />
       </div>}
     </div>

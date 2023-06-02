@@ -13,23 +13,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
 import { FC } from 'react';
 import threatStatementElements from '../../../../../assets/threat-statement-elements.png';
+import styles from '../../styles';
 import InfoModalBase from '../InfoModalBase';
 
 const InfoModalSelector: FC = () => {
   return (<InfoModalBase>
-    <p>A useful threat statement considers <span className='threat-statement-editor-info-model-content-highlight'>threat source</span>,{' '}
-      <span className='threat-statement-editor-info-model-content-highlight'>prerequisites</span>,{' '}
-      <span className='threat-statement-editor-info-model-content-highlight'>threat action</span>,{' '}
-      <span className='threat-statement-editor-info-model-content-highlight'>threat impact</span>,{' '}
-      <span className='threat-statement-editor-info-model-content-highlight'>impacted goal</span>{' '}
-      and <span className='threat-statement-editor-info-model-content-highlight'>impacted assets</span>.</p>
+    <p>A useful threat statement considers <span css={css(styles.contentHighlight)}>threat source</span>,{' '}
+      <span css={css(styles.contentHighlight)}>prerequisites</span>,{' '}
+      <span css={css(styles.contentHighlight)}>threat action</span>,{' '}
+      <span css={css(styles.contentHighlight)}>threat impact</span>,{' '}
+      <span css={css(styles.contentHighlight)}>impacted goal</span>{' '}
+      and <span css={css(styles.contentHighlight)}>impacted assets</span>.</p>
     <p>This tool empowers you to compose useful threat statements by providing examples and suggestions
       for each section and generating the final statement for you.</p>
-    <img width='740px' src={threatStatementElements} alt="ThreatStatementElements" style={{
-      marginTop: '20px',
-    }}/>
+    <img css={css(styles.image)} src={threatStatementElements} alt="ThreatStatementElements" />
   </InfoModalBase>);
 };
 

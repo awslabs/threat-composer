@@ -13,15 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
 import { FC } from 'react';
 import threatStatementFullExamples from '../../../../../assets/threat-statement-examples.png';
+import styles from '../../styles';
 import InfoModalBase from '../InfoModalBase';
 
 const InfoModalFullExamples: FC = () => {
   return (<InfoModalBase>
-    <img width='740px' src={threatStatementFullExamples} alt="ThreatStatementFullExamples" style={{
-      marginTop: '60px',
-    }}/>
+    <img css={css(styles.image)} src={threatStatementFullExamples} alt="ThreatStatementFullExamples"/>
   </InfoModalBase>);
 };
 

@@ -13,17 +13,33 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-/** @jsxImportSource @emotion/react */
+import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC } from 'react';
-import threatStatementEditor from '../../../../../assets/threat-statement-flow.png';
-import styles from '../../styles';
-import InfoModalBase from '../InfoModalBase';
 
-const InfoModalSelector: FC = () => {
-  return (<InfoModalBase>
-    <img css={css(styles.image)} src={threatStatementEditor} alt="ThreatStatementEditor"/>
-  </InfoModalBase>);
+const styles = {
+  container: css({
+    marginTop: awsui.spaceScaledL,
+    marginBottom: awsui.spaceScaledXxxl,
+  }),
+  textEditorLayout: css({
+    position: 'relative',
+  }),
+  input: css({
+    display: 'inline-block',
+    width: '100%',
+  }),
+  inputClear: css({
+    position: 'absolute',
+    float: 'right',
+    top: '10px',
+    right: '5px',
+  }),
+  inputClearSmall: css({
+    position: 'absolute',
+    float: 'right',
+    top: '1px',
+    right: '5px',
+  }),
 };
 
-export default InfoModalSelector;
+export default styles;

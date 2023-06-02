@@ -15,7 +15,9 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
+import { css } from '@emotion/react';
 import { FC } from 'react';
+import styles from '../../styles';
 import InfoModalBase from '../InfoModalBase';
 
 export interface InfoModalGetStartedProps {
@@ -24,7 +26,7 @@ export interface InfoModalGetStartedProps {
 
 const InfoModalGetStarted: FC<InfoModalGetStartedProps> = ({ onClick }) => {
   return (<InfoModalBase title='Guiding principles of this tool'>
-    <div className='threat-statement-editor-info-model-content'>
+    <div css={css(styles.contentList)}>
       <ol>
         <li>Do one thing, well</li>
         <li>Optimise for approachability over completeness</li>
@@ -34,13 +36,9 @@ const InfoModalGetStarted: FC<InfoModalGetStartedProps> = ({ onClick }) => {
         <li>No user-supplied data leaves the browser</li>
       </ol>
     </div>
-    <div style={{
-      textAlign: 'center',
-      marginTop: '100px',
-    }}><Button onClick={onClick} variant='primary'>
-        <span style={{
-          padding: '20px',
-        }}>Get Started</span>
+    <div css={css(styles.getStartedBtnContainer)}>
+      <Button onClick={onClick} variant='primary'>
+        Get Started
       </Button>
     </div>
   </InfoModalBase>);

@@ -20,6 +20,7 @@ import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { FC } from 'react';
 import svgStyles from '../../../styles/svg';
+import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
 import Tooltip from '../Tooltip';
 
 export const WITHOUT_NO_LINKED_ENTITY = 'WITHOUT_LINKED_ENTITY';
@@ -38,6 +39,9 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: awsui.spaceScaledS,
+    [getMobileMediaQuery()]: {
+      display: 'block',
+    },
   }),
 };
 

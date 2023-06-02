@@ -13,17 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-/** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { FC } from 'react';
-import threatStatementEditor from '../../../../../assets/threat-statement-flow.png';
-import styles from '../../styles';
-import InfoModalBase from '../InfoModalBase';
 
-const InfoModalSelector: FC = () => {
-  return (<InfoModalBase>
-    <img css={css(styles.image)} src={threatStatementEditor} alt="ThreatStatementEditor"/>
-  </InfoModalBase>);
-};
+const styles = css({
+  maxWidth: '1024px',
+  width: '100%',
+});
 
-export default InfoModalSelector;
+export default styles;

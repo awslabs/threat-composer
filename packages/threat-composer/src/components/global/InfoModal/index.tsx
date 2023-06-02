@@ -13,6 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
+import { ClassNames } from '@emotion/react';
 import React, { FC, useState, useEffect } from 'react';
 import Carousel from 'react-simply-carousel';
 import InfoModalCopy from './components/Copy';
@@ -23,9 +25,8 @@ import InfoModalGetStarted from './components/GetStarted';
 import InfoModalIntro from './components/Intro';
 import InfoModalMoreFeatures from './components/MoreFeatures';
 import InfoModalSelector from './components/Selector';
+import styles from './styles';
 import Modal from '../../generic/Modal';
-
-import './index.css';
 
 const TOTAL_SLIDES = 8;
 
@@ -45,7 +46,7 @@ const InfoModal: FC<InfoModalProps> = ({
       if (event.key === 'ArrowRight') {
         setActiveSlide(cur => cur + 1);
       } else if (event.key === 'ArrowLeft') {
-        setActiveSlide(cur => cur === 0 ? cur : cur - 1 );
+        setActiveSlide(cur => cur === 0 ? cur : cur - 1);
       }
     };
 
@@ -61,93 +62,94 @@ const InfoModal: FC<InfoModalProps> = ({
     activeSlide >= TOTAL_SLIDES && setVisible(false);
   }, [activeSlide]);
 
-  return <Modal
-    visible={visible}
-    onDismiss={() => setVisible(false)}
-  >
-    <Carousel
-      containerProps={{
-        className: 'threat-statement-editor-info-model-container',
-      }}
-      preventScrollOnSwipe
-      swipeTreshold={60}
-      activeSlideIndex={activeSlide}
-      activeSlideProps={{
-        className: 'threat-statement-editor-info-model-slide-active',
-      }}
-      onRequestChange={setActiveSlide}
-      forwardBtnProps={{
-        children: '>',
-        className: 'threat-statement-editor-info-model-navigation-next-button',
-        hidden: activeSlide === TOTAL_SLIDES - 1,
-      }}
-      backwardBtnProps={{
-        children: '<',
-        className: 'threat-statement-editor-info-model-navigation-prev-button',
-        hidden: activeSlide === 0,
-      }}
-      dotsNav={{
-        show: true,
-        itemBtnProps: {
-          className: 'threat-statement-editor-info-model-navigation-button',
-        },
-        activeItemBtnProps: {
-          className: 'threat-statement-editor-info-model-navigation-button-active',
-        },
-      }}
-      itemsToShow={2}
-      speed={400}
-    >
-      <div
-        className='threat-statement-editor-info-model-slide'
-        key='intro'
+  return (<ClassNames>
+    {({ css, cx }) => (
+      <Modal
+        visible={visible}
+        onDismiss={() => setVisible(false)}
       >
-        <InfoModalIntro/>
-      </div>
-      <div
-        className='threat-statement-editor-info-model-slide'
-        key='tenets'
-      >
-        <InfoModalFeatures/>
-      </div>
-      <div
-        className='threat-statement-editor-info-model-slide'
-        key='features'
-      >
-        <InfoModalMoreFeatures/>
-      </div>
-      <div
-        className='threat-statement-editor-info-model-slide'
-        key='selector'
-      >
-        <InfoModalSelector/>
-      </div>
-      <div
-        className='threat-statement-editor-info-model-slide'
-        key='editor'
-      >
-        <InfoModalEditor/>
-      </div>
-      <div
-        className='threat-statement-editor-info-model-slide'
-        key='fullexamples'
-      >
-        <InfoModalFullExamples/>
-      </div>
-      <div
-        className='threat-statement-editor-info-model-slide'
-        key='copy'
-      >
-        <InfoModalCopy/>
-      </div>
-      <div
-        className='threat-statement-editor-info-model-slide'
-        key='getstarted'
-      >
-        <InfoModalGetStarted onClick={() => setVisible(false)}/>
-      </div>
-    </Carousel>
-  </Modal>;
+        <Carousel
+          containerProps={{
+            className: css(styles.container),
+          }}
+          preventScrollOnSwipe
+          swipeTreshold={60}
+          activeSlideIndex={activeSlide}
+          activeSlideProps={{}}
+          onRequestChange={setActiveSlide}
+          forwardBtnProps={{
+            children: '>',
+            className: cx(css(styles.navBtn), css(styles.nextBtn)),
+            hidden: activeSlide === TOTAL_SLIDES - 1,
+          }}
+          backwardBtnProps={{
+            children: '<',
+            className: cx(css(styles.navBtn), css(styles.prevBtn)),
+            hidden: activeSlide === 0,
+          }}
+          dotsNav={{
+            show: true,
+            itemBtnProps: {
+              className: css(styles.navBtnDot),
+            },
+            activeItemBtnProps: {
+              className: cx(css(styles.navBtnDot), css(styles.navBtnDotActive)),
+            },
+          }}
+          itemsToShow={2}
+          speed={400}
+        >
+          <div
+            className={css(styles.slide)}
+            key='intro'
+          >
+            <InfoModalIntro />
+          </div>
+          <div
+            className={css(styles.slide)}
+            key='tenets'
+          >
+            <InfoModalFeatures />
+          </div>
+          <div
+            className={css(styles.slide)}
+            key='features'
+          >
+            <InfoModalMoreFeatures />
+          </div>
+          <div
+            className={css(styles.slide)}
+            key='selector'
+          >
+            <InfoModalSelector />
+          </div>
+          <div
+            className={css(styles.slide)}
+            key='editor'
+          >
+            <InfoModalEditor />
+          </div>
+          <div
+            className={css(styles.slide)}
+            key='fullexamples'
+          >
+            <InfoModalFullExamples />
+          </div>
+          <div
+            className={css(styles.slide)}
+            key='copy'
+          >
+            <InfoModalCopy />
+          </div>
+          <div
+            className={css(styles.slide)}
+            key='getstarted'
+          >
+            <InfoModalGetStarted onClick={() => setVisible(false)} />
+          </div>
+        </Carousel>
+      </Modal>)}
+  </ClassNames>);
 };
 
 export default InfoModal;

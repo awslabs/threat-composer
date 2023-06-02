@@ -13,12 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import React, { FC, PropsWithChildren } from 'react';
-
-import './index.css';
+import styles from './styles';
 
 export interface EditorLayoutProps {
   title: string;
@@ -36,7 +36,7 @@ const EditorLayout: FC<PropsWithChildren<EditorLayoutProps>> = ({
     header={<Header description={description}>{title}</Header>}
     footer={secondaryControl}
   >
-    <div className='threat-statement-generator-editor-layout-container'>
+    <div css={styles.container}>
       <SpaceBetween direction='vertical' size='m'>
         {children}
       </SpaceBetween>

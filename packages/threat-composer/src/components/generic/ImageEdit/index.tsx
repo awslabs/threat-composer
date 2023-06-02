@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import FormField from '@cloudscape-design/components/form-field';
 import Header from '@cloudscape-design/components/header';
 import Input from '@cloudscape-design/components/input';
@@ -20,6 +21,7 @@ import RadioGroup from '@cloudscape-design/components/radio-group';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import imageCompression from 'browser-image-compression';
 import { FC, useCallback, useEffect, useState } from 'react';
+import imageStyles from '../../../styles/image';
 import getBase64 from '../../../utils/getBase64';
 import FileUpload from '../FileUpload';
 
@@ -27,6 +29,7 @@ export interface ImageUploadProps {
   value: string;
   onChange: (value: string) => void;
 }
+
 
 const ImageEdit: FC<ImageUploadProps> = ({
   value,
@@ -89,7 +92,7 @@ const ImageEdit: FC<ImageUploadProps> = ({
       direction='vertical'
       size='s'>
       {image && <Header variant='h3'>Preview</Header>}
-      {image && <img width={1024} src={image} alt='Preview Diagram' />}
+      {image && <img css={imageStyles} src={image} alt='Preview Diagram' />}
       <FileUpload
         label='Image Upload'
         accept='image/png, image/gif, image/jpeg'
@@ -102,7 +105,7 @@ const ImageEdit: FC<ImageUploadProps> = ({
       key="imageUrl"
     >
       {inputValue && <Header variant='h3'>Preview</Header>}
-      {inputValue && <img width={1024} src={inputValue} alt='Preview Diagram' />}
+      {inputValue && <img css={imageStyles} src={inputValue} alt='Preview Diagram' />}
       <Input
         value={inputValue}
         onChange={event =>
