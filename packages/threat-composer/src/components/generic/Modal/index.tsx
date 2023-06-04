@@ -38,16 +38,24 @@ const styles = {
     opacity: '1',
     zIndex: '1299',
   }),
+  contentContainer: css({
+    'maxWidth': '800px',
+    'width': '100%',
+    'margin': 'auto',
+    'position': 'relative',
+    'borderRadius': '10px',
+    'background': 'rgba(0, 0, 0, 0.75)',
+    '@media screen and (max-width: 800px), screen and (max-height: 640px)': {
+      borderRadius: '0px',
+      width: '100%',
+      height: '100%',
+    },
+  }),
   contentMain: css({
     position: 'relative',
     margin: awsui.spaceScaledL,
-  }),
-  contentContainer: css({
-    width: '800px',
-    margin: 'auto',
-    position: 'relative',
-    borderRadius: '10px',
-    background: 'rgba(0, 0, 0, 0.75)',
+    height: '100%',
+    maxHeight: 'calc(100vh - 40px)',
   }),
   closeButton: css({
     'position': 'absolute',
@@ -55,7 +63,6 @@ const styles = {
     'right': awsui.spaceScaledM,
     'color': '#5f6b7a !important',
     'zIndex': '1299',
-
     '&:hover': {
       color: '#9ba7b6 !important',
     },

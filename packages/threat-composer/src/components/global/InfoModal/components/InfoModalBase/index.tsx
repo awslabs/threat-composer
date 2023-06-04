@@ -25,7 +25,7 @@ export interface InfoModalBaseProps {
 const InfoModalBase: FC<PropsWithChildren<InfoModalBaseProps>> = ({ children, title }) => {
   return (<div css={css(styles.contentBase)}>
     {title && <div css={css(styles.contentBaseHeader)}>{title}</div>}
-    <div css={css(styles.contentBaseText)}>{children}</div>
+    <div css={[css(styles.contentBaseMain), css(styles.contentBaseText)]}>{children}</div>
   </div>);
 };
 

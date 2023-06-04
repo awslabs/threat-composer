@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 import { ClassNames } from '@emotion/react';
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useRef, useMemo } from 'react';
 import Carousel from 'react-simply-carousel';
 import InfoModalCopy from './components/Copy';
 import InfoModalEditor from './components/Editor';
@@ -26,9 +26,14 @@ import InfoModalIntro from './components/Intro';
 import InfoModalMoreFeatures from './components/MoreFeatures';
 import InfoModalSelector from './components/Selector';
 import styles from './styles';
+import { useMobileMediaQuery } from '../../../hooks/useMediaQuery';
 import Modal from '../../generic/Modal';
 
 const TOTAL_SLIDES = 8;
+
+const MARGIN_SLIDE_H = 0;
+
+const DEFAULT_SLIDE_WIDTH = 760;
 
 export interface InfoModalProps {
   visible: boolean;
@@ -39,7 +44,9 @@ const InfoModal: FC<InfoModalProps> = ({
   visible,
   setVisible,
 }) => {
+  const contentRef = useRef<HTMLDivElement>(null);
   const [activeSlide, setActiveSlide] = useState(0);
+  const isMobileView = useMobileMediaQuery();
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
@@ -57,10 +64,17 @@ const InfoModal: FC<InfoModalProps> = ({
     };
   }, [setActiveSlide]);
 
-
   useEffect(() => {
     activeSlide >= TOTAL_SLIDES && setVisible(false);
   }, [activeSlide]);
+
+  const contentRefDimention = useMemo(() => {
+    const clientWidth = contentRef.current?.clientWidth;
+
+    return {
+      width: clientWidth ? `${clientWidth - MARGIN_SLIDE_H}px` : `${DEFAULT_SLIDE_WIDTH}px`,
+    };
+  }, [contentRef.current?.clientHeight, contentRef.current?.clientWidth, window?.innerHeight]);
 
   return (<ClassNames>
     {({ css, cx }) => (
@@ -68,86 +82,115 @@ const InfoModal: FC<InfoModalProps> = ({
         visible={visible}
         onDismiss={() => setVisible(false)}
       >
-        <Carousel
-          containerProps={{
-            className: css(styles.container),
-          }}
-          preventScrollOnSwipe
-          swipeTreshold={60}
-          activeSlideIndex={activeSlide}
-          activeSlideProps={{}}
-          onRequestChange={setActiveSlide}
-          forwardBtnProps={{
-            children: '>',
-            className: cx(css(styles.navBtn), css(styles.nextBtn)),
-            hidden: activeSlide === TOTAL_SLIDES - 1,
-          }}
-          backwardBtnProps={{
-            children: '<',
-            className: cx(css(styles.navBtn), css(styles.prevBtn)),
-            hidden: activeSlide === 0,
-          }}
-          dotsNav={{
-            show: true,
-            itemBtnProps: {
-              className: css(styles.navBtnDot),
-            },
-            activeItemBtnProps: {
-              className: cx(css(styles.navBtnDot), css(styles.navBtnDotActive)),
-            },
-          }}
-          itemsToShow={2}
-          speed={400}
-        >
-          <div
-            className={css(styles.slide)}
-            key='intro'
+        <div css={css(styles.contentRoot)} ref={contentRef as React.MutableRefObject<HTMLDivElement>}>
+          <Carousel
+            containerProps={{
+              className: css(styles.container),
+            }}
+            preventScrollOnSwipe
+            swipeTreshold={60}
+            activeSlideIndex={activeSlide}
+            activeSlideProps={{}}
+            onRequestChange={setActiveSlide}
+            forwardBtnProps={{
+              children: '>',
+              className: cx(css(styles.navBtn), css(styles.nextBtn)),
+              hidden: activeSlide === TOTAL_SLIDES - 1,
+            }}
+            backwardBtnProps={{
+              children: '<',
+              className: cx(css(styles.navBtn), css(styles.prevBtn)),
+              hidden: activeSlide === 0,
+            }}
+            dotsNav={{
+              show: true,
+              containerProps: {
+                className: css(styles.navBtnDotContainer),
+              },
+              itemBtnProps: {
+                className: css(styles.navBtnDot),
+              },
+              activeItemBtnProps: {
+                className: cx(css(styles.navBtnDot), css(styles.navBtnDotActive)),
+              },
+            }}
+            itemsToShow={isMobileView ? 1 : 2}
+            speed={400}
           >
-            <InfoModalIntro />
-          </div>
-          <div
-            className={css(styles.slide)}
-            key='tenets'
-          >
-            <InfoModalFeatures />
-          </div>
-          <div
-            className={css(styles.slide)}
-            key='features'
-          >
-            <InfoModalMoreFeatures />
-          </div>
-          <div
-            className={css(styles.slide)}
-            key='selector'
-          >
-            <InfoModalSelector />
-          </div>
-          <div
-            className={css(styles.slide)}
-            key='editor'
-          >
-            <InfoModalEditor />
-          </div>
-          <div
-            className={css(styles.slide)}
-            key='fullexamples'
-          >
-            <InfoModalFullExamples />
-          </div>
-          <div
-            className={css(styles.slide)}
-            key='copy'
-          >
-            <InfoModalCopy />
-          </div>
-          <div
-            className={css(styles.slide)}
-            key='getstarted'
-          >
-            <InfoModalGetStarted onClick={() => setVisible(false)} />
-          </div>
-        </Carousel>
+            <div
+              className={css(styles.slide)}
+              style={{
+                ['--slide-width' as any]: contentRefDimention.width,
+              }}
+              key='intro'
+            >
+              <InfoModalIntro />
+            </div>
+            <div
+              className={css(styles.slide)}
+              style={{
+                ['--slide-width' as any]: contentRefDimention.width,
+              }}
+              key='tenets'
+            >
+              <InfoModalFeatures />
+            </div>
+            <div
+              className={css(styles.slide)}
+              style={{
+                ['--slide-width' as any]: contentRefDimention.width,
+              }}
+              key='features'
+            >
+              <InfoModalMoreFeatures />
+            </div>
+            {!isMobileView && <div
+              className={css(styles.slide)}
+              style={{
+                ['--slide-width' as any]: contentRefDimention.width,
+              }}
+              key='selector'
+            >
+              <InfoModalSelector/>
+            </div>}
+            {!isMobileView && <div
+              className={css(styles.slide)}
+              style={{
+                ['--slide-width' as any]: contentRefDimention.width,
+              }}
+              key='editor'
+            >
+              <InfoModalEditor />
+            </div>}
+            {!isMobileView && <div
+              className={css(styles.slide)}
+              style={{
+                ['--slide-width' as any]: contentRefDimention.width,
+              }}
+              key='fullexamples'
+            >
+              <InfoModalFullExamples />
+            </div>}
+            {!isMobileView && <div
+              className={css(styles.slide)}
+              style={{
+                ['--slide-width' as any]: contentRefDimention.width,
+              }}
+              key='copy'
+            >
+              <InfoModalCopy />
+            </div>}
+            <div
+              className={css(styles.slide)}
+              style={{
+                ['--slide-width' as any]: contentRefDimention.width,
+              }}
+              key='getstarted'
+            >
+              <InfoModalGetStarted onClick={() => setVisible(false)} />
+            </div>
+          </Carousel>
+        </div>
       </Modal>)}
   </ClassNames>);
 };

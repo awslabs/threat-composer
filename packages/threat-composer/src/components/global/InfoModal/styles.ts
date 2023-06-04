@@ -14,24 +14,32 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import * as awsui from '@cloudscape-design/design-tokens';
+import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
 
 const styles: any = {
+  contentRoot: {
+    width: '100%',
+    height: '100%',
+    maxHeight: 'calc(100vh - 60px)',
+    position: 'relative',
+    [`${getMobileMediaQuery()}, screen and (max-height: 640px)`]: {
+      paddingBottom: awsui.spaceScaledL,
+    },
+  },
   container: {
     width: '100%',
+    height: '100%',
     justifyContent: 'space-between',
     userSelect: 'none',
   },
   slide: {
-    width: '760px',
-    height: '600px',
+    width: 'var(--slide-width)',
+    maxWidth: 'calc(100vw - 40px)',
     textAlign: 'center',
     padding: '20px',
+    paddingBottom: '50px',
     boxSizing: 'border-box',
     lineHeight: '240px',
-  },
-  text: {
-    fontSize: '20px !important',
-    lineHeight: '24px !important',
   },
   navBtn: {
     width: '30px',
@@ -52,6 +60,10 @@ const styles: any = {
     float: 'left',
     left: '20px',
   },
+  navBtnDotContainer: {
+    position: 'absolute',
+    bottom: '20px',
+  },
   navBtnDot: {
     height: '16px',
     width: '16px',
@@ -66,8 +78,8 @@ const styles: any = {
   },
   contentBase: {
     color: '#fbfbfb',
-    width: '720px',
-    height: '560px',
+    width: '100%',
+    height: '100%',
     textAlign: 'start',
   },
   contentBaseHeader: {
@@ -75,11 +87,23 @@ const styles: any = {
     fontSize: '32px',
     lineHeight: '48px',
     marginBottom: '20px',
+    [`${getMobileMediaQuery()}, screen and (max-height: 640px)`]: {
+      fontSize: '24px',
+      lineHeight: '32px',
+    },
+  },
+  contentBaseMain: {
+    maxHeight: 'calc(100vh - 150px)',
+    overflow: 'auto',
   },
   contentBaseText: {
     fontSize: '20px',
     lineHeight: '32px',
     color: '#fbfbfb',
+    [`${getMobileMediaQuery()}, screen and (max-height: 640px)`]: {
+      fontSize: '16px',
+      lineHeight: '20px',
+    },
   },
   contentHighlight: {
     color: 'rgb(9, 114, 211)',
@@ -96,6 +120,10 @@ const styles: any = {
       margin: '0 0 6px 2em',
       padding: '4px 8px',
       listStyle: 'none',
+      [`${getMobileMediaQuery()}, screen and (max-height: 640px)`]: {
+        padding: '3px 8px',
+        margin: 0,
+      },
     },
     '& li:before': {
       content: 'counter( LIST-ITEMS )',
@@ -105,29 +133,49 @@ const styles: any = {
       background: 'rgb(9, 114, 211)',
       borderRadius: '16px',
       width: '20px',
+      [`${getMobileMediaQuery()}, screen and (max-height: 640px)`]: {
+        padding: '3px 8px',
+      },
     },
   },
   featureSets: {
     marginTop: '50px',
     marginLeft: '20px',
     marginRight: '20px',
+    [`${getMobileMediaQuery()}, screen and (max-height: 640px)`]: {
+      marginTop: '20px',
+    },
   },
   featureSet: {
     'textAlign': 'center',
     'boxSizing': 'border-box',
+    'overflow': 'hidden',
     '& svg': {
       width: '60px',
       height: '60px',
     },
+    [`${getMobileMediaQuery()}, screen and (max-height: 640px)`]: {
+      '& svg': {
+        width: '40px',
+        height: '40px',
+      },
+    },
   },
   image: {
     width: '100%',
+    height: '100%',
     maxWidth: '740px',
-    marginTop: awsui.spaceScaledXxxl,
+    marginTop: '40px',
+    [`${getMobileMediaQuery()}, screen and (max-height: 640px)`]: {
+      marginTop: '20px',
+    },
   },
   getStartedBtnContainer: {
     textAlign: 'center',
     marginTop: '100px',
+    [`${getMobileMediaQuery()}, screen and (max-height: 640px)`]: {
+      marginTop: '40px',
+    },
   },
 };
 

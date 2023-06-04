@@ -43,7 +43,7 @@ const styles = css({
     padding: '6px 13px',
     border: `1px solid ${awsui.colorChartsLineGrid}`,
   },
-  'table tr:nth-child(2n)': {
+  'table tr:nth-of-type(2n)': {
     background: awsui.colorBackgroundCellShaded,
   },
 });
