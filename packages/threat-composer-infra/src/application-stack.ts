@@ -25,6 +25,9 @@ import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import {
   DistributionProps,
   LambdaEdgeEventType,
+  FunctionEventType,
+  Function,
+  FunctionCode,
 } from "aws-cdk-lib/aws-cloudfront";
 import { Version } from "aws-cdk-lib/aws-lambda";
 import { HostedZone, ARecord, RecordTarget } from "aws-cdk-lib/aws-route53";
@@ -63,6 +66,21 @@ export class ApplicationStack extends Stack {
     let distributionProps: DistributionProps = {
       defaultBehavior: {
         origin: new StaticWebsiteOrigin(),
+        functionAssociations: [
+          {
+            eventType: FunctionEventType.VIEWER_RESPONSE,
+            function: new Function(this, "ResponseHeaderFunction", {
+              code: FunctionCode.fromInline(
+                `function handler(event) { var response = event.response; 
+                  response.headers['strict-transport-security'] = { value: 'max-age=63072000; includeSubdomains; preload'}; 
+                  response.headers['x-content-type-options'] = { value: 'nosniff'}; 
+                  response.headers['x-frame-options'] = {value: 'DENY'}; 
+                  return response; 
+                }`
+              ),
+            }),
+          },
+        ],
       },
     };
 
@@ -112,10 +130,7 @@ export class ApplicationStack extends Stack {
             .filter((x) => !!x),
         },
       },
-      distributionProps:
-        (domainName && certificate) || lambdaEdge
-          ? distributionProps
-          : undefined,
+      distributionProps,
     };
 
     const website = new StaticWebsite(this, "StaticWebsite", websiteProps);
