@@ -67,17 +67,17 @@ const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => 
     onSave={handleSave}
     onReset={handleReset}
     customEditors={<SpaceBetween direction='vertical' size='s'>
-      <AssumptionLinkView
-        linkedAssumptionIds={linkedAssumptionIds}
-        assumptionList={assumptionList}
-        onAddAssumptionLink={handleAddAssumptionLink}
-        onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
-      />
       <ThreatLinkView
         linkedThreatIds={linkedThreatIds}
         threatList={statementList}
         onAddThreatLink={(id) => setLinkedThreatIds(prev => [...prev, id])}
         onRemoveThreatLink={(id) => setLinkedThreatIds(prev => prev.filter(p => p !== id))}
+      />
+      <AssumptionLinkView
+        linkedAssumptionIds={linkedAssumptionIds}
+        assumptionList={assumptionList}
+        onAddAssumptionLink={handleAddAssumptionLink}
+        onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
       />
     </SpaceBetween>}
   />);

@@ -414,16 +414,16 @@ const ThreatStatementList: FC = () => {
               selectedAriaLabel="Selected"
             />
             {composerMode === 'Full' && <LinkedEntityFilter
-              label='Linked assumptions'
-              entityDisplayName='assumptions'
-              selected={selectedLinkedAssumptionFilter}
-              setSelected={setSelectedLinkedAssumptionFilter}
-            />}
-            {composerMode === 'Full' && <LinkedEntityFilter
               label='Linked mitigations'
               entityDisplayName='mitigations'
               selected={selectedLinkedMitigationFilter}
               setSelected={setSelectedLinkedMitigationFilter}
+            />}
+            {composerMode === 'Full' && <LinkedEntityFilter
+              label='Linked assumptions'
+              entityDisplayName='assumptions'
+              selected={selectedLinkedAssumptionFilter}
+              setSelected={setSelectedLinkedAssumptionFilter}
             />}
             {composerMode === 'Full' ? (<div css={styles.btnClearFilter}>
               <div><Button onClick={handleClearFilter}

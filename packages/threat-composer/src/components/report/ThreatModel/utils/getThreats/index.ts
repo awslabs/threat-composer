@@ -26,7 +26,7 @@ export const getThreatsContent = (
 
   rows.push('\n');
 
-  rows.push(`| Threat Number | Threat | ${threatsOnly ? '' : 'Assumptions | Mitigations |'} Priority | STRIDE | Comments |`);
+  rows.push(`| Threat Number | Threat | ${threatsOnly ? '' : 'Mitigations | Assumptions |'} Priority | STRIDE | Comments |`);
   rows.push(`| --- | --- | ${threatsOnly ? '' : '--- | --- |'} --- | --- | --- |`);
 
   if (data.threats) {
@@ -53,7 +53,7 @@ export const getThreatsContent = (
       const priority = x.metadata?.find(m => m.key === 'Priority')?.value || '';
       const STRIDE = ((x.metadata?.find(m => m.key === 'STRIDE')?.value || []) as string[]).join(', ');
       const comments = (x.metadata?.find(m => m.key === 'Comments')?.value as string) || '';
-      rows.push(`| <a name="${threatId}"></a>${threatId} | ${parseTableCellContent(x.statement || '')} | ${threatsOnly ? '' : ` ${parseTableCellContent(assumptionsContent)} | ${parseTableCellContent(mitigationsContent)} |`} ${priority} | ${STRIDE} | ${parseTableCellContent(comments)} |`);
+      rows.push(`| <a name="${threatId}"></a>${threatId} | ${parseTableCellContent(x.statement || '')} | ${threatsOnly ? '' : `${parseTableCellContent(mitigationsContent)} | ${parseTableCellContent(assumptionsContent)} | `} ${priority} | ${STRIDE} | ${parseTableCellContent(comments)} |`);
     });
   }
 

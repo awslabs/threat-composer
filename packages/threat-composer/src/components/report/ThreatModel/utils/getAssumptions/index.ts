@@ -25,14 +25,35 @@ export const getAssumptionsContent = (
 
   rows.push('\n');
 
-  rows.push('| Assumption Number | Assumption | Comments |');
-  rows.push('| --- | --- | --- |');
+  rows.push('| Assumption Number | Assumption | Linked Threats | Linked Mitigations | Comments |');
+  rows.push('| --- | --- | --- | --- | --- |');
 
   if (data.assumptions) {
     data.assumptions?.forEach(x => {
+      const threatLinks = data.assumptionLinks?.filter(al => al.assumptionId === x.id && al.type === 'Threat') || [];
+      const mitigationLinks = data.assumptionLinks?.filter(al => al.assumptionId === x.id && al.type === 'Mitigation') || [];
+
+      const threatsContent = threatLinks.map(tl => {
+        const threat = data.threats?.find(s => s.id === tl.linkedId);
+        if (threat) {
+          const threatId = `T-${standardizeNumericId(threat.numericId)}`;
+          return `[**${threatId}**](#${threatId}): ${threat.statement}`;
+        }
+        return null;
+      }).filter(t => !!t).join('<br/>');
+
+      const mitigationsContent = mitigationLinks.map(tl => {
+        const mitigation = data.mitigations?.find(m => m.id === tl.linkedId);
+        if (mitigation) {
+          const mitigationId = `M-${standardizeNumericId(mitigation.numericId)}`;
+          return `[**${mitigationId}**](#${mitigationId}): ${mitigation.content}`;
+        }
+        return null;
+      }).filter(t => !!t).join('<br/>');
+
       const assumptionId = `A-${standardizeNumericId(x.numericId)}`;
       const comments = (x.metadata?.find(m => m.key === 'Comments')?.value as string) || '';
-      rows.push(`| <a name="${assumptionId}"></a>${assumptionId} | ${parseTableCellContent(x.content)} | ${parseTableCellContent(comments)} |`);
+      rows.push(`| <a name="${assumptionId}"></a>${assumptionId} | ${parseTableCellContent(x.content)} | ${parseTableCellContent(threatsContent)} | ${parseTableCellContent(mitigationsContent)} | ${parseTableCellContent(comments)} |`);
     });
   }
 

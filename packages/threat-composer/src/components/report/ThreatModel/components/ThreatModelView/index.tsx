@@ -19,8 +19,6 @@ import Button from '@cloudscape-design/components/button';
 import Header from '@cloudscape-design/components/header';
 import Popover from '@cloudscape-design/components/popover';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
-import * as awsui from '@cloudscape-design/design-tokens';
-import { css } from '@emotion/react';
 import { FC, useMemo, useCallback } from 'react';
 import { DataExchangeFormat } from '../../../../../customTypes';
 import printStyles from '../../../../../styles/print';
@@ -34,37 +32,6 @@ import { getAssumptionsContent } from '../../utils/getAssumptions';
 import { getDataflowContent } from '../../utils/getDataFlow';
 import { getMitigationsContent } from '../../utils/getMitigations';
 import { getThreatsContent } from '../../utils/getThreats';
-
-const styles = css({
-  '@media print': {
-    color: `${awsui.colorBackgroundHomeHeader} !important`,
-  },
-
-  'img': {
-    maxWidth: '1024px',
-    width: '100%',
-  },
-
-  '& h1': {
-    marginTop: awsui.spaceScaledS,
-    marginBottom: awsui.spaceScaledS,
-  },
-
-  '& h2': {
-    marginTop: awsui.spaceScaledL,
-    marginBottom: awsui.spaceScaledS,
-  },
-
-  '& h3': {
-    marginTop: awsui.spaceScaledS,
-    marginBottom: awsui.spaceScaledS,
-  },
-
-  '& h4': {
-    marginTop: awsui.spaceScaledS,
-    marginBottom: awsui.spaceScaledS,
-  },
-});
 
 export interface ThreatModelViewProps {
   composerMode: string;
@@ -95,7 +62,7 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
     await navigator.clipboard.writeText(content);
   }, [content]);
 
-  return (<div css={styles}>
+  return (<div>
     <SpaceBetween direction='vertical' size='s'>
       <div css={printStyles.hiddenPrint}><Header
         actions={

@@ -101,12 +101,12 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
           </CopyToClipbord>
         </TextContent>
         {showLinkedEntities && <SpaceBetween direction='vertical' size='s'>
+          <MitigationLink
+            linkedEntityId={statement.id}
+          />
           <AssumptionLink
             linkedEntityId={statement.id}
             type='Threat'
-          />
-          <MitigationLink
-            linkedEntityId={statement.id}
           />
         </SpaceBetween>}
       </ColumnLayout>

@@ -332,21 +332,21 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
             <Metrics statement={editingStatement} onClick={(token) => setEditor(token as ThreatFieldTypes)} />
           </Grid>
           {composerMode === 'Full' && <div css={styles.metadataContainer}>
-            <AssumptionLinkComponent
-              variant='container'
-              linkedAssumptionIds={linkedAssumptionIds}
-              assumptionList={assumptionList}
-              onAddAssumptionLink={handleAddAssumptionLink}
-              onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
-            />
-          </div>}
-          {composerMode === 'Full' && <div css={styles.metadataContainer}>
             <MitigationLinkComponent
               variant='container'
               linkedMitigationIds={linkedMitigationIds}
               mitigationList={mitigationList}
               onAddMitigationLink={handleAddMitigationLink}
               onRemoveMitigationLink={(id) => setLinkedMitigationIds(prev => prev.filter(p => p !== id))}
+            />
+          </div>}
+          {composerMode === 'Full' && <div css={styles.metadataContainer}>
+            <AssumptionLinkComponent
+              variant='container'
+              linkedAssumptionIds={linkedAssumptionIds}
+              assumptionList={assumptionList}
+              onAddAssumptionLink={handleAddAssumptionLink}
+              onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
             />
           </div>}
           {composerMode === 'Full' && <div css={styles.metadataContainer}>

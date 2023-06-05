@@ -14,6 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
+import Icon from '@cloudscape-design/components/icon';
 import TextContent from '@cloudscape-design/components/text-content';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
@@ -23,32 +24,80 @@ import rehypeRaw from 'rehype-raw';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 
+const externalPattern = /^((https?):\/\/)/;
+
 export interface MarkdownViewerProps {
   children: string;
   allowHtml?: boolean;
 }
 
 const styles = css({
+  '@media print': {
+    color: 'black !important',
+  },
+
+  '& img': {
+    maxWidth: '1024px',
+    width: '100%',
+  },
+
+  '& h1': {
+    marginTop: `${awsui.spaceScaledS} !important`,
+    marginBottom: `${awsui.spaceScaledS} !important`,
+  },
+
+  '& h2': {
+    marginTop: `${awsui.spaceScaledL} !important`,
+    marginBottom: `${awsui.spaceScaledS} !important`,
+  },
+
+  '& h3': {
+    marginTop: `${awsui.spaceScaledS} !important`,
+    marginBottom: `${awsui.spaceScaledS} !important`,
+  },
+
+  '& h4': {
+    marginTop: `${awsui.spaceScaledS} !important`,
+    marginBottom: `${awsui.spaceScaledS} !important`,
+  },
+
   '& table': {
     borderCollapse: 'collapse',
   },
+
   '& tr': {
     borderTop: `1px solid ${awsui.colorChartsLineGrid}`,
   },
+
   '& th': {
     padding: '6px 13px',
     border: `1px solid ${awsui.colorChartsLineGrid}`,
   },
+
   '& td': {
     padding: '6px 13px',
     border: `1px solid ${awsui.colorChartsLineGrid}`,
   },
+
   'table tr:nth-of-type(2n)': {
     background: awsui.colorBackgroundCellShaded,
   },
 });
 
 const components = {
+  a: (props: any) => {
+    if (props.href) {
+      const isExternal = externalPattern.test(props.href);
+
+      if (isExternal) {
+        return <a href={props.href} target='_blank' rel="noreferrer noopener">{props.children}{' '}<Icon name="external"/></a>;
+      }
+
+      return <a href={props.href} rel="noreferrer noopener">{props.children}</a>;
+    }
+
+    return <>{props.children}</>;
+  },
 };
 
 /**
