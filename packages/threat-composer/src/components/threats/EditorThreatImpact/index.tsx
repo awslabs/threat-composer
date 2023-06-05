@@ -13,12 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
 import { TextareaProps } from '@cloudscape-design/components/textarea';
 import { FC, forwardRef, useCallback, useRef, RefObject, useImperativeHandle } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext';
 import Textarea from '../../generic/Textarea';
 import EditorLayout from '../EditorLayout';
+import styles from '../EditorLayout/styles';
 import ExampleList from '../ExampleList';
 import { EditorProps } from '../ThreatStatementEditor/types';
 
@@ -52,8 +54,8 @@ const EditorThreatImpact: FC<EditorProps> = forwardRef<TextareaProps.Ref, Editor
     title={fieldData.displayTitle}
     description={fieldData.description}
   >
-    <div className='threat-statement-generator-editor-layout-text-editor-layout'>
-      <div className='threat-statement-generator-editor-layout-text-editor-layout-input'>
+    <div css={styles.textEditorLayout}>
+      <div css={styles.input}>
         <Textarea
           ref={inputRef as RefObject<TextareaProps.Ref>}
           spellcheck
@@ -63,7 +65,7 @@ const EditorThreatImpact: FC<EditorProps> = forwardRef<TextareaProps.Ref, Editor
           rows={2}
         />
       </div>
-      {statement.threatImpact && <div className='threat-statement-generator-editor-layout-text-editor-layout-clear'>
+      {statement.threatImpact && <div css={styles.inputClear}>
         <Button variant='icon' iconName='close' onClick={() => handleChange('')} />
       </div>}
     </div>

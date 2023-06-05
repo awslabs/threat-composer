@@ -13,17 +13,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-/** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
-import { FC } from 'react';
-import threatStatementEditor from '../../../../../assets/threat-statement-flow.png';
-import styles from '../../styles';
-import InfoModalBase from '../InfoModalBase';
+import type { Meta, StoryObj } from '@storybook/react';
+import InfoModal from '.';
 
-const InfoModalSelector: FC = () => {
-  return (<InfoModalBase>
-    <img css={css(styles.image)} src={threatStatementEditor} alt="ThreatStatementEditor"/>
-  </InfoModalBase>);
+const meta: Meta<typeof InfoModal> = {
+  title: 'Others/InfoModal',
+  component: InfoModal,
 };
 
-export default InfoModalSelector;
+export default meta;
+  type Story = StoryObj<typeof InfoModal>;
+
+export const Default: Story = {
+  args: {
+    visible: true,
+    setVisible: console.log,
+  },
+};

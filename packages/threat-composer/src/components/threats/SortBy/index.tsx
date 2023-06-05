@@ -13,11 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import FormField from '@cloudscape-design/components/form-field';
 import RadioGroup from '@cloudscape-design/components/radio-group';
 import Select from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
+import { css } from '@emotion/react';
 import { FC } from 'react';
+
+const styles = {
+  selector: css({
+    minWidth: '100px',
+  }),
+  radioGroup: css({
+    marginTop: '10px',
+  }),
+};
 
 export const DEFAULT_SORT_BY = {
   field: 'Id',
@@ -49,9 +60,7 @@ const SortByComponent: FC<SortByProps> = ({
   setValue,
 }) => {
   return (<SpaceBetween direction='horizontal' size='s'>
-    <div style={{
-      minWidth: '100px',
-    }}>
+    <div css={styles.selector}>
       <FormField
         label="Sort by"
       >
@@ -68,9 +77,7 @@ const SortByComponent: FC<SortByProps> = ({
         />
       </FormField>
     </div>
-    <div style={{
-      marginTop: '10px',
-    }}>
+    <div css={styles.radioGroup}>
       <RadioGroup
         onChange={({ detail }) => setValue({
           ...value,

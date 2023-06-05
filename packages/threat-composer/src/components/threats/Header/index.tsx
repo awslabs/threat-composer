@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
 import HeaderComponent from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';

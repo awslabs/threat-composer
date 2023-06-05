@@ -13,9 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import Grid from '@cloudscape-design/components/grid';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
+import * as awsui from '@cloudscape-design/design-tokens';
+import { css } from '@emotion/react';
 import React, { FC, useCallback, useMemo, useState, useRef, useEffect, ReactNode } from 'react';
 import { v4 as uuidV4 } from 'uuid';
 import { EditorProps } from './types';
@@ -53,7 +56,18 @@ import Header from '../Header';
 import MetadataEditor from '../MetadataEditor';
 import Metrics from '../Metrics';
 
-import './index.css';
+const styles = {
+  finalStatementSection: css({
+    '&:hover': {
+      backgroundColor: awsui.colorBackgroundDropdownItemHover,
+    },
+  }),
+  metadataContainer: css({
+    'h3>span>span': {
+      fontSize: '20px',
+    },
+  }),
+};
 
 const defaultThreatStatementFormat = threatStatementFormat[63];
 
@@ -123,9 +137,9 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
       }
       const displayedHtml = displayedStatement?.map((s, index) => typeof s === 'string' ?
         s : s.type === 'b' ?
-          <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly' ? 'bottom' : 'top'}><b className='threat-statement-editor-final-statement-section'>{s.content}</b></Tooltip> :
+          <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly' ? 'bottom' : 'top'}><b css={styles.finalStatementSection}>{s.content}</b></Tooltip> :
           s.type === 'span' ?
-            <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly' ? 'bottom' : 'top'}><span key={index} className='threat-statement-editor-final-statement-section'>{s.content}</span></Tooltip> :
+            <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly' ? 'bottom' : 'top'}><span css={styles.finalStatementSection}>{s.content}</span></Tooltip> :
             s.content);
 
       setDisplayStatement(displayedHtml);
@@ -307,7 +321,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
           <Grid
             gridDefinition={[{ colspan: { default: 12, xs: 9 } }, { colspan: { default: 12, xs: 3 } }]}
           >
-            <div className='threat-statement-editor-editor-container'>
+            <div>
               <Component
                 ref={inputRef}
                 statement={editingStatement}
@@ -317,16 +331,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
             </div>
             <Metrics statement={editingStatement} onClick={(token) => setEditor(token as ThreatFieldTypes)} />
           </Grid>
-          {composerMode === 'Full' && <div className='threat-statement-editor-editor-linked-container'>
-            <AssumptionLinkComponent
-              variant='container'
-              linkedAssumptionIds={linkedAssumptionIds}
-              assumptionList={assumptionList}
-              onAddAssumptionLink={handleAddAssumptionLink}
-              onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
-            />
-          </div>}
-          {composerMode === 'Full' && <div className='threat-statement-editor-editor-linked-container'>
+          {composerMode === 'Full' && <div css={styles.metadataContainer}>
             <MitigationLinkComponent
               variant='container'
               linkedMitigationIds={linkedMitigationIds}
@@ -335,7 +340,16 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
               onRemoveMitigationLink={(id) => setLinkedMitigationIds(prev => prev.filter(p => p !== id))}
             />
           </div>}
-          {composerMode === 'Full' && <div className='threat-statement-editor-editor-linked-container'>
+          {composerMode === 'Full' && <div css={styles.metadataContainer}>
+            <AssumptionLinkComponent
+              variant='container'
+              linkedAssumptionIds={linkedAssumptionIds}
+              assumptionList={assumptionList}
+              onAddAssumptionLink={handleAddAssumptionLink}
+              onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
+            />
+          </div>}
+          {composerMode === 'Full' && <div css={styles.metadataContainer}>
             <MetadataEditor
               variant='container'
               editingStatement={editingStatement}

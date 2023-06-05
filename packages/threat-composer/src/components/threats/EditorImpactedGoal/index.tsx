@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import Autosuggest, { AutosuggestProps } from '@cloudscape-design/components/autosuggest';
 import { BaseKeyDetail, CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import TokenGroup, { TokenGroupProps } from '@cloudscape-design/components/token-group';

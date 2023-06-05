@@ -13,16 +13,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import { DeleteConfirmationDialog } from '@aws-northstar/ui';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
+import * as awsui from '@cloudscape-design/design-tokens';
+import { css } from '@emotion/react';
 import { FC, PropsWithChildren, useMemo, useRef, ReactNode, useState } from 'react';
 import Tags from './components/Tags';
+import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
 import Tooltip from '../Tooltip';
-
-import './index.css';
 
 export interface GenericCardProps {
   header: string;
@@ -36,6 +38,30 @@ export interface GenericCardProps {
   onRemoveTagFromEntity?: (entityId: string, tag: string) => void;
   moreActions?: ReactNode;
 }
+
+const styles = {
+  header: css({
+    display: 'inline-flex',
+    alignItems: 'center',
+    [getMobileMediaQuery()]: {
+      display: 'block',
+      marginTop: awsui.spaceScaledS,
+    },
+  }),
+  tags: css({
+    marginRight: awsui.spaceScaledS,
+    marginLeft: awsui.spaceScaledS,
+    [getMobileMediaQuery()]: {
+      marginLeft: '0px',
+    },
+  }),
+  info: css({
+    marginLeft: awsui.spaceScaledS,
+    [getMobileMediaQuery()]: {
+      marginLeft: '0px',
+    },
+  }),
+};
 
 const GenericCard: FC<PropsWithChildren<GenericCardProps>> = ({
   header,
@@ -63,20 +89,15 @@ const GenericCard: FC<PropsWithChildren<GenericCardProps>> = ({
   return (<div ref={ref}>
     <Container
       header={<Header actions={actions}
-      ><div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-          }}
-        >
+      ><div css={styles.header}>
           {header}
-          {info}
-          <Tags
+          <div css={styles.info}>{info}</div>
+          <div css={styles.tags}><Tags
             tags={tags}
             entityId={entityId}
             onAddTagToEntity={onAddTagToEntity}
             onRemoveTagFromEntity={onRemoveTagFromEntity}
-          />
+          /></div>
         </div></Header>}
     >
       {children}

@@ -13,21 +13,30 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
 import Grid from '@cloudscape-design/components/grid';
 import Input from '@cloudscape-design/components/input';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import Toggle from '@cloudscape-design/components/toggle';
+import * as awsui from '@cloudscape-design/design-tokens';
+import { css } from '@emotion/react';
 import { useCallback, useMemo, useState } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { PerFieldExample } from '../../../customTypes';
 import renderArrayField from '../../../utils/renderArrayField';
 import shuffle from '../../../utils/shuffle';
 
-import './index.css';
-
 export const DEFAULT_NUM_DISPLAY = 5;
+
+const styles = {
+  list: css({
+    '& button': {
+      padding: `0px ${awsui.spaceStaticXxs} !important`,
+    },
+  }),
+};
 
 export interface ExampleListProps<T> {
   examples: T[];
@@ -126,7 +135,7 @@ const ExampleList = <T extends string | PerFieldExample | string[]>({
       </Grid>}
       <ul>
         {randomDislayList.slice(0, showMoreExamples ? undefined : DEFAULT_NUM_DISPLAY).map((example, index) => (
-          <li key={index} className='threat-statement-editor-example-list-entry'>{renderExample(example)}</li>
+          <li key={index} css={styles.list}>{renderExample(example)}</li>
         ))}
       </ul>
       {randomDislayList.length > DEFAULT_NUM_DISPLAY && (<Button

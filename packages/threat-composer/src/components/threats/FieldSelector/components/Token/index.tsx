@@ -13,6 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
+import * as awsui from '@cloudscape-design/design-tokens';
+import { css } from '@emotion/react';
 import { FC, PropsWithChildren } from 'react';
 import Tooltip from '../../../../generic/Tooltip';
 
@@ -30,12 +33,25 @@ const Token: FC<PropsWithChildren<TokenProps>> = ({
   filled,
   tooltip,
 }) => {
+  const bgColor = highlighted ?
+    awsui.colorBackgroundToggleCheckedDisabled :
+    (filled ? awsui.colorBackgroundItemSelected : awsui.colorBackgroundButtonPrimaryDisabled);
+
   return (<Tooltip tooltip={tooltip}>
     <button
-      style={{
-        backgroundColor: highlighted ? '#b5d6f4' : (filled ? '#f2f8fd' : undefined),
-      }} onClick={onClick}>
-      {children}
+      css={css`
+        text-align: left;
+        text-decoration: none;
+        border-spacing: 0;
+        border-collapse: separate;
+        border: 2px solid;
+        border-radius: ${awsui.borderRadiusBadge};
+        height: fit-content !important;
+        padding: ${awsui.spaceScaledXxs};
+        color: ${awsui.colorTextBodyDefault};
+        background-color: ${bgColor};
+      `} onClick={onClick}>
+      <span>{children}</span>
     </button>
   </Tooltip>
   );

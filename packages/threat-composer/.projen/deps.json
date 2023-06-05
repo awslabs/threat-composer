@@ -55,6 +55,11 @@
       "type": "build"
     },
     {
+      "name": "@types/d3",
+      "version": "^7",
+      "type": "build"
+    },
+    {
       "name": "@types/indefinite",
       "type": "build"
     },
@@ -75,6 +80,10 @@
     {
       "name": "@types/react",
       "version": "18.0.0",
+      "type": "build"
+    },
+    {
+      "name": "@types/sanitize-html",
       "type": "build"
     },
     {
@@ -192,16 +201,15 @@
       "type": "runtime"
     },
     {
+      "name": "@cloudscape-design/design-tokens",
+      "type": "runtime"
+    },
+    {
       "name": "@cloudscape-design/global-styles",
       "type": "runtime"
     },
     {
-      "name": "@types/d3",
-      "version": "^7",
-      "type": "runtime"
-    },
-    {
-      "name": "@types/sanitize-html",
+      "name": "@emotion/react",
       "type": "runtime"
     },
     {

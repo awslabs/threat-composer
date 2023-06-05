@@ -13,10 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
 import Grid from '@cloudscape-design/components/grid';
 import { FC, useMemo } from 'react';
 import { TemplateThreatStatement } from '../../../customTypes';
+import expandablePanelHeaderStyles from '../../../styles/expandablePanelHeader';
 import CommentsEdit from '../../generic/CommentsEdit';
 import STRIDESELECTOR from '../../generic/STRIDESelector';
 import PriorityEdit from '../PriorityEdit';
@@ -37,7 +39,7 @@ const MetadataEditor: FC<MetadataEditorProps> = ({
   }, [editingStatement.metadata]);
 
   return (
-    <ExpandableSection headerText={<span className={variant === 'default' ? 'threat-statement-generator-metadata-editor-header' : undefined}>Metadata</span>} headingTagOverride='h3' variant={variant}>
+    <ExpandableSection headerText={<span css={variant === 'default' ? expandablePanelHeaderStyles : undefined}>Metadata</span>} headingTagOverride='h3' variant={variant}>
       <Grid
         gridDefinition={[
           { colspan: { default: 12, xs: 3 } },

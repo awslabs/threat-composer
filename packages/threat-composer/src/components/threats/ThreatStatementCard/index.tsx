@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import { SpaceBetween } from '@cloudscape-design/components';
 import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
@@ -100,12 +101,12 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
           </CopyToClipbord>
         </TextContent>
         {showLinkedEntities && <SpaceBetween direction='vertical' size='s'>
+          <MitigationLink
+            linkedEntityId={statement.id}
+          />
           <AssumptionLink
             linkedEntityId={statement.id}
             type='Threat'
-          />
-          <MitigationLink
-            linkedEntityId={statement.id}
           />
         </SpaceBetween>}
       </ColumnLayout>

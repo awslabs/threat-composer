@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Grid from '@cloudscape-design/components/grid';
@@ -20,6 +21,7 @@ import Header from '@cloudscape-design/components/header';
 import Multiselect from '@cloudscape-design/components/multiselect';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
+import { css } from '@emotion/react';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
@@ -33,8 +35,6 @@ import { OPTIONS as STRIDEOptions } from '../../generic/STRIDESelector';
 import WorkspaceSelector from '../../workspaces/WorkspaceSelector';
 import SortByComponent, { SortByOption, DEFAULT_SORT_BY } from '../SortBy';
 import ThreatStatementCard from '../ThreatStatementCard';
-
-import './index.css';
 
 const NO_VALUE = '-';
 
@@ -52,6 +52,14 @@ const LELEV_MAPPING: any = {
   High: 3,
   Medium: 2,
   Low: 1,
+};
+
+const styles = {
+  btnClearFilter: css({
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+  }),
 };
 
 const ThreatStatementList: FC = () => {
@@ -406,22 +414,18 @@ const ThreatStatementList: FC = () => {
               selectedAriaLabel="Selected"
             />
             {composerMode === 'Full' && <LinkedEntityFilter
-              label='Linked assumptions'
-              entityDisplayName='assumptions'
-              selected={selectedLinkedAssumptionFilter}
-              setSelected={setSelectedLinkedAssumptionFilter}
-            />}
-            {composerMode === 'Full' && <LinkedEntityFilter
               label='Linked mitigations'
               entityDisplayName='mitigations'
               selected={selectedLinkedMitigationFilter}
               setSelected={setSelectedLinkedMitigationFilter}
             />}
-            {composerMode === 'Full' ? (<div style={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-            }}>
+            {composerMode === 'Full' && <LinkedEntityFilter
+              label='Linked assumptions'
+              entityDisplayName='assumptions'
+              selected={selectedLinkedAssumptionFilter}
+              setSelected={setSelectedLinkedAssumptionFilter}
+            />}
+            {composerMode === 'Full' ? (<div css={styles.btnClearFilter}>
               <div><Button onClick={handleClearFilter}
                 disabled={hasNoFilter}
               >

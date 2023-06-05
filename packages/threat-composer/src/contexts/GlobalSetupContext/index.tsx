@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import { FC, PropsWithChildren, useState, useEffect } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { GlobalSetupContext, useGlobalSetupContext } from './context';
@@ -20,7 +21,6 @@ import InfoModal from '../../components/global/InfoModal';
 import { LOCAL_STORAGE_KEY_NEW_VISIT_FLAG } from '../../configs/localStorageKeys';
 import { ComposerMode, DataExchangeFormat } from '../../customTypes';
 
-import './index.css';
 import '@cloudscape-design/global-styles/index.css';
 
 export interface GlobalSetupContextProviderProps {
@@ -48,7 +48,7 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
     }
   }, [hasVisitBefore, composerMode]);
 
-  return (<div className='threat-statement-generator-main'>
+  return (<div>
     <GlobalSetupContext.Provider value={{
       hasVisitBefore,
       composerMode,

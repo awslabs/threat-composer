@@ -16,7 +16,6 @@
 import Button from '@cloudscape-design/components/button';
 import { FC, ReactNode } from 'react';
 import Tooltip from '../../../../generic/Tooltip';
-import './index.css';
 
 export interface ExpandableTokenProps {
   onClick?: () => void;

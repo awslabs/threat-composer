@@ -13,10 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
+import { css } from '@emotion/react';
 import { FC } from 'react';
 
-import './index.css';
+const styles = css({
+  background: 'transparent',
+  border: 'none !important',
+  cursor: 'pointer',
+});
 
 export interface StatusProps {
   completed?: boolean;
@@ -25,7 +31,7 @@ export interface StatusProps {
 }
 
 const Status: FC<StatusProps> = ({ completed, label, onClick }) => {
-  return (<button className='threat-statement-generator-editor-container-metrics-status-button' onClick={onClick}><StatusIndicator type={completed ? 'success' : 'stopped'}>{label}</StatusIndicator></button>);
+  return (<button css={styles} onClick={onClick}><StatusIndicator type={completed ? 'success' : 'stopped'}>{label}</StatusIndicator></button>);
 };
 
 export default Status;

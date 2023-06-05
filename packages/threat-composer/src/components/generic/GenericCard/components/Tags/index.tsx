@@ -13,9 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import { CancelableEventHandler, BaseKeyDetail } from '@cloudscape-design/components/internal/events';
 import TokenGroup from '@cloudscape-design/components/token-group';
+import * as awsui from '@cloudscape-design/design-tokens';
+import { css } from '@emotion/react';
 import { FC, useCallback, useState } from 'react';
+import getMobileMediaQuery from '../../../../../utils/getMobileMediaQuery';
 import Input from '../../../../generic/Input';
 
 export interface TagsProps {
@@ -24,6 +28,21 @@ export interface TagsProps {
   onAddTagToEntity?: (entityId: string, tag: string) => void;
   onRemoveTagFromEntity?: (entityId: string, tag: string) => void;
 }
+
+const styles = {
+  tags: css({
+    '&>div': {
+      display: 'inline-block',
+    },
+  }),
+  input: css({
+    marginLeft: awsui.spaceScaledS,
+    [getMobileMediaQuery()]: {
+      marginLeft: '0px',
+      marginTop: awsui.spaceScaledS,
+    },
+  }),
+};
 
 const Tags: FC<TagsProps> = ({
   tags,
@@ -34,13 +53,13 @@ const Tags: FC<TagsProps> = ({
   const [value, setValue] = useState('');
 
   const handleKeyDown: CancelableEventHandler<BaseKeyDetail> = useCallback(({ detail }) => {
-    if (detail.keyCode === 13) {
+    if (detail.keyCode === 13 && value) {
       onAddTagToEntity?.(entityId, value);
       setValue('');
     }
   }, [onAddTagToEntity, entityId, value]);
 
-  return (<div className='threat-statement-editor-statement-list-card-tags'>
+  return (<div css={styles.tags}>
     {tags && tags.length > 0 && <TokenGroup
       onDismiss={({ detail: { itemIndex } }) => {
         tags && onRemoveTagFromEntity?.(entityId, tags?.[itemIndex]);
@@ -50,10 +69,12 @@ const Tags: FC<TagsProps> = ({
         dismissLabel: `Remove ${t}`,
       }))}
     />}
-    <Input value={value}
-      onKeyDown={handleKeyDown}
-      onChange={({ detail }) => setValue(detail.value)}
-      placeholder='Add tag' />
+    <div css={styles.input}>
+      <Input value={value}
+        onKeyDown={handleKeyDown}
+        onChange={({ detail }) => setValue(detail.value)}
+        placeholder='Add tag' />
+    </div>
   </div>);
 };
 

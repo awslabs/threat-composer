@@ -13,8 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import Badge from '@cloudscape-design/components/badge';
 import { SelectProps } from '@cloudscape-design/components/select';
+import * as awsui from '@cloudscape-design/design-tokens';
+import { css } from '@emotion/react';
 import { FC, useMemo, useState, useRef } from 'react';
 import PriorityEdit from '..//PriorityEdit';
 import { TemplateThreatStatement } from '../../../customTypes';
@@ -52,27 +55,25 @@ const PriorityBadge: FC<PriorityBadgeProps> = ({
     />;
   }, [editingStatement, onEditMetadata]);
 
-  return <div style={{
-    marginLeft: '10px',
-  }}>{editMode ? (editor) :
-      (<button
-        onClick={() => {
-          setEditMode(true);
-          setTimeout(() => ref.current?.focus(), 200);
-        }}
-        style={{
-          background: 'none',
-          color: 'inherit',
-          border: 'none',
-          padding: 0,
-          paddingBottom: '5px',
-          font: 'inherit',
-          cursor: 'pointer',
-          outline: 'inherit',
-          verticalAlign: 'middle',
-        }}>
-        <Badge color={PRIORITY_COLOR_MAPPING[priority || 'NoSet'] || 'grey'}>{priority || 'Priority Not Set'}</Badge>
-      </button>)}</div>;
+  return <div>{editMode ? (editor) :
+    (<button
+      onClick={() => {
+        setEditMode(true);
+        setTimeout(() => ref.current?.focus(), 200);
+      }}
+      css={css`
+        background: none;
+        color: inherit;
+        border: none;
+        padding: 0;
+        paddingBottom: ${awsui.spaceScaledXxs};
+        font: inherit;
+        cursor: pointer;
+        outline: inherit;
+        verticalAlign: middle;
+      `}>
+      <Badge color={PRIORITY_COLOR_MAPPING[priority || 'NoSet'] || 'grey'}>{priority || 'Priority Not Set'}</Badge>
+    </button>)}</div>;
 };
 
 export default PriorityBadge;

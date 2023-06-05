@@ -13,12 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import TextContent from '@cloudscape-design/components/text-content';
+import { css } from '@emotion/react';
 import { FC, ReactNode } from 'react';
 import { TemplateThreatStatement } from '../../../customTypes';
 import CopyToClipbord from '../../generic/CopyToClipboard';
-
-import './index.css';
 
 export interface FinalStatementProps {
   statement: TemplateThreatStatement;
@@ -28,7 +28,11 @@ export interface FinalStatementProps {
 const FinalStatement: FC<FinalStatementProps> = ({ statement, displayStatement }) => {
   return (
     <TextContent>
-      <p className='threat-statement-generator-editor-container-header-statement'>
+      <p css={css`
+        font-size: 20px !important;
+        line-height: 1.5 !important;
+      `}
+      >
         {(statement.statement || (displayStatement && displayStatement.length > 0)) && <CopyToClipbord content={statement.statement}>
           {displayStatement ? displayStatement : statement.statement}
         </CopyToClipbord>}

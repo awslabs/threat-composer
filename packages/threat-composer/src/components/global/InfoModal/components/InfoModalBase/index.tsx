@@ -13,18 +13,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
 import { FC, PropsWithChildren } from 'react';
-
-import './index.css';
+import styles from '../../styles';
 
 export interface InfoModalBaseProps {
   title?: React.ReactNode;
 }
 
 const InfoModalBase: FC<PropsWithChildren<InfoModalBaseProps>> = ({ children, title }) => {
-  return (<div className='threat-statement-editor-info-model-content-base'>
-    {title && <div className='threat-statement-editor-info-model-content-base-header'>{title}</div>}
-    <div className='threat-statement-editor-info-model-content-base-content'>{children}</div>
+  return (<div css={css(styles.contentBase)}>
+    {title && <div css={css(styles.contentBaseHeader)}>{title}</div>}
+    <div css={[css(styles.contentBaseMain), css(styles.contentBaseText)]}>{children}</div>
   </div>);
 };
 

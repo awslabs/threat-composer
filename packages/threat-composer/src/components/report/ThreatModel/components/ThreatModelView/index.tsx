@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import { SpaceBetween } from '@cloudscape-design/components';
 import Button from '@cloudscape-design/components/button';
 import Header from '@cloudscape-design/components/header';
@@ -20,6 +21,7 @@ import Popover from '@cloudscape-design/components/popover';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import { FC, useMemo, useCallback } from 'react';
 import { DataExchangeFormat } from '../../../../../customTypes';
+import printStyles from '../../../../../styles/print';
 import sanitizeHtml from '../../../../../utils/sanitizeHtml';
 import MarkdownViewer from '../../../../generic/MarkdownViewer';
 import { getApplicationInfoContent } from '../../utils/getApplicationInfo';
@@ -30,8 +32,6 @@ import { getAssumptionsContent } from '../../utils/getAssumptions';
 import { getDataflowContent } from '../../utils/getDataFlow';
 import { getMitigationsContent } from '../../utils/getMitigations';
 import { getThreatsContent } from '../../utils/getThreats';
-
-import './index.css';
 
 export interface ThreatModelViewProps {
   composerMode: string;
@@ -62,9 +62,9 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
     await navigator.clipboard.writeText(content);
   }, [content]);
 
-  return (<div className='threat-statement-generator-threat-model-view'>
+  return (<div>
     <SpaceBetween direction='vertical' size='s'>
-      <div className='hidden-print'><Header
+      <div css={printStyles.hiddenPrint}><Header
         actions={
           <SpaceBetween direction="horizontal" size="xs">
             <Popover
