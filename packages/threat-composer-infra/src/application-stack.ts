@@ -75,6 +75,9 @@ export class ApplicationStack extends Stack {
                   response.headers['strict-transport-security'] = { value: 'max-age=63072000; includeSubdomains; preload'}; 
                   response.headers['x-content-type-options'] = { value: 'nosniff'}; 
                   response.headers['x-frame-options'] = {value: 'DENY'}; 
+                  response.headers['cache-control'] = { value: 'no-store, no-cache'};
+                  response.headers['access-control-allow-origin'] = {value: '*'};
+                  response.headers['pragma'] = {value: 'no-cache'};
                   return response; 
                 }`
               ),

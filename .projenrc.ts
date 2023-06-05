@@ -46,11 +46,11 @@ monorepo.addTask('license:checker', {
 });
 
 monorepo.addTask('dev', {
-  exec: 'npx nx run threat-composer-app:dev'
+  exec: 'GENERATE_SOURCEMAP=false npx nx run threat-composer-app:dev'
 });
 
 monorepo.addTask('storybook', {
-  exec: 'npx nx run threat-composer:storybook'
+  exec: 'GENERATE_SOURCEMAP=false npx nx run threat-composer:storybook'
 });
 
 monorepo.compileTask.reset('npx nx run-many --target=build --all --skip-nx-cache --nx-bail');
