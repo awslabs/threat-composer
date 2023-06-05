@@ -93,7 +93,12 @@ const components = {
         return <a href={props.href} target='_blank' rel="noreferrer noopener">{props.children}{' '}<Icon name="external"/></a>;
       }
 
-      return <a href={props.href} rel="noreferrer noopener">{props.children}</a>;
+      return <a href={props.href}>{props.children}</a>;
+    }
+
+    if (props.name) {
+      // @ts-ignore
+      return <a name={props.name}>{props.children}</a>;
     }
 
     return <>{props.children}</>;
