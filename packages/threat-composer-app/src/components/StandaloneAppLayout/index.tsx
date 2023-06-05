@@ -15,6 +15,7 @@
  ******************************************************************************************************************** */
 import Box from '@cloudscape-design/components/box';
 import { FC, PropsWithChildren, useMemo } from 'react';
+import { useMobileMediaQuery } from 'threat-composer/lib/hooks/useMediaQuery';
 import NavHeader from '../NavHeader';
 
 export interface StandaloneAppLayoutProps {
@@ -27,6 +28,7 @@ const StandaloneAppLayout: FC<PropsWithChildren<StandaloneAppLayoutProps>> = ({
   children,
   ...props
 }) => {
+  const isMobileView = useMobileMediaQuery();
   const headerHref = useMemo(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
@@ -39,11 +41,18 @@ const StandaloneAppLayout: FC<PropsWithChildren<StandaloneAppLayoutProps>> = ({
       title={title}
       href={headerHref}
     />
-    <div style={{ paddingTop: '40px' }}>
-      <Box padding='l'>
-        {children}
-      </Box>
-    </div>
+    <main>
+      <div style={isMobileView ? {
+        paddingTop: '40px',
+      } : {
+        paddingTop: '56px',
+      }}>
+        <Box padding='l'>
+          {children}
+        </Box>
+      </div>
+    </main>
+
   </div>);
 };
 

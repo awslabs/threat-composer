@@ -23,7 +23,7 @@ import SideNavigation, { SideNavigationProps } from '@cloudscape-design/componen
 import { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
 import { FC, ReactNode, useState, useCallback, createContext, PropsWithChildren, ReactElement, useContext, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import NavHeader, { NavHeaderProps } from '../NavHeader';
+import { NavHeaderProps } from '../NavHeader';
 
 export type AppLayoutProps = (NavHeaderProps | { header: ReactElement<TopNavigationProps> })
 & {
@@ -145,51 +145,44 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
       {'header' in props ? (
         props.header
       ) : (
-        props.navigationHide ? <NavHeader
-          title={title}
-          href={headerHref}
-          logo={props.logo}
-          {...headerProps}
-        /> : undefined
+        undefined
       )}
-      <div style={props.navigationHide ? { paddingTop: '40px' }: {}}>
-        <AppLayoutComponent
-          breadcrumbs={breadcrumbGroupHide ? undefined :
-            ('breadcrumbGroup' in props ? (
-              props.breadcrumbGroup
-            ) : (
-              <BreadcrumbGroup onFollow={onNavigate} items={activeBreadcrumbs} />
-            ))
-          }
-          navigation={
-            'navigation' in props ? (
-              props.navigation
-            ) : (
-              <div>
-                <SideNavigation
-                  header={{ text: title, href: headerHref }}
-                  activeHref={activeHref}
-                  onFollow={onNavigate}
-                  items={props.navigationItems}
-                />
-              </div>
-            )
-          }
-          content={
-            !contentType || contentType === 'default' ? <Box padding={{ top: 'l' }}>{children}</Box> : children
-          }
-          {...props}
-          contentType={contentType}
-          notifications={notifications}
-          navigationOpen={navigationOpen}
-          onNavigationChange={({ detail }) => setNavigationOpen(detail.open)}
-          toolsHide={toolsHide}
-          tools={tools}
-          toolsOpen={toolsOpen}
-          toolsWidth={toolsWidth}
-          onToolsChange={({ detail }) => setToolsOpen(detail.open)}
-        />
-      </div>
+      <AppLayoutComponent
+        breadcrumbs={breadcrumbGroupHide ? undefined :
+          ('breadcrumbGroup' in props ? (
+            props.breadcrumbGroup
+          ) : (
+            <BreadcrumbGroup onFollow={onNavigate} items={activeBreadcrumbs} />
+          ))
+        }
+        navigation={
+          'navigation' in props ? (
+            props.navigation
+          ) : (
+            <div>
+              <SideNavigation
+                header={{ text: title, href: headerHref }}
+                activeHref={activeHref}
+                onFollow={onNavigate}
+                items={props.navigationItems}
+              />
+            </div>
+          )
+        }
+        content={
+          !contentType || contentType === 'default' ? <Box padding={{ top: 'l' }}>{children}</Box> : children
+        }
+        {...props}
+        contentType={contentType}
+        notifications={notifications}
+        navigationOpen={navigationOpen}
+        onNavigationChange={({ detail }) => setNavigationOpen(detail.open)}
+        toolsHide={toolsHide}
+        tools={tools}
+        toolsOpen={toolsOpen}
+        toolsWidth={toolsWidth}
+        onToolsChange={({ detail }) => setToolsOpen(detail.open)}
+      />
     </AppLayoutContext.Provider>
   );
 };
