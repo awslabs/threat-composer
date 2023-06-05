@@ -16,7 +16,7 @@
 import { BreadcrumbGroupProps } from '@cloudscape-design/components';
 import { useEffect } from 'react';
 import { useWorkspacesContext } from 'threat-composer';
-import { useAppLayoutContext } from '../../components/AppLayout';
+import { useAppLayoutContext } from '../../components/FullAppLayout';
 
 const useSetActiveBreadcrumbGroup = (additionPaths?: BreadcrumbGroupProps.Item[]) => {
   const { setActiveBreadcrumbs } = useAppLayoutContext();

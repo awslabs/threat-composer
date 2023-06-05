@@ -13,27 +13,38 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC } from 'react';
-import { ThreatStatementGenerator } from 'threat-composer';
-import StandaloneAppLayout from '../../../../components/StandaloneAppLayout';
+import Box from '@cloudscape-design/components/box';
+import { FC, PropsWithChildren, useMemo } from 'react';
+import NavHeader from '../NavHeader';
 
-const defaultHref = process.env.PUBLIC_URL || '/';
-export interface StandaloneProps {
-  composeMode: string | null;
+export interface StandaloneAppLayoutProps {
+  href: string;
+  title: string;
 }
 
-const Standalone: FC<StandaloneProps> = ({
-  composeMode,
+const StandaloneAppLayout: FC<PropsWithChildren<StandaloneAppLayoutProps>> = ({
+  title,
+  children,
+  ...props
 }) => {
-  return (
-    <StandaloneAppLayout
-      title='threat-composer'
-      href={defaultHref}
-    >
-      <ThreatStatementGenerator composerMode={composeMode !== 'EditorOnly' ? 'ThreatsOnly' : 'EditorOnly'} />
-    </StandaloneAppLayout>
+  const headerHref = useMemo(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    const href = props.href || '/';
+    return mode ? `${href}/?mode=${mode}` : href;
+  }, [props]);
 
-  );
+  return (<div>
+    <NavHeader
+      title={title}
+      href={headerHref}
+    />
+    <div style={{ paddingTop: '40px' }}>
+      <Box padding='l'>
+        {children}
+      </Box>
+    </div>
+  </div>);
 };
 
-export default Standalone;
+export default StandaloneAppLayout;

@@ -119,7 +119,7 @@ const NavHeader: FC<NavHeaderProps> = ({ title, href, logo, ...props }) => {
   }, [density]);
 
   return (
-    <div style={{ position: 'sticky', top: 0, zIndex: 1002 }}>
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1002, margin: 0 }}>
       <TopNavigation
         {...props}
         utilities={utilities}
