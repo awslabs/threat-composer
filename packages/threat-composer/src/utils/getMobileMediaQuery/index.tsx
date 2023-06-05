@@ -13,10 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { MOBILE_BREAKPOINT } from '../../configs';
+import { MOBILE_BREAKPOINT, SMALL_DEVICE_BREAKPOINT } from '../../configs';
 
 const getMobileMediaQuery = () => {
   return `@media (max-width: ${MOBILE_BREAKPOINT}px)`;
+};
+
+export const getSmallMobileMediaQuery = () => {
+  return `@media (max-width: ${SMALL_DEVICE_BREAKPOINT}px)`;
 };
 
 export default getMobileMediaQuery;

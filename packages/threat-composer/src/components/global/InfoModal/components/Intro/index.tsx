@@ -27,8 +27,8 @@ const InfoModalIntro: FC = () => {
     </p>
     <div css={css(styles.featureSets)}>
       <Grid gridDefinition={[
-        { colspan: { default: 12, xs: 6 } },
-        { colspan: { default: 12, xs: 6 } },
+        { colspan: { default: 12, xxs: 6 } },
+        { colspan: { default: 12, xxs: 6 } },
       ]}>
         <div css={[css(styles.featureSet), css(styles.contentBaseText)]}>
           <div><svg focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="PsychologyIcon" fill='#d1d5db'>

@@ -14,3 +14,4 @@
   limitations under the License.
  ******************************************************************************************************************** */
 export const MOBILE_BREAKPOINT = 688;
+export const SMALL_DEVICE_BREAKPOINT = 465;

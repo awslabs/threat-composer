@@ -94,7 +94,9 @@ const styles: any = {
   },
   contentBaseMain: {
     maxHeight: 'calc(100vh - 150px)',
-    overflow: 'auto',
+    [`${getMobileMediaQuery()}, screen and (max-height: 640px)`]: {
+      overflow: 'auto',
+    },
   },
   contentBaseText: {
     fontSize: '20px',
@@ -123,6 +125,7 @@ const styles: any = {
       [`${getMobileMediaQuery()}, screen and (max-height: 640px)`]: {
         padding: '3px 8px',
         margin: 0,
+        lineHeight: '24px',
       },
     },
     '& li:before': {
@@ -174,7 +177,7 @@ const styles: any = {
     textAlign: 'center',
     marginTop: '100px',
     [`${getMobileMediaQuery()}, screen and (max-height: 640px)`]: {
-      marginTop: '40px',
+      marginTop: '20px',
     },
   },
 };

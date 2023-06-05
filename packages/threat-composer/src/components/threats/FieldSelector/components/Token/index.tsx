@@ -44,7 +44,7 @@ const Token: FC<PropsWithChildren<TokenProps>> = ({
         text-decoration: none;
         border-spacing: 0;
         border-collapse: separate;
-        border: 2px solid;
+        border: 1px solid;
         border-radius: ${awsui.borderRadiusBadge};
         height: fit-content !important;
         padding: ${awsui.spaceScaledXxs};
