@@ -23,9 +23,7 @@ import SideNavigation, { SideNavigationProps } from '@cloudscape-design/componen
 import { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
 import { FC, ReactNode, useState, useCallback, createContext, PropsWithChildren, ReactElement, useContext, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import NavHeader, { NavHeaderProps } from './components/NavHeader';
-
-const defaultHref = process.env.PUBLIC_URL || '/';
+import { NavHeaderProps } from '../NavHeader';
 
 export type AppLayoutProps = (NavHeaderProps | { header: ReactElement<TopNavigationProps> })
 & {
@@ -99,7 +97,8 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
 
   const headerHref = useMemo(() => {
     const mode = searchParams.get('mode');
-    return mode ? `${defaultHref}/?mode=${mode}` : defaultHref;
+    const href = 'href' in props ? props.href : '/';
+    return mode ? `${href}/?mode=${mode}` : href;
   }, [searchParams]);
 
   const [tools, setTools] = useState(props.tools);
@@ -146,12 +145,7 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
       {'header' in props ? (
         props.header
       ) : (
-        props.navigationHide ? <NavHeader
-          title={title}
-          href={headerHref}
-          logo={props.logo}
-          {...headerProps}
-        /> : undefined
+        undefined
       )}
       <AppLayoutComponent
         breadcrumbs={breadcrumbGroupHide ? undefined :

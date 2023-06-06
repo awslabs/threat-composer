@@ -46,10 +46,9 @@ const Header: FC<HeaderProps> = ({
         </Button>
       </SpaceBetween>);
   }, [onComplete, onCancel, onStartOver]);
+
   return (
-    <HeaderComponent variant='h1' actions={actions}>{!statement.numericId || statement.numericId === -1 ? <span style={{
-      visibility: 'hidden',
-    }}>New threat</span> : `Threat ${statement.numericId}`}</HeaderComponent>
+    <HeaderComponent variant='h1' actions={actions}>{!statement.numericId || statement.numericId === -1 ? undefined : `Threat ${statement.numericId}`}</HeaderComponent>
   );
 };
 

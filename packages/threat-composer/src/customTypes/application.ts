@@ -19,7 +19,7 @@ export interface ApplicationInfo {
    */
   name?: string;
   /**
-   * The description of the archiecture diagram
+   * The description of the architecture diagram
    */
   description?: string;
 }

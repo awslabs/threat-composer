@@ -15,8 +15,9 @@
  ******************************************************************************************************************** */
 import { FC } from 'react';
 import { ThreatStatementGenerator } from 'threat-composer';
-import AppLayout from '../AppLayout';
+import StandaloneAppLayout from '../../../../components/StandaloneAppLayout';
 
+const defaultHref = process.env.PUBLIC_URL || '/';
 export interface StandaloneProps {
   composeMode: string | null;
 }
@@ -25,9 +26,13 @@ const Standalone: FC<StandaloneProps> = ({
   composeMode,
 }) => {
   return (
-    <AppLayout standalone>
+    <StandaloneAppLayout
+      title='threat-composer'
+      href={defaultHref}
+    >
       <ThreatStatementGenerator composerMode={composeMode !== 'EditorOnly' ? 'ThreatsOnly' : 'EditorOnly'} />
-    </AppLayout>
+    </StandaloneAppLayout>
+
   );
 };
 

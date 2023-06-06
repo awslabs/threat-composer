@@ -26,6 +26,7 @@ export interface ContextAggregatorProps {
   onThreatListView?: WorkspaceContextAggregatorProps['onThreatListView'];
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
+  onImported?: () => void;
 }
 
 const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
@@ -36,11 +37,13 @@ const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
   onThreatListView,
   onPreview,
   onPreviewClose,
+  onImported,
 }) => {
   return (
     <GlobalSetupContextProvider
       onPreview={onPreview}
       onPreviewClose={onPreviewClose}
+      onImported={onImported}
       composerMode={composerMode}>
       <WorkspacesContextProvider onWorkspaceChanged={onWorkspaceChanged}>
         {(workspaceId) => (<WorkspaceContextAggregator

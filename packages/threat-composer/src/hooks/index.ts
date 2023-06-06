@@ -13,12 +13,5 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { useRef } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-
-const useUniqueId = (defaultId?: string): string => {
-  const { current: uniqueId } = useRef(defaultId ?? uuidv4());
-  return uniqueId;
-};
-
-export default useUniqueId;
+export { default as useMediaQuery } from './useMediaQuery';
+export * from './useMediaQuery';

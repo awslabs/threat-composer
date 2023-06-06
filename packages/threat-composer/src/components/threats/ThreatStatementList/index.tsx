@@ -321,6 +321,7 @@ const ThreatStatementList: FC = () => {
       <Container header={
         <Header
           actions={actions}
+          counter={`(${filteredStatementList.length})`}
           info={composerMode === 'Full' ? undefined : <Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
         >Threat Statement List</Header>
       }>

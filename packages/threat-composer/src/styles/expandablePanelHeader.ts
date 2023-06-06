@@ -16,7 +16,7 @@
 import { css } from '@emotion/react';
 
 const styles = css({
-  fontSize: '14px',
+  fontSize: '16px',
 });
 
 export default styles;

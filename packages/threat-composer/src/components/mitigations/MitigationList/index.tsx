@@ -24,6 +24,7 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { AssumptionLink, Mitigation, MitigationLink } from '../../../customTypes';
+import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
 import MitigationCard from '../MitigationCard';
 import MitigationCreationCard from '../MitigationCreationCard';
 
@@ -36,10 +37,12 @@ const MitigationList: FC = () => {
 
   const {
     addMitigationLinks,
+    mitigationLinkList,
   } = useMitigationLinksContext();
 
   const {
     addAssumptionLinks,
+    assumptionLinkList,
   } = useAssumptionLinksContext();
 
   const [filteringText, setFilteringText] = useState('');
@@ -49,14 +52,29 @@ const MitigationList: FC = () => {
     setSelectedTags,
   ] = useState<string[]>([]);
 
+  const [
+    selectedLinkedThreatsFilter,
+    setSelectedLinkedThreatsFilter,
+  ] = useState(ALL);
+
+  const [
+    selectedLinkedAssumptionsFilter,
+    setSelectedLinkedAssumptionsFilter,
+  ] = useState(ALL);
+
   const hasNoFilter = useMemo(() => {
     return (filteringText === ''
+      && selectedLinkedAssumptionsFilter === ALL
+      && selectedLinkedThreatsFilter === ALL
       && selectedTags.length === 0);
-  }, [filteringText, selectedTags]);
+  }, [filteringText, selectedTags,
+    selectedLinkedThreatsFilter, selectedLinkedAssumptionsFilter]);
 
   const handleClearFilter = useCallback(() => {
     setFilteringText('');
     setSelectedTags([]);
+    setSelectedLinkedAssumptionsFilter(ALL);
+    setSelectedLinkedThreatsFilter(ALL);
   }, []);
 
   const allTags = useMemo(() => {
@@ -98,10 +116,28 @@ const MitigationList: FC = () => {
       });
     }
 
+    if (selectedLinkedThreatsFilter !== ALL) {
+      output = output.filter(st => {
+        return mitigationLinkList.some(ml => ml. mitigationId === st.id) ?
+          selectedLinkedThreatsFilter === WITH_LINKED_ENTITY :
+          selectedLinkedThreatsFilter === WITHOUT_NO_LINKED_ENTITY;
+      });
+    }
+
+    if (selectedLinkedAssumptionsFilter !== ALL) {
+      output = output.filter(st => {
+        return assumptionLinkList.some(al => al.linkedId === st.id) ?
+          selectedLinkedAssumptionsFilter === WITH_LINKED_ENTITY :
+          selectedLinkedAssumptionsFilter === WITHOUT_NO_LINKED_ENTITY;
+      });
+    }
+
     output = output.sort((op1, op2) => (op2.displayOrder || Number.MAX_VALUE) - (op1.displayOrder || Number.MAX_VALUE));
 
     return output;
-  }, [filteringText, mitigationList, selectedTags]);
+  }, [filteringText, mitigationList, selectedTags,
+    assumptionLinkList, mitigationLinkList,
+    selectedLinkedAssumptionsFilter, selectedLinkedThreatsFilter]);
 
   const handleSaveNew = useCallback((mitigation: Mitigation,
     linkedAssumptionIds: string[],
@@ -134,7 +170,9 @@ const MitigationList: FC = () => {
   return (<div>
     <SpaceBetween direction='vertical' size='s'>
       <Container header={
-        <Header>Mitigation List</Header>
+        <Header
+          counter={`(${filteredList.length})`}
+        >Mitigation List</Header>
       }>
         <SpaceBetween direction='vertical' size='s'>
           <TextFilter
@@ -146,8 +184,12 @@ const MitigationList: FC = () => {
             }
           />
           <Grid
-            gridDefinition={[{ colspan: { default: 12, xs: 3 } },
-              { colspan: { default: 1 } }]}
+            gridDefinition={[
+              { colspan: { default: 12, xs: 3 } },
+              { colspan: { default: 12, xs: 3 } },
+              { colspan: { default: 12, xs: 3 } },
+              { colspan: { default: 1 } },
+            ]}
           >
             <Multiselect
               tokenLimit={0}
@@ -165,6 +207,18 @@ const MitigationList: FC = () => {
               }))}
               placeholder="Filtered by tags"
               selectedAriaLabel="Selected"
+            />
+            <LinkedEntityFilter
+              label='Linked threats'
+              entityDisplayName='threats'
+              selected={selectedLinkedThreatsFilter}
+              setSelected={setSelectedLinkedThreatsFilter}
+            />
+            <LinkedEntityFilter
+              label='Linked assumptions'
+              entityDisplayName='assumptions'
+              selected={selectedLinkedAssumptionsFilter}
+              setSelected={setSelectedLinkedAssumptionsFilter}
             />
             <Button onClick={handleClearFilter}
               variant='icon'

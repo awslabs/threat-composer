@@ -17,13 +17,15 @@ import { SideNavigationProps } from '@cloudscape-design/components/side-navigati
 import { FC, useMemo, useCallback, useState } from 'react';
 import { Routes, Route, RouteProps, useParams, useSearchParams, useNavigate, Navigate } from 'react-router-dom';
 import { ContextAggregator, DataExchangeFormat, WorkspaceSelector, useWorkspacesContext } from 'threat-composer';
+import AppLayout from '../../../../components/FullAppLayout';
 import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_DATAFLOW_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST, ROUTE_VIEW_THREAT_MODEL } from '../../../../config/routes';
 import routes from '../../../../routes';
 import generateUrl from '../../../../utils/generateUrl';
 import ThreatModelReport from '../../../ThreatModelReport';
-import AppLayout from '../AppLayout';
 
 const TEMP_PREVIEW_DATA_KEY = 'ThreatStatementGenerator.TempPreviewData';
+
+const defaultHref = process.env.PUBLIC_URL || '/';
 
 const AppInner = () => {
   const [searchParms] = useSearchParams();
@@ -110,6 +112,10 @@ const Full: FC = () => {
     window.open(`${window.location.pathname}?${urlParams.toString()}`, '_blank', 'noopener,noreferrer,resizable');
   }, []);
 
+  const handleImported = useCallback(() => {
+    navigate(generateUrl(ROUTE_VIEW_THREAT_MODEL, searchParms, workspaceId));
+  }, [navigate, workspaceId, searchParms]);
+
   return (
     <ContextAggregator
       composerMode='Full'
@@ -117,11 +123,13 @@ const Full: FC = () => {
       onThreatListView={handleThreatListView}
       onThreatEditorView={handleThreatEditorView}
       onPreview={handlePreview}
+      onImported={handleImported}
     >
       {isPreview ? (
         <ThreatModelReport />
       ) : (<AppLayout
-        standalone={false}
+        title='threat-composer'
+        href={defaultHref}
         navigationItems={navigationItems}
         availableRoutes={routes.map(x => x.path || '')}
         breadcrumbGroup={<WorkspaceSelector embededMode={false} />}

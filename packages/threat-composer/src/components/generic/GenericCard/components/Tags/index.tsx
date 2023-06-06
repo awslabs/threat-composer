@@ -14,11 +14,13 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
+import Button from '@cloudscape-design/components/button';
 import { CancelableEventHandler, BaseKeyDetail } from '@cloudscape-design/components/internal/events';
 import TokenGroup from '@cloudscape-design/components/token-group';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { FC, useCallback, useState } from 'react';
+import { useMobileMediaQuery } from '../../../../../hooks/useMediaQuery';
 import getMobileMediaQuery from '../../../../../utils/getMobileMediaQuery';
 import Input from '../../../../generic/Input';
 
@@ -51,12 +53,18 @@ const Tags: FC<TagsProps> = ({
   onRemoveTagFromEntity,
 }) => {
   const [value, setValue] = useState('');
+  const isMoblieView = useMobileMediaQuery();
 
   const handleKeyDown: CancelableEventHandler<BaseKeyDetail> = useCallback(({ detail }) => {
     if (detail.keyCode === 13 && value) {
       onAddTagToEntity?.(entityId, value);
       setValue('');
     }
+  }, [onAddTagToEntity, entityId, value]);
+
+  const handleAddTag = useCallback(() => {
+    onAddTagToEntity?.(entityId, value);
+    setValue('');
   }, [onAddTagToEntity, entityId, value]);
 
   return (<div css={styles.tags}>
@@ -73,6 +81,7 @@ const Tags: FC<TagsProps> = ({
       <Input value={value}
         onKeyDown={handleKeyDown}
         onChange={({ detail }) => setValue(detail.value)}
+        secondaryControl={isMoblieView ? <Button onClick={handleAddTag}>Add Tag</Button> : undefined}
         placeholder='Add tag' />
     </div>
   </div>);
