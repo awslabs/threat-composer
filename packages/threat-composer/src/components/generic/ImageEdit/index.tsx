@@ -16,13 +16,13 @@
 /** @jsxImportSource @emotion/react */
 import FormField from '@cloudscape-design/components/form-field';
 import Header from '@cloudscape-design/components/header';
-import Input from '@cloudscape-design/components/input';
 import RadioGroup from '@cloudscape-design/components/radio-group';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import imageCompression from 'browser-image-compression';
 import { FC, useCallback, useEffect, useState } from 'react';
 import imageStyles from '../../../styles/image';
 import getBase64 from '../../../utils/getBase64';
+import Input from '../../generic/Input';
 import FileUpload from '../FileUpload';
 
 export interface ImageUploadProps {

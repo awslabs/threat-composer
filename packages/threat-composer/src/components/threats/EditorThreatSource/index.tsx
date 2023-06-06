@@ -16,10 +16,11 @@
 /** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
-import Input, { InputProps } from '@cloudscape-design/components/input';
+import { InputProps } from '@cloudscape-design/components/input';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useCallback, useEffect, useRef, forwardRef } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
+import Input from '../../generic/Input';
 import EditorLayout from '../EditorLayout';
 import styles from '../EditorLayout/styles';
 import ExampleList from '../ExampleList';
