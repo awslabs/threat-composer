@@ -112,6 +112,10 @@ const Full: FC = () => {
     window.open(`${window.location.pathname}?${urlParams.toString()}`, '_blank', 'noopener,noreferrer,resizable');
   }, []);
 
+  const handleImported = useCallback(() => {
+    navigate(generateUrl(ROUTE_VIEW_THREAT_MODEL, searchParms, workspaceId));
+  }, [navigate, workspaceId, searchParms]);
+
   return (
     <ContextAggregator
       composerMode='Full'
@@ -119,6 +123,7 @@ const Full: FC = () => {
       onThreatListView={handleThreatListView}
       onThreatEditorView={handleThreatEditorView}
       onPreview={handlePreview}
+      onImported={handleImported}
     >
       {isPreview ? (
         <ThreatModelReport />

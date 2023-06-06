@@ -27,6 +27,7 @@ export interface GlobalSetupContextProviderProps {
   composerMode?: ComposerMode;
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
+  onImported?: () => void;
 }
 
 const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProviderProps>> = ({
@@ -34,6 +35,7 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
   composerMode = 'ThreatsOnly',
   onPreview,
   onPreviewClose,
+  onImported,
 }) => {
   const [hasVisitBefore, setHasVisitBefore] = useLocalStorageState<boolean>(LOCAL_STORAGE_KEY_NEW_VISIT_FLAG, {
     defaultValue: false,
@@ -55,6 +57,7 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
       showInfoModal: () => setInfoModalVisible(true),
       onPreview,
       onPreviewClose,
+      onImported,
     }}>
       {children}
       {infoModalVisible && <InfoModal

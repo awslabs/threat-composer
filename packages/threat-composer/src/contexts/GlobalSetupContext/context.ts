@@ -22,6 +22,7 @@ export interface GlobalSetupContextApi {
   composerMode: ComposerMode;
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
+  onImported?: () => void;
 }
 
 const initialState: GlobalSetupContextApi = {

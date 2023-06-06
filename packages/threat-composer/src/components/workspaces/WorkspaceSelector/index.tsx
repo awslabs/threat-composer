@@ -24,7 +24,7 @@ import { FC, useMemo, useState, useCallback, PropsWithChildren } from 'react';
 import { DEFAULT_WORKSPACE_ID, DEFAULT_WORKSPACE_LABEL } from '../../../configs/constants';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext';
-import { TemplateThreatStatement } from '../../../customTypes';
+import { DataExchangeFormat, TemplateThreatStatement } from '../../../customTypes';
 import useImportExport from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
 import AddWorkspace from '../../workspaces/EditWorkspace';
@@ -55,7 +55,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
 
   const { importData, exportAll, exportSelectedThreats } = useImportExport();
   const { removeData, deleteCurrentWorkspace } = useRemoveData();
-  const { composerMode, onPreview, onPreviewClose } = useGlobalSetupContext();
+  const { composerMode, onPreview, onPreviewClose, onImported } = useGlobalSetupContext();
 
   const {
     currentWorkspace,
@@ -160,6 +160,11 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     }
   }, []);
 
+  const handleImport = useCallback((data: DataExchangeFormat) => {
+    importData(data);
+    onImported?.();
+  }, [importData, onImported]);
+
   return (<>
     <SpaceBetween direction="horizontal" size="xs">
       <Select
@@ -214,7 +219,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
       visible={fileImportModalVisible}
       setVisible={setFileImportModalVisible}
       onExport={exportAll}
-      onImport={importData}
+      onImport={handleImport}
       onPreview={onPreview}
       onPreviewClose={onPreviewClose}
     />}
@@ -245,8 +250,8 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
           Export data
         </Button>}
         type='warning'>
-        Delete <b>Data from {currentWorkspace ? `workspace ${currentWorkspace.name}` : 'Default workspace' }</b> permenantly? This action cannot be undone.
-        <br/>
+        Delete <b>Data from {currentWorkspace ? `workspace ${currentWorkspace.name}` : 'Default workspace'}</b> permenantly? This action cannot be undone.
+        <br />
         You can export the data to a json file as backup.
       </Alert>
     </DeleteConfirmationDialog>}
@@ -267,7 +272,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         </Button>}
         type='warning'>
         Delete <b>workspace {currentWorkspace?.name}</b> permenantly? All the data inside workspace will be deleted. This action cannot be undone.
-        <br/>
+        <br />
         You can export the data to a json file as backup.
       </Alert>
     </DeleteConfirmationDialog>}

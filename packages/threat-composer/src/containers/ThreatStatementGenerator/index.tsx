@@ -31,6 +31,7 @@ export interface ThreatStatementGeneratorInnerProps {
   composerMode?: ComposerMode;
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
+  onImported?: () => void;
 }
 
 /**
@@ -41,11 +42,13 @@ const ThreatStatementGenerator: FC<ThreatStatementGeneratorInnerProps> = ({
   composerMode,
   onPreview,
   onPreviewClose,
+  onImported,
 }) => {
   return (
     <ContextAggregator
       onPreview={onPreview}
       onPreviewClose={onPreviewClose}
+      onImported={onImported}
       composerMode={composerMode} >
       <ThreatStatementGeneratorInner />
     </ContextAggregator>

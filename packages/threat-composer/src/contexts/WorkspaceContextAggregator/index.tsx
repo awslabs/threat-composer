@@ -33,6 +33,7 @@ export interface WorkspaceContextAggregatorProps {
   onThreatListView?: ThreatsContextProviderProps['onThreatListView'];
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
+  onImported?: () => void;
 }
 
 const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggregatorProps>> = ({
@@ -74,10 +75,15 @@ const WorkspaceContextAggregator: FC<PropsWithChildren<WorkspaceContextAggregato
   requiredGlobalSetupContext = true,
   onPreview,
   onPreviewClose,
+  onImported,
   ...rest
 }) => {
   return requiredGlobalSetupContext ? (
-    <GlobalSetupContextProvider composerMode={composerMode} onPreview={onPreview} onPreviewClose={onPreviewClose}>
+    <GlobalSetupContextProvider composerMode={composerMode}
+      onPreview={onPreview}
+      onPreviewClose={onPreviewClose}
+      onImported={onImported}
+    >
       <WorkspaceContextInnerAggregator workspaceId={workspaceId} {...rest}>
         {children}
       </WorkspaceContextInnerAggregator>

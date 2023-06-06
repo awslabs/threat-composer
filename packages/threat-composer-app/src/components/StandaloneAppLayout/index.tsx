@@ -15,13 +15,17 @@
  ******************************************************************************************************************** */
 import Box from '@cloudscape-design/components/box';
 import { FC, PropsWithChildren, useMemo } from 'react';
-import { useMobileMediaQuery } from 'threat-composer/lib/hooks/useMediaQuery';
+import { useMobileMediaQuery } from 'threat-composer';
 import NavHeader from '../NavHeader';
 
 export interface StandaloneAppLayoutProps {
   href: string;
   title: string;
 }
+
+const baseStyles = {
+  maxWidth: '1419px',
+};
 
 const StandaloneAppLayout: FC<PropsWithChildren<StandaloneAppLayoutProps>> = ({
   title,
@@ -42,14 +46,22 @@ const StandaloneAppLayout: FC<PropsWithChildren<StandaloneAppLayoutProps>> = ({
       href={headerHref}
     />
     <main>
-      <div style={isMobileView ? {
-        paddingTop: '40px',
-      } : {
-        paddingTop: '56px',
+      <div style={{
+        display: 'flex',
+        width: '100%',
+        justifyContent: 'center',
       }}>
-        <Box padding='l'>
-          {children}
-        </Box>
+        <div style={isMobileView ? {
+          ...baseStyles,
+          paddingTop: '40px',
+        } : {
+          ...baseStyles,
+          paddingTop: '56px',
+        }}>
+          <Box padding='l'>
+            {children}
+          </Box>
+        </div>
       </div>
     </main>
 
