@@ -91,9 +91,10 @@ const ImageEdit: FC<ImageUploadProps> = ({
     {imageSource === 'file' && <SpaceBetween
       direction='vertical'
       size='s'>
-      {image && <Header variant='h3'>Preview</Header>}
-      {image && <img css={imageStyles} src={image} alt='Preview Diagram' />}
+      {image && <Header key='header' variant='h3'>Preview</Header>}
+      {image && <img key='image' css={imageStyles} src={image} alt='Preview Diagram' />}
       <FileUpload
+        key='fileUpload'
         label='Image Upload'
         accept='image/png, image/gif, image/jpeg'
         files={selectedFiles}
@@ -104,7 +105,7 @@ const ImageEdit: FC<ImageUploadProps> = ({
       label="Image Url"
       key="imageUrl"
     >
-      {inputValue && <Header variant='h3'>Preview</Header>}
+      {inputValue && <Header key='header' variant='h3'>Preview</Header>}
       {inputValue && <img css={imageStyles} src={inputValue} alt='Preview Diagram' />}
       <Input
         value={inputValue}
