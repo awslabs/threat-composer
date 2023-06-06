@@ -13,23 +13,26 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ApplicationInfo } from './application';
-import { ArchitectureInfo } from './architecture';
-import { Assumption, AssumptionLink } from './assumptions';
-import { DataflowInfo } from './dataflow';
-import { Mitigation, MitigationLink } from './mitigations';
-import { TemplateThreatStatement } from './threats';
-import { Workspace } from './workspaces';
+import { z } from 'zod';
+import { ApplicationInfoSchema } from './application';
+import { ArchitectureInfoSchema } from './architecture';
+import { AssumptionSchema, AssumptionLinkSchema } from './assumptions';
+import { DataflowInfoSchema } from './dataflow';
+import { MitigationSchema, MitigationLinkSchema } from './mitigations';
+import { TemplateThreatStatementSchema } from './threats';
+import { WorkspaceSchema } from './workspaces';
 
-export interface DataExchangeFormat {
-  schema: number;
-  workspace?: Workspace;
-  applicationInfo?: ApplicationInfo;
-  architecture?: ArchitectureInfo;
-  dataflow?: DataflowInfo;
-  assumptions?: Assumption[];
-  mitigations?: Mitigation[];
-  assumptionLinks?: AssumptionLink[];
-  mitigationLinks?: MitigationLink[];
-  threats?: TemplateThreatStatement[];
-}
+export const DataExchangeFormatSchema = z.object({
+  schema: z.number(),
+  workspace: WorkspaceSchema.optional(),
+  applicationInfo: ApplicationInfoSchema.optional(),
+  architecture: ArchitectureInfoSchema.optional(),
+  dataflow: DataflowInfoSchema.optional(),
+  assumptions: AssumptionSchema.array().optional(),
+  mitigations: MitigationSchema.array().optional(),
+  assumptionLinks: AssumptionLinkSchema.array().optional(),
+  mitigationLinks: MitigationLinkSchema.array().optional(),
+  threats: TemplateThreatStatementSchema.array().optional(),
+});
+
+export type DataExchangeFormat = z.infer<typeof DataExchangeFormatSchema>;

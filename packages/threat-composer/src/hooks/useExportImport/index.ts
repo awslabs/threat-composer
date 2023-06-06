@@ -28,6 +28,7 @@ import { useThreatsContext } from '../../contexts/ThreatsContext/context';
 import { ComposerMode, DataExchangeFormat, TemplateThreatStatement, Workspace } from '../../customTypes';
 import downloadObjectAsJson from '../../utils/downloadObjectAsJson';
 import sanitizeHtml from '../../utils/sanitizeHtml';
+import validateData from '../../utils/validateData';
 
 const SCHEMA_VERSION = 1.0;
 
@@ -101,7 +102,13 @@ const useImportExport = () => {
       };
     }
 
-    const importedData = parsedData as DataExchangeFormat;
+    const validatedData = validateData(parsedData);
+
+    if (!validatedData.success) {
+      throw new Error(validatedData.error.issues.map(i => i.message).join(';'));
+    }
+
+    const importedData = validatedData.data as DataExchangeFormat;
 
     if (!parsedData.schema || parsedData.schema !== SCHEMA_VERSION) {
       throw new Error('Unsupported Schema version');

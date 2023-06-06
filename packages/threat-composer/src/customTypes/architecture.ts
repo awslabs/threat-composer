@@ -13,8 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { BaseImageInfo } from './entities';
+import { z } from 'zod';
+import { BaseImageInfoSchema } from './entities';
 
-export interface ArchitectureInfo extends BaseImageInfo {
+export const ArchitectureInfoSchema = BaseImageInfoSchema.extend({});
 
-}
+export type ArchitectureInfo = z.infer<typeof ArchitectureInfoSchema>;

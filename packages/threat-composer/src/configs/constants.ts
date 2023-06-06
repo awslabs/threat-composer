@@ -16,3 +16,9 @@
 export const DEFAULT_WORKSPACE_ID = 'default';
 export const DEFAULT_WORKSPACE_LABEL = 'Default';
 export const DEFAULT_NEW_ENTITY_ID = 'new';
+
+export const SINGLE_FIELD_INPUT_TAG_MAX_LENGTH = 30;
+export const SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH = 50;
+export const SINGLE_FIELD_INPUT_MAX_LENGTH = 200;
+export const FREE_TEXT_INPUT_SMALL_MAX_LENGTH = 1000;
+export const FREE_TEXT_INPUT_MAX_LENGTH = 10000;

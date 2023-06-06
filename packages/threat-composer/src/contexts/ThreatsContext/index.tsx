@@ -112,7 +112,7 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
   }, []);
 
   const perFieldExamples: PerFieldExamplesType = useMemo(() => {
-    return threatStatementExamples.reduce((agg: PerFieldExamplesType, st: TemplateThreatStatement, index: number) => {
+    return (threatStatementExamples as TemplateThreatStatement[]).reduce((agg: PerFieldExamplesType, st: TemplateThreatStatement, index: number) => {
       return {
         threat_source: addNewValueToStringArray(agg.threat_source, st.threatSource),
         prerequisites: addNewValueToPerFieldExampleArray(agg.prerequisites, 'prerequisites', st, index),
@@ -264,7 +264,7 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
     editingStatement,
     statementList,
     setStatementList,
-    threatStatementExamples,
+    threatStatementExamples: threatStatementExamples as TemplateThreatStatement[],
     perFieldExamples,
     previousInputs,
     setView,

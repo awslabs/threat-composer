@@ -18,6 +18,7 @@ import Button from '@cloudscape-design/components/button';
 import { TextareaProps } from '@cloudscape-design/components/textarea';
 import { FC, forwardRef, useCallback, useRef, RefObject, useImperativeHandle } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext';
+import { TemplateThreatStatementSchema } from '../../../customTypes';
 import Textarea from '../../generic/Textarea';
 import EditorLayout from '../EditorLayout';
 import styles from '../EditorLayout/styles';
@@ -62,6 +63,7 @@ const EditorThreatImpact: FC<EditorProps> = forwardRef<TextareaProps.Ref, Editor
           onChange={({ detail }) => handleChange(detail.value)}
           value={statement.threatImpact || ''}
           placeholder="Enter threat impact"
+          validateData={TemplateThreatStatementSchema.shape.threatImpact.safeParse}
           rows={2}
         />
       </div>

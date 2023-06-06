@@ -18,6 +18,7 @@ import Button from '@cloudscape-design/components/button';
 import { TextareaProps } from '@cloudscape-design/components/textarea';
 import { FC, useCallback, forwardRef, useRef, RefObject, useImperativeHandle } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
+import { TemplateThreatStatementSchema } from '../../../customTypes';
 import Textarea from '../../generic/Textarea';
 import EditorLayout from '../EditorLayout';
 import styles from '../EditorLayout/styles';
@@ -62,6 +63,7 @@ const EditorPrerequisites: FC<EditorProps> = forwardRef<TextareaProps.Ref, Edito
           value={statement.prerequisites || ''}
           placeholder="Enter prerequisites"
           spellcheck
+          validateData={TemplateThreatStatementSchema.shape.prerequisites.safeParse}
           rows={2}
         />
       </div>

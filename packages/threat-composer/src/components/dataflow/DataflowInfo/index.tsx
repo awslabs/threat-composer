@@ -15,16 +15,18 @@
  ******************************************************************************************************************** */
 import { FC } from 'react';
 import { useDataflowInfoContext } from '../../../contexts/DataflowContext/context';
+import { DataflowInfoSchema } from '../../../customTypes';
 import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
 
-const ArchitectureInfo: FC = () => {
+const DataflowInfo: FC = () => {
   const { dataflowInfo, setDataflowInfo } = useDataflowInfoContext();
   return <BaseDiagramInfo
     headerTitle='Dataflow'
     diagramTitle='Dataflow Diagram'
     entity={dataflowInfo}
     onConfirm={(diagram) => setDataflowInfo(diagram)}
+    validateData={DataflowInfoSchema.shape.description.safeParse}
   />;
 };
 
-export default ArchitectureInfo;
+export default DataflowInfo;

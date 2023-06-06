@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useMemo } from 'react';
-import { EntityBase } from '../../../customTypes';
+import { EntityBase, MetadataCommentSchema } from '../../../customTypes';
 import MarkdownEditor from '../MarkdownEditor';
 
 export interface CommentsEditProps<T> {
@@ -35,6 +35,7 @@ const CommentsEdit = <T extends EntityBase>({
     value={comments}
     onChange={(value) => onEditEntity(entity, 'Comments', value)}
     rows={3}
+    validateData={MetadataCommentSchema.safeParse}
   />);
 };
 

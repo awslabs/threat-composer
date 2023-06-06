@@ -13,8 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { BaseImageInfo } from './entities';
+import { z } from 'zod';
+import { BaseImageInfoSchema } from './entities';
 
-export interface DataflowInfo extends BaseImageInfo {
+export const DataflowInfoSchema = BaseImageInfoSchema.extend({});
 
-}
+export type DataflowInfo = z.infer<typeof DataflowInfoSchema>;

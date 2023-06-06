@@ -20,7 +20,7 @@ import Header from '@cloudscape-design/components/header';
 import Modal from '@cloudscape-design/components/modal';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import React, { FC, useMemo, useState } from 'react';
-import { TemplateThreatStatement } from '../../../customTypes';
+import { TemplateThreatStatement, TemplateThreatStatementSchema } from '../../../customTypes';
 import renderThreatStatement from '../../../utils/renderThreatStatement';
 import Textarea from '../../generic/Textarea';
 
@@ -77,6 +77,7 @@ const CustomTemplate: FC<CustomTemplateProps> = ({ visible, setVisible, statemen
         value={value}
         onChange={({ detail }) => setValue(detail.value)}
         label="Template"
+        validateData={TemplateThreatStatementSchema.shape.customTemplate.safeParse}
         constraintText="Tokens like [threat_source], [prerequisites], [threat_action], [threat_impact], [impacted_goal] or [impacted_assets] will be replaced by actual content. "
       />
     </SpaceBetween>

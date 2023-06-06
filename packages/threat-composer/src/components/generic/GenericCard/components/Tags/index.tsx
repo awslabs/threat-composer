@@ -20,6 +20,7 @@ import TokenGroup from '@cloudscape-design/components/token-group';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { FC, useCallback, useState } from 'react';
+import { TagSchema } from '../../../../../customTypes';
 import { useMobileMediaQuery } from '../../../../../hooks/useMediaQuery';
 import getMobileMediaQuery from '../../../../../utils/getMobileMediaQuery';
 import Input from '../../../../generic/Input';
@@ -81,6 +82,7 @@ const Tags: FC<TagsProps> = ({
       <Input value={value}
         onKeyDown={handleKeyDown}
         onChange={({ detail }) => setValue(detail.value)}
+        validateData={TagSchema.safeParse}
         secondaryControl={isMoblieView ? <Button onClick={handleAddTag}>Add Tag</Button> : undefined}
         placeholder='Add tag' />
     </div>

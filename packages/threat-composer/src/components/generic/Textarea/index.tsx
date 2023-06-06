@@ -16,18 +16,21 @@
 import FormField, { FormFieldProps } from '@cloudscape-design/components/form-field';
 import TextareaComponent, { TextareaProps as TextareaComponetProps } from '@cloudscape-design/components/textarea';
 import React, { FC } from 'react';
+import { z } from 'zod';
 import useContentValidation from '../../../hooks/useContentValidation';
 
 export interface TextAreaProps extends FormFieldProps, TextareaComponetProps {
   ref?: React.ForwardedRef<any>;
+  validateData?: (newValue: string) => z.SafeParseReturnType<string | undefined, string | undefined>;
 }
 
 const Textarea: FC<TextAreaProps> = React.forwardRef<TextareaComponetProps.Ref, TextAreaProps>(({
   value,
   onChange,
+  validateData,
   ...props
 }, ref) => {
-  const { tempValue, errorText, handleChange } = useContentValidation(value, onChange);
+  const { tempValue, errorText, handleChange } = useContentValidation(value, onChange, validateData);
 
   return (
     <FormField

@@ -13,13 +13,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export interface ApplicationInfo {
+import { z } from 'zod';
+import { FREE_TEXT_INPUT_MAX_LENGTH, SINGLE_FIELD_INPUT_MAX_LENGTH } from '../configs';
+
+export const ApplicationInfoSchema = z.object({
   /**
    * The name of the application.
-   */
-  name?: string;
+  */
+  name: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional(),
   /**
    * The description of the architecture diagram
    */
-  description?: string;
-}
+  description: z.string().max(FREE_TEXT_INPUT_MAX_LENGTH).optional(),
+});
+
+export type ApplicationInfo = z.infer<typeof ApplicationInfoSchema>;

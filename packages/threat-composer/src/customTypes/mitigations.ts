@@ -13,20 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { AssumptionLink } from './assumptions';
-import { ContentEntityBase, EntityLinkBase } from './entities';
+import { z } from 'zod';
+import { ContentEntityBaseSchema, EntityLinkBaseSchema } from './entities';
 
-export interface Mitigation extends ContentEntityBase {
-  assumptionList?: AssumptionLink[];
-}
+export const MitigationSchema = ContentEntityBaseSchema.extend({});
 
-export interface MitigationLink extends EntityLinkBase {
+export type Mitigation = z.infer<typeof MitigationSchema>;
+
+export const MitigationLinkSchema = EntityLinkBaseSchema.extend({
   /**
    * The mitigation being linked.
    */
-  mitigationId: string;
+  mitigationId: z.string(),
   /**
    * The linked entity Id.
    */
-  linkedId: string;
-}
+  linkedId: z.string(),
+});
+
+export type MitigationLink = z.infer<typeof MitigationLinkSchema>;

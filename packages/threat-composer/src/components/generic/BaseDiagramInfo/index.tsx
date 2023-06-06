@@ -22,7 +22,7 @@ import { FC, useCallback, useState, useMemo } from 'react';
 import { BaseImageInfo } from '../../../customTypes';
 import imageStyles from '../../../styles/image';
 import ImageEdit from '../ImageEdit';
-import MarkdownEditor from '../MarkdownEditor';
+import MarkdownEditor, { MarkdownEditorProps } from '../MarkdownEditor';
 import MarkdownViewer from '../MarkdownViewer';
 
 export interface BaseDiagramInfoProps {
@@ -30,6 +30,7 @@ export interface BaseDiagramInfoProps {
   headerTitle: string;
   diagramTitle: string;
   onConfirm: (info: BaseImageInfo) => void;
+  validateData?: MarkdownEditorProps['validateData'];
 }
 
 const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
@@ -37,6 +38,7 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
   diagramTitle,
   entity,
   onConfirm,
+  validateData,
 }) => {
   const [editMode, setEditMode] = useState(!entity.description && !entity.image);
   const [image, setImage] = useState<string>('');
@@ -65,8 +67,14 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
 
   return (<Container header={<Header actions={actions}>{headerTitle}</Header>}>
     {editMode ? (<SpaceBetween direction='vertical' size='s'>
-      <MarkdownEditor label='Introduction' value={content} onChange={setContent} parentHeaderLevel='h3'/>
-      <Header variant='h3'>Architecture Diagram</Header>
+      <MarkdownEditor
+        label='Introduction'
+        value={content}
+        onChange={setContent}
+        parentHeaderLevel='h3'
+        validateData={validateData}
+      />
+      <Header variant='h3'>{headerTitle} Diagram</Header>
       <ImageEdit value={image} onChange={setImage} />
     </SpaceBetween>) :
       (<SpaceBetween direction='vertical' size='s'>

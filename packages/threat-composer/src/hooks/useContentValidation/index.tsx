@@ -16,17 +16,21 @@
 import { BaseChangeDetail } from '@cloudscape-design/components/input/interfaces';
 import { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import { useCallback, useEffect, useState } from 'react';
+import { z } from 'zod';
 import { REGEX_CONTENT_NOT_HTML_TAG } from '../../configs';
 
 const useContentValidation = (
   value: string,
   onChange?: NonCancelableEventHandler<BaseChangeDetail>,
-) => {
+  validateData?: (newValue: string) => z.SafeParseReturnType<string | undefined, string | undefined>) => {
   const [tempValue, setTempValue] = useState(value);
   const [errorText, setErrorText] = useState('');
 
   useEffect(() => {
     setTempValue(value);
+    if (!value) {
+      setErrorText('');
+    }
   }, [value]);
 
   const handleChange: NonCancelableEventHandler<BaseChangeDetail> = useCallback((event) => {
@@ -34,11 +38,20 @@ const useContentValidation = (
     setTempValue(newValue);
     if (REGEX_CONTENT_NOT_HTML_TAG.test(newValue)) {
       setErrorText('Html tags not supported');
-    } else {
-      setErrorText('');
-      onChange?.(event);
+      return;
     }
-  }, [setTempValue, setErrorText, onChange]);
+
+    if (validateData) {
+      const validation = validateData(newValue);
+      if (!validation.success) {
+        setErrorText(validation.error.issues.map(i => i.message).join('; '));
+        return ;
+      }
+    }
+
+    setErrorText('');
+    onChange?.(event);
+  }, [setTempValue, setErrorText, onChange, validateData]);
 
   return {
     tempValue,

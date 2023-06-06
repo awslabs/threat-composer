@@ -21,7 +21,7 @@ import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { ContentEntityBase, EntityBase } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
-import Textarea from '../../generic/Textarea';
+import Textarea, { TextAreaProps } from '../../generic/Textarea';
 import MetadataEditor from '../EntityMetadataEditor';
 import GenericCard from '../GenericCard';
 
@@ -32,6 +32,7 @@ export interface GenericEntityCreationCardProps {
   onSave?: () => void;
   onReset?: () => void;
   customEditors?: ReactNode;
+  validateData?: TextAreaProps['validateData'];
 }
 
 export const DEFAULT_ENTITY = {
@@ -47,6 +48,7 @@ const GenericEntityCreationCard: FC<GenericEntityCreationCardProps> = ({
   onSave,
   onReset,
   customEditors,
+  validateData,
 }) => {
   const handleAddTagToEntity = useCallback((tag: string) => {
     const updated = addTagToEntity(editingEntity, tag);
@@ -79,6 +81,7 @@ const GenericEntityCreationCard: FC<GenericEntityCreationCardProps> = ({
             ...editingEntity,
             content: detail.value,
           })}
+          validateData={validateData}
         />
         {customEditors}
       </ColumnLayout>

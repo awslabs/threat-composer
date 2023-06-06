@@ -18,7 +18,7 @@ import Box from '@cloudscape-design/components/box';
 import Grid from '@cloudscape-design/components/grid';
 import { FC } from 'react';
 import MarkdownViewer from '../MarkdownViewer';
-import Textarea from '../Textarea';
+import Textarea, { TextAreaProps } from '../Textarea';
 
 const parentHeaderLevelMapping: any = {
   h1: '##',
@@ -34,6 +34,7 @@ export interface MarkdownEditorProps {
   description?: string;
   parentHeaderLevel?: 'h1' | 'h2' | 'h3';
   rows?: number;
+  validateData?: TextAreaProps['validateData'];
 }
 
 const MarkdownEditor: FC<MarkdownEditorProps> = ({
@@ -43,6 +44,7 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
   description,
   parentHeaderLevel,
   rows = 20,
+  validateData,
 }) => {
   return (
     <Grid
@@ -60,6 +62,7 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
           onChange(event.detail.value)
         }
         rows={rows}
+        validateData={validateData}
       />
       <Box margin='l'>
         <MarkdownViewer>
