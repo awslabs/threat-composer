@@ -13,4 +13,4 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export const REGEX_CONTENT_NOT_HTML_TAG = /(<.*?>)/gi;
+export const REGEX_CONTENT_NOT_HTML_TAG = /(<.*?>)/i;
