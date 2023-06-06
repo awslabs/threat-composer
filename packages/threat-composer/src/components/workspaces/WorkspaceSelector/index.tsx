@@ -147,11 +147,11 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     }
   }, [removeData]);
 
-  const handleDeleteWorkspace = useCallback(async () => {
+  const handleDeleteWorkspace = useCallback(async (toDeleteWorkspaceId: string) => {
     setIsRemovingWorkspace(true);
 
     try {
-      await deleteCurrentWorkspace();
+      await deleteCurrentWorkspace(toDeleteWorkspaceId);
     } catch (e) {
       console.log('Error in deleting workspace', e);
     } finally {
@@ -260,7 +260,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
       visible={removeWorkspaceModalVisible}
       title='Delete Workspace?'
       onCancelClicked={() => setRemoveWorkspaceModalVisible(false)}
-      onDeleteClicked={handleDeleteWorkspace}
+      onDeleteClicked={() => handleDeleteWorkspace(currentWorkspace.id)}
       loading={isRemovingWorkspace}
       deleteButtonText='Delete workspace'
     >

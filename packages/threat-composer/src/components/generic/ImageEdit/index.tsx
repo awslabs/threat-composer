@@ -16,13 +16,13 @@
 /** @jsxImportSource @emotion/react */
 import FormField from '@cloudscape-design/components/form-field';
 import Header from '@cloudscape-design/components/header';
-import Input from '@cloudscape-design/components/input';
 import RadioGroup from '@cloudscape-design/components/radio-group';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import imageCompression from 'browser-image-compression';
 import { FC, useCallback, useEffect, useState } from 'react';
 import imageStyles from '../../../styles/image';
 import getBase64 from '../../../utils/getBase64';
+import Input from '../../generic/Input';
 import FileUpload from '../FileUpload';
 
 export interface ImageUploadProps {
@@ -91,9 +91,10 @@ const ImageEdit: FC<ImageUploadProps> = ({
     {imageSource === 'file' && <SpaceBetween
       direction='vertical'
       size='s'>
-      {image && <Header variant='h3'>Preview</Header>}
-      {image && <img css={imageStyles} src={image} alt='Preview Diagram' />}
+      {image && <Header key='header' variant='h3'>Preview</Header>}
+      {image && <img key='image' css={imageStyles} src={image} alt='Preview Diagram' />}
       <FileUpload
+        key='fileUpload'
         label='Image Upload'
         accept='image/png, image/gif, image/jpeg'
         files={selectedFiles}
@@ -104,7 +105,7 @@ const ImageEdit: FC<ImageUploadProps> = ({
       label="Image Url"
       key="imageUrl"
     >
-      {inputValue && <Header variant='h3'>Preview</Header>}
+      {inputValue && <Header key='header' variant='h3'>Preview</Header>}
       {inputValue && <img css={imageStyles} src={inputValue} alt='Preview Diagram' />}
       <Input
         value={inputValue}

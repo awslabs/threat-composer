@@ -58,8 +58,8 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
 
   const actions = useMemo(() => {
     return editMode ? (<SpaceBetween direction='horizontal' size='s'>
-      <Button onClick={() => setEditMode(false)}>Cancel</Button>
-      <Button variant='primary' onClick={handleSaveDiagramInfo}>Confirm</Button>
+      <Button key='cancelBtn' onClick={() => setEditMode(false)}>Cancel</Button>
+      <Button key='confirmBtn' variant='primary' onClick={handleSaveDiagramInfo}>Confirm</Button>
     </SpaceBetween>) : (<Button onClick={handleEdit}>Edit</Button>);
   }, [editMode, handleSaveDiagramInfo, handleEdit, setEditMode]);
 

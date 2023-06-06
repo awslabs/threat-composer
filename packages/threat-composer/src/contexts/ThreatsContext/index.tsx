@@ -221,7 +221,7 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
   const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
     setEditingStatement(null);
     window.setTimeout(() => {
-      // tio delete after the workspace is switched. Otherwise the default value is set again.
+      // to delete after the workspace is switched. Otherwise the default value is set again.
       removeLocalStorageKey(getLocalStorageKey(workspaceId));
     }, 1000);
   }, [removeStatementList, removeEditingStatement]);

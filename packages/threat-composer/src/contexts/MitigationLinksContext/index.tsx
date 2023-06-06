@@ -94,7 +94,7 @@ const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContex
 
   const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
     window.setTimeout(() => {
-      // tio delete after the workspace is switched. Otherwise the default value is set again.
+      // to delete after the workspace is switched. Otherwise the default value is set again.
       removeLocalStorageKey(getLocalStorageKey(workspaceId));
     }, 1000);
   }, []);

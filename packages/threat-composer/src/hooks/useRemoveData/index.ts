@@ -27,7 +27,7 @@ import { useThreatsContext } from '../../contexts/ThreatsContext';
 
 const useRemoveData = () => {
   const { composerMode } = useGlobalSetupContext();
-  const { currentWorkspace, removeWorkspace, switchWorkspace } = useWorkspacesContext();
+  const { removeWorkspace, switchWorkspace } = useWorkspacesContext();
   const { removeApplicationInfo, onDeleteWorkspace: applicationInfoDeleteWorkspace } = useApplicationInfoContext();
   const { removeArchitectureInfo, onDeleteWorkspace: architectureInfoDeleteWorkspace } = useArchitectureInfoContext();
   const { removeDataflowInfo, onDeleteWorkspace: dataflowInfoDeleteWorkspace } = useDataflowInfoContext();
@@ -58,27 +58,25 @@ const useRemoveData = () => {
     removeAllStatements, removeAllAssumptionLinks,
     removeAllMitigationLinks]);
 
-  const deleteCurrentWorkspace = useCallback(async () => {
-    if (!currentWorkspace) {
-      throw new Error('Cannot remove default workspace');
+  const deleteCurrentWorkspace = useCallback(async (toDeleteWorkspaceId: string) => {
+    if (toDeleteWorkspaceId) {
+      await Promise.all([
+        removeWorkspace(toDeleteWorkspaceId),
+        applicationInfoDeleteWorkspace(toDeleteWorkspaceId),
+        architectureInfoDeleteWorkspace(toDeleteWorkspaceId),
+        threatsDeleteWorkspace(toDeleteWorkspaceId),
+        dataflowInfoDeleteWorkspace(toDeleteWorkspaceId),
+        assumptionsDeleteWorkspace(toDeleteWorkspaceId),
+        mitigationsDeleteWorkspace(toDeleteWorkspaceId),
+        assumptionLinksDeleteWorkspace(toDeleteWorkspaceId),
+        mitigationLinksDeleteWorkspace(toDeleteWorkspaceId),
+      ]);
+
+      switchWorkspace(null);
     }
-
-    await Promise.all([
-      removeWorkspace(currentWorkspace.id),
-      applicationInfoDeleteWorkspace(currentWorkspace.id),
-      architectureInfoDeleteWorkspace(currentWorkspace.id),
-      threatsDeleteWorkspace(currentWorkspace.id),
-      dataflowInfoDeleteWorkspace(currentWorkspace.id),
-      assumptionsDeleteWorkspace(currentWorkspace.id),
-      mitigationsDeleteWorkspace(currentWorkspace.id),
-      assumptionLinksDeleteWorkspace(currentWorkspace.id),
-      mitigationLinksDeleteWorkspace(currentWorkspace.id),
-    ]);
-
-    switchWorkspace(null);
   }, [
     composerMode,
-    currentWorkspace,
+    switchWorkspace,
     applicationInfoDeleteWorkspace,
     architectureInfoDeleteWorkspace,
     dataflowInfoDeleteWorkspace,
