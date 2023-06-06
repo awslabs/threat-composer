@@ -63,16 +63,17 @@ const useRemoveData = () => {
       throw new Error('Cannot remove default workspace');
     }
 
+    const workspaceId = currentWorkspace.id;
     await Promise.all([
-      removeWorkspace(currentWorkspace.id),
-      applicationInfoDeleteWorkspace(currentWorkspace.id),
-      architectureInfoDeleteWorkspace(currentWorkspace.id),
-      threatsDeleteWorkspace(currentWorkspace.id),
-      dataflowInfoDeleteWorkspace(currentWorkspace.id),
-      assumptionsDeleteWorkspace(currentWorkspace.id),
-      mitigationsDeleteWorkspace(currentWorkspace.id),
-      assumptionLinksDeleteWorkspace(currentWorkspace.id),
-      mitigationLinksDeleteWorkspace(currentWorkspace.id),
+      removeWorkspace(workspaceId),
+      applicationInfoDeleteWorkspace(workspaceId),
+      architectureInfoDeleteWorkspace(workspaceId),
+      threatsDeleteWorkspace(workspaceId),
+      dataflowInfoDeleteWorkspace(workspaceId),
+      assumptionsDeleteWorkspace(workspaceId),
+      mitigationsDeleteWorkspace(workspaceId),
+      assumptionLinksDeleteWorkspace(workspaceId),
+      mitigationLinksDeleteWorkspace(workspaceId),
     ]);
 
     switchWorkspace(null);
