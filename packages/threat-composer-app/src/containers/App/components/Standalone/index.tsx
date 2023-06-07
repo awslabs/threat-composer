@@ -16,8 +16,10 @@
 import { FC } from 'react';
 import { ThreatStatementGenerator } from 'threat-composer';
 import StandaloneAppLayout from '../../../../components/StandaloneAppLayout';
+import useNotifications from '../../../../hooks/useNotifications';
 
 const defaultHref = process.env.PUBLIC_URL || '/';
+
 export interface StandaloneProps {
   composeMode: string | null;
 }
@@ -25,10 +27,12 @@ export interface StandaloneProps {
 const Standalone: FC<StandaloneProps> = ({
   composeMode,
 }) => {
+  const notifications = useNotifications(true);
   return (
     <StandaloneAppLayout
       title='threat-composer'
       href={defaultHref}
+      notifications={notifications}
     >
       <ThreatStatementGenerator composerMode={composeMode !== 'EditorOnly' ? 'ThreatsOnly' : 'EditorOnly'} />
     </StandaloneAppLayout>

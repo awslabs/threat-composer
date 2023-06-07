@@ -54,13 +54,16 @@ const FileImport: FC<FileImportProps> = ({
 
   const handleImport = useCallback((files: File[]) => {
     setError('');
+    setData(undefined);
+    setLoading(true);
+
     if (files.length > 0) {
       const file = files[0];
       const reader = new FileReader();
-      setLoading(true);
 
       reader.addEventListener('load', (event) => {
         const result = event.target?.result;
+        setError('');
         try {
           const importedData = parseImportedData(JSON.parse(result as string));
           setData(importedData);

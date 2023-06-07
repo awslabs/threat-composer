@@ -16,6 +16,6 @@
 import { z } from 'zod';
 import { BaseImageInfoSchema } from './entities';
 
-export const ArchitectureInfoSchema = BaseImageInfoSchema.extend({});
+export const ArchitectureInfoSchema = BaseImageInfoSchema.extend({}).strict();
 
 export type ArchitectureInfo = z.infer<typeof ArchitectureInfoSchema>;

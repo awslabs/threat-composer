@@ -13,18 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { z } from 'zod';
-import { FREE_TEXT_INPUT_MAX_LENGTH, SINGLE_FIELD_INPUT_MAX_LENGTH } from '../configs';
-
-export const ApplicationInfoSchema = z.object({
-  /**
-   * The name of the application.
-  */
-  name: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional(),
-  /**
-   * The description of the architecture diagram
-   */
-  description: z.string().max(FREE_TEXT_INPUT_MAX_LENGTH).optional(),
-}).strict();
-
-export type ApplicationInfo = z.infer<typeof ApplicationInfoSchema>;
+export const LEVEL_SELECTOR_OPTIONS = [
+  { label: 'High', value: 'High' },
+  { label: 'Medium', value: 'Medium' },
+  { label: 'Low', value: 'Low' },
+];

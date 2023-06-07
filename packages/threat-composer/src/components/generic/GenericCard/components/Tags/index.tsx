@@ -41,6 +41,7 @@ const styles = {
   input: css({
     marginLeft: awsui.spaceScaledS,
     [getMobileMediaQuery()]: {
+      display: 'block !important',
       marginLeft: '0px',
       marginTop: awsui.spaceScaledS,
     },

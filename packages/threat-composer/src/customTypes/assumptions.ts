@@ -21,7 +21,7 @@ export const AssumptionSchema = ContentEntityBaseSchema.extend({
    * A flag determining the assumption is still valid or not.
    */
   valid: z.boolean().optional(),
-});
+}).strict();
 
 export type Assumption = z.infer<typeof AssumptionSchema>;
 
@@ -35,7 +35,7 @@ export const AssumptionLinkSchema = EntityLinkBaseSchema.extend({
    * The linked entity Id.
    */
   linkedId: z.string().length(36),
-});
+}).strict();
 
 export type AssumptionLink = z.infer<typeof AssumptionLinkSchema>;
 

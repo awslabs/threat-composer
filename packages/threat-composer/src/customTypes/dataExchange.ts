@@ -33,6 +33,6 @@ export const DataExchangeFormatSchema = z.object({
   assumptionLinks: AssumptionLinkSchema.array().optional(),
   mitigationLinks: MitigationLinkSchema.array().optional(),
   threats: TemplateThreatStatementSchema.array().optional(),
-});
+}).strict();
 
 export type DataExchangeFormat = z.infer<typeof DataExchangeFormatSchema>;

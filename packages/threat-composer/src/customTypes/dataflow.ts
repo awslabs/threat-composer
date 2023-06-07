@@ -16,6 +16,6 @@
 import { z } from 'zod';
 import { BaseImageInfoSchema } from './entities';
 
-export const DataflowInfoSchema = BaseImageInfoSchema.extend({});
+export const DataflowInfoSchema = BaseImageInfoSchema.extend({}).strict();
 
 export type DataflowInfo = z.infer<typeof DataflowInfoSchema>;

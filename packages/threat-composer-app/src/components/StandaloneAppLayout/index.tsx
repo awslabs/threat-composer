@@ -14,22 +14,24 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Box from '@cloudscape-design/components/box';
-import { FC, PropsWithChildren, useMemo } from 'react';
+import { FC, PropsWithChildren, useMemo, ReactNode } from 'react';
 import { useMobileMediaQuery } from 'threat-composer';
 import NavHeader from '../NavHeader';
 
 export interface StandaloneAppLayoutProps {
   href: string;
   title: string;
+  notifications?: ReactNode;
 }
 
 const baseStyles = {
-  maxWidth: '1419px',
+  width: '100%',
 };
 
 const StandaloneAppLayout: FC<PropsWithChildren<StandaloneAppLayoutProps>> = ({
   title,
   children,
+  notifications,
   ...props
 }) => {
   const isMobileView = useMobileMediaQuery();
@@ -46,21 +48,25 @@ const StandaloneAppLayout: FC<PropsWithChildren<StandaloneAppLayoutProps>> = ({
       href={headerHref}
     />
     <main>
-      <div style={{
-        display: 'flex',
-        width: '100%',
-        justifyContent: 'center',
+      <div style={isMobileView ? {
+        ...baseStyles,
+        paddingTop: '40px',
+      } : {
+        ...baseStyles,
+        paddingTop: '56px',
       }}>
-        <div style={isMobileView ? {
-          ...baseStyles,
-          paddingTop: '40px',
-        } : {
-          ...baseStyles,
-          paddingTop: '56px',
+        {notifications && <div>{notifications}</div>}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
         }}>
-          <Box padding='l'>
-            {children}
-          </Box>
+          <div style={{
+            maxWidth: '1419px',
+          }}>
+            <Box padding='l'>
+              {children}
+            </Box>
+          </div>
         </div>
       </div>
     </main>

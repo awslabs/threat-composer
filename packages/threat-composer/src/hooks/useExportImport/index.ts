@@ -105,7 +105,7 @@ const useImportExport = () => {
     const validatedData = validateData(parsedData);
 
     if (!validatedData.success) {
-      throw new Error(validatedData.error.issues.map(i => i.message).join(';'));
+      throw new Error(validatedData.error.issues.map(i => `${i.path}: ${i.message}`).join('\n'));
     }
 
     const importedData = validatedData.data as DataExchangeFormat;
@@ -132,7 +132,6 @@ const useImportExport = () => {
       setStatementList(data.threats || []);
     }
   }, [
-    parseImportedData,
     setApplicationInfo,
     setArchitectureInfo,
     setDataflowInfo,

@@ -13,18 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { z } from 'zod';
-import { FREE_TEXT_INPUT_MAX_LENGTH, SINGLE_FIELD_INPUT_MAX_LENGTH } from '../configs';
+import { useMemo } from 'react';
+import Notifications from '../../components/Notifications';
 
-export const ApplicationInfoSchema = z.object({
-  /**
-   * The name of the application.
-  */
-  name: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional(),
-  /**
-   * The description of the architecture diagram
-   */
-  description: z.string().max(FREE_TEXT_INPUT_MAX_LENGTH).optional(),
-}).strict();
+const toDisplayNotification = (process.env.REACT_APP_GITHUB_PAGES === 'true');
 
-export type ApplicationInfo = z.infer<typeof ApplicationInfoSchema>;
+const useNotifications = (addPadding?: boolean) => {
+  return useMemo(() => toDisplayNotification ? <Notifications addPadding={addPadding}/> : undefined, []);
+};
+
+export default useNotifications;
+

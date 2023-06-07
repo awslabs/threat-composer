@@ -186,8 +186,8 @@ const MitigationList: FC = () => {
           <Grid
             gridDefinition={[
               { colspan: { default: 12, xs: 3 } },
-              { colspan: { default: 12, xs: 3 } },
-              { colspan: { default: 12, xs: 3 } },
+              { colspan: { default: 12, xs: 4 } },
+              { colspan: { default: 12, xs: 4 } },
               { colspan: { default: 1 } },
             ]}
           >

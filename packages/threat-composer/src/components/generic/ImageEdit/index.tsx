@@ -20,6 +20,7 @@ import RadioGroup from '@cloudscape-design/components/radio-group';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import imageCompression from 'browser-image-compression';
 import { FC, useCallback, useEffect, useState } from 'react';
+import { ImageUrlSchema } from '../../../customTypes';
 import imageStyles from '../../../styles/image';
 import getBase64 from '../../../utils/getBase64';
 import Input from '../../generic/Input';
@@ -112,6 +113,7 @@ const ImageEdit: FC<ImageUploadProps> = ({
         onChange={event =>
           setInputValue(event.detail.value)
         }
+        validateData={ImageUrlSchema.safeParse}
       />
     </FormField>}
   </SpaceBetween>;

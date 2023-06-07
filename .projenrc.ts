@@ -159,6 +159,7 @@ const appProject = new ReactTypeScriptProject({
   deps: [
     "@cloudscape-design/components",
     "@cloudscape-design/global-styles",
+    "@cloudscape-design/design-tokens",
     "react-router-dom",
     uiProject.package.packageName,
   ],

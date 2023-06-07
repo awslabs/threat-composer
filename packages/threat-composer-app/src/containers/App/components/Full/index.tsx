@@ -19,6 +19,7 @@ import { Routes, Route, RouteProps, useParams, useSearchParams, useNavigate, Nav
 import { ContextAggregator, DataExchangeFormat, WorkspaceSelector, useWorkspacesContext } from 'threat-composer';
 import AppLayout from '../../../../components/FullAppLayout';
 import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_DATAFLOW_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST, ROUTE_VIEW_THREAT_MODEL } from '../../../../config/routes';
+import useNotifications from '../../../../hooks/useNotifications';
 import routes from '../../../../routes';
 import generateUrl from '../../../../utils/generateUrl';
 import ThreatModelReport from '../../../ThreatModelReport';
@@ -116,6 +117,8 @@ const Full: FC = () => {
     navigate(generateUrl(ROUTE_VIEW_THREAT_MODEL, searchParms, workspaceId));
   }, [navigate, workspaceId, searchParms]);
 
+  const notifications = useNotifications();
+
   return (
     <ContextAggregator
       composerMode='Full'
@@ -133,6 +136,7 @@ const Full: FC = () => {
         navigationItems={navigationItems}
         availableRoutes={routes.map(x => x.path || '')}
         breadcrumbGroup={<WorkspaceSelector embededMode={false} />}
+        notifications={notifications}
       >
         <AppInner />
       </AppLayout>)}

@@ -21,20 +21,16 @@ export const ThreatStatementDisplayTokenSchema = z.object({
   /**
    * the html tag type for the content. If not type is specified. <span> will be used.
    */
-  type: z.string().optional(),
-  /**
-   * the props of the html node.
-   */
-  props: z.any().optional(),
+  type: z.union([z.literal('b'), z.literal('span')]).optional(),
   /**
     * The tooltip content of the node.
     */
-  tooltip: z.string().optional(),
+  tooltip: z.string().max(30).optional(),
   /**
     * The text content of the node.
     */
-  content: z.string(),
-});
+  content: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH),
+}).strict();
 
 export type ThreatStatementDisplayToken = z.infer<typeof ThreatStatementDisplayTokenSchema>;
 
@@ -65,9 +61,9 @@ export const TemplateThreatStatementSchema = EntityBaseSchema.extend({
     */
   impactedAssets: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).array().optional(),
   /**
-    * The full rendered statement as string;
+    * The full rendered statement as string.
     */
-  statement: z.string().optional(),
+  statement: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH * 7).optional(),
   /**
     * The custom templates applied to the threat statement.
     */
@@ -76,7 +72,7 @@ export const TemplateThreatStatementSchema = EntityBaseSchema.extend({
     * A list of displayed statement token
     */
   displayedStatement: z.union([ThreatStatementDisplayTokenSchema, z.string()]).array().optional(),
-});
+}).strict();
 
 export type TemplateThreatStatement = z.infer<typeof TemplateThreatStatementSchema>;
 
