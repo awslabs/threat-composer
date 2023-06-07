@@ -21,6 +21,7 @@ import { InputProps } from '@cloudscape-design/components/input';
 import Modal from '@cloudscape-design/components/modal';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import React, { FC, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { WorkspaceSchema } from '../../../customTypes';
 import Input from '../../generic/Input';
 
 export interface EditWorkspaceProps {
@@ -71,7 +72,11 @@ const EditWorkspace: FC<EditWorkspaceProps> = ({
       <FormField
         label="Workspace name"
       >
-        <Input ref={inputRef as RefObject<InputProps.Ref>} value={value} onChange={({ detail }) => setValue(detail.value)}></Input>
+        <Input ref={inputRef as RefObject<InputProps.Ref>}
+          value={value}
+          onChange={({ detail }) => setValue(detail.value)}
+          validateData={WorkspaceSchema.shape.name.safeParse}
+        />
       </FormField>
     </SpaceBetween>
   </Modal>;

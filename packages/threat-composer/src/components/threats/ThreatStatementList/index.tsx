@@ -23,13 +23,13 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { css } from '@emotion/react';
 import { FC, useCallback, useMemo, useState } from 'react';
+import { LEVEL_SELECTOR_OPTIONS } from '../../../configs';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { TemplateThreatStatement } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
-import { OPTIONS as LevelOptions } from '../../generic/LevelSelector';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
 import { OPTIONS as STRIDEOptions } from '../../generic/STRIDESelector';
 import WorkspaceSelector from '../../workspaces/WorkspaceSelector';
@@ -38,7 +38,7 @@ import ThreatStatementCard from '../ThreatStatementCard';
 
 const NO_VALUE = '-';
 
-const LevelOptionsWithNoValue = [...LevelOptions, {
+const LevelOptionsWithNoValue = [...LEVEL_SELECTOR_OPTIONS, {
   label: 'Priority Not Set', value: NO_VALUE,
 }];
 

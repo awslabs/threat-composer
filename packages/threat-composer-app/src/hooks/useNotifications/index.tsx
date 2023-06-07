@@ -13,12 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { z } from 'zod';
-import { SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH } from '../configs';
+import { useMemo } from 'react';
+import Notifications from '../../components/Notifications';
 
-export const WorkspaceSchema = z.object({
-  id: z.string(),
-  name: z.string().max(SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH),
-});
+const toDisplayNotification = (process.env.REACT_APP_GITHUB_PAGES === 'true');
 
-export type Workspace = z.infer<typeof WorkspaceSchema>;
+const useNotifications = (addPadding?: boolean) => {
+  return useMemo(() => toDisplayNotification ? <Notifications addPadding={addPadding}/> : undefined, []);
+};
+
+export default useNotifications;
+

@@ -16,18 +16,21 @@
 import FormField, { FormFieldProps } from '@cloudscape-design/components/form-field';
 import InputComponent, { InputProps as InputComponentProps } from '@cloudscape-design/components/input';
 import React, { FC } from 'react';
+import { z } from 'zod';
 import useContentValidation from '../../../hooks/useContentValidation';
 
 export interface InputProps extends FormFieldProps, InputComponentProps {
   ref?: React.ForwardedRef<any>;
+  validateData?: (newValue: string) => z.SafeParseReturnType<string | undefined, string | undefined>;
 }
 
 const Input: FC<InputProps> = React.forwardRef<InputComponentProps.Ref, InputProps>(({
   value,
   onChange,
+  validateData,
   ...props
 }, ref) => {
-  const { tempValue, errorText, handleChange } = useContentValidation(value, onChange);
+  const { tempValue, errorText, handleChange } = useContentValidation(value, onChange, validateData);
   return (
     <FormField
       {...props}

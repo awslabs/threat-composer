@@ -16,7 +16,7 @@ jobs:
       - run: npm install -g yarn
       - run: npm install -g oss-attribution-generator
       - run: yarn install --immutable && npx projen
-      - run: REACT_APP_ROUTE_BASE_PATH=/threat-composer PUBLIC_URL=https://awslabs.github.io/threat-composer PATH=/tmp/git-secrets/bin:$PATH yarn run build
+      - run: REACT_APP_ROUTE_BASE_PATH=/threat-composer REACT_APP_GITHUB_PAGES=true PUBLIC_URL=https://awslabs.github.io/threat-composer PATH=/tmp/git-secrets/bin:$PATH yarn run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:

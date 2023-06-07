@@ -97,6 +97,10 @@
       "type": "runtime"
     },
     {
+      "name": "@cloudscape-design/design-tokens",
+      "type": "runtime"
+    },
+    {
       "name": "@cloudscape-design/global-styles",
       "type": "runtime"
     },

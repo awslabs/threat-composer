@@ -78,7 +78,8 @@ const uiProject = new TypeScriptProject({
     "sanitize-html",
     "rehype-raw",
     "@aws-northstar/ui",
-    "@emotion/react"
+    "@emotion/react",
+    "zod",
   ],
   devDeps: [
     "@cloudscape-design/jest-preset",
@@ -158,6 +159,7 @@ const appProject = new ReactTypeScriptProject({
   deps: [
     "@cloudscape-design/components",
     "@cloudscape-design/global-styles",
+    "@cloudscape-design/design-tokens",
     "react-router-dom",
     uiProject.package.packageName,
   ],

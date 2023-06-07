@@ -13,12 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { z } from 'zod';
-import { SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH } from '../configs';
+import { DataExchangeFormat, DataExchangeFormatSchema } from '../../customTypes';
 
-export const WorkspaceSchema = z.object({
-  id: z.string(),
-  name: z.string().max(SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH),
-});
+const validateData = (data: DataExchangeFormat) => {
+  const validation = DataExchangeFormatSchema.safeParse(data);
+  return validation;
+};
 
-export type Workspace = z.infer<typeof WorkspaceSchema>;
+export default validateData;

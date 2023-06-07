@@ -79,7 +79,8 @@
     "remark-gfm": "*",
     "sanitize-html": "*",
     "use-local-storage-state": "*",
-    "uuid": "*"
+    "uuid": "*",
+    "zod": "*"
   },
   "main": "lib/index.js",
   "license": "Apache-2.0",

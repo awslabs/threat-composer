@@ -13,4 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export type ComposerMode = 'ThreatsOnly' | 'EditorOnly' | 'Full';
+import { z } from 'zod';
+
+export const ComposerModeSchema = z.union([z.literal('ThreatsOnly'), z.literal('EditorOnly'), z.literal('Full')]);
+
+export type ComposerMode = z.infer<typeof ComposerModeSchema>;

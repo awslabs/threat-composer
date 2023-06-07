@@ -18,7 +18,7 @@ import ColumnLayout from '@cloudscape-design/components/column-layout';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useState, useCallback } from 'react';
-import { Assumption } from '../../../customTypes';
+import { Assumption, AssumptionSchema } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import MetadataEditor from '../../generic/EntityMetadataEditor';
@@ -80,6 +80,7 @@ const AssumptionCard: FC<AssumptionCardProps> = ({
             <Textarea
               value={editingValue}
               onChange={({ detail }) => setEditingValue(detail.value)}
+              validateData={AssumptionSchema.shape.content.safeParse}
             />
             <SpaceBetween direction='horizontal' size='s'>
               <Button onClick={handleCancel}>Cancel</Button>

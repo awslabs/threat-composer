@@ -132,7 +132,7 @@ const renderThreatStatement = (statement: TemplateThreatStatement): {
 
     output.push({
       stringOutput: updatedContent,
-      displayOutput: displayedOutput,
+      displayOutput: displayedOutput as ThreatStatementDisplayToken,
     });
 
     return output;

@@ -13,27 +13,29 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ContentEntityBase, EntityLinkBase } from './entities';
+import { z } from 'zod';
+import { ContentEntityBaseSchema, EntityLinkBaseSchema } from './entities';
 
-export interface Assumption extends ContentEntityBase {
+export const AssumptionSchema = ContentEntityBaseSchema.extend({
   /**
    * A flag determining the assumption is still valid or not.
    */
-  valid?: boolean;
-}
+  valid: z.boolean().optional(),
+}).strict();
 
-export interface AssumptionLink extends EntityLinkBase {
-  /**
-   * Specifies whether the assumption is linked to a mitigation or a threat.
-   */
-  type: 'Mitigation' | 'Threat';
+export type Assumption = z.infer<typeof AssumptionSchema>;
+
+export const AssumptionLinkSchema = EntityLinkBaseSchema.extend({
+  type: z.union([z.literal('Mitigation'), z.literal('Threat')]),
   /**
    * The assumption being linked.
    */
-  assumptionId: string;
+  assumptionId: z.string().length(36),
   /**
    * The linked entity Id.
    */
-  linkedId: string;
-}
+  linkedId: z.string().length(36),
+}).strict();
+
+export type AssumptionLink = z.infer<typeof AssumptionLinkSchema>;
 

@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@cloudscape-design/components": "*",
+    "@cloudscape-design/design-tokens": "*",
     "@cloudscape-design/global-styles": "*",
     "react": "*",
     "react-dom": "*",

@@ -47,21 +47,31 @@ const FileImport: FC<FileImportProps> = ({
 }) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [data, setData] = useState<DataExchangeFormat>();
+  const [error, setError] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [loadingPercentage, setLoadingPercentage] = useState(0);
   const { parseImportedData } = useImportExport();
 
   const handleImport = useCallback((files: File[]) => {
+    setError('');
+    setData(undefined);
+    setLoading(true);
+
     if (files.length > 0) {
       const file = files[0];
       const reader = new FileReader();
-      setLoading(true);
 
       reader.addEventListener('load', (event) => {
         const result = event.target?.result;
-        const importedData = parseImportedData(JSON.parse(result as string));
-        setData(importedData);
-        setLoading(false);
+        setError('');
+        try {
+          const importedData = parseImportedData(JSON.parse(result as string));
+          setData(importedData);
+        } catch (e: any) {
+          setError(e.message);
+        } finally {
+          setLoading(false);
+        }
       });
 
       reader.addEventListener('progress', (event) => {
@@ -125,7 +135,7 @@ const FileImport: FC<FileImportProps> = ({
         statusIconAriaLabel="Warning"
         type="warning"
         key="override-warning">
-        <TextContent>Importing data will override all the data in current workspace. This action cannot be undone.<br/>
+        <TextContent>Importing data will override all the data in current workspace. This action cannot be undone.<br />
           You can export the data to a json file as backup or create a new <b>workspace</b>.
         </TextContent>
       </Alert>
@@ -135,12 +145,16 @@ const FileImport: FC<FileImportProps> = ({
         key="content-warning">
         <TextContent>Only import content from trusted sources.</TextContent>
       </Alert>
-      <FileUpload accept='application/json' files={selectedFiles} onChange={setSelectedFiles} />
+      <FileUpload key='fileUpload' accept='application/json' files={selectedFiles} onChange={setSelectedFiles} />
       {loading && <ProgressBar
+        key='progress-bar'
         value={loadingPercentage}
         label="Loading file"
       />}
-      {!onPreview && composerMode !== 'Full' && data && data.threats && data.threats.length > 0 && <Alert statusIconAriaLabel="Info" type="info" key="info">
+      {error && <Alert key="error" statusIconAriaLabel="Error" type="error" >
+        {error}
+      </Alert>}
+      {!onPreview && composerMode !== 'Full' && data && data.threats && data.threats.length > 0 && <Alert key="info" statusIconAriaLabel="Info" type="info" >
         {data.threats.length} threat statement loaded
       </Alert>}
     </SpaceBetween>

@@ -15,6 +15,7 @@
  ******************************************************************************************************************** */
 import { FC } from 'react';
 import { useArchitectureInfoContext } from '../../../contexts/ArchitectureContext/context';
+import { ArchitectureInfoSchema } from '../../../customTypes';
 import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
 
 const ArchitectureInfo: FC = () => {
@@ -24,6 +25,7 @@ const ArchitectureInfo: FC = () => {
     diagramTitle='Architecture Diagram'
     entity={architectureInfo}
     onConfirm={(diagram) => setArchitectureInfo(diagram)}
+    validateData={ArchitectureInfoSchema.shape.description.safeParse}
   />;
 };
 

@@ -13,12 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { z } from 'zod';
-import { SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH } from '../configs';
-
-export const WorkspaceSchema = z.object({
-  id: z.string(),
-  name: z.string().max(SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH),
-});
-
-export type Workspace = z.infer<typeof WorkspaceSchema>;
+export const LEVEL_SELECTOR_OPTIONS = [
+  { label: 'High', value: 'High' },
+  { label: 'Medium', value: 'Medium' },
+  { label: 'Low', value: 'Low' },
+];

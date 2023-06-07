@@ -140,7 +140,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
           <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly' ? 'bottom' : 'top'}><b css={styles.finalStatementSection}>{s.content}</b></Tooltip> :
           s.type === 'span' ?
             <Tooltip tooltip={s.tooltip} key={index} anchor={composerMode === 'EditorOnly' ? 'bottom' : 'top'}><span css={styles.finalStatementSection}>{s.content}</span></Tooltip> :
-            s.content);
+            <>{s.content}</>);
 
       setDisplayStatement(displayedHtml);
       setSuggestions(currentSuggestions);

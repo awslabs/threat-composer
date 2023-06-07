@@ -20,6 +20,7 @@ import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useState, useCallback, useMemo } from 'react';
 import { useApplicationInfoContext } from '../../../contexts/ApplicationContext/context';
+import { ApplicationInfoSchema } from '../../../customTypes';
 import Input from '../../generic/Input';
 import MarkdownEditor from '../../generic/MarkdownEditor';
 import MarkdownViewer from '../../generic/MarkdownViewer';
@@ -63,6 +64,7 @@ const ApplicationInfo: FC = () => {
           onChange={event =>
             setName(event.detail.value)
           }
+          validateData={ApplicationInfoSchema.shape.name.safeParse}
           placeholder='Enter application name'
         />
       </FormField>
@@ -71,6 +73,7 @@ const ApplicationInfo: FC = () => {
         onChange={setContent}
         label='Description'
         parentHeaderLevel='h2'
+        validateData={ApplicationInfoSchema.shape.description.safeParse}
       />
     </SpaceBetween>) :
       (<MarkdownViewer>

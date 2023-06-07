@@ -16,12 +16,7 @@
 import FormField from '@cloudscape-design/components/form-field';
 import Select, { SelectProps } from '@cloudscape-design/components/select';
 import React, { FC } from 'react';
-
-export const OPTIONS = [
-  { label: 'High', value: 'High' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'Low', value: 'Low' },
-];
+import { LEVEL_SELECTOR_OPTIONS } from '../../../configs';
 
 export const NO_VALUE = '-';
 
@@ -50,14 +45,14 @@ const LevelSelector: FC<LevelSelectorProps> = React.forwardRef<SelectProps.Ref, 
     >
       <Select
         ref={ref}
-        selectedOption={OPTIONS.find(x => x.value === selectedLevel) || null}
+        selectedOption={LEVEL_SELECTOR_OPTIONS.find(x => x.value === selectedLevel) || null}
         onChange={({ detail }) => {
           const selected = detail.selectedOption.value;
           setSelectedLevel?.(!selected || selected === NO_VALUE ? undefined : selected);
         }}
         options={allowNoValue ? [{
           label: NO_VALUE, value: NO_VALUE,
-        }, ...OPTIONS] : OPTIONS}
+        }, ...LEVEL_SELECTOR_OPTIONS] : LEVEL_SELECTOR_OPTIONS}
         selectedAriaLabel="Selected"
         onFocus={onFocus}
         onBlur={onBlur}

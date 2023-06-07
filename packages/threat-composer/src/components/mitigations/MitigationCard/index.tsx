@@ -18,7 +18,7 @@ import ColumnLayout from '@cloudscape-design/components/column-layout';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useState, useCallback } from 'react';
-import { Mitigation } from '../../../customTypes';
+import { Mitigation, MitigationSchema } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import AssumptionLink from '../../assumptions/AssumptionLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';
@@ -80,6 +80,7 @@ const MitigationCard: FC<MitigationCardProps> = ({
             <Textarea
               value={editingValue}
               onChange={({ detail }) => setEditingValue(detail.value)}
+              validateData={MitigationSchema.shape.content.safeParse}
             />
             <SpaceBetween direction='horizontal' size='s'>
               <Button onClick={handleCancel}>Cancel</Button>
