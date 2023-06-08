@@ -14,6 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Box from '@cloudscape-design/components/box';
+import * as awsui from '@cloudscape-design/design-tokens';
 import { FC, PropsWithChildren, useMemo, ReactNode } from 'react';
 import { useMobileMediaQuery } from 'threat-composer';
 import NavHeader from '../NavHeader';
@@ -26,6 +27,7 @@ export interface StandaloneAppLayoutProps {
 
 const baseStyles = {
   width: '100%',
+  background: awsui.colorBackgroundContainerContent,
 };
 
 const StandaloneAppLayout: FC<PropsWithChildren<StandaloneAppLayoutProps>> = ({
@@ -42,7 +44,9 @@ const StandaloneAppLayout: FC<PropsWithChildren<StandaloneAppLayoutProps>> = ({
     return mode ? `${href}/?mode=${mode}` : href;
   }, [props]);
 
-  return (<div>
+  return (<div style={{
+    background: awsui.colorBackgroundContainerContent,
+  }}>
     <NavHeader
       title={title}
       href={headerHref}
@@ -50,10 +54,10 @@ const StandaloneAppLayout: FC<PropsWithChildren<StandaloneAppLayoutProps>> = ({
     <main>
       <div style={isMobileView ? {
         ...baseStyles,
-        paddingTop: '40px',
+        paddingTop: `calc(24px + ${awsui.spaceScaledL})`,
       } : {
         ...baseStyles,
-        paddingTop: '56px',
+        paddingTop: `calc(36px + ${awsui.spaceScaledL})`,
       }}>
         {notifications && <div>{notifications}</div>}
         <div style={{
@@ -70,7 +74,6 @@ const StandaloneAppLayout: FC<PropsWithChildren<StandaloneAppLayoutProps>> = ({
         </div>
       </div>
     </main>
-
   </div>);
 };
 
