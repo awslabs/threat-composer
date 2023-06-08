@@ -39,11 +39,13 @@ const ImageEdit: FC<ImageUploadProps> = ({
   const isValueBase64String = value && value.startsWith('data:');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [inputValue, setInputValue] = useState(isValueBase64String ? '' : value);
-  const [imageSource, setImageSource] = useState<string>(!value || isValueBase64String ? 'file' : 'url');
+  const [imageSource, setImageSource] = useState<string>(!value ? 'no' : isValueBase64String ? 'file' : 'url');
   const [image, setImage] = useState<string>(isValueBase64String ? value : '');
 
   useEffect(() => {
-    if (imageSource === 'file') {
+    if (imageSource === 'no') {
+      onChange('');
+    } else if (imageSource === 'file') {
       onChange(image);
     } else if (imageSource === 'url') {
       onChange(inputValue);
@@ -86,6 +88,7 @@ const ImageEdit: FC<ImageUploadProps> = ({
         items={[
           { value: 'file', label: 'From file upload' },
           { value: 'url', label: 'Form url' },
+          { value: 'no', label: 'No Image' },
         ]}
       />
     </FormField>

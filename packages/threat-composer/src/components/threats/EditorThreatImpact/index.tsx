@@ -65,6 +65,7 @@ const EditorThreatImpact: FC<EditorProps> = forwardRef<TextareaProps.Ref, Editor
           placeholder="Enter threat impact"
           validateData={TemplateThreatStatementSchema.shape.threatImpact.safeParse}
           rows={2}
+          stretch
         />
       </div>
       {statement.threatImpact && <div css={styles.inputClear}>

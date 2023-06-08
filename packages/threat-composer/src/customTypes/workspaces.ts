@@ -17,7 +17,7 @@ import { z } from 'zod';
 import { SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH } from '../configs';
 
 export const WorkspaceSchema = z.object({
-  id: z.string(),
+  id: z.string().length(36),
   name: z.string().max(SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH),
 });
 

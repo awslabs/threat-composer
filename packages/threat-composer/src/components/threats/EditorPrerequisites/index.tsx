@@ -65,6 +65,7 @@ const EditorPrerequisites: FC<EditorProps> = forwardRef<TextareaProps.Ref, Edito
           spellcheck
           validateData={TemplateThreatStatementSchema.shape.prerequisites.safeParse}
           rows={2}
+          stretch
         />
       </div>
       {statement.prerequisites && <div css={styles.inputClear}>
