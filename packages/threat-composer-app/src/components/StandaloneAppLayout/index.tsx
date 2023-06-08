@@ -46,6 +46,8 @@ const StandaloneAppLayout: FC<PropsWithChildren<StandaloneAppLayoutProps>> = ({
 
   return (<div style={{
     background: awsui.colorBackgroundContainerContent,
+    width: '100%',
+    height: '100vh',
   }}>
     <NavHeader
       title={title}
