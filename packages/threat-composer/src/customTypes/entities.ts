@@ -93,8 +93,8 @@ export const EntityLinkBaseSchema = z.object({
 
 export type EntityLinkBase = z.infer<typeof EntityLinkBaseSchema>;
 
-export const ImageUrlSchema = z.string().max(IMAGE_URL_MAX_LENGTH).regex(REGEX_CONTENT_IMAGE_URL);
-export const ImageBase64Schema = z.string().max(IMAGE_BASE64_MAX_LENGTH).regex(REGEX_CONTENT_IMAGE_BASE64);
+export const ImageUrlSchema = z.string().max(IMAGE_URL_MAX_LENGTH).regex(REGEX_CONTENT_IMAGE_URL).optional();
+export const ImageBase64Schema = z.string().max(IMAGE_BASE64_MAX_LENGTH).regex(REGEX_CONTENT_IMAGE_BASE64).optional();
 
 export const BaseImageInfoSchema = z.object({
   /**
