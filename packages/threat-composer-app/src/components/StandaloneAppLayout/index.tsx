@@ -68,6 +68,7 @@ const StandaloneAppLayout: FC<PropsWithChildren<StandaloneAppLayoutProps>> = ({
         }}>
           <div style={{
             maxWidth: '1419px',
+            width: '100%',
           }}>
             <Box padding='l'>
               {children}
