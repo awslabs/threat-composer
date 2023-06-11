@@ -2,7 +2,7 @@
 
 ## Goal
 
-Help humans to reduce time-to-value when performing threat modeling
+A threat modeling tool to help humans to reduce time-to-value when threat modeling
 
 ## Summary
 
