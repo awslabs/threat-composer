@@ -17,12 +17,13 @@ import { BaseChangeDetail } from '@cloudscape-design/components/input/interfaces
 import { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import { useCallback, useEffect, useState } from 'react';
 import { z } from 'zod';
-import { REGEX_CONTENT_NOT_HTML_TAG } from '../../configs';
+import sanitizeHtml from '../../utils/sanitizeHtml';
 
 const useContentValidation = (
   value: string,
   onChange?: NonCancelableEventHandler<BaseChangeDetail>,
-  validateData?: (newValue: string) => z.SafeParseReturnType<string | undefined, string | undefined>) => {
+  validateData?: (newValue: string) => z.SafeParseReturnType<string | undefined, string | undefined>,
+) => {
   const [tempValue, setTempValue] = useState(value);
   const [errorText, setErrorText] = useState('');
 
@@ -36,7 +37,8 @@ const useContentValidation = (
   const handleChange: NonCancelableEventHandler<BaseChangeDetail> = useCallback((event) => {
     const newValue = event.detail.value;
     setTempValue(newValue);
-    if (REGEX_CONTENT_NOT_HTML_TAG.test(newValue)) {
+    const cleanValue = sanitizeHtml(newValue);
+    if (cleanValue !== newValue) {
       setErrorText('Html tags not supported');
       return;
     }
