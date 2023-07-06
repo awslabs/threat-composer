@@ -19,6 +19,7 @@ import { BaseKeyDetail, CancelableEventHandler, NonCancelableEventHandler } from
 import TokenGroup, { TokenGroupProps } from '@cloudscape-design/components/token-group';
 import { FC, useCallback, useState, forwardRef } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
+import { ThreatStatementImpactedGoalItem } from '../../../customTypes';
 import Autosuggest from '../../generic/Autosuggest';
 import EditorLayout from '../EditorLayout';
 import ExampleList from '../ExampleList';
@@ -85,6 +86,7 @@ const EditorImpactedGoal: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, Edi
       placeholder="Select an impacted goal or enter new one"
       empty="No matches found"
       onKeyDown={handleKeyDown}
+      validateData={ThreatStatementImpactedGoalItem.safeParse}
     />
     <TokenGroup
       onDismiss={handleRemoveImpactedGoal}

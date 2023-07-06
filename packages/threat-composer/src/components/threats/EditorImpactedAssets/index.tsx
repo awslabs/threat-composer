@@ -19,6 +19,7 @@ import { BaseKeyDetail, CancelableEventHandler, NonCancelableEventHandler } from
 import TokenGroup, { TokenGroupProps } from '@cloudscape-design/components/token-group';
 import { FC, useCallback, useState, forwardRef } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
+import { ThreatStatementImpactedAssetItem } from '../../../customTypes';
 import Autosuggest from '../../generic/Autosuggest';
 import EditorLayout from '../EditorLayout';
 import ExampleList from '../ExampleList';
@@ -77,6 +78,7 @@ const EditorImpactedAssets: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, E
       placeholder="Select an existing asset or enter new asset"
       empty="No matches found"
       onKeyDown={handleKeyDown}
+      validateData={ThreatStatementImpactedAssetItem.safeParse}
     />
     <TokenGroup
       onDismiss={handleRemoveAsset}

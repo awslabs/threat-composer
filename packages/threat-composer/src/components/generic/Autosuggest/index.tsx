@@ -15,7 +15,8 @@
  ******************************************************************************************************************** */
 import CloudscapeAutosuggest, { AutosuggestProps as CloudscapeAutosuggestProps } from '@cloudscape-design/components/autosuggest';
 import FormField, { FormFieldProps } from '@cloudscape-design/components/form-field';
-import React, { FC } from 'react';
+import { BaseKeyDetail, CancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { z } from 'zod';
 import useContentValidation from '../../../hooks/useContentValidation';
 
@@ -32,11 +33,26 @@ const Autosuggest: FC<AutosuggestProps> = React.forwardRef<CloudscapeAutosuggest
   ...props
 },
 ref) => {
+  const [displayedErrorText, setDisplayedErrorText] = useState<string>();
   const { tempValue, errorText, handleChange } = useContentValidation(value, onChange, validateData);
+
+  useEffect(() => {
+    setDisplayedErrorText(errorText);
+  }, [errorText]);
+
+  const handleKeyDown: CancelableEventHandler<BaseKeyDetail> = useCallback((event) => {
+    if (event.detail.keyCode === 8 && !value && errorText) {
+      setDisplayedErrorText(undefined);
+    }
+
+    props.onKeyDown?.(event);
+  },
+  [props.onKeyDown, errorText, value]);
+
   return (
     <FormField
       {...props}
-      errorText={errorText}
+      errorText={displayedErrorText}
     >
       <CloudscapeAutosuggest
         {...props}
@@ -45,6 +61,7 @@ ref) => {
         onChange={event =>
           handleChange(event)
         }
+        onKeyDown={handleKeyDown}
       />
     </FormField>);
 });

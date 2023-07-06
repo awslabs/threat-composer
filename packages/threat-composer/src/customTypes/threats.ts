@@ -34,6 +34,9 @@ export const ThreatStatementDisplayTokenSchema = z.object({
 
 export type ThreatStatementDisplayToken = z.infer<typeof ThreatStatementDisplayTokenSchema>;
 
+export const ThreatStatementImpactedGoalItem = z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH);
+
+export const ThreatStatementImpactedAssetItem = z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH);
 
 export const TemplateThreatStatementSchema = EntityBaseSchema.extend({
   /**
@@ -55,11 +58,11 @@ export const TemplateThreatStatementSchema = EntityBaseSchema.extend({
   /**
     * Impacted goal of the threat.
     */
-  impactedGoal: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).array().optional(),
+  impactedGoal: ThreatStatementImpactedGoalItem.array().optional(),
   /**
     * Impacted assets of the threat.
     */
-  impactedAssets: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).array().optional(),
+  impactedAssets: ThreatStatementImpactedAssetItem.array().optional(),
   /**
     * The full rendered statement as string.
     */
@@ -109,6 +112,5 @@ export const PerFieldExampleSchema = z.object({
     */
   stride: z.string().array().optional(),
 });
-
 
 export type PerFieldExample = z.infer<typeof PerFieldExampleSchema>;

@@ -51,6 +51,7 @@ const EditorPrerequisites: FC<EditorProps> = forwardRef<TextareaProps.Ref, Edito
     inputRef.current?.focus();
   }, [handleChange]);
 
+
   return (<EditorLayout
     title={fieldData.displayTitle}
     description={fieldData.description}
@@ -63,6 +64,7 @@ const EditorPrerequisites: FC<EditorProps> = forwardRef<TextareaProps.Ref, Edito
           value={statement.prerequisites || ''}
           placeholder="Enter prerequisites"
           spellcheck
+          singleLine
           validateData={TemplateThreatStatementSchema.shape.prerequisites.safeParse}
           rows={2}
           stretch
