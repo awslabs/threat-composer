@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { error } from 'console';
 import CloudscapeAutosuggest, { AutosuggestProps as CloudscapeAutosuggestProps } from '@cloudscape-design/components/autosuggest';
 import FormField, { FormFieldProps } from '@cloudscape-design/components/form-field';
 import { BaseKeyDetail, CancelableEventHandler } from '@cloudscape-design/components/internal/events';
@@ -33,16 +34,15 @@ const Autosuggest: FC<AutosuggestProps> = React.forwardRef<CloudscapeAutosuggest
   ...props
 },
 ref) => {
-  const [displayedErrorText, setDisplayedErrorText] = useState<string>();
+  const [resetErrorText, setResetErrorText] = useState<boolean>();
   const { tempValue, errorText, handleChange } = useContentValidation(value, onChange, validateData);
-
-  useEffect(() => {
-    setDisplayedErrorText(errorText);
-  }, [errorText]);
 
   const handleKeyDown: CancelableEventHandler<BaseKeyDetail> = useCallback((event) => {
     if (event.detail.keyCode === 8 && !value && errorText) {
-      setDisplayedErrorText(undefined);
+      // When the value is empty, press backspace to reset the errorText.
+      setResetErrorText(true);
+    } else {
+      setResetErrorText(false);
     }
 
     props.onKeyDown?.(event);
@@ -52,7 +52,7 @@ ref) => {
   return (
     <FormField
       {...props}
-      errorText={displayedErrorText}
+      errorText={resetErrorText ? undefined : errorText}
     >
       <CloudscapeAutosuggest
         {...props}
