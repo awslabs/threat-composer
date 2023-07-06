@@ -13,11 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { error } from 'console';
 import CloudscapeAutosuggest, { AutosuggestProps as CloudscapeAutosuggestProps } from '@cloudscape-design/components/autosuggest';
 import FormField, { FormFieldProps } from '@cloudscape-design/components/form-field';
 import { BaseKeyDetail, CancelableEventHandler } from '@cloudscape-design/components/internal/events';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { z } from 'zod';
 import useContentValidation from '../../../hooks/useContentValidation';
 
