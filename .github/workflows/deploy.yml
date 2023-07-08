@@ -36,3 +36,11 @@ jobs:
         uses: actions/deploy-pages@v2
         with:
           artifact_name: "github-pages"
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release to GitHub Release
+        id: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
