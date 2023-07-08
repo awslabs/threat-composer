@@ -11,27 +11,12 @@
                 "preset": "angular",
                 "releaseRules": [
                     {
-                        "type": "docs",
-                        "scope": "README",
-                        "release": "patch"
-                    },
-                    {
                         "message": "*BREAKING CHANGE*",
                         "release": "minor"
                     },
                     {
-                        "type": "refactor",
-                        "message": "*RENAME Props*",
-                        "release": "minor"
-                    },
-                    {
                         "type": "feat",
                         "release": "patch"
-                    },
-                    {
-                        "type": "feat",
-                        "message": "*New Component*",
-                        "release": "minor"
                     },
                     {
                         "type": "style",
