@@ -27,6 +27,7 @@ export interface ContextAggregatorProps {
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
   onImported?: () => void;
+  onDefineWorkload?: () => void;
 }
 
 const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
@@ -38,12 +39,14 @@ const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
   onPreview,
   onPreviewClose,
   onImported,
+  onDefineWorkload,
 }) => {
   return (
     <GlobalSetupContextProvider
       onPreview={onPreview}
       onPreviewClose={onPreviewClose}
       onImported={onImported}
+      onDefineWorkload={onDefineWorkload}
       composerMode={composerMode}>
       <WorkspacesContextProvider onWorkspaceChanged={onWorkspaceChanged}>
         {(workspaceId) => (<WorkspaceContextAggregator

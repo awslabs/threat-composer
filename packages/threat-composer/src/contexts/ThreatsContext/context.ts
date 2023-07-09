@@ -52,6 +52,8 @@ export interface ThreatsContextApi {
   saveStatement: (statement: TemplateThreatStatement) => void;
   removeAllStatements: () => Promise<void>;
   onDeleteWorkspace: (workspaceId: string) => Promise<void>;
+  onThreatListView?: () => void;
+  onThreatEditorView?: (threatId: string) => void;
 }
 
 const initialState: ThreatsContextApi = {

@@ -83,7 +83,7 @@ const editorMapping: { [key in ThreatFieldTypes]: React.ComponentType<EditorProp
 const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement }> = ({
   editingStatement,
 }) => {
-  const { setEditingStatement, saveStatement, addStatement } = useThreatsContext();
+  const { setEditingStatement, saveStatement, addStatement, onThreatListView } = useThreatsContext();
   const inputRef = useRef<{ focus(): void }>();
   const fullExamplesRef = useRef<{ collapse(): void }>();
   const { currentWorkspace, workspaceList } = useWorkspacesContext();
@@ -119,7 +119,8 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
 
   const handleCancel = useCallback(() => {
     setEditingStatement(null);
-  }, [setEditingStatement]);
+    onThreatListView?.();
+  }, [setEditingStatement, onThreatListView]);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -201,7 +202,14 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
     }
 
     setEditingStatement(null);
-  }, [saveStatement, editingStatement, linkedAssumptionIds, linkedMitigationIds, prevLinkedAssumptionIds, prevLinkedMitigationIds]);
+    onThreatListView?.();
+  }, [saveStatement,
+    editingStatement,
+    linkedAssumptionIds,
+    linkedMitigationIds,
+    prevLinkedAssumptionIds,
+    prevLinkedMitigationIds,
+    onThreatListView]);
 
   const handleExampleClicked = useCallback((statement: TemplateThreatStatement) => {
     setEditingStatement({

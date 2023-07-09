@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import React, { FC } from 'react';
-import WorkspaceSelector from '../../components/workspaces/WorkspaceSelector';
+import WorkspaceSelectorComponent from '../../components/workspaces/WorkspaceSelector';
 import ContextAggregator from '../../contexts/ContextAggregator';
 import { ComposerMode } from '../../customTypes';
 
@@ -22,12 +22,12 @@ export interface WorkspaceSelectorProps {
   composerMode: string;
 }
 
-const MitigationList: FC<WorkspaceSelectorProps> = ({ composerMode }) => {
+const WorkspaceSelector: FC<WorkspaceSelectorProps> = ({ composerMode }) => {
   return (<ContextAggregator composerMode={composerMode as ComposerMode}>
-    <WorkspaceSelector
+    <WorkspaceSelectorComponent
       embededMode={false}
     />
   </ContextAggregator>);
 };
 
-export default MitigationList;
+export default WorkspaceSelector;

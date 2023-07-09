@@ -21,8 +21,8 @@ import BreadcrumbGroup, { BreadcrumbGroupProps } from '@cloudscape-design/compon
 import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import SideNavigation, { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
 import { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
-import { FC, ReactNode, useState, useCallback, createContext, PropsWithChildren, ReactElement, useContext, useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { FC, ReactNode, useState, useCallback, createContext, PropsWithChildren, ReactElement, useContext, useMemo, useEffect } from 'react';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { NavHeaderProps } from '../NavHeader';
 
 export type AppLayoutProps = (NavHeaderProps | { header: ReactElement<TopNavigationProps> })
@@ -92,8 +92,8 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
   const [contentType, setContentType] = useState(props.contentType);
 
   const [navigationOpen, setNavigationOpen] = useState(props.navigationOpen ?? true);
-
   const [notifications, setNotifications] = useState(props.notifications);
+  const location = useLocation();
 
   const headerHref = useMemo(() => {
     const mode = searchParams.get('mode');
@@ -111,14 +111,16 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
     { text: defaultBreadcrumb, href: headerHref },
   ]);
 
+  useEffect(() => {
+    setActiveHref(`${location.pathname}${location.search || ''}`);
+  }, [location]);
+
   const onNavigate: CancelableEventHandler<BreadcrumbGroupProps.ClickDetail | SideNavigationProps.FollowDetail> =
     useCallback(
       (e) => {
         if (!e.detail.external) {
           e.preventDefault();
           setContentType(undefined);
-
-          setActiveHref(e.detail.href);
           navigate(e.detail.href);
         }
       },

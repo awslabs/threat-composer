@@ -28,6 +28,7 @@ export interface GlobalSetupContextProviderProps {
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
   onImported?: () => void;
+  onDefineWorkload?: () => void;
 }
 
 const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProviderProps>> = ({
@@ -36,12 +37,14 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
   onPreview,
   onPreviewClose,
   onImported,
+  onDefineWorkload,
 }) => {
   const [hasVisitBefore, setHasVisitBefore] = useLocalStorageState<boolean>(LOCAL_STORAGE_KEY_NEW_VISIT_FLAG, {
     defaultValue: false,
   });
 
   const [infoModalVisible, setInfoModalVisible] = useState(false);
+  const [showImportUpdate, setShowImportUpdate] = useState(0);
 
   useEffect(() => {
     if (!hasVisitBefore) {
@@ -58,6 +61,9 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
       onPreview,
       onPreviewClose,
       onImported,
+      showImportUpdate,
+      onShowImport: () => setShowImportUpdate(prev => prev+1),
+      onDefineWorkload,
     }}>
       {children}
       {infoModalVisible && <InfoModal

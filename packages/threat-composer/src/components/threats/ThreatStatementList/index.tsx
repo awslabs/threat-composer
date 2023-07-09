@@ -23,7 +23,7 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { css } from '@emotion/react';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { LEVEL_SELECTOR_OPTIONS } from '../../../configs';
+import { LEVEL_SELECTOR_OPTIONS, DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
@@ -69,6 +69,7 @@ const ThreatStatementList: FC = () => {
     addStatement,
     editStatement,
     saveStatement,
+    onThreatEditorView,
   } = useThreatsContext();
 
   const {
@@ -238,6 +239,17 @@ const ThreatStatementList: FC = () => {
     selectedTags, selectedPriorities, selectedSTRIDEs,
     selectedLinkedAssumptionFilter, selectedLinkedMitigationFilter]);
 
+
+  const handleAddStatement = useCallback((idToCopy?: string) => {
+    addStatement(idToCopy);
+    onThreatEditorView?.(DEFAULT_NEW_ENTITY_ID);
+  }, [addStatement, onThreatEditorView]);
+
+  const handleEditStatement = useCallback((id: string) => {
+    editStatement(id);
+    onThreatEditorView?.(id);
+  }, [editStatement, onThreatEditorView]);
+
   const actions = useMemo(() => {
     return (
       <>{composerMode !== 'Full' ?
@@ -248,19 +260,19 @@ const ThreatStatementList: FC = () => {
           enabledExportFiltered={!hasNoFilter}
           filteredThreats={filteredStatementList}
         >
-          <Button variant="primary" onClick={() => addStatement()}>
+          <Button variant="primary" onClick={() => handleAddStatement()}>
             Add new statement
           </Button>
         </WorkspaceSelector>) :
         (<SpaceBetween direction='horizontal' size='s'>
-          <Button variant="primary" onClick={() => addStatement()}>
+          <Button variant="primary" onClick={() => handleAddStatement()}>
             Add new statement
           </Button>
         </SpaceBetween>)}
       </>);
   }, [
     filteredStatementList,
-    addStatement,
+    handleAddStatement,
     statementList,
     hasNoFilter,
     composerMode,
@@ -456,9 +468,9 @@ const ThreatStatementList: FC = () => {
       {filteredStatementList?.map(st => (<ThreatStatementCard
         key={st.id}
         statement={st}
-        onCopy={addStatement}
+        onCopy={handleAddStatement}
         onRemove={removeStatement}
-        onEditInWizard={editStatement}
+        onEditInWizard={handleEditStatement}
         onEditMetadata={handleEditMetadata}
         onAddTagToStatement={handleAddTagToStatement}
         onRemoveTagFromStatement={handleRemoveTagFromStatement}
