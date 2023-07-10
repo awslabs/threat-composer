@@ -19,6 +19,7 @@ import ColumnLayout from '@cloudscape-design/components/column-layout';
 import Container from '@cloudscape-design/components/container';
 import ContentLayout from '@cloudscape-design/components/content-layout';
 import Header from '@cloudscape-design/components/header';
+import Link from '@cloudscape-design/components/link';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC } from 'react';
@@ -27,37 +28,124 @@ import { useGlobalSetupContext } from '../../../contexts';
 
 const LandingPage: FC = () => {
   const { onShowImport, onDefineWorkload } = useGlobalSetupContext();
-  return (<ContentLayout header={<Header
-    variant="h1"
-    description="A threat modeling tool to help humans to reduce time-to-value when threat modeling"
-    actions={
-      <SpaceBetween direction='horizontal' size='s'>
-        <Button onClick={onShowImport}>Import existing</Button>
-        <Button variant="primary" onClick={onDefineWorkload}>Define workload or feature</Button>
+  return (
+    <ContentLayout
+      header={
+        <Header
+          variant="h1"
+          description="A threat modeling tool to help humans to reduce time-to-value when threat modeling"
+          actions={
+            <SpaceBetween direction="horizontal" size="s">
+              <Button onClick={onShowImport}>Import existing</Button>
+              <Button variant="primary" onClick={onDefineWorkload}>
+                Define workload or feature
+              </Button>
+            </SpaceBetween>
+          }
+        >
+          Threat Composer
+        </Header>
+      }
+    >
+      <SpaceBetween direction="vertical" size="s">
+        <Container header={<Header variant="h2">How it works</Header>}>
+          <Box padding="xxl">
+            <img
+              style={{
+                display: 'block',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                width: '80%',
+              }}
+              src={HowItWorks}
+            />
+          </Box>
+        </Container>
+        <Container header={<Header variant="h2">Benefits and features</Header>}>
+          <ColumnLayout columns={2} variant="text-grid">
+            <TextContent>
+              <h3>Reduce time-to-value when performing threat modeling</h3>
+              <p>
+                Helps you focus on brainstorming and collaboration. Guides you
+                through the threat model process. Inspires you with examples.
+              </p>
+            </TextContent>
+            <TextContent>
+              <h3>Threat models-as-code</h3>
+              <p>
+                Produces threat models that can be exported and shared as
+                structured JSON, making it easy to version control your threat
+                models. Additionally supports Markdown and PDF (browser dependant)
+              </p>
+            </TextContent>
+            <TextContent>
+              <h3>Opinionated threat statement structure</h3>
+              <p>
+                Helps you create useful threat statements that help you devise
+                mitigations and to prioritize.
+              </p>
+            </TextContent>
+            <TextContent>
+              <h3>Client-side storage and workspace separation</h3>
+              <p>
+                Data persisted only client-side with the browser, with workspace
+                separation to allow you to work across multiple threat models.
+              </p>
+            </TextContent>
+            <TextContent>
+              <h3>Self hosted</h3>
+              <p>
+                AWS CDK project with optional continuous deployment and
+                continuous integration pipeline to self host in your AWS
+                account.
+              </p>
+            </TextContent>
+            <TextContent>
+              <h3>Open source</h3>
+              <p>
+                Source code is available for your inspection, forking and
+                modifications to suit your specific organizational needs.
+              </p>
+            </TextContent>
+          </ColumnLayout>
+        </Container>
+        <Container header={<Header variant="h2">Related resources</Header>}>
+          <ColumnLayout columns={2} variant="text-grid">
+            <TextContent>
+              <Link external href="https://github.com/awslabs/threat-composer">
+                Threat Composer - GitHub Repository
+              </Link>
+              <p>
+                Get access to the latest source code, raise bugs, and make feature requests.
+              </p>
+            </TextContent>
+            <TextContent>
+              <Link
+                external
+                href="https://explore.skillbuilder.aws/learn/course/external/view/elearning/13274/threat-modeling-the-right-way-for-builders-workshop"
+              >
+                Threat modeling for builders - AWS Skills Builder eLearning
+              </Link>
+              <p>
+                Learn how to threat model using this eLearning training course.
+              </p>
+            </TextContent>
+            <TextContent>
+              <Link
+                external
+                href="https://aws.amazon.com/blogs/security/how-to-approach-threat-modeling"
+              >
+                How to approach threat modeling - AWS Security Blog
+              </Link>
+              <p>
+                Learn about approaches to integrate threat modeling into your organization.
+              </p>
+            </TextContent>
+          </ColumnLayout>
+        </Container>
       </SpaceBetween>
-    }>Threat Composer</Header>}>
-    <Container>
-      <SpaceBetween direction='vertical' size='s'>
-        <Box variant='h2'>How it works</Box>
-        <Box padding='s'><img src={HowItWorks} width='100%'/></Box>
-        <Box variant='h2'>Benefits and features</Box>
-        <ColumnLayout columns={2}>
-          <TextContent>
-            <h3>Reduce time-to-value when performing threat modeling</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-              ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-              quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
-          </TextContent>
-          <TextContent>
-            <h3>Threat-models-as-code</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-              ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-              quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
-          </TextContent>
-        </ColumnLayout>
-      </SpaceBetween>
-    </Container>
-  </ContentLayout>);
+    </ContentLayout>
+  );
 };
 
 export default LandingPage;
