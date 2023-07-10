@@ -20,7 +20,7 @@ import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/componen
 import { CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import Select, { SelectProps } from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { FC, useMemo, useState, useCallback, PropsWithChildren } from 'react';
+import { FC, useMemo, useState, useCallback, PropsWithChildren, useEffect } from 'react';
 import { DEFAULT_WORKSPACE_ID, DEFAULT_WORKSPACE_LABEL } from '../../../configs/constants';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext';
@@ -36,6 +36,7 @@ export interface WorkspaceSelectorProps {
   enabledRemoveAll?: boolean;
   enabledExportFiltered?: boolean;
   filteredThreats?: TemplateThreatStatement[];
+  onImport?: () => void;
 }
 
 const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
@@ -55,7 +56,11 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
 
   const { importData, exportAll, exportSelectedThreats } = useImportExport();
   const { removeData, deleteCurrentWorkspace } = useRemoveData();
-  const { composerMode, onPreview, onPreviewClose, onImported } = useGlobalSetupContext();
+  const { composerMode, onPreview, onPreviewClose, onImported, showImportUpdate } = useGlobalSetupContext();
+
+  useEffect(() => {
+    showImportUpdate && setFileImportModalVisible(true);
+  }, [showImportUpdate]);
 
   const {
     currentWorkspace,

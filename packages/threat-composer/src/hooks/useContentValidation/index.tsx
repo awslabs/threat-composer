@@ -36,7 +36,6 @@ const useContentValidation = (
 
   const handleChange: NonCancelableEventHandler<BaseChangeDetail> = useCallback((event) => {
     const newValue = event.detail.value;
-    console.log(newValue);
     setTempValue(newValue);
     const cleanValue = sanitizeHtml(newValue);
     if (cleanValue !== newValue) {

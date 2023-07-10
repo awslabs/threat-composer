@@ -20,15 +20,19 @@ export interface GlobalSetupContextApi {
   hasVisitBefore: boolean;
   showInfoModal: () => void;
   composerMode: ComposerMode;
+  showImportUpdate: number;
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
   onImported?: () => void;
+  onShowImport?: () => void;
+  onDefineWorkload?: () => void;
 }
 
 const initialState: GlobalSetupContextApi = {
   hasVisitBefore: false,
   composerMode: 'ThreatsOnly',
   showInfoModal: () => { },
+  showImportUpdate: 0,
 };
 
 export const GlobalSetupContext = createContext<GlobalSetupContextApi>(initialState);

@@ -17,7 +17,6 @@ import { FC, PropsWithChildren, useState, useCallback, useEffect, useMemo } from
 import useLocalStorageState from 'use-local-storage-state';
 import { v4 as uuidV4 } from 'uuid';
 import { PerFieldExamplesType, ThreatsContext, DEFAULT_PER_FIELD_EXAMPLES, useThreatsContext } from './context';
-import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
 import { LOCAL_STORAGE_KEY_STATEMENT_LIST, LOCAL_STORAGE_KEY_EDITING_STATEMENT } from '../../configs/localStorageKeys';
 import { PerFieldExample, TemplateThreatStatement } from '../../customTypes';
 import threatStatementExamplesData from '../../data/threatStatementExamples.json';
@@ -233,16 +232,6 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
       } else {
         setView('list');
       }
-    } else if (composerMode === 'Full') {
-      if (editingStatement) {
-        if (editingStatement.numericId === -1) {
-          onThreatEditorView?.(DEFAULT_NEW_ENTITY_ID);
-        } else {
-          onThreatEditorView?.(editingStatement.id);
-        }
-      } else {
-        onThreatListView?.();
-      }
     }
   }, [composerMode, editingStatement, setView]);
 
@@ -275,6 +264,8 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
     saveStatement: handleSaveStatement,
     removeAllStatements: handleRemoveAllStatements,
     onDeleteWorkspace: handleDeleteWorkspace,
+    onThreatListView,
+    onThreatEditorView,
   }}>
     <ThreatsMigration>
       {children}

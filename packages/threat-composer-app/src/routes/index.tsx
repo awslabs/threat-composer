@@ -14,11 +14,22 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { RouteProps } from 'react-router-dom';
-import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_DATAFLOW_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST, ROUTE_VIEW_THREAT_MODEL } from '../config/routes';
+import {
+  ROUTE_WORKSPACE_HOME,
+  ROUTE_APPLICATION_INFO,
+  ROUTE_ARCHITECTURE_INFO,
+  ROUTE_ASSUMPTION_LIST,
+  ROUTE_DATAFLOW_INFO,
+  ROUTE_MITIGATION_LIST,
+  ROUTE_THREAT_EDITOR,
+  ROUTE_THREAT_LIST,
+  ROUTE_VIEW_THREAT_MODEL,
+} from '../config/routes';
 import Application from '../containers/Application';
 import Architecture from '../containers/Architecture';
 import AssumptionList from '../containers/AssumptionList';
 import Dataflow from '../containers/Dataflow';
+import LandingPage from '../containers/LandingPage';
 import MitigationList from '../containers/MitigationList';
 import ThreatModelReport from '../containers/ThreatModelReport';
 import ThreatStatementEditor from '../containers/ThreatStatementEditor';
@@ -31,6 +42,10 @@ const getRouteWithBasePath = (route: string) => {
 };
 
 const routes: RouteProps[] = [
+  {
+    path: getRouteWithBasePath(ROUTE_WORKSPACE_HOME),
+    element: <LandingPage />,
+  },
   {
     path: getRouteWithBasePath(ROUTE_APPLICATION_INFO),
     element: <Application />,

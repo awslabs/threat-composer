@@ -14,11 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
-import { FC, useMemo, useCallback, useState } from 'react';
+import React, { FC, useMemo, useCallback, useState, useEffect } from 'react';
 import { Routes, Route, RouteProps, useParams, useSearchParams, useNavigate, Navigate } from 'react-router-dom';
 import { ContextAggregator, DataExchangeFormat, WorkspaceSelector, useWorkspacesContext } from 'threat-composer';
 import AppLayout from '../../../../components/FullAppLayout';
-import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_DATAFLOW_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST, ROUTE_VIEW_THREAT_MODEL } from '../../../../config/routes';
+import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_DATAFLOW_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST, ROUTE_VIEW_THREAT_MODEL, ROUTE_WORKSPACE_HOME } from '../../../../config/routes';
 import useNotifications from '../../../../hooks/useNotifications';
 import routes from '../../../../routes';
 import generateUrl from '../../../../utils/generateUrl';
@@ -28,12 +28,21 @@ const TEMP_PREVIEW_DATA_KEY = 'ThreatStatementGenerator.TempPreviewData';
 
 const defaultHref = process.env.PUBLIC_URL || '/';
 
-const AppInner = () => {
-  const [searchParms] = useSearchParams();
+const AppInner: FC<{
+  setWorkspaceId: React.Dispatch<React.SetStateAction<string>>;
+}> = ({ setWorkspaceId }) => {
   const { currentWorkspace } = useWorkspacesContext();
+  const [searchParms] = useSearchParams();
+  useEffect(() => {
+    setWorkspaceId(currentWorkspace?.id || 'default');
+  }, [currentWorkspace]);
+
+  const workspaceHome = generateUrl(ROUTE_WORKSPACE_HOME, searchParms, currentWorkspace?.id || 'default');
+
   return (<Routes>
+    <Route path='/' element={<Navigate replace to={workspaceHome}/>}/>
     {routes.map((r: RouteProps, index: number) => <Route key={index} {...r} />)}
-    <Route path='*' element={<Navigate to={generateUrl(ROUTE_VIEW_THREAT_MODEL, searchParms, currentWorkspace ? currentWorkspace.id : 'default')} />} />
+    <Route path='*' element={<Navigate replace to={workspaceHome}/>}/>
   </Routes>);
 };
 
@@ -41,6 +50,7 @@ const Full: FC = () => {
   const { workspaceId: initialWorkspaceId } = useParams();
   const [searchParms] = useSearchParams();
   const navigate = useNavigate();
+
   const [isPreview] = useState(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const previewParams = urlParams.get('preview');
@@ -50,10 +60,7 @@ const Full: FC = () => {
   const [workspaceId, setWorkspaceId] = useState(initialWorkspaceId || 'default');
 
   const handleWorkspaceChanged = useCallback((newWorkspaceId: string) => {
-    if (newWorkspaceId !== workspaceId) {
-      setWorkspaceId(newWorkspaceId);
-      navigate(generateUrl(ROUTE_THREAT_LIST, searchParms, newWorkspaceId));
-    }
+    navigate(generateUrl(ROUTE_WORKSPACE_HOME, searchParms, newWorkspaceId));
   }, [navigate, workspaceId, searchParms]);
 
   const handleThreatListView = useCallback(() => {
@@ -66,6 +73,11 @@ const Full: FC = () => {
 
   const navigationItems: SideNavigationProps.Item[] = useMemo(() => {
     return [
+      {
+        text: 'Home',
+        href: generateUrl(ROUTE_WORKSPACE_HOME, searchParms, workspaceId),
+        type: 'link',
+      },
       {
         text: 'Application Info',
         href: generateUrl(ROUTE_APPLICATION_INFO, searchParms, workspaceId),
@@ -117,6 +129,10 @@ const Full: FC = () => {
     navigate(generateUrl(ROUTE_VIEW_THREAT_MODEL, searchParms, workspaceId));
   }, [navigate, workspaceId, searchParms]);
 
+  const handleDefineWorkload = useCallback(() => {
+    navigate(generateUrl(ROUTE_APPLICATION_INFO, searchParms, workspaceId));
+  }, [navigate, workspaceId, searchParms]);
+
   const notifications = useNotifications();
 
   return (
@@ -127,6 +143,7 @@ const Full: FC = () => {
       onThreatEditorView={handleThreatEditorView}
       onPreview={handlePreview}
       onImported={handleImported}
+      onDefineWorkload={handleDefineWorkload}
     >
       {isPreview ? (
         <ThreatModelReport />
@@ -138,7 +155,7 @@ const Full: FC = () => {
         breadcrumbGroup={<WorkspaceSelector embededMode={false} />}
         notifications={notifications}
       >
-        <AppInner />
+        <AppInner setWorkspaceId={setWorkspaceId} />
       </AppLayout>)}
     </ContextAggregator>
   );
