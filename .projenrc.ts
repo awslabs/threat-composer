@@ -67,6 +67,7 @@ const uiProject = new TypeScriptProject({
     "@cloudscape-design/components",
     "@cloudscape-design/global-styles",
     "@cloudscape-design/design-tokens",
+    "@cloudscape-design/board-components",
     "use-local-storage-state",
     "indefinite",
     "uuid",

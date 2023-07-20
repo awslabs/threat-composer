@@ -13,14 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC } from 'react';
-import LandingPageComponent from '../../components/workspaces/LandingPage';
-import { ContextAggregator } from '../../contexts';
+import type { Meta, StoryObj } from '@storybook/react';
+import WorkspaceHome from '.';
 
-const WorkspaceHome: FC = () => {
-  return (<ContextAggregator composerMode='Full'>
-    <LandingPageComponent/>
-  </ContextAggregator>);
+const meta: Meta<typeof WorkspaceHome> = {
+  title: 'Others/WorkspaceHome',
+  component: WorkspaceHome,
 };
 
-export default WorkspaceHome;
+export default meta;
+type Story = StoryObj<typeof WorkspaceHome>;
+
+export const Default: Story = {
+};

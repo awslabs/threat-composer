@@ -36,7 +36,6 @@ export interface WorkspaceSelectorProps {
   enabledRemoveAll?: boolean;
   enabledExportFiltered?: boolean;
   filteredThreats?: TemplateThreatStatement[];
-  onImport?: () => void;
 }
 
 const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({

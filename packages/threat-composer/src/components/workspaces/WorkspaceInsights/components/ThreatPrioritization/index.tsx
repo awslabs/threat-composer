@@ -13,14 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC } from 'react';
-import LandingPageComponent from '../../components/workspaces/LandingPage';
-import { ContextAggregator } from '../../contexts';
+import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 
-const WorkspaceHome: FC = () => {
-  return (<ContextAggregator composerMode='Full'>
-    <LandingPageComponent/>
-  </ContextAggregator>);
+
+const ThreatPrioritization = () => {
+  const { statementList } = useThreatsContext();
+
+  console.log(statementList);
+
+  return <div>Threat Prioritization</div>;
 };
 
-export default WorkspaceHome;
+export default ThreatPrioritization;

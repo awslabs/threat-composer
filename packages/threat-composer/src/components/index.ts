@@ -23,4 +23,4 @@ export { default as MitigationList } from './mitigations/MitigationList';
 export { default as WorkspaceSelector } from './workspaces/WorkspaceSelector';
 export { default as ThreatModel } from './report/ThreatModel';
 export { default as ThreatModelView } from './report/ThreatModel/components/ThreatModelView';
-export { default as LandingPage } from './global/LandingPage';
+export { default as WorkspaceHome } from './workspaces/WorkspaceHome';

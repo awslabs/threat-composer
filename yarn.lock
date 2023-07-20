@@ -2164,6 +2164,16 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@cloudscape-design/board-components@*":
+  version "3.0.26"
+  resolved "https://registry.yarnpkg.com/@cloudscape-design/board-components/-/board-components-3.0.26.tgz#015f1bce7f341adc67f670eebec68f7c48ea12d7"
+  integrity sha512-hUXgrd7bYU/1VUHziPButxH2oWhn3cnuZhnCzywHhf/nfQKOnfrJcz+I79iYmoTDIBbCpicgqvfiSJe0E0C/iA==
+  dependencies:
+    "@cloudscape-design/component-toolkit" "^1.0.0-beta"
+    "@cloudscape-design/test-utils-core" "^1.0.0"
+    "@dnd-kit/utilities" "^3.2.1"
+    clsx "^1.2.1"
+
 "@cloudscape-design/collection-hooks@^1.0.0":
   version "1.0.19"
   resolved "https://registry.yarnpkg.com/@cloudscape-design/collection-hooks/-/collection-hooks-1.0.19.tgz#3c0d50751a2c5965b5dcb7e94def81dcda1ea782"
@@ -7699,7 +7709,7 @@ clone-deep@^4.0.1:
     kind-of "^6.0.2"
     shallow-clone "^3.0.0"
 
-clsx@^1.1.0:
+clsx@^1.1.0, clsx@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
   integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
