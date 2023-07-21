@@ -20,7 +20,7 @@ import Header from '@cloudscape-design/components/header';
 import { useState, ReactNode, useCallback } from 'react';
 import Overview from './components/Overview';
 import STRIDEAllocation from './components/STRIDEAllocation';
-import ThreatGrammer from './components/ThreatGrammer';
+import ThreatGrammar from './components/ThreatGrammar';
 import ThreatPrioritization from './components/ThreatPrioritization';
 
 export interface ItemType {
@@ -34,25 +34,25 @@ const WorkspaceInsights = () => {
       id: 'overview',
       rowSpan: 2,
       columnSpan: 6,
-      data: { title: 'Threats Overview', content: <Overview /> },
+      data: { title: 'Threat summary', content: <Overview /> },
     },
     {
       id: 'stride-allocation',
-      rowSpan: 2,
+      rowSpan: 5,
       columnSpan: 2,
-      data: { title: 'STRIDE Allocation', content: <STRIDEAllocation /> },
+      data: { title: 'STRIDE category distribution', content: <STRIDEAllocation /> },
     },
     {
       id: 'threat-grammer',
-      rowSpan: 2,
+      rowSpan: 5,
       columnSpan: 2,
-      data: { title: 'Threat Grammer', content: <ThreatGrammer /> },
+      data: { title: 'Threat grammar distribution', content: <ThreatGrammar /> },
     },
     {
       id: 'threat-prioritization',
-      rowSpan: 2,
+      rowSpan: 5,
       columnSpan: 2,
-      data: { title: 'Threat Prioritization', content: <ThreatPrioritization /> },
+      data: { title: 'Threat prioritization', content: <ThreatPrioritization /> },
     },
   ]);
 

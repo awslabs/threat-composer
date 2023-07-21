@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import {
   Button,
   Box,
@@ -26,15 +27,30 @@ import {
 import BarChart from '@cloudscape-design/components/bar-chart';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 
-const STRIDEAllocation = () => {
+const ThreatGrammar = () => {
   const { statementList } = useThreatsContext();
-  const missingStride = statementList.length - statementList.filter((s) => s.metadata?.find(m => m.key === 'STRIDE' && m.value.length)).length;
-  const countSpoofing = statementList.filter((s) => s.metadata?.find(m => m.key === 'STRIDE' && m.value.includes('S'))).length;
-  const countTampering = statementList.filter((s) => s.metadata?.find(m => m.key === 'STRIDE' && m.value.includes('T'))).length;
-  const countRepudiation = statementList.filter((s) => s.metadata?.find(m => m.key === 'STRIDE' && m.value.includes('R'))).length;
-  const countInformationDisclosure = statementList.filter((s) => s.metadata?.find(m => m.key === 'STRIDE' && m.value.includes('I'))).length;
-  const countDenialOfService = statementList.filter((s) => s.metadata?.find(m => m.key === 'STRIDE' && m.value.includes('D'))).length;
-  const countElevationOfPrivilege = statementList.filter((s) => s.metadata?.find(m => m.key === 'STRIDE' && m.value.includes('E'))).length;
+  const countThreatSource = statementList.filter((s) => s.threatSource).length;
+  const countPrerequisites = statementList.filter(
+    (s) => s.prerequisites,
+  ).length;
+  const countThreatAction = statementList.filter((s) => s.threatAction).length;
+  const countThreatImpact = statementList.filter((s) => s.threatImpact).length;
+  const countImpactedGoal = statementList.filter(
+    (s) => s.impactedGoal?.length != 0,
+  ).length;
+  const countImpactedAssets = statementList.filter(
+    (s) => s.impactedAssets?.length != 0,
+  ).length;
+  const notUsingGrammar =
+    statementList.filter(
+      (s) =>
+        !s.threatSource &&
+        !s.prerequisites &&
+        !s.threatAction &&
+        !s.threatImpact &&
+        !s.impactedGoal?.length &&
+        !s.impactedAssets?.length,
+    ).length;
 
   return (
     <ColumnLayout columns={1} borders="horizontal">
@@ -59,41 +75,40 @@ const STRIDEAllocation = () => {
       <BarChart
         series={[
           {
-            title: 'Spoofing',
+            title: 'Inputs for mitigation',
             type: 'bar',
-            data: [{ x: 'Spoofing', y: countSpoofing }],
+            data: [
+              { x: 'Threat source', y: countThreatSource },
+              {
+                x: 'Prerequistes',
+                y: countPrerequisites,
+              },
+              {
+                x: 'Threat action',
+                y: countThreatAction,
+              },
+            ],
           },
           {
-            title: 'Tampering',
+            title: 'Inputs for prioritisation',
             type: 'bar',
-            data: [{ x: 'Tampering', y: countTampering }],
-          },
-          {
-            title: 'Repudiation',
-            type: 'bar',
-            data: [{ x: 'Repudiation', y: countRepudiation }],
-          },
-          {
-            title: 'Information disclosure',
-            type: 'bar',
-            data: [{ x: 'Information disclosure', y: countInformationDisclosure }],
-          },
-          {
-            title: 'Denial of service',
-            type: 'bar',
-            data: [{ x: 'Denial of Service', y: countDenialOfService }],
-          },
-          {
-            title: 'Elevation of Privilege',
-            type: 'bar',
-            data: [{ x: 'Elevation of Privilege', y: countElevationOfPrivilege }],
+            data: [
+              { x: 'Threat impact', y: countThreatImpact },
+              {
+                x: 'Impacted goal',
+                y: countImpactedGoal,
+              },
+              {
+                x: 'Impacted assets',
+                y: countImpactedAssets,
+              },
+            ],
           },
         ]}
         ariaLabel="Stacked, horizontal bar chart"
         emphasizeBaselineAxis={false}
-        height={280}
+        height={245}
         hideFilter
-        hideLegend
         horizontalBars
         stackedBars
         empty={
@@ -114,12 +129,12 @@ const STRIDEAllocation = () => {
           </Box>
         }
       />
-      {missingStride > 0 ? (
+      {notUsingGrammar > 0 ? (
         <div>
-          <Box variant="awsui-key-label">Missing STRIDE</Box>
+          <Box variant="awsui-key-label">Not using grammar</Box>
           <SpaceBetween direction="horizontal" size="xxs">
             <Link variant="awsui-value-large" href="#ThreatList">
-              {missingStride}
+              {notUsingGrammar}
             </Link>
             <Icon name="status-warning" variant="warning" />
           </SpaceBetween>
@@ -131,4 +146,4 @@ const STRIDEAllocation = () => {
   );
 };
 
-export default STRIDEAllocation;
+export default ThreatGrammar;
