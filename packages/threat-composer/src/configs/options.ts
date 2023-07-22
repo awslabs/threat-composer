@@ -13,8 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { ALL_LEVELS } from './constants';
+
 export const LEVEL_SELECTOR_OPTIONS = [
   { label: 'High', value: 'High' },
   { label: 'Medium', value: 'Medium' },
   { label: 'Low', value: 'Low' },
+];
+
+export const LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL = [
+  { lable: ALL_LEVELS, value: ALL_LEVELS },
+  ...LEVEL_SELECTOR_OPTIONS,
 ];

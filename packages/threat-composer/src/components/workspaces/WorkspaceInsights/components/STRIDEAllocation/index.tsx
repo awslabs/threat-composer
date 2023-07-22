@@ -24,38 +24,40 @@ import {
   Icon,
 } from '@cloudscape-design/components';
 import BarChart from '@cloudscape-design/components/bar-chart';
+import { useState, useMemo } from 'react';
+import { ALL_LEVELS, LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
+import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 
 const STRIDEAllocation = () => {
   const { statementList } = useThreatsContext();
-  const missingStride = statementList.length - statementList.filter((s) => s.metadata?.find(m => m.key === 'STRIDE' && m.value.length)).length;
-  const countSpoofing = statementList.filter((s) => s.metadata?.find(m => m.key === 'STRIDE' && m.value.includes('S'))).length;
-  const countTampering = statementList.filter((s) => s.metadata?.find(m => m.key === 'STRIDE' && m.value.includes('T'))).length;
-  const countRepudiation = statementList.filter((s) => s.metadata?.find(m => m.key === 'STRIDE' && m.value.includes('R'))).length;
-  const countInformationDisclosure = statementList.filter((s) => s.metadata?.find(m => m.key === 'STRIDE' && m.value.includes('I'))).length;
-  const countDenialOfService = statementList.filter((s) => s.metadata?.find(m => m.key === 'STRIDE' && m.value.includes('D'))).length;
-  const countElevationOfPrivilege = statementList.filter((s) => s.metadata?.find(m => m.key === 'STRIDE' && m.value.includes('E'))).length;
+  const [selectedPriority, setSelectedPriority] = useState<string | undefined>(ALL_LEVELS);
+
+  const filteredStatementList = useMemo(() => {
+    return filterThreatsByMetadata(statementList, 'Priority', selectedPriority);
+  }, [statementList, selectedPriority]);
+
+  const missingStride = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE').length, [filteredStatementList]);
+  const countSpoofing = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'S').length, [filteredStatementList]);
+  const countTampering = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'T').length, [filteredStatementList]);
+  const countRepudiation = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'R').length, [filteredStatementList]);
+  const countInformationDisclosure = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'I').length, [filteredStatementList]);
+  const countDenialOfService = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'D').length, [filteredStatementList]);
+  const countElevationOfPrivilege = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'E').length, [filteredStatementList]);
+
+  console.log(countSpoofing, countTampering);
 
   return (
     <ColumnLayout columns={1} borders="horizontal">
-      <div>
-        <FormField label="Filter by threat priority">
-          <Select
-            selectedOption={{ label: 'All' }}
-            placeholder="Filter data"
-            empty="Not supported in the demo"
-            onChange={() => {
-              /*noop*/
-            }}
-            options={[
-              { label: 'High', value: '1' },
-              { label: 'Med', value: '2' },
-              { label: 'Low', value: '3' },
-              { label: 'All', value: '5' },
-            ]}
-          />
-        </FormField>
-      </div>
+      <FormField label="Filter by threat priority">
+        <Select
+          selectedOption={LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL.find(x => x.value === selectedPriority) || null}
+          onChange={({ detail }) => {
+            setSelectedPriority(detail.selectedOption.value);
+          }}
+          options={LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL}
+        />
+      </FormField>
       <BarChart
         series={[
           {
@@ -89,7 +91,7 @@ const STRIDEAllocation = () => {
             data: [{ x: 'Elevation of Privilege', y: countElevationOfPrivilege }],
           },
         ]}
-        ariaLabel="Stacked, horizontal bar chart"
+        ariaLabel="Threat STRIDE Allocation Chart"
         emphasizeBaselineAxis={false}
         height={280}
         hideFilter

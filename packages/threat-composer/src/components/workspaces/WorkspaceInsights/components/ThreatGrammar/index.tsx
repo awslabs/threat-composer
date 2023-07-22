@@ -13,7 +13,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-
 import {
   Button,
   Box,
@@ -25,53 +24,57 @@ import {
   Icon,
 } from '@cloudscape-design/components';
 import BarChart from '@cloudscape-design/components/bar-chart';
+import {
+  colorChartsPurple600,
+  colorChartsYellow600,
+} from '@cloudscape-design/design-tokens';
+import { useState, useMemo } from 'react';
+import { ALL_LEVELS, LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
+import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 
 const ThreatGrammar = () => {
   const { statementList } = useThreatsContext();
-  const countThreatSource = statementList.filter((s) => s.threatSource).length;
-  const countPrerequisites = statementList.filter(
+
+  const [selectedPriority, setSelectedPriority] = useState<string | undefined>(ALL_LEVELS);
+
+  const filteredStatementList = useMemo(() => {
+    return filterThreatsByMetadata(statementList, 'Priority', selectedPriority);
+  }, [statementList, selectedPriority]);
+
+  const countThreatSource = useMemo(() => filteredStatementList.filter((s) => s.threatSource).length, [filteredStatementList]);
+  const countPrerequisites = useMemo(() => filteredStatementList.filter(
     (s) => s.prerequisites,
-  ).length;
-  const countThreatAction = statementList.filter((s) => s.threatAction).length;
-  const countThreatImpact = statementList.filter((s) => s.threatImpact).length;
-  const countImpactedGoal = statementList.filter(
+  ).length, [filteredStatementList]);
+  const countThreatAction = useMemo(() => filteredStatementList.filter((s) => s.threatAction).length, [filteredStatementList]);
+  const countThreatImpact = useMemo(() => filteredStatementList.filter((s) => s.threatImpact).length, [filteredStatementList]);
+  const countImpactedGoal = useMemo(() => filteredStatementList.filter(
     (s) => s.impactedGoal?.length != 0,
-  ).length;
-  const countImpactedAssets = statementList.filter(
+  ).length, [filteredStatementList]);
+  const countImpactedAssets = useMemo(() => filteredStatementList.filter(
     (s) => s.impactedAssets?.length != 0,
-  ).length;
-  const notUsingGrammar =
-    statementList.filter(
-      (s) =>
-        !s.threatSource &&
+  ).length, [filteredStatementList]);
+  const notUsingGrammar = useMemo(() => filteredStatementList.filter(
+    (s) =>
+      !s.threatSource &&
         !s.prerequisites &&
         !s.threatAction &&
         !s.threatImpact &&
         !s.impactedGoal?.length &&
         !s.impactedAssets?.length,
-    ).length;
+  ).length, [filteredStatementList]);
 
   return (
     <ColumnLayout columns={1} borders="horizontal">
-      <div>
-        <FormField label="Filter by threat priority">
-          <Select
-            selectedOption={{ label: 'All' }}
-            placeholder="Filter data"
-            empty="Not supported in the demo"
-            onChange={() => {
-              /*noop*/
-            }}
-            options={[
-              { label: 'High', value: '1' },
-              { label: 'Med', value: '2' },
-              { label: 'Low', value: '3' },
-              { label: 'All', value: '5' },
-            ]}
-          />
-        </FormField>
-      </div>
+      <FormField label="Filter by threat priority">
+        <Select
+          selectedOption={LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL.find(x => x.value === selectedPriority) || null}
+          onChange={({ detail }) => {
+            setSelectedPriority(detail.selectedOption.value);
+          }}
+          options={LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL}
+        />
+      </FormField>
       <BarChart
         series={[
           {
@@ -88,6 +91,7 @@ const ThreatGrammar = () => {
                 y: countThreatAction,
               },
             ],
+            color: colorChartsYellow600,
           },
           {
             title: 'Inputs for prioritisation',
@@ -103,9 +107,10 @@ const ThreatGrammar = () => {
                 y: countImpactedAssets,
               },
             ],
+            color: colorChartsPurple600,
           },
         ]}
-        ariaLabel="Stacked, horizontal bar chart"
+        ariaLabel="Threat Grammer Chart"
         emphasizeBaselineAxis={false}
         height={245}
         hideFilter

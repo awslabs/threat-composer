@@ -13,9 +13,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-
-// @ts-nocheck
-
 import {
   Button,
   Box,
@@ -24,28 +21,21 @@ import {
   Link,
   Icon,
 } from '@cloudscape-design/components';
-
 import BarChart from '@cloudscape-design/components/bar-chart';
+import { colorChartsGreen600, colorChartsPurple600, colorChartsYellow600 } from '@cloudscape-design/design-tokens';
+import { useMemo } from 'react';
+
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
+import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 
 const ThreatPrioritization = () => {
   const { statementList } = useThreatsContext();
 
-  const missingPriority =
-    statementList.length -
-    statementList.filter((s) =>
-      s.metadata?.find((m) => m.key === 'Priority' && m.value.length),
-    ).length;
+  const missingPriority = useMemo(() => filterThreatsByMetadata(statementList, 'Priority').length, [statementList]);
 
-  const countHigh = statementList.filter((s) =>
-    s.metadata?.find((m) => m.key === 'Priority' && m.value === 'High'),
-  ).length;
-  const countMed = statementList.filter((s) =>
-    s.metadata?.find((m) => m.key === 'Priority' && m.value === 'Medium'),
-  ).length;
-  const countLow = statementList.filter((s) =>
-    s.metadata?.find((m) => m.key === 'Priority' && m.value === 'Low'),
-  ).length;
+  const countHigh = useMemo(() => filterThreatsByMetadata(statementList, 'Priority', 'High').length, [statementList]);
+  const countMed = useMemo(() => filterThreatsByMetadata(statementList, 'Priority', 'Medium').length, [statementList]);
+  const countLow = useMemo(() => filterThreatsByMetadata(statementList, 'Priority', 'Low').length, [statementList]);
 
   return (
     <ColumnLayout columns={1} borders="horizontal">
@@ -55,19 +45,22 @@ const ThreatPrioritization = () => {
             title: 'High',
             type: 'bar',
             data: [{ x: 'High', y: countHigh }],
+            color: colorChartsYellow600,
           },
           {
             title: 'Med',
             type: 'bar',
             data: [{ x: 'Med', y: countMed }],
+            color: colorChartsGreen600,
           },
           {
             title: 'Low',
             type: 'bar',
             data: [{ x: 'Low', y: countLow }],
+            color: colorChartsPurple600,
           },
         ]}
-        ariaLabel="Stacked, horizontal bar chart"
+        ariaLabel="Threat Prioritization Chart"
         emphasizeBaselineAxis={false}
         height={245}
         hideFilter

@@ -31,3 +31,5 @@ export const FREE_TEXT_INPUT_MAX_LENGTH = 100000;
 export const IMAGE_BASE64_MAX_LENGTH = 500000;
 //  Architecture diagram url, data flow diagram, url
 export const IMAGE_URL_MAX_LENGTH = 2048;
+
+export const ALL_LEVELS = 'All';
