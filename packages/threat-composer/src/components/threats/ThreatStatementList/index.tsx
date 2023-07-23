@@ -23,11 +23,11 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { css } from '@emotion/react';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { LEVEL_SELECTOR_OPTIONS, DEFAULT_NEW_ENTITY_ID } from '../../../configs';
+import { LEVEL_SELECTOR_OPTIONS, DEFAULT_NEW_ENTITY_ID, LEVEL_NOT_SET } from '../../../configs';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { TemplateThreatStatement } from '../../../customTypes';
+import { TemplateThreatStatement, ThreatStatementListFilter } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
@@ -36,14 +36,12 @@ import WorkspaceSelector from '../../workspaces/WorkspaceSelector';
 import SortByComponent, { SortByOption, DEFAULT_SORT_BY } from '../SortBy';
 import ThreatStatementCard from '../ThreatStatementCard';
 
-const NO_VALUE = '-';
-
 const LevelOptionsWithNoValue = [...LEVEL_SELECTOR_OPTIONS, {
-  label: 'Priority Not Set', value: NO_VALUE,
+  label: 'Priority Not Set', value: LEVEL_NOT_SET,
 }];
 
 const STRIDE_OPTION_NO_VALUE = {
-  label: 'STRIDE Not Set', value: NO_VALUE,
+  label: 'STRIDE Not Set', value: LEVEL_NOT_SET,
 };
 
 const STRIDEOptionsWithNoValue = [...STRIDEOptions, STRIDE_OPTION_NO_VALUE];
@@ -62,7 +60,13 @@ const styles = {
   }),
 };
 
-const ThreatStatementList: FC = () => {
+export interface ThreatStatementListProps {
+  initialFilter?: ThreatStatementListFilter;
+}
+
+const ThreatStatementList: FC<ThreatStatementListProps> = ({
+  initialFilter,
+}) => {
   const {
     statementList,
     removeStatement,
@@ -106,12 +110,12 @@ const ThreatStatementList: FC = () => {
   const [
     selectedPriorities,
     setSelectedPriorities,
-  ] = useState<string[]>([]);
+  ] = useState<string[]>(initialFilter && initialFilter.priority ? [initialFilter.priority] : []);
 
   const [
     selectedSTRIDEs,
     setSelectedSTRIDEs,
-  ] = useState<string[]>([]);
+  ] = useState<string[]>(initialFilter && initialFilter.stride ? [initialFilter.stride] : []);
 
   const [
     selectedLinkedAssumptionFilter,
@@ -121,7 +125,10 @@ const ThreatStatementList: FC = () => {
   const [
     selectedLinkedMitigationFilter,
     setSelectedLinkedMitigationFilter,
-  ] = useState(ALL);
+  ] = useState(initialFilter && typeof initialFilter.mitigated !== 'undefined' ? (
+    initialFilter.mitigated ? WITH_LINKED_ENTITY :
+      WITHOUT_NO_LINKED_ENTITY
+  ) : ALL);
 
   const handleEditMetadata = useEditMetadata(saveStatement);
 
@@ -165,7 +172,7 @@ const ThreatStatementList: FC = () => {
     if (selectedPriorities && selectedPriorities.length > 0) {
       output = output.filter(st => {
         const priority = st.metadata?.find(m => m.key === 'Priority');
-        const includedNoValue = selectedPriorities.includes(NO_VALUE);
+        const includedNoValue = selectedPriorities.includes(LEVEL_NOT_SET);
         if (includedNoValue && (!priority || !priority.value || priority.value.length === 0)) {
           return true;
         }
@@ -177,7 +184,7 @@ const ThreatStatementList: FC = () => {
     if (selectedSTRIDEs && selectedSTRIDEs.length > 0) {
       output = output.filter(st => {
         const stride = st.metadata?.find(m => m.key === 'STRIDE');
-        const includedNoValue = selectedSTRIDEs.includes(NO_VALUE);
+        const includedNoValue = selectedSTRIDEs.includes(LEVEL_NOT_SET);
         if (includedNoValue && (!stride || !stride.value || stride.value.length === 0)) {
           return true;
         }
@@ -366,7 +373,7 @@ const ThreatStatementList: FC = () => {
             <Multiselect
               tokenLimit={0}
               selectedOptions={[...STRIDEOptions.filter(x => selectedSTRIDEs.includes(x.value)),
-                ...selectedSTRIDEs.includes(NO_VALUE) ? [STRIDE_OPTION_NO_VALUE] : []]}
+                ...selectedSTRIDEs.includes(LEVEL_NOT_SET) ? [STRIDE_OPTION_NO_VALUE] : []]}
               onChange={({ detail }) =>
                 setSelectedSTRIDEs(detail.selectedOptions?.map(o => o.value || '') || [])
               }

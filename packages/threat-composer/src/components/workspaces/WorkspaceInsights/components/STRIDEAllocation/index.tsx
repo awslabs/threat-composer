@@ -25,9 +25,10 @@ import {
 } from '@cloudscape-design/components';
 import BarChart from '@cloudscape-design/components/bar-chart';
 import { useState, useMemo } from 'react';
-import { ALL_LEVELS, LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL } from '../../../../../configs';
+import { ALL_LEVELS, LEVEL_NOT_SET, LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
+import useLinkClicked from '../../hooks/useLinkClicked';
 
 const STRIDEAllocation = () => {
   const { statementList } = useThreatsContext();
@@ -45,7 +46,7 @@ const STRIDEAllocation = () => {
   const countDenialOfService = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'D').length, [filteredStatementList]);
   const countElevationOfPrivilege = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'E').length, [filteredStatementList]);
 
-  console.log(countSpoofing, countTampering);
+  const handleLinkClicked = useLinkClicked();
 
   return (
     <ColumnLayout columns={1} borders="horizontal">
@@ -120,7 +121,9 @@ const STRIDEAllocation = () => {
         <div>
           <Box variant="awsui-key-label">Missing STRIDE</Box>
           <SpaceBetween direction="horizontal" size="xxs">
-            <Link variant="awsui-value-large" href="#ThreatList">
+            <Link variant="awsui-value-large" href="#" onFollow={handleLinkClicked({
+              stride: LEVEL_NOT_SET,
+            })}>
               {missingStride}
             </Link>
             <Icon name="status-warning" variant="warning" />

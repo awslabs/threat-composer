@@ -18,24 +18,28 @@ import Badge from '@cloudscape-design/components/badge';
 import Box from '@cloudscape-design/components/box';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
 import Icon from '@cloudscape-design/components/icon';
+import { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
 import Link from '@cloudscape-design/components/link';
 import { useMemo, FC } from 'react';
+import { LEVEL_HIGH, LEVEL_NOT_SET } from '../../../../../configs';
 import { useMitigationLinksContext } from '../../../../../contexts/MitigationLinksContext';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
+import useLinkClicked from '../../hooks/useLinkClicked';
 
 const NumberWithWarningSign: FC<{
   displayedNumber: number;
-}> = ({ displayedNumber }) => {
+  onLinkClicked: CancelableEventHandler<BaseNavigationDetail>;
+}> = ({ displayedNumber, onLinkClicked }) => {
   return displayedNumber > 0 ? (
     <SpaceBetween direction="horizontal" size="xxs">
-      <Link variant="awsui-value-large" href="#ThreatList">
+      <Link variant="awsui-value-large" href="#" onFollow={onLinkClicked}>
         {displayedNumber}
       </Link>
-      <Icon name="status-warning" variant="warning" />
+      <Icon name="status-warning" variant="warning"/>
     </SpaceBetween>
   ) : (
-    <Link variant="awsui-value-large" href="#ThreatList">
+    <Link variant="awsui-value-large" href="#" onFollow={onLinkClicked}>
       {displayedNumber}
     </Link>
   );
@@ -44,6 +48,8 @@ const NumberWithWarningSign: FC<{
 const Overview: FC = () => {
   const { statementList } = useThreatsContext();
   const { mitigationLinkList } = useMitigationLinksContext();
+
+  const handleLinkClicked = useLinkClicked();
 
   const missingMitigation = useMemo(() => {
     return statementList.filter((s) =>
@@ -56,7 +62,7 @@ const Overview: FC = () => {
   }, [statementList]);
 
   const countHigh = useMemo(() => {
-    return filterThreatsByMetadata(statementList, 'Priority', 'High').length;
+    return filterThreatsByMetadata(statementList, 'Priority', LEVEL_HIGH).length;
   }, [statementList]);
 
   const countMed = useMemo(() => {
@@ -71,35 +77,45 @@ const Overview: FC = () => {
     <ColumnLayout columns={6} variant="text-grid" minColumnWidth={170}>
       <div>
         <Box variant="awsui-key-label">Total</Box>
-        <Link variant="awsui-value-large" href="#ThreatList">
+        <Link variant="awsui-value-large" href="#" onFollow={handleLinkClicked()}>
           {statementList.length}
         </Link>
       </div>
       <div>
         <Box variant="awsui-key-label">Missing mitigations</Box>
-        <NumberWithWarningSign displayedNumber={missingMitigation} />
+        <NumberWithWarningSign displayedNumber={missingMitigation} onLinkClicked={handleLinkClicked({
+          mitigated: false,
+        })}/>
       </div>
       <div>
         <Box variant="awsui-key-label">
           <Badge color="red">High</Badge>
         </Box>
-        <Link variant="awsui-value-large" href="#ThreatList">{countHigh}</Link>
+        <Link variant="awsui-value-large" href="#" onFollow={handleLinkClicked({
+          priority: LEVEL_HIGH,
+        })}>{countHigh}</Link>
       </div>
       <div>
         <Box variant="awsui-key-label">
           <Badge color="blue">Med</Badge>
         </Box>
-        <Link variant="awsui-value-large" href="#ThreatList">{countMed}</Link>
+        <Link variant="awsui-value-large" href="#" onFollow={handleLinkClicked({
+          priority: 'Medium',
+        })}>{countMed}</Link>
       </div>
       <div>
         <Box variant="awsui-key-label">
           <Badge color="green">Low</Badge>
         </Box>
-        <Link variant="awsui-value-large" href="#ThreatList">{countLow}</Link>
+        <Link variant="awsui-value-large" href="#Threat" onFollow={handleLinkClicked({
+          priority: 'Low',
+        })}>{countLow}</Link>
       </div>
       <div>
         <Box variant="awsui-key-label">Missing priority</Box>
-        <NumberWithWarningSign displayedNumber={missingPriority} />
+        <NumberWithWarningSign displayedNumber={missingPriority} onLinkClicked={handleLinkClicked({
+          priority: LEVEL_NOT_SET,
+        })}/>
       </div>
     </ColumnLayout>
   );

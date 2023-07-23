@@ -25,17 +25,21 @@ import BarChart from '@cloudscape-design/components/bar-chart';
 import { colorChartsGreen600, colorChartsPurple600, colorChartsYellow600 } from '@cloudscape-design/design-tokens';
 import { useMemo } from 'react';
 
+import { LEVEL_HIGH, LEVEL_LOW, LEVEL_MEDIUM, LEVEL_NOT_SET } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
+import useLinkClicked from '../../hooks/useLinkClicked';
 
 const ThreatPrioritization = () => {
   const { statementList } = useThreatsContext();
 
+  const handleLinkClicked = useLinkClicked();
+
   const missingPriority = useMemo(() => filterThreatsByMetadata(statementList, 'Priority').length, [statementList]);
 
-  const countHigh = useMemo(() => filterThreatsByMetadata(statementList, 'Priority', 'High').length, [statementList]);
-  const countMed = useMemo(() => filterThreatsByMetadata(statementList, 'Priority', 'Medium').length, [statementList]);
-  const countLow = useMemo(() => filterThreatsByMetadata(statementList, 'Priority', 'Low').length, [statementList]);
+  const countHigh = useMemo(() => filterThreatsByMetadata(statementList, 'Priority', LEVEL_HIGH).length, [statementList]);
+  const countMed = useMemo(() => filterThreatsByMetadata(statementList, 'Priority', LEVEL_MEDIUM).length, [statementList]);
+  const countLow = useMemo(() => filterThreatsByMetadata(statementList, 'Priority', LEVEL_LOW).length, [statementList]);
 
   return (
     <ColumnLayout columns={1} borders="horizontal">
@@ -88,7 +92,9 @@ const ThreatPrioritization = () => {
         <div>
           <Box variant="awsui-key-label">Missing priority</Box>
           <SpaceBetween direction="horizontal" size="xxs">
-            <Link variant="awsui-value-large" href="#ThreatList">
+            <Link variant="awsui-value-large" href="#" onFollow={handleLinkClicked({
+              priority: LEVEL_NOT_SET,
+            })}>
               {missingPriority}
             </Link>
             <Icon name="status-warning" variant="warning" />

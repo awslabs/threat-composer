@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { z } from 'zod';
 import { EntityBaseSchema } from './entities';
-import { SINGLE_FIELD_INPUT_MAX_LENGTH } from '../configs';
+import { SINGLE_FIELD_INPUT_MAX_LENGTH, LEVEL_HIGH, LEVEL_MEDIUM, LEVEL_LOW, LEVEL_NOT_SET } from '../configs';
 
 export const ThreatStatementDisplayTokenSchema = z.object({
   /**
@@ -89,6 +89,12 @@ export interface ThreatFieldData {
   description: string;
   examples?: string[];
   tokens?: string[];
+}
+
+export interface ThreatStatementListFilter {
+  mitigated?: boolean;
+  priority?: typeof LEVEL_HIGH | typeof LEVEL_MEDIUM | typeof LEVEL_LOW | typeof LEVEL_NOT_SET;
+  stride?: 'S' | 'T' | 'R' | 'I' | 'D' | 'E' | typeof LEVEL_NOT_SET;
 }
 
 export interface ThreatStatementFormat {

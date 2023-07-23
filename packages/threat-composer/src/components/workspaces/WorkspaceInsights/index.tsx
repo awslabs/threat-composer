@@ -84,7 +84,6 @@ const WorkspaceInsights = () => {
     <Board
       renderItem={handleRenderItem as (item: BoardProps.Item<unknown>) => JSX.Element}
       onItemsChange={event => {
-        console.log(event.detail.items);
         setItems(event.detail.items as BoardProps.Item<ItemType>[]);
       }}
       empty={<></>}

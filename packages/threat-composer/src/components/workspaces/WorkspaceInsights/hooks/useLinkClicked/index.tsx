@@ -13,12 +13,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { useLocation } from 'react-router-dom';
-import { ThreatStatementList as ThreatStatementListComponent } from 'threat-composer';
+import { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
+import { useCallback } from 'react';
+import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
+import { ThreatStatementListFilter } from '../../../../../customTypes';
 
-const ThreatStatementList = () => {
-  const { state } = useLocation();
-  return <ThreatStatementListComponent initialFilter={state?.filter}/>;
+const useLinkClicked = () => {
+  const { onThreatListView } = useThreatsContext();
+  return useCallback((filter?: ThreatStatementListFilter): CancelableEventHandler<BaseNavigationDetail> => (event) => {
+    event.preventDefault();
+    onThreatListView?.(filter);
+  }, [onThreatListView]);
 };
 
-export default ThreatStatementList;
+export default useLinkClicked;
+

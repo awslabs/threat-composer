@@ -16,7 +16,7 @@
 import { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
 import React, { FC, useMemo, useCallback, useState, useEffect } from 'react';
 import { Routes, Route, RouteProps, useParams, useSearchParams, useNavigate, Navigate } from 'react-router-dom';
-import { ContextAggregator, DataExchangeFormat, WorkspaceSelector, useWorkspacesContext } from 'threat-composer';
+import { ContextAggregator, DataExchangeFormat, ThreatStatementListFilter, WorkspaceSelector, useWorkspacesContext } from 'threat-composer';
 import AppLayout from '../../../../components/FullAppLayout';
 import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_DATAFLOW_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST, ROUTE_VIEW_THREAT_MODEL, ROUTE_WORKSPACE_HOME } from '../../../../config/routes';
 import useNotifications from '../../../../hooks/useNotifications';
@@ -63,8 +63,12 @@ const Full: FC = () => {
     navigate(generateUrl(ROUTE_WORKSPACE_HOME, searchParms, newWorkspaceId));
   }, [navigate, workspaceId, searchParms]);
 
-  const handleThreatListView = useCallback(() => {
-    navigate(generateUrl(ROUTE_THREAT_LIST, searchParms, workspaceId));
+  const handleThreatListView = useCallback((filter?: ThreatStatementListFilter) => {
+    navigate(generateUrl(ROUTE_THREAT_LIST, searchParms, workspaceId), {
+      state: filter ? {
+        filter,
+      } : undefined,
+    });
   }, [navigate, workspaceId, searchParms]);
 
   const handleThreatEditorView = useCallback((newThreatId?: string) => {

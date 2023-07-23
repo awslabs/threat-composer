@@ -33,3 +33,7 @@ export const IMAGE_BASE64_MAX_LENGTH = 500000;
 export const IMAGE_URL_MAX_LENGTH = 2048;
 
 export const ALL_LEVELS = 'All';
+export const LEVEL_NOT_SET = '-';
+export const LEVEL_HIGH = 'High';
+export const LEVEL_MEDIUM = 'Medium';
+export const LEVEL_LOW = 'Low';

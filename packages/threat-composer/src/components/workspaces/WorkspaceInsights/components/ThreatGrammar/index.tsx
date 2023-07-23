@@ -138,7 +138,7 @@ const ThreatGrammar = () => {
         <div>
           <Box variant="awsui-key-label">Not using grammar</Box>
           <SpaceBetween direction="horizontal" size="xxs">
-            <Link variant="awsui-value-large" href="#ThreatList">
+            <Link variant="awsui-value-large" href="#">
               {notUsingGrammar}
             </Link>
             <Icon name="status-warning" variant="warning" />
