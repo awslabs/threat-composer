@@ -24,59 +24,59 @@ import {
   Icon,
   BarChart,
   BarChartProps,
-} from "@cloudscape-design/components";
+} from '@cloudscape-design/components';
 import {
   colorChartsPaletteCategorical2,
   colorChartsPaletteCategorical1,
-} from "@cloudscape-design/design-tokens";
-import { useState, useMemo } from "react";
+} from '@cloudscape-design/design-tokens';
+import { useState, useMemo } from 'react';
 import {
   ALL_LEVELS,
   LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL,
-} from "../../../../../configs";
-import { useThreatsContext } from "../../../../../contexts/ThreatsContext";
-import filterThreatsByMetadata from "../../../../../utils/filterThreatsByMetadata";
+} from '../../../../../configs';
+import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
+import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 
 const ThreatGrammar = () => {
-  const { statementList } = useThreatsContext();
+  const { statementList, addStatement } = useThreatsContext();
 
   const [selectedPriority, setSelectedPriority] = useState<string | undefined>(
-    ALL_LEVELS
+    ALL_LEVELS,
   );
 
   const filteredStatementList = useMemo(() => {
-    return filterThreatsByMetadata(statementList, "Priority", selectedPriority);
+    return filterThreatsByMetadata(statementList, 'Priority', selectedPriority);
   }, [statementList, selectedPriority]);
 
   const countThreatSource = useMemo(
     () => filteredStatementList.filter((s) => s.threatSource).length,
-    [filteredStatementList]
+    [filteredStatementList],
   );
   const countPrerequisites = useMemo(
     () => filteredStatementList.filter((s) => s.prerequisites).length,
-    [filteredStatementList]
+    [filteredStatementList],
   );
   const countThreatAction = useMemo(
     () => filteredStatementList.filter((s) => s.threatAction).length,
-    [filteredStatementList]
+    [filteredStatementList],
   );
   const countThreatImpact = useMemo(
     () => filteredStatementList.filter((s) => s.threatImpact).length,
-    [filteredStatementList]
+    [filteredStatementList],
   );
   const countImpactedGoal = useMemo(
     () =>
       filteredStatementList.filter(
-        (s) => s.impactedGoal && s.impactedGoal?.length != 0
+        (s) => s.impactedGoal && s.impactedGoal?.length != 0,
       ).length,
-    [filteredStatementList]
+    [filteredStatementList],
   );
   const countImpactedAssets = useMemo(
     () =>
       filteredStatementList.filter(
-        (s) => s.impactedAssets && s.impactedAssets?.length != 0
+        (s) => s.impactedAssets && s.impactedAssets?.length != 0,
       ).length,
-    [filteredStatementList]
+    [filteredStatementList],
   );
   const notUsingGrammar = useMemo(
     () =>
@@ -87,39 +87,39 @@ const ThreatGrammar = () => {
           !s.threatAction &&
           !s.threatImpact &&
           !s.impactedGoal?.length &&
-          !s.impactedAssets?.length
+          !s.impactedAssets?.length,
       ).length,
-    [filteredStatementList]
+    [filteredStatementList],
   );
 
-  let barSeries: BarChartProps<string>["series"] = [
+  let barSeries: BarChartProps<string>['series'] = [
     {
-      title: "Inputs for mitigation",
-      type: "bar",
+      title: 'Inputs for mitigation',
+      type: 'bar',
       data: [
-        { x: "Threat source", y: countThreatSource },
+        { x: 'Threat source', y: countThreatSource },
         {
-          x: "Prerequistes",
+          x: 'Prerequistes',
           y: countPrerequisites,
         },
         {
-          x: "Threat action",
+          x: 'Threat action',
           y: countThreatAction,
         },
       ],
       color: colorChartsPaletteCategorical2,
     },
     {
-      title: "Inputs for prioritisation",
-      type: "bar",
+      title: 'Inputs for prioritisation',
+      type: 'bar',
       data: [
-        { x: "Threat impact", y: countThreatImpact },
+        { x: 'Threat impact', y: countThreatImpact },
         {
-          x: "Impacted goal",
+          x: 'Impacted goal',
           y: countImpactedGoal,
         },
         {
-          x: "Impacted assets",
+          x: 'Impacted assets',
           y: countImpactedAssets,
         },
       ],
@@ -140,7 +140,7 @@ const ThreatGrammar = () => {
           <Box variant="p" color="text-body-secondary">
             Start by adding a threat to this workspace
           </Box>
-          <Button variant="primary">Add a threat</Button>
+          <Button variant="primary" onClick={() => addStatement()}>Add a threat</Button>
         </Box>
       ) : (
         <div>
@@ -148,7 +148,7 @@ const ThreatGrammar = () => {
             <Select
               selectedOption={
                 LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL.find(
-                  (x) => x.value === selectedPriority
+                  (x) => x.value === selectedPriority,
                 ) || null
               }
               onChange={({ detail }) => {
@@ -167,24 +167,26 @@ const ThreatGrammar = () => {
               <b>No threats meet the filter criteria</b>
             </Box>
           ) : (
-            <BarChart
-              series={barSeries}
-              ariaLabel="Threat Grammer Chart"
-              emphasizeBaselineAxis={false}
-              height={245}
-              hideFilter
-              horizontalBars
-              stackedBars
-              noMatch={
-                <Box textAlign="center" color="inherit">
-                  <b>No matching data</b>
-                  <Box variant="p" color="inherit">
-                    There is no matching data to display
+            <Box padding="s">
+              <BarChart
+                series={barSeries}
+                ariaLabel="Threat Grammer Chart"
+                emphasizeBaselineAxis={false}
+                height={245}
+                hideFilter
+                horizontalBars
+                stackedBars
+                noMatch={
+                  <Box textAlign="center" color="inherit">
+                    <b>No matching data</b>
+                    <Box variant="p" color="inherit">
+                      There is no matching data to display
+                    </Box>
+                    <Button>Clear filter</Button>
                   </Box>
-                  <Button>Clear filter</Button>
-                </Box>
-              }
-            />
+                }
+              />
+            </Box>
           )}
         </div>
       )}

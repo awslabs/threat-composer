@@ -21,7 +21,7 @@ import { ThreatStatementListFilter } from '../../../../../customTypes';
 const useLinkClicked = () => {
   const { onThreatListView } = useThreatsContext();
   return useCallback((filter?: ThreatStatementListFilter): CancelableEventHandler<BaseNavigationDetail> => (event) => {
-    event.preventDefault();
+    event?.preventDefault?.();
     onThreatListView?.(filter);
   }, [onThreatListView]);
 };

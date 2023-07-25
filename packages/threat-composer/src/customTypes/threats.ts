@@ -92,7 +92,8 @@ export interface ThreatFieldData {
 }
 
 export interface ThreatStatementListFilter {
-  mitigated?: boolean;
+  linkedMitigations?: boolean;
+  linkedAssumptions?: boolean;
   priority?: typeof LEVEL_HIGH | typeof LEVEL_MEDIUM | typeof LEVEL_LOW | typeof LEVEL_NOT_SET;
   stride?: 'S' | 'T' | 'R' | 'I' | 'D' | 'E' | typeof LEVEL_NOT_SET;
 }

@@ -120,13 +120,16 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
   const [
     selectedLinkedAssumptionFilter,
     setSelectedLinkedAssumptionFilter,
-  ] = useState(ALL);
+  ] = useState(initialFilter && typeof initialFilter.linkedAssumptions !== 'undefined' ? (
+    initialFilter.linkedAssumptions ? WITH_LINKED_ENTITY :
+      WITHOUT_NO_LINKED_ENTITY
+  ) : ALL);
 
   const [
     selectedLinkedMitigationFilter,
     setSelectedLinkedMitigationFilter,
-  ] = useState(initialFilter && typeof initialFilter.mitigated !== 'undefined' ? (
-    initialFilter.mitigated ? WITH_LINKED_ENTITY :
+  ] = useState(initialFilter && typeof initialFilter.linkedMitigations !== 'undefined' ? (
+    initialFilter.linkedMitigations ? WITH_LINKED_ENTITY :
       WITHOUT_NO_LINKED_ENTITY
   ) : ALL);
 
@@ -245,7 +248,6 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
   }, [filteringText, selectedImpactedAssets, selectedImpactedGoal,
     selectedTags, selectedPriorities, selectedSTRIDEs,
     selectedLinkedAssumptionFilter, selectedLinkedMitigationFilter]);
-
 
   const handleAddStatement = useCallback((idToCopy?: string) => {
     addStatement(idToCopy);
