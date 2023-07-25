@@ -13,19 +13,23 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { SpaceBetween } from '@cloudscape-design/components';
-import Badge from '@cloudscape-design/components/badge';
-import Box from '@cloudscape-design/components/box';
-import ColumnLayout from '@cloudscape-design/components/column-layout';
-import Icon from '@cloudscape-design/components/icon';
-import { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
-import Link from '@cloudscape-design/components/link';
-import { useMemo, FC } from 'react';
-import { LEVEL_HIGH, LEVEL_NOT_SET } from '../../../../../configs';
-import { useMitigationLinksContext } from '../../../../../contexts/MitigationLinksContext';
-import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
-import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
-import useLinkClicked from '../../hooks/useLinkClicked';
+import { SpaceBetween } from "@cloudscape-design/components";
+import Badge from "@cloudscape-design/components/badge";
+import Box from "@cloudscape-design/components/box";
+import ColumnLayout from "@cloudscape-design/components/column-layout";
+import Icon from "@cloudscape-design/components/icon";
+import {
+  CancelableEventHandler,
+  BaseNavigationDetail,
+} from "@cloudscape-design/components/internal/events";
+import Link from "@cloudscape-design/components/link";
+import { useMemo, FC } from "react";
+import { LEVEL_HIGH, LEVEL_NOT_SET } from "../../../../../configs";
+import { useAssumptionLinksContext } from "../../../../../contexts";
+import { useMitigationLinksContext } from "../../../../../contexts/MitigationLinksContext";
+import { useThreatsContext } from "../../../../../contexts/ThreatsContext";
+import filterThreatsByMetadata from "../../../../../utils/filterThreatsByMetadata";
+import useLinkClicked from "../../hooks/useLinkClicked";
 
 const NumberWithWarningSign: FC<{
   displayedNumber: number;
@@ -36,7 +40,7 @@ const NumberWithWarningSign: FC<{
       <Link variant="awsui-value-large" href="#" onFollow={onLinkClicked}>
         {displayedNumber}
       </Link>
-      <Icon name="status-warning" variant="warning"/>
+      <Icon name="status-warning" variant="warning" />
     </SpaceBetween>
   ) : (
     <Link variant="awsui-value-large" href="#" onFollow={onLinkClicked}>
@@ -48,74 +52,121 @@ const NumberWithWarningSign: FC<{
 const Overview: FC = () => {
   const { statementList } = useThreatsContext();
   const { mitigationLinkList } = useMitigationLinksContext();
+  const { assumptionLinkList } = useAssumptionLinksContext();
+
+  const missingMitigationOrAssumption = useMemo(() => {
+    return statementList.filter(
+      (s) =>
+        !mitigationLinkList.find((ml) => ml.linkedId === s.id) &&
+        !assumptionLinkList.find((al) => al.linkedId === s.id)
+    ).length;
+  }, [statementList, mitigationLinkList, assumptionLinkList]);
 
   const handleLinkClicked = useLinkClicked();
 
   const missingMitigation = useMemo(() => {
-    return statementList.filter((s) =>
-      !mitigationLinkList.find((ml) => ml.linkedId === s.id),
+    return statementList.filter(
+      (s) => !mitigationLinkList.find((ml) => ml.linkedId === s.id)
     ).length;
   }, [statementList, mitigationLinkList]);
 
   const missingPriority = useMemo(() => {
-    return filterThreatsByMetadata(statementList, 'Priority').length;
+    return filterThreatsByMetadata(statementList, "Priority").length;
   }, [statementList]);
 
   const countHigh = useMemo(() => {
-    return filterThreatsByMetadata(statementList, 'Priority', LEVEL_HIGH).length;
+    return filterThreatsByMetadata(statementList, "Priority", LEVEL_HIGH)
+      .length;
   }, [statementList]);
 
   const countMed = useMemo(() => {
-    return filterThreatsByMetadata(statementList, 'Priority', 'Medium').length;
+    return filterThreatsByMetadata(statementList, "Priority", "Medium").length;
   }, [statementList]);
 
   const countLow = useMemo(() => {
-    return filterThreatsByMetadata(statementList, 'Priority', 'Low').length;
+    return filterThreatsByMetadata(statementList, "Priority", "Low").length;
   }, [statementList]);
 
   return (
-    <ColumnLayout columns={6} variant="text-grid" minColumnWidth={170}>
+    <ColumnLayout columns={7} variant="text-grid" minColumnWidth={100}>
       <div>
         <Box variant="awsui-key-label">Total</Box>
-        <Link variant="awsui-value-large" href="#" onFollow={handleLinkClicked()}>
+        <Link
+          variant="awsui-value-large"
+          href="#"
+          onFollow={handleLinkClicked()}
+        >
           {statementList.length}
         </Link>
       </div>
       <div>
-        <Box variant="awsui-key-label">Missing mitigations</Box>
-        <NumberWithWarningSign displayedNumber={missingMitigation} onLinkClicked={handleLinkClicked({
-          mitigated: false,
-        })}/>
+        <Box variant="awsui-key-label">No mitigation and assumption</Box>
+        <NumberWithWarningSign
+          displayedNumber={missingMitigationOrAssumption}
+          onLinkClicked={handleLinkClicked({
+            mitigated: false,
+          })}
+        />
+      </div>
+      <div>
+        <Box variant="awsui-key-label">No mitigation</Box>
+        <NumberWithWarningSign
+          displayedNumber={missingMitigation}
+          onLinkClicked={handleLinkClicked({
+            mitigated: false,
+          })}
+        />
       </div>
       <div>
         <Box variant="awsui-key-label">
           <Badge color="red">High</Badge>
         </Box>
-        <Link variant="awsui-value-large" href="#" onFollow={handleLinkClicked({
-          priority: LEVEL_HIGH,
-        })}>{countHigh}</Link>
+        <Link
+          variant="awsui-value-large"
+          href="#"
+          onFollow={handleLinkClicked({
+            priority: LEVEL_HIGH,
+          })}
+        >
+          {countHigh}
+        </Link>
       </div>
       <div>
         <Box variant="awsui-key-label">
           <Badge color="blue">Med</Badge>
         </Box>
-        <Link variant="awsui-value-large" href="#" onFollow={handleLinkClicked({
-          priority: 'Medium',
-        })}>{countMed}</Link>
+        <Link
+          variant="awsui-value-large"
+          href="#"
+          onFollow={handleLinkClicked({
+            priority: "Medium",
+          })}
+        >
+          {countMed}
+        </Link>
       </div>
       <div>
         <Box variant="awsui-key-label">
           <Badge color="green">Low</Badge>
         </Box>
-        <Link variant="awsui-value-large" href="#Threat" onFollow={handleLinkClicked({
-          priority: 'Low',
-        })}>{countLow}</Link>
+        <Link
+          variant="awsui-value-large"
+          href="#Threat"
+          onFollow={handleLinkClicked({
+            priority: "Low",
+          })}
+        >
+          {countLow}
+        </Link>
       </div>
       <div>
         <Box variant="awsui-key-label">Missing priority</Box>
-        <NumberWithWarningSign displayedNumber={missingPriority} onLinkClicked={handleLinkClicked({
-          priority: LEVEL_NOT_SET,
-        })}/>
+        <NumberWithWarningSign
+          displayedNumber={missingPriority}
+          onLinkClicked={handleLinkClicked({
+            priority: LEVEL_NOT_SET,
+          })}
+        />
       </div>
     </ColumnLayout>
   );

@@ -37,22 +37,22 @@ const WorkspaceInsights = () => {
       data: { title: 'Threat summary', content: <Overview /> },
     },
     {
+      id: 'threat-prioritization',
+      rowSpan: 5,
+      columnSpan: 2,
+      data: { title: 'Threat prioritization', content: <ThreatPrioritization /> },
+    },
+    {
       id: 'stride-allocation',
       rowSpan: 5,
       columnSpan: 2,
-      data: { title: 'STRIDE category distribution', content: <STRIDEAllocation /> },
+      data: { title: 'Threat category distribution', content: <STRIDEAllocation /> },
     },
     {
       id: 'threat-grammer',
       rowSpan: 5,
       columnSpan: 2,
       data: { title: 'Threat grammar distribution', content: <ThreatGrammar /> },
-    },
-    {
-      id: 'threat-prioritization',
-      rowSpan: 5,
-      columnSpan: 2,
-      data: { title: 'Threat prioritization', content: <ThreatPrioritization /> },
     },
   ]);
 

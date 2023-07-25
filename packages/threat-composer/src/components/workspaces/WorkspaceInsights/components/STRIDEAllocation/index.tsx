@@ -22,116 +22,172 @@ import {
   ColumnLayout,
   Link,
   Icon,
-} from '@cloudscape-design/components';
-import BarChart from '@cloudscape-design/components/bar-chart';
-import { useState, useMemo } from 'react';
-import { ALL_LEVELS, LEVEL_NOT_SET, LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL } from '../../../../../configs';
-import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
-import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
-import useLinkClicked from '../../hooks/useLinkClicked';
+  BarChart,
+  BarChartProps,
+} from "@cloudscape-design/components";
+import { useState, useMemo } from "react";
+import {
+  ALL_LEVELS,
+  LEVEL_NOT_SET,
+  LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL,
+} from "../../../../../configs";
+import { useThreatsContext } from "../../../../../contexts/ThreatsContext";
+import filterThreatsByMetadata from "../../../../../utils/filterThreatsByMetadata";
+import useLinkClicked from "../../hooks/useLinkClicked";
 
 const STRIDEAllocation = () => {
   const { statementList } = useThreatsContext();
-  const [selectedPriority, setSelectedPriority] = useState<string | undefined>(ALL_LEVELS);
+  const [selectedPriority, setSelectedPriority] = useState<string | undefined>(
+    ALL_LEVELS
+  );
 
   const filteredStatementList = useMemo(() => {
-    return filterThreatsByMetadata(statementList, 'Priority', selectedPriority);
+    return filterThreatsByMetadata(statementList, "Priority", selectedPriority);
   }, [statementList, selectedPriority]);
 
-  const missingStride = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE').length, [filteredStatementList]);
-  const countSpoofing = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'S').length, [filteredStatementList]);
-  const countTampering = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'T').length, [filteredStatementList]);
-  const countRepudiation = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'R').length, [filteredStatementList]);
-  const countInformationDisclosure = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'I').length, [filteredStatementList]);
-  const countDenialOfService = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'D').length, [filteredStatementList]);
-  const countElevationOfPrivilege = useMemo(() => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'E').length, [filteredStatementList]);
+  const missingStride = useMemo(
+    () => filterThreatsByMetadata(filteredStatementList, "STRIDE").length,
+    [filteredStatementList]
+  );
+  const countSpoofing = useMemo(
+    () => filterThreatsByMetadata(filteredStatementList, "STRIDE", "S").length,
+    [filteredStatementList]
+  );
+  const countTampering = useMemo(
+    () => filterThreatsByMetadata(filteredStatementList, "STRIDE", "T").length,
+    [filteredStatementList]
+  );
+  const countRepudiation = useMemo(
+    () => filterThreatsByMetadata(filteredStatementList, "STRIDE", "R").length,
+    [filteredStatementList]
+  );
+  const countInformationDisclosure = useMemo(
+    () => filterThreatsByMetadata(filteredStatementList, "STRIDE", "I").length,
+    [filteredStatementList]
+  );
+  const countDenialOfService = useMemo(
+    () => filterThreatsByMetadata(filteredStatementList, "STRIDE", "D").length,
+    [filteredStatementList]
+  );
+  const countElevationOfPrivilege = useMemo(
+    () => filterThreatsByMetadata(filteredStatementList, "STRIDE", "E").length,
+    [filteredStatementList]
+  );
 
   const handleLinkClicked = useLinkClicked();
 
+  const barSeries: BarChartProps<string>["series"] = [
+    {
+      title: "Spoofing",
+      type: "bar",
+      data: [{ x: "Spoofing", y: countSpoofing }],
+    },
+    {
+      title: "Tampering",
+      type: "bar",
+      data: [{ x: "Tampering", y: countTampering }],
+    },
+    {
+      title: "Repudiation",
+      type: "bar",
+      data: [{ x: "Repudiation", y: countRepudiation }],
+    },
+    {
+      title: "Information disclosure",
+      type: "bar",
+      data: [{ x: "Information disclosure", y: countInformationDisclosure }],
+    },
+    {
+      title: "Denial of service",
+      type: "bar",
+      data: [{ x: "Denial of Service", y: countDenialOfService }],
+    },
+    {
+      title: "Elevation of Privilege",
+      type: "bar",
+      data: [{ x: "Elevation of Privilege", y: countElevationOfPrivilege }],
+    },
+  ];
+
   return (
     <ColumnLayout columns={1} borders="horizontal">
-      <FormField label="Filter by threat priority">
-        <Select
-          selectedOption={LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL.find(x => x.value === selectedPriority) || null}
-          onChange={({ detail }) => {
-            setSelectedPriority(detail.selectedOption.value);
-          }}
-          options={LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL}
-        />
-      </FormField>
-      <BarChart
-        series={[
-          {
-            title: 'Spoofing',
-            type: 'bar',
-            data: [{ x: 'Spoofing', y: countSpoofing }],
-          },
-          {
-            title: 'Tampering',
-            type: 'bar',
-            data: [{ x: 'Tampering', y: countTampering }],
-          },
-          {
-            title: 'Repudiation',
-            type: 'bar',
-            data: [{ x: 'Repudiation', y: countRepudiation }],
-          },
-          {
-            title: 'Information disclosure',
-            type: 'bar',
-            data: [{ x: 'Information disclosure', y: countInformationDisclosure }],
-          },
-          {
-            title: 'Denial of service',
-            type: 'bar',
-            data: [{ x: 'Denial of Service', y: countDenialOfService }],
-          },
-          {
-            title: 'Elevation of Privilege',
-            type: 'bar',
-            data: [{ x: 'Elevation of Privilege', y: countElevationOfPrivilege }],
-          },
-        ]}
-        ariaLabel="Threat STRIDE Allocation Chart"
-        emphasizeBaselineAxis={false}
-        height={280}
-        hideFilter
-        hideLegend
-        horizontalBars
-        stackedBars
-        empty={
-          <Box textAlign="center" color="inherit">
-            <b>No data available</b>
-            <Box variant="p" color="inherit">
-              There is no data available
-            </Box>
+      {!statementList.length ? (
+        <Box
+          margin="xxl"
+          padding="xxl"
+          color="text-body-secondary"
+          textAlign="center"
+        >
+          <b>No threats available</b>
+          <Box variant="p" color="text-body-secondary">
+            Start by adding a threat to this workspace
           </Box>
-        }
-        noMatch={
-          <Box textAlign="center" color="inherit">
-            <b>No matching data</b>
-            <Box variant="p" color="inherit">
-              There is no matching data to display
+          <Button variant="primary">Add a threat</Button>
+        </Box>
+      ) : (
+        <div>
+          <FormField label="Filter by threat priority">
+            <Select
+              selectedOption={
+                LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL.find(
+                  (x) => x.value === selectedPriority
+                ) || null
+              }
+              onChange={({ detail }) => {
+                setSelectedPriority(detail.selectedOption.value);
+              }}
+              options={LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL}
+            />
+          </FormField>
+          {!filteredStatementList.length ? (
+            <Box
+              margin="xxl"
+              padding="xxl"
+              color="text-body-secondary"
+              textAlign="center"
+            >
+              <b>No threats meet the filter criteria</b>
             </Box>
-            <Button>Clear filter</Button>
-          </Box>
-        }
-      />
+          ) : (
+            <BarChart
+              series={barSeries}
+              ariaLabel="Threat category allocation chart"
+              emphasizeBaselineAxis={false}
+              height={280}
+              hideFilter
+              hideLegend
+              horizontalBars
+              stackedBars
+              noMatch={
+                <Box textAlign="center" color="inherit">
+                  <b>No matching data</b>
+                  <Box variant="p" color="inherit">
+                    There is no matching data to display
+                  </Box>
+                  <Button>Clear filter</Button>
+                </Box>
+              }
+            />
+          )}
+        </div>
+      )}
       {missingStride > 0 ? (
         <div>
           <Box variant="awsui-key-label">Missing STRIDE</Box>
           <SpaceBetween direction="horizontal" size="xxs">
-            <Link variant="awsui-value-large" href="#" onFollow={handleLinkClicked({
-              stride: LEVEL_NOT_SET,
-            })}>
+            <Link
+              variant="awsui-value-large"
+              href="#"
+              onFollow={handleLinkClicked({
+                stride: LEVEL_NOT_SET,
+              })}
+            >
               {missingStride}
             </Link>
             <Icon name="status-warning" variant="warning" />
           </SpaceBetween>
         </div>
-      ) : (
-        <div></div>
-      )}
+      ) : null}
     </ColumnLayout>
   );
 };
