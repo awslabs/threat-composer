@@ -197,6 +197,10 @@
       "type": "runtime"
     },
     {
+      "name": "@cloudscape-design/board-components",
+      "type": "runtime"
+    },
+    {
       "name": "@cloudscape-design/components",
       "type": "runtime"
     },

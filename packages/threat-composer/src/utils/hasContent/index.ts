@@ -13,10 +13,29 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { LandingPage as LandingPageComponent } from 'threat-composer';
+import { ApplicationInfo, ArchitectureInfo, Assumption, DataflowInfo, Mitigation, TemplateThreatStatement } from '../../customTypes';
 
-const LandingPage = () => {
-  return <LandingPageComponent />;
+export const hasApplicationInfo = (applicationInfo: ApplicationInfo) => {
+  return !!(applicationInfo.name || applicationInfo.description);
 };
 
-export default LandingPage;
+export const hasArchitectureInfo = (archInfo: ArchitectureInfo) => {
+  return !!(archInfo.description || archInfo.image);
+};
+
+export const hasDataflowInfo = (dataflowInfo: DataflowInfo) => {
+  return !!(dataflowInfo.description || dataflowInfo.image);
+};
+
+export const hasAssumptions = (assumptions: Assumption[]) => {
+  return assumptions.length > 0;
+};
+
+export const hasThreats = (threatStatementList: TemplateThreatStatement[]) => {
+  return threatStatementList.length > 0;
+};
+
+export const hasMitigations = (mitigations: Mitigation[]) => {
+  return mitigations.length > 0;
+};
+

@@ -13,10 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { useLocation } from 'react-router-dom';
 import { ThreatStatementList as ThreatStatementListComponent } from 'threat-composer';
 
 const ThreatStatementList = () => {
-  return <ThreatStatementListComponent />;
+  const { state } = useLocation();
+  return <ThreatStatementListComponent initialFilter={state?.filter}/>;
 };
 
 export default ThreatStatementList;

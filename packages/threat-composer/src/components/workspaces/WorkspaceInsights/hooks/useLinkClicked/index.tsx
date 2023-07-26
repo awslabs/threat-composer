@@ -13,14 +13,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC } from 'react';
-import LandingPageComponent from '../../components/workspaces/LandingPage';
-import { ContextAggregator } from '../../contexts';
+import { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
+import { useCallback } from 'react';
+import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
+import { ThreatStatementListFilter } from '../../../../../customTypes';
 
-const WorkspaceHome: FC = () => {
-  return (<ContextAggregator composerMode='Full'>
-    <LandingPageComponent/>
-  </ContextAggregator>);
+const useLinkClicked = () => {
+  const { onThreatListView } = useThreatsContext();
+  return useCallback((filter?: ThreatStatementListFilter): CancelableEventHandler<BaseNavigationDetail> => (event) => {
+    event?.preventDefault?.();
+    onThreatListView?.(filter);
+  }, [onThreatListView]);
 };
 
-export default WorkspaceHome;
+export default useLinkClicked;
+

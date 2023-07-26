@@ -65,6 +65,7 @@
   },
   "dependencies": {
     "@aws-northstar/ui": "*",
+    "@cloudscape-design/board-components": "*",
     "@cloudscape-design/components": "*",
     "@cloudscape-design/design-tokens": "*",
     "@cloudscape-design/global-styles": "*",

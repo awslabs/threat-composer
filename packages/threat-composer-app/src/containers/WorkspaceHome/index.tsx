@@ -13,14 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC } from 'react';
-import LandingPageComponent from '../../components/workspaces/LandingPage';
-import { ContextAggregator } from '../../contexts';
+import { WorkspaceHome as WorkspaceHomeComponent } from 'threat-composer';
 
-const WorkspaceHome: FC = () => {
-  return (<ContextAggregator composerMode='Full'>
-    <LandingPageComponent/>
-  </ContextAggregator>);
+const WorkspaceHome = () => {
+  return <WorkspaceHomeComponent />;
 };
 
 export default WorkspaceHome;

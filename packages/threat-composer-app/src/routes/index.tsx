@@ -29,11 +29,11 @@ import Application from '../containers/Application';
 import Architecture from '../containers/Architecture';
 import AssumptionList from '../containers/AssumptionList';
 import Dataflow from '../containers/Dataflow';
-import LandingPage from '../containers/LandingPage';
 import MitigationList from '../containers/MitigationList';
 import ThreatModelReport from '../containers/ThreatModelReport';
 import ThreatStatementEditor from '../containers/ThreatStatementEditor';
 import ThreatStatementList from '../containers/ThreatStatementList';
+import WorkspaceHome from '../containers/WorkspaceHome';
 
 const ROUTE_BASE_PATH = process.env.REACT_APP_ROUTE_BASE_PATH || '';
 
@@ -44,7 +44,7 @@ const getRouteWithBasePath = (route: string) => {
 const routes: RouteProps[] = [
   {
     path: getRouteWithBasePath(ROUTE_WORKSPACE_HOME),
-    element: <LandingPage />,
+    element: <WorkspaceHome />,
   },
   {
     path: getRouteWithBasePath(ROUTE_APPLICATION_INFO),

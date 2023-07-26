@@ -13,14 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC } from 'react';
-import LandingPageComponent from '../../components/workspaces/LandingPage';
-import { ContextAggregator } from '../../contexts';
+import useHasContent from '../../../hooks/useHasContent';
+import LandingPage from '../LandingPage';
+import WorkspaceInsight from '../WorkspaceInsights';
 
-const WorkspaceHome: FC = () => {
-  return (<ContextAggregator composerMode='Full'>
-    <LandingPageComponent/>
-  </ContextAggregator>);
+const WorkspaceHome = () => {
+  const [hasContent] = useHasContent();
+  return hasContent ? <WorkspaceInsight /> : <LandingPage />;
 };
 
 export default WorkspaceHome;

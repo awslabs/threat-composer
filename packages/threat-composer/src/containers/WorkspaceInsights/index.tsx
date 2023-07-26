@@ -14,13 +14,13 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import React, { FC } from 'react';
-import LandingPageComponent from '../../components/workspaces/LandingPage';
+import WorkspaceInsightsComponent from '../../components/workspaces/WorkspaceInsights';
 import { ContextAggregator } from '../../contexts';
 
-const WorkspaceHome: FC = () => {
+const WorkspaceInsights: FC = () => {
   return (<ContextAggregator composerMode='Full'>
-    <LandingPageComponent/>
+    <WorkspaceInsightsComponent/>
   </ContextAggregator>);
 };
 
-export default WorkspaceHome;
+export default WorkspaceInsights;
