@@ -99,7 +99,7 @@ const ThreatGrammar = () => {
       data: [
         { x: 'Threat source', y: countThreatSource },
         {
-          x: 'Prerequistes',
+          x: 'Prerequisites',
           y: countPrerequisites,
         },
         {
