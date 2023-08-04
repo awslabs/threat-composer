@@ -20,14 +20,14 @@ import {
   StaticWebsiteOrigin,
   StaticWebsiteProps,
 } from "@aws-prototyping-sdk/static-website";
-import { Stack, StackProps, CfnOutput, Stage } from "aws-cdk-lib";
+import { Stack, StackProps, CfnOutput, Stage, Duration } from "aws-cdk-lib";
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import {
   DistributionProps,
   LambdaEdgeEventType,
-  FunctionEventType,
-  Function,
-  FunctionCode,
+  ResponseHeadersPolicy,
+  HeadersFrameOption,
+  HeadersReferrerPolicy,
 } from "aws-cdk-lib/aws-cloudfront";
 import { Version } from "aws-cdk-lib/aws-lambda";
 import { HostedZone, ARecord, RecordTarget } from "aws-cdk-lib/aws-route53";
@@ -41,49 +41,82 @@ export class ApplicationStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const domainName = this.node.tryGetContext(
-      `domainName${Stage.of(this)?.stageName}`
-    );
-    const certificate = this.node.tryGetContext(
-      `certificate${Stage.of(this)?.stageName}`
-    );
+    const stageName = Stage.of(this)?.stageName;
+
+    const domainName = this.node.tryGetContext(`domainName${stageName}`);
+    const certificate = this.node.tryGetContext(`certificate${stageName}`);
     const hostedZoneId = this.node.tryGetContext(
-      `hostZone${Stage.of(this)?.stageName}`
+      `hostZone${stageName}`
     ) as string;
     const hostedZoneName = this.node.tryGetContext(
-      `hostZoneName${Stage.of(this)?.stageName}`
+      `hostZoneName${stageName}`
     ) as string;
     const lambdaEdge = this.node.tryGetContext(
-      `lambdaEdge${Stage.of(this)?.stageName}`
+      `lambdaEdge${stageName}`
     ) as string;
-    const cidrType = this.node.tryGetContext(
-      `cidrType${Stage.of(this)?.stageName}`
-    ) as string;
+    const cidrType = this.node.tryGetContext(`cidrType${stageName}`) as string;
     const cidrRanges = this.node.tryGetContext(
-      `cidrRanges${Stage.of(this)?.stageName}`
+      `cidrRanges${stageName}`
     ) as string;
+
+    const contentSecurityPolicyOverride = this.node.tryGetContext(
+      `contentSecurityPolicyOverride`
+    ) as string;
+
+    const responseHeadersPolicy = new ResponseHeadersPolicy(
+      this,
+      "ResourceHeadersPolicy",
+      {
+        responseHeadersPolicyName: `ThreatComposerResourceHeadersPolicy${stageName}`,
+        corsBehavior: {
+          accessControlAllowCredentials: false,
+          accessControlAllowMethods: ["ALL"],
+          accessControlAllowOrigins: ["*"],
+          accessControlAllowHeaders: ["*"],
+          originOverride: true,
+        },
+        customHeadersBehavior: {
+          customHeaders: [
+            { header: "pragma", value: "no-cache", override: true },
+            {
+              header: "cache-control",
+              value: "no-store, no-cache",
+              override: true,
+            },
+          ],
+        },
+        securityHeadersBehavior: {
+          // A default content security policy is present in the index.html file to cater for github page hosting.
+          // Here allow users to override to cater for specific use cases.
+          contentSecurityPolicy: contentSecurityPolicyOverride
+            ? {
+              contentSecurityPolicy: contentSecurityPolicyOverride,
+              override: true,
+            }
+            : undefined,
+          frameOptions: {
+            frameOption: HeadersFrameOption.DENY,
+            override: true,
+          },
+          referrerPolicy: {
+            referrerPolicy: HeadersReferrerPolicy.NO_REFERRER,
+            override: true,
+          },
+          strictTransportSecurity: {
+            accessControlMaxAge: Duration.seconds(63072000),
+            includeSubdomains: true,
+            preload: true,
+            override: true,
+          },
+          contentTypeOptions: { override: true },
+        },
+      }
+    );
 
     let distributionProps: DistributionProps = {
       defaultBehavior: {
         origin: new StaticWebsiteOrigin(),
-        functionAssociations: [
-          {
-            eventType: FunctionEventType.VIEWER_RESPONSE,
-            function: new Function(this, "ResponseHeaderFunction", {
-              code: FunctionCode.fromInline(
-                `function handler(event) { var response = event.response; 
-                  response.headers['strict-transport-security'] = { value: 'max-age=63072000; includeSubdomains; preload'}; 
-                  response.headers['x-content-type-options'] = { value: 'nosniff'}; 
-                  response.headers['x-frame-options'] = {value: 'DENY'}; 
-                  response.headers['cache-control'] = { value: 'no-store, no-cache'};
-                  response.headers['access-control-allow-origin'] = {value: '*'};
-                  response.headers['pragma'] = {value: 'no-cache'};
-                  return response; 
-                }`
-              ),
-            }),
-          },
-        ],
+        responseHeadersPolicy: responseHeadersPolicy,
       },
     };
 
