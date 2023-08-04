@@ -17,10 +17,10 @@ import React, { FC } from 'react';
 import LandingPageComponent from '../../components/workspaces/LandingPage';
 import { ContextAggregator } from '../../contexts';
 
-const WorkspaceHome: FC = () => {
+const LandingPage: FC = () => {
   return (<ContextAggregator composerMode='Full'>
     <LandingPageComponent/>
   </ContextAggregator>);
 };
 
-export default WorkspaceHome;
+export default LandingPage;

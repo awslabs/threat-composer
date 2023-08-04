@@ -28,6 +28,7 @@ import {
   FunctionEventType,
   Function,
   FunctionCode,
+  ResponseHeadersPolicy,
 } from "aws-cdk-lib/aws-cloudfront";
 import { Version } from "aws-cdk-lib/aws-lambda";
 import { HostedZone, ARecord, RecordTarget } from "aws-cdk-lib/aws-route53";
@@ -66,12 +67,14 @@ export class ApplicationStack extends Stack {
     let distributionProps: DistributionProps = {
       defaultBehavior: {
         origin: new StaticWebsiteOrigin(),
-        functionAssociations: [
-          {
-            eventType: FunctionEventType.VIEWER_RESPONSE,
-            function: new Function(this, "ResponseHeaderFunction", {
-              code: FunctionCode.fromInline(
-                `function handler(event) { var response = event.response; 
+        functionAssociations: lambdaEdge
+          ? undefined
+          : [
+              {
+                eventType: FunctionEventType.VIEWER_RESPONSE,
+                function: new Function(this, "ResponseHeaderFunction", {
+                  code: FunctionCode.fromInline(
+                    `function handler(event) { var response = event.response; 
                   response.headers['strict-transport-security'] = { value: 'max-age=63072000; includeSubdomains; preload'}; 
                   response.headers['x-content-type-options'] = { value: 'nosniff'}; 
                   response.headers['x-frame-options'] = {value: 'DENY'}; 
@@ -80,10 +83,13 @@ export class ApplicationStack extends Stack {
                   response.headers['pragma'] = {value: 'no-cache'};
                   return response; 
                 }`
-              ),
-            }),
-          },
-        ],
+                  ),
+                }),
+              },
+            ],
+        responseHeadersPolicy: lambdaEdge
+          ? ResponseHeadersPolicy.CORS_ALLOW_ALL_ORIGINS_AND_SECURITY_HEADERS
+          : undefined,
       },
     };
 
