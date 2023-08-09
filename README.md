@@ -198,14 +198,14 @@ Note that all the configurations are **OPTIONAL**.
 | cidrTypeProd	|(Optional) The IP address type for prod instance of [WAF WebAcl IPSet](https://docs.aws.amazon.com/waf/latest/developerguide/waf-ip-set-managing.html). Options are IPV4 or IPV6. Default value: IPV4.	|
 | cidrRangesDev	|(Optional) The IP address ranges for dev instance of [WAF WebAcl IPSet](https://docs.aws.amazon.com/waf/latest/developerguide/waf-ip-set-managing.html). Multiple values is supported via `,` separator. Default value: `192.168.0.0/24`. |
 | cidrRangesProd |(Optional) The IP address ranges for prod instance of [WAF WebAcl IPSet](https://docs.aws.amazon.com/waf/latest/developerguide/waf-ip-set-managing.html). Multiple values is supported via `,` separator. Default value: `192.168.0.0/24`.	|
-| domainNameDev	| (Optional) The custom domain name for dev  deployment	|
-| domainNameProd	|(Optional) The custom domain name for prod  development	|
-| certificateDev	| (Optional) The AWS Certificate Manager  certificate ARN for the custom domain name of dev deployment if custom domain name is used	|
-| certificateProd	| (Optional) The AWS Certificate Manager  certificate ARN for the custom domain name of prod deployment if custom domain name is used	|
-| hostZoneNameDev	| (Optional) The Route 53 host zone for the custom  domain name of prod deployment if host zone record creation is required	|
-| hostZoneNameProd	| (Optional) The Route 53 host zone for the custom  domain name of prod deployment if host zone record creation is required	|
-| lambdaEdgeDev	|(Optional) The lambda edge function ARN attached to CloudFront VIEWER_REQUEST event for CloudFront dev instance	|
-| lambdaEdgeProd	|(Optional) The lambda edge function ARN attached to CloudFront VIEWER_REQUEST event for CloudFront prod instance	|
+| domainNameDev	| (Optional) The custom domain name for dev deployment |
+| domainNameProd	|(Optional) The custom domain name for prod deployment |
+| certificateDev	| (Optional) The AWS Certificate Manager certificate ARN for the custom domain name of dev deployment if custom domain name is used |
+| certificateProd	| (Optional) The AWS Certificate Manager certificate ARN for the custom domain name of prod deployment if custom domain name is used |
+| hostZoneNameDev	| (Optional) The Route 53 host zone for the custom domain name of prod deployment if host zone record creation is required |
+| hostZoneNameProd | (Optional) The Route 53 host zone for the custom domain name of prod deployment if host zone record creation is required |
+| lambdaEdgeDev	|(Optional) The lambda edge function ARN attached to CloudFront VIEWER_REQUEST event for CloudFront dev instance or the AWS Systems Manbager(SSM) parameter name (in us-east-1) storing the Lambda edge function ARN |
+| lambdaEdgeProd |(Optional) The lambda edge function ARN attached to CloudFront VIEWER_REQUEST event for CloudFront prod instance or the AWS Systems Manbager(SSM) parameter name (in us-east-1) storing the Lambda edge function ARN |
 
 ### Deployment - Static Website Only
 

@@ -20,7 +20,14 @@ import {
   StaticWebsiteOrigin,
   StaticWebsiteProps,
 } from "@aws-prototyping-sdk/static-website";
-import { Stack, StackProps, CfnOutput, Stage, Duration } from "aws-cdk-lib";
+import {
+  Stack,
+  StackProps,
+  CfnOutput,
+  Stage,
+  Duration,
+  Arn,
+} from "aws-cdk-lib";
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import {
   DistributionProps,
@@ -32,10 +39,20 @@ import {
 import { Version } from "aws-cdk-lib/aws-lambda";
 import { HostedZone, ARecord, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
+import {
+  AwsSdkCall,
+  PhysicalResourceId,
+  AwsCustomResource,
+  AwsCustomResourcePolicy,
+} from "aws-cdk-lib/custom-resources";
 import { NagSuppressions } from "cdk-nag";
 import { Construct } from "constructs";
 
 const PACKAGES_ROOT = path.join(__dirname, "..", "..");
+
+const removeLeadingSlash = (value: string): string => {
+  return value.slice(0, 1) == "/" ? value.slice(1) : value;
+};
 
 export class ApplicationStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -133,6 +150,49 @@ export class ApplicationStack extends Stack {
     }
 
     if (lambdaEdge) {
+      let lambdaEdgeArn = lambdaEdge;
+
+      if (!lambdaEdgeArn.includes(":lambda:")) {
+        const lambdaEdgeRegion = "us-east-1";
+
+        // The provided value is expected to be SSM Parameter in us-east-1 (where the lambda edge is deployed)
+        const ssmAwsSdkCall: AwsSdkCall = {
+          service: "SSM",
+          action: "getParameter",
+          parameters: {
+            Name: lambdaEdge,
+          },
+          region: lambdaEdgeRegion,
+          physicalResourceId: PhysicalResourceId.of(Date.now().toString()),
+        };
+
+        const ssmAwsSdkCallCustomResource = new AwsCustomResource(
+          this,
+          "SSMAWSSDKCallCustomResource",
+          {
+            onCreate: ssmAwsSdkCall,
+            onUpdate: ssmAwsSdkCall,
+            policy: AwsCustomResourcePolicy.fromSdkCalls({
+              resources: [
+                Arn.format(
+                  {
+                    service: "ssm",
+                    region: lambdaEdgeRegion,
+                    resource: "parameter",
+                    resourceName: removeLeadingSlash(lambdaEdge),
+                  },
+                  Stack.of(this)
+                ),
+              ],
+            }),
+          }
+        );
+
+        lambdaEdgeArn = ssmAwsSdkCallCustomResource
+          .getResponseField("Parameter.Value")
+          .toString();
+      }
+
       distributionProps = {
         ...distributionProps,
         defaultBehavior: {
@@ -142,7 +202,7 @@ export class ApplicationStack extends Stack {
               functionVersion: Version.fromVersionArn(
                 this,
                 "LambdaEdgeFunctionVersion",
-                lambdaEdge
+                lambdaEdgeArn
               ),
               eventType: LambdaEdgeEventType.VIEWER_REQUEST,
             },
@@ -159,11 +219,10 @@ export class ApplicationStack extends Stack {
       ),
       webAclProps: {
         cidrAllowList: {
-          cidrType: cidrType === "IPV4" ? "IPV4" : "IPV6",
-          cidrRanges: cidrRanges
-            .split(",")
+          cidrType: cidrType === "IPV6" ? "IPV6" : "IPV4",
+          cidrRanges: (cidrRanges?.split(",")
             .map((x) => x.trim())
-            .filter((x) => !!x),
+            .filter((x) => !!x)) || ['192.168.0.0/24'],
         },
       },
       distributionProps,
