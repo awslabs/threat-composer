@@ -18,7 +18,7 @@ import { useSearchParams } from 'react-router-dom';
 import Full from './components/Full';
 import Standalone from './components/Standalone';
 
-const DEFAULT_MODE = process.env.DEFAULT_MODE;
+const DEFAULT_MODE = process.env.REACT_APP_DEFAULT_MODE;
 
 /**
  * Demo app for threat-composer
