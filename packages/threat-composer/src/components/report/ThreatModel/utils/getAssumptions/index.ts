@@ -54,7 +54,7 @@ export const getAssumptionsContent = async (
 
       const assumptionId = `A-${standardizeNumericId(x.numericId)}`;
       const comments = await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || '');
-      return `| <a name="${assumptionId}"></a>${assumptionId} | ${await escapeMarkdown(x.content)} | ${threatsContent} | ${mitigationsContent} | ${comments} |`;
+      return `| <a name="${assumptionId}"></a>${assumptionId} | ${escapeMarkdown(x.content)} | ${threatsContent} | ${mitigationsContent} | ${comments} |`;
     });
 
     rows.push(...(await Promise.all(promises)));

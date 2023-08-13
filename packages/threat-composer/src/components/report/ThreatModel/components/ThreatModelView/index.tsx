@@ -97,7 +97,6 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
       >
       </Header></div>
       <MarkdownViewer allowHtml>{content}</MarkdownViewer>
-      <div css={printStyles.hiddenPrint}></div>
     </SpaceBetween>
   </div>);
 };
