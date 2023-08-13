@@ -14,10 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { DataExchangeFormat } from '../../../../../customTypes';
+import escapeMarkdown from '../../../../../utils/escapeMarkdown';
+import parseTableCellContent from '../../../../../utils/parseTableCellContent';
 import standardizeNumericId from '../../../../../utils/standardizeNumericId';
-import parseTableCellContent from '../parseTableCellContent';
 
-export const getMitigationsContent = (
+export const getMitigationsContent = async (
   data: DataExchangeFormat,
 ) => {
   const rows: string[] = [];
@@ -29,7 +30,7 @@ export const getMitigationsContent = (
   rows.push('| --- | --- | --- | --- | --- |');
 
   if (data.mitigations) {
-    data.mitigations.forEach(x => {
+    const promises = data.mitigations.map(async (x) => {
       const threats = data.mitigationLinks?.filter(ml => ml.mitigationId === x.id) || [];
       const assumpptionLinks = data.assumptionLinks?.filter(al => al.linkedId === x.id) || [];
 
@@ -37,7 +38,7 @@ export const getMitigationsContent = (
         const threat = data.threats?.find(s => s.id === tl.linkedId);
         if (threat) {
           const threatId = `T-${standardizeNumericId(threat.numericId)}`;
-          return `[**${threatId}**](#${threatId}): ${threat.statement}`;
+          return `[**${threatId}**](#${threatId}): ${escapeMarkdown(threat.statement || '')}`;
         }
         return null;
       }).filter(t => !!t).join('<br/>');
@@ -46,16 +47,18 @@ export const getMitigationsContent = (
         const assumption = data.assumptions?.find(a => a.id === al.assumptionId);
         if (assumption) {
           const assumptionId = `A-${standardizeNumericId(assumption.numericId)}`;
-          return `[**${assumptionId}**](#${assumptionId}): ${assumption.content}`;
+          return `[**${assumptionId}**](#${assumptionId}): ${escapeMarkdown(assumption.content)}`;
         }
         return null;
       }).filter(a => !!a).join('<br/>');
 
-      const comments = (x.metadata?.find(m => m.key === 'Comments')?.value as string) || '';
+      const comments = await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || '');
 
       const mitigationId = `M-${standardizeNumericId(x.numericId)}`;
-      rows.push(`| <a name="${mitigationId}"></a>${mitigationId} | ${parseTableCellContent(x.content)} | ${parseTableCellContent(threatsContent)} | ${parseTableCellContent(assumptionsContent)} | ${parseTableCellContent(comments)} |`);
+      return `| <a name="${mitigationId}"></a>${mitigationId} | ${escapeMarkdown(x.content)} | ${threatsContent} | ${assumptionsContent} | ${comments} |`;
     });
+
+    rows.push(...(await Promise.all(promises)));
   }
 
   rows.push('\n');

@@ -57,6 +57,10 @@ monorepo.addTask('storybook', {
 monorepo.compileTask.reset('npx nx run-many --target=build --all --skip-nx-cache --nx-bail');
 monorepo.postCompileTask.reset('yarn run generate:attribution && yarn run license:checker');
 
+const uiESModules = [ 
+  "unified",
+].join("|");
+
 const uiProject = new TypeScriptProject({
   parent: monorepo,
   outdir: "packages/threat-composer",
@@ -73,7 +77,10 @@ const uiProject = new TypeScriptProject({
     "uuid",
     "react-simply-carousel",
     "browser-image-compression",
+    "remark-parse",
     'remark-gfm',
+    "remark-rehype",
+    "rehype-stringify",
     'remark-frontmatter',
     'react-markdown',
     "d3@^7",
@@ -82,6 +89,7 @@ const uiProject = new TypeScriptProject({
     "@aws-northstar/ui",
     "@emotion/react",
     "zod",
+    "unified",
   ],
   devDeps: [
     "@cloudscape-design/jest-preset",
@@ -116,6 +124,11 @@ const uiProject = new TypeScriptProject({
   ],
   jestOptions: {
     configFilePath: "./jest.config.json",
+    jestConfig: {
+      transformIgnorePatterns: [
+        `[/\\\\]node_modules[/\\\\](?!${uiESModules}).+\\.(js|jsx|mjs|cjs|ts|tsx)$`,
+      ],
+    }, 
   },
   tsconfig: {
     compilerOptions: {

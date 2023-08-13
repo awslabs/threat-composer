@@ -18,13 +18,15 @@ import { useSearchParams } from 'react-router-dom';
 import Full from './components/Full';
 import Standalone from './components/Standalone';
 
+const DEFAULT_MODE = process.env.DEFAULT_MODE;
+
 /**
  * Demo app for threat-composer
  */
 const App: FC = () => {
   const [searchParams] = useSearchParams();
   const mode = searchParams.get('mode');
-  return mode === 'Full' ? <Full/> : <Standalone composeMode={mode} />;
+  return mode === 'Full' || DEFAULT_MODE === 'Full' ? <Full/> : <Standalone composeMode={mode} />;
 };
 
 export default App;

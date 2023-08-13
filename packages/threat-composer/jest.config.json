@@ -1,4 +1,7 @@
 {
+  "transformIgnorePatterns": [
+    "[/\\\\]node_modules[/\\\\](?!unified).+\\.(js|jsx|mjs|cjs|ts|tsx)$"
+  ],
   "testMatch": [
     "<rootDir>/src/**/__tests__/**/*.ts?(x)",
     "<rootDir>/(test|src)/**/*(*.)@(spec|test).ts?(x)"

@@ -14,10 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { DataExchangeFormat } from '../../../../../customTypes';
+import escapeMarkdown from '../../../../../utils/escapeMarkdown';
+import parseTableCellContent from '../../../../../utils/parseTableCellContent';
 import standardizeNumericId from '../../../../../utils/standardizeNumericId';
-import parseTableCellContent from '../parseTableCellContent';
 
-export const getAssumptionsContent = (
+export const getAssumptionsContent = async (
   data: DataExchangeFormat,
 ) => {
   const rows: string[] = [];
@@ -29,7 +30,7 @@ export const getAssumptionsContent = (
   rows.push('| --- | --- | --- | --- | --- |');
 
   if (data.assumptions) {
-    data.assumptions?.forEach(x => {
+    const promises = data.assumptions?.map(async (x) => {
       const threatLinks = data.assumptionLinks?.filter(al => al.assumptionId === x.id && al.type === 'Threat') || [];
       const mitigationLinks = data.assumptionLinks?.filter(al => al.assumptionId === x.id && al.type === 'Mitigation') || [];
 
@@ -37,7 +38,7 @@ export const getAssumptionsContent = (
         const threat = data.threats?.find(s => s.id === tl.linkedId);
         if (threat) {
           const threatId = `T-${standardizeNumericId(threat.numericId)}`;
-          return `[**${threatId}**](#${threatId}): ${threat.statement}`;
+          return `[**${threatId}**](#${threatId}): ${escapeMarkdown(threat.statement || '')}`;
         }
         return null;
       }).filter(t => !!t).join('<br/>');
@@ -46,15 +47,17 @@ export const getAssumptionsContent = (
         const mitigation = data.mitigations?.find(m => m.id === tl.linkedId);
         if (mitigation) {
           const mitigationId = `M-${standardizeNumericId(mitigation.numericId)}`;
-          return `[**${mitigationId}**](#${mitigationId}): ${mitigation.content}`;
+          return `[**${mitigationId}**](#${mitigationId}): ${escapeMarkdown(mitigation.content)}`;
         }
         return null;
       }).filter(t => !!t).join('<br/>');
 
       const assumptionId = `A-${standardizeNumericId(x.numericId)}`;
-      const comments = (x.metadata?.find(m => m.key === 'Comments')?.value as string) || '';
-      rows.push(`| <a name="${assumptionId}"></a>${assumptionId} | ${parseTableCellContent(x.content)} | ${parseTableCellContent(threatsContent)} | ${parseTableCellContent(mitigationsContent)} | ${parseTableCellContent(comments)} |`);
+      const comments = await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || '');
+      return `| <a name="${assumptionId}"></a>${assumptionId} | ${await escapeMarkdown(x.content)} | ${threatsContent} | ${mitigationsContent} | ${comments} |`;
     });
+
+    rows.push(...(await Promise.all(promises)));
   }
 
   rows.push('\n');

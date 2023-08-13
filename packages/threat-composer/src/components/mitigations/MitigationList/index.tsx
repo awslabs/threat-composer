@@ -38,11 +38,13 @@ const MitigationList: FC = () => {
   const {
     addMitigationLinks,
     mitigationLinkList,
+    removeMitigationLinksByMitigationId,
   } = useMitigationLinksContext();
 
   const {
     addAssumptionLinks,
     assumptionLinkList,
+    removeAssumptionLinksByLinkedEntityId,
   } = useAssumptionLinksContext();
 
   const [filteringText, setFilteringText] = useState('');
@@ -61,6 +63,12 @@ const MitigationList: FC = () => {
     selectedLinkedAssumptionsFilter,
     setSelectedLinkedAssumptionsFilter,
   ] = useState(ALL);
+
+  const handleRemove = useCallback(async (mitigationId: string) => {
+    removeMitigation(mitigationId);
+    await removeAssumptionLinksByLinkedEntityId(mitigationId);
+    await removeMitigationLinksByMitigationId(mitigationId);
+  }, [removeAssumptionLinksByLinkedEntityId, removeMitigation, removeMitigationLinksByMitigationId]);
 
   const hasNoFilter = useMemo(() => {
     return (filteringText === ''
@@ -239,7 +247,7 @@ const MitigationList: FC = () => {
       {filteredList?.map(entity => (<MitigationCard
         key={entity.id}
         entity={entity}
-        onRemove={removeMitigation}
+        onRemove={handleRemove}
         onEdit={saveMitigation}
         onAddTagToEntity={handleAddTagToEntity}
         onRemoveTagFromEntity={handleRemoveTagFromEntity}

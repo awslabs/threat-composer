@@ -19,7 +19,7 @@ import Button from '@cloudscape-design/components/button';
 import Header from '@cloudscape-design/components/header';
 import Popover from '@cloudscape-design/components/popover';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
-import { FC, useMemo, useCallback } from 'react';
+import { FC, useEffect, useCallback, useState } from 'react';
 import { DataExchangeFormat } from '../../../../../customTypes';
 import printStyles from '../../../../../styles/print';
 import sanitizeHtml from '../../../../../utils/sanitizeHtml';
@@ -44,18 +44,26 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
   composerMode,
   onPrintButtonClick,
 }) => {
-  const content = useMemo(() => {
-    const sanitizedData = sanitizeHtml(data);
-    return (composerMode === 'Full' ? [
-      getApplicationName(sanitizedData),
-      getApplicationInfoContent(sanitizedData),
-      getArchitectureContent(sanitizedData),
-      getDataflowContent(sanitizedData),
-      getAssumptionsContent(sanitizedData),
-      getThreatsContent(sanitizedData),
-      getMitigationsContent(sanitizedData),
-      getAssetsContent(sanitizedData),
-    ] : [getThreatsContent(sanitizedData, true)]).filter(x => !!x).join('\n');
+  const [content, setContent] = useState('');
+
+  useEffect(() => {
+    const updateContent = async () => {
+      const sanitizedData = sanitizeHtml(data);
+      const processedContent = (composerMode === 'Full' ? [
+        await getApplicationName(sanitizedData),
+        await getApplicationInfoContent(sanitizedData),
+        await getArchitectureContent(sanitizedData),
+        await getDataflowContent(sanitizedData),
+        await getAssumptionsContent(sanitizedData),
+        await getThreatsContent(sanitizedData),
+        await getMitigationsContent(sanitizedData),
+        await getAssetsContent(sanitizedData),
+      ] : [await getThreatsContent(sanitizedData, true)]).filter(x => !!x).join('\n');
+
+      setContent(processedContent);
+    };
+
+    updateContent().catch(err => console.log('Error', err));
   }, [data, composerMode]);
 
   const handleCopyMarkdown = useCallback(async () => {
@@ -89,6 +97,7 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
       >
       </Header></div>
       <MarkdownViewer allowHtml>{content}</MarkdownViewer>
+      <div css={printStyles.hiddenPrint}></div>
     </SpaceBetween>
   </div>);
 };

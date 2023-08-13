@@ -13,8 +13,25 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-const parseTableCellContent = (str: string) => {
-  return str.replace('|', '&#124;').replace('\n\n', '<br/>');
+import rehypeStringify from 'rehype-stringify';
+import remarkGfm from 'remark-gfm';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
+import { unified } from 'unified';
+
+const parseTableCellContent = async (str: string) => {
+  if (str) {
+    const htmlOutput = await unified()
+      .use(remarkParse)
+      .use(remarkGfm)
+      .use(remarkRehype)
+      .use(rehypeStringify)
+      .process(str);
+    const output = String(htmlOutput).replace(/(\r\n|\n|\r)/gm, '');
+    return output;
+  }
+
+  return str;
 };
 
 export default parseTableCellContent;

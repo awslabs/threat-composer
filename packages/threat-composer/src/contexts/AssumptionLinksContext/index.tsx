@@ -47,9 +47,9 @@ const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContex
   });
 
   const handlRemoveAssumptionLink = useCallback((assumptionId: string, linkedEntityId: string) => {
-    setAssumptionLinkList((prevList) => prevList.filter(x => !(
-      x.assumptionId === assumptionId && x.linkedId === linkedEntityId
-    )));
+    setAssumptionLinkList((prevList) => prevList.filter(x =>
+      !(x.linkedId === linkedEntityId && x.assumptionId === assumptionId),
+    ));
   }, [setAssumptionLinkList]);
 
   const handleRemoveAssumptionLinks = useCallback((assumptionLinks: AssumptionLink[]) => {
@@ -58,6 +58,19 @@ const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContex
         assumptionLinks.findIndex(al => isSameAssumptionLink(al, pl)) < 0);
     });
   }, [setAssumptionLinkList]);
+
+  const handlRemoveAssumptionLinksByAssumptionId = useCallback(async (assumptionId: string) => {
+    setAssumptionLinkList((prevList) => prevList.filter(x =>
+      !(x.assumptionId === assumptionId),
+    ));
+  }, [setAssumptionLinkList]);
+
+  const handlRemoveAssumptionLinksByLinkedEntityId = useCallback(async (linkedEntityId: string) => {
+    setAssumptionLinkList((prevList) => prevList.filter(x =>
+      !(x.linkedId === linkedEntityId),
+    ));
+  }, [setAssumptionLinkList]);
+
 
   const handleAddAssumptionLink = useCallback((assumptionLink: AssumptionLink) => {
     setAssumptionLinkList((prevList) => {
@@ -107,6 +120,8 @@ const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContex
     getLinkedAssumptionLinks: handleGetLinkedAssumptionLinks,
     getAssumptionEntityLinks: handleGetAssumptionEntityLinks,
     removeAssumptionLink: handlRemoveAssumptionLink,
+    removeAssumptionLinksByAssumptionId: handlRemoveAssumptionLinksByAssumptionId,
+    removeAssumptionLinksByLinkedEntityId: handlRemoveAssumptionLinksByLinkedEntityId,
     removeAssumptionLinks: handleRemoveAssumptionLinks,
     addAssumptionLink: handleAddAssumptionLink,
     addAssumptionLinks: handleAddAssumptionLinks,

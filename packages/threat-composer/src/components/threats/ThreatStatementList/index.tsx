@@ -78,16 +78,24 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
 
   const {
     assumptionLinkList,
+    removeAssumptionLinksByLinkedEntityId,
   } = useAssumptionLinksContext();
 
   const {
     mitigationLinkList,
+    removeMitigationLinksByLinkedEntityId,
   } = useMitigationLinksContext();
 
   const {
     showInfoModal,
     composerMode,
   } = useGlobalSetupContext();
+
+  const handleRemove = useCallback(async (statementId: string) => {
+    removeStatement(statementId);
+    await removeAssumptionLinksByLinkedEntityId(statementId);
+    await removeMitigationLinksByLinkedEntityId(statementId);
+  }, [removeStatement, removeAssumptionLinksByLinkedEntityId, removeMitigationLinksByLinkedEntityId]);
 
   const [filteringText, setFilteringText] = useState('');
   const [sortBy, setSortBy] = useState<SortByOption>(DEFAULT_SORT_BY);
@@ -478,7 +486,7 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
         key={st.id}
         statement={st}
         onCopy={handleAddStatement}
-        onRemove={removeStatement}
+        onRemove={handleRemove}
         onEditInWizard={handleEditStatement}
         onEditMetadata={handleEditMetadata}
         onAddTagToStatement={handleAddTagToStatement}

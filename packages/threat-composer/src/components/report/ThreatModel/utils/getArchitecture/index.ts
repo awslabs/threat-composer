@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { DataExchangeFormat } from '../../../../../customTypes';
 
-export const getArchitectureContent = (
+export const getArchitectureContent = async (
   data: DataExchangeFormat,
 ) => {
   const rows: string[] = [];
