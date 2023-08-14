@@ -14,9 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { Workspace } from '../../customTypes';
+import { ViewNavigationEvent, Workspace } from '../../customTypes';
 
-export interface WorkspacesContextApi {
+export interface WorkspacesContextApi extends ViewNavigationEvent {
   workspaceList: Workspace[];
   setWorkspaceList: (workspace: Workspace[]) => void;
   currentWorkspace: Workspace | null;

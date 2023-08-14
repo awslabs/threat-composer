@@ -33,8 +33,7 @@ import validateData from '../../utils/validateData';
 const SCHEMA_VERSION = 1.0;
 
 const getExportFileName = (composerMode: ComposerMode, filtered: boolean, currentWorkspace: Workspace | null) => {
-  const date = new Date().toISOString().split('T')[0];
-  const exportFileName = `${EXPORT_FILE_NAME}_Workspace_${currentWorkspace ? currentWorkspace.name.replace(' ', '-') : 'Default'}${composerMode !== 'Full' ? '_ThreatsOnly' : ''}${filtered ? '_Filtered' : ''}_${date}`;
+  const exportFileName = `${EXPORT_FILE_NAME}_Workspace_${currentWorkspace ? currentWorkspace.name.replace(' ', '-') : 'Default'}${composerMode !== 'Full' ? '_ThreatsOnly' : ''}${filtered ? '_Filtered' : ''}`;
   return exportFileName;
 };
 

@@ -20,7 +20,8 @@ import { useAssumptionsContext } from '../../contexts/AssumptionsContext';
 import { useDataflowInfoContext } from '../../contexts/DataflowContext';
 import { useMitigationsContext } from '../../contexts/MitigationsContext';
 import { useThreatsContext } from '../../contexts/ThreatsContext';
-import { hasApplicationInfo, hasArchitectureInfo, hasAssumptions, hasDataflowInfo, hasMitigations, hasThreats } from '../../utils/hasContent';
+import { HasContentDetails } from '../../customTypes';
+import { hasApplicationName, hasApplicationInfo, hasArchitectureInfo, hasAssumptions, hasDataflowInfo, hasMitigations, hasThreats } from '../../utils/hasContent';
 
 const useHasContent = () => {
   const { applicationInfo } = useApplicationInfoContext();
@@ -30,8 +31,9 @@ const useHasContent = () => {
   const { mitigationList } = useMitigationsContext();
   const { statementList } = useThreatsContext();
 
-  const hasContent = useMemo(() => {
+  const hasContent: [ boolean, HasContentDetails] = useMemo(() => {
     const details = {
+      applicationName: hasApplicationName(applicationInfo),
       applicationInfo: hasApplicationInfo(applicationInfo),
       architecture: hasArchitectureInfo(architectureInfo),
       dataflow: hasDataflowInfo(dataflowInfo),

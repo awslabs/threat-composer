@@ -18,7 +18,7 @@ import useLocalStorageState from 'use-local-storage-state';
 import { v4 as uuidV4 } from 'uuid';
 import { PerFieldExamplesType, ThreatsContext, DEFAULT_PER_FIELD_EXAMPLES, useThreatsContext } from './context';
 import { LOCAL_STORAGE_KEY_STATEMENT_LIST, LOCAL_STORAGE_KEY_EDITING_STATEMENT } from '../../configs/localStorageKeys';
-import { PerFieldExample, TemplateThreatStatement, ThreatStatementListFilter } from '../../customTypes';
+import { PerFieldExample, TemplateThreatStatement, ViewNavigationEvent } from '../../customTypes';
 import threatStatementExamplesData from '../../data/threatStatementExamples.json';
 import ThreatsMigration from '../../migrations/ThreatsMigration';
 import removeLocalStorageKey from '../../utils/removeLocalStorageKey';
@@ -29,8 +29,8 @@ export type View = 'list' | 'editor';
 
 export interface ThreatsContextProviderProps {
   workspaceId: string | null;
-  onThreatListView?: (filter?: ThreatStatementListFilter) => void;
-  onThreatEditorView?: (threatId: string) => void;
+  onThreatListView?: ViewNavigationEvent['onThreatListView'];
+  onThreatEditorView?: ViewNavigationEvent['onThreatEditorView'];
 }
 
 const getLocalStorageKey = (workspaceId: string | null) => {

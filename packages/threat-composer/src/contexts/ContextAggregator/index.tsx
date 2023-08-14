@@ -14,16 +14,14 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren } from 'react';
-import { ComposerMode, DataExchangeFormat } from '../../customTypes';
+import { ComposerMode, DataExchangeFormat, ViewNavigationEvent } from '../../customTypes';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
-import WorkspaceContextAggregator, { WorkspaceContextAggregatorProps } from '../WorkspaceContextAggregator';
+import WorkspaceContextAggregator from '../WorkspaceContextAggregator';
 import WorkspacesContextProvider, { WorkspacesContextProviderProps } from '../WorkspacesContext';
 
-export interface ContextAggregatorProps {
+export interface ContextAggregatorProps extends ViewNavigationEvent {
   composerMode?: ComposerMode;
   onWorkspaceChanged?: WorkspacesContextProviderProps['onWorkspaceChanged'];
-  onThreatEditorView?: WorkspaceContextAggregatorProps['onThreatEditorView'];
-  onThreatListView?: WorkspaceContextAggregatorProps['onThreatListView'];
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
   onImported?: () => void;
@@ -34,12 +32,11 @@ const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
   children,
   onWorkspaceChanged,
   composerMode = 'ThreatsOnly',
-  onThreatEditorView,
-  onThreatListView,
   onPreview,
   onPreviewClose,
   onImported,
   onDefineWorkload,
+  ...props
 }) => {
   return (
     <GlobalSetupContextProvider
@@ -48,12 +45,12 @@ const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
       onImported={onImported}
       onDefineWorkload={onDefineWorkload}
       composerMode={composerMode}>
-      <WorkspacesContextProvider onWorkspaceChanged={onWorkspaceChanged}>
+      <WorkspacesContextProvider onWorkspaceChanged={onWorkspaceChanged} {...props}>
         {(workspaceId) => (<WorkspaceContextAggregator
           workspaceId={workspaceId}
           requiredGlobalSetupContext={false}
-          onThreatEditorView={onThreatEditorView}
-          onThreatListView={onThreatListView}
+          onThreatEditorView={props.onThreatEditorView}
+          onThreatListView={props.onThreatListView}
         >
           {children}
         </WorkspaceContextAggregator>)}

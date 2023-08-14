@@ -19,10 +19,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { WorkspacesContext, useWorkspacesContext } from './context';
 import { DEFAULT_WORKSPACE_ID } from '../../configs/constants';
 import { LOCAL_STORAGE_KEY_CURRENT_WORKSPACE, LOCAL_STORAGE_KEY_WORKSPACE_LIST } from '../../configs/localStorageKeys';
-import { Workspace } from '../../customTypes';
+import { ViewNavigationEvent, Workspace } from '../../customTypes';
 import WorkspacesMigration from '../../migrations/WorkspacesMigration';
 
-export interface WorkspacesContextProviderProps {
+export interface WorkspacesContextProviderProps extends ViewNavigationEvent {
   workspaceId?: string;
   onWorkspaceChanged?: (workspaceId: string) => void;
   children: (workspace: string | null) => ReactElement<{ workspaceId: string | null }>;
@@ -32,6 +32,7 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = ({
   children,
   workspaceId,
   onWorkspaceChanged,
+  ...props
 }) => {
   const [currentWorkspace, setCurrentWorkspace] = useLocalStorageState<Workspace | null>(LOCAL_STORAGE_KEY_CURRENT_WORKSPACE, {
     defaultValue: null,
@@ -99,6 +100,7 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = ({
     addWorkspace: handleAddWorkspace,
     removeWorkspace: handleRemoveWorkspace,
     renameWorkspace: handleRenameWorkspace,
+    ...props,
   }}>
     <WorkspacesMigration>
       {children(currentWorkspace?.id || null)}

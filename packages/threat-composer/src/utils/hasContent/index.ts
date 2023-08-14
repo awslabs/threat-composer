@@ -15,8 +15,12 @@
  ******************************************************************************************************************** */
 import { ApplicationInfo, ArchitectureInfo, Assumption, DataflowInfo, Mitigation, TemplateThreatStatement } from '../../customTypes';
 
+export const hasApplicationName = (applicationInfo: ApplicationInfo) => {
+  return !!(applicationInfo.name);
+};
+
 export const hasApplicationInfo = (applicationInfo: ApplicationInfo) => {
-  return !!(applicationInfo.name || applicationInfo.description);
+  return !!(applicationInfo.description);
 };
 
 export const hasArchitectureInfo = (archInfo: ArchitectureInfo) => {

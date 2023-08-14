@@ -15,8 +15,9 @@
  ******************************************************************************************************************** */
 import { FC } from 'react';
 import ThreatModelView from './components/ThreatModelView';
-import { useGlobalSetupContext } from '../../../contexts';
+import { useGlobalSetupContext, useWorkspacesContext } from '../../../contexts';
 import useImportExport from '../../../hooks/useExportImport';
+import useHasContent from '../../../hooks/useHasContent';
 
 export interface ThreatModelProps {
   onPrintButtonClick?: () => void;
@@ -27,10 +28,26 @@ const ThreatModel: FC<ThreatModelProps> = ({
 }) => {
   const { getWorkspaceData } = useImportExport();
   const { composerMode } = useGlobalSetupContext();
+  const [_, hasContentDetails] = useHasContent();
+  const {
+    onApplicationInfoView,
+    onArchitectureView,
+    onDataflowView,
+    onAssumptionListView,
+    onThreatListView,
+    onMitigationListView,
+  } = useWorkspacesContext();
   return <ThreatModelView
     onPrintButtonClick={onPrintButtonClick}
     composerMode={composerMode}
     data={getWorkspaceData()}
+    hasContentDetails={hasContentDetails}
+    onApplicationInfoView={onApplicationInfoView}
+    onArchitectureView={onArchitectureView}
+    onDataflowView={onDataflowView}
+    onAssumptionListView={onAssumptionListView}
+    onThreatListView={onThreatListView}
+    onMitigationListView={onMitigationListView}
   />;
 };
 
