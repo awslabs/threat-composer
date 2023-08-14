@@ -13,18 +13,27 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat } from '../../../../../customTypes';
+const replacements = [
+  [/\*/g, '\\*', 'asterisks'],
+  [/#/g, '\\#', 'number signs'],
+  [/\//g, '\\/', 'slashes'],
+  [/\(/g, '\\(', 'parentheses'],
+  [/\)/g, '\\)', 'parentheses'],
+  [/\[/g, '\\[', 'square brackets'],
+  [/\]/g, '\\]', 'square brackets'],
+  [/</g, '&lt;', 'angle brackets'],
+  [/>/g, '&gt;', 'angle brackets'],
+  [/_/g, '\\_', 'underscores'],
+  [/`/g, '\\`', 'codeblocks'],
+];
 
-export const getApplicationInfoContent = async (
-  data: DataExchangeFormat,
-) => {
-  const rows: string[] = [];
-  rows.push('## Application Info');
-  if (data.applicationInfo?.description) {
-    rows.push(data.applicationInfo.description);
-  }
-
-  rows.push('\n');
-
-  return rows.join('\n');
+const escapeMarkdown = (input: string, skips: string[] = []) => {
+  return replacements.reduce((str, replacement) => {
+    var name = replacement[2] as string;
+    return skips.indexOf(name) !== -1
+      ? str
+      : str.replace(replacement[0], replacement[1] as string);
+  }, input);
 };
+
+export default escapeMarkdown;

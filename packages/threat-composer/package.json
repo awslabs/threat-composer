@@ -76,9 +76,13 @@
     "react-markdown": "*",
     "react-simply-carousel": "*",
     "rehype-raw": "*",
+    "rehype-stringify": "*",
     "remark-frontmatter": "*",
     "remark-gfm": "*",
+    "remark-parse": "*",
+    "remark-rehype": "*",
     "sanitize-html": "*",
+    "unified": "*",
     "use-local-storage-state": "*",
     "uuid": "*",
     "zod": "*"

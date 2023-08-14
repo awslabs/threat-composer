@@ -81,6 +81,7 @@ const AssumptionCard: FC<AssumptionCardProps> = ({
               value={editingValue}
               onChange={({ detail }) => setEditingValue(detail.value)}
               validateData={AssumptionSchema.shape.content.safeParse}
+              singleLine
             />
             <SpaceBetween direction='horizontal' size='s'>
               <Button onClick={handleCancel}>Cancel</Button>

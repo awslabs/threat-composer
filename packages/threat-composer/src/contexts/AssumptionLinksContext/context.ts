@@ -23,6 +23,8 @@ export interface AssumptionLinksContextApi {
   getLinkedAssumptionLinks: (linkedEntityId: string) => AssumptionLink[];
   getAssumptionEntityLinks: (assumptionId: string, type: AssumptionLink['type']) => AssumptionLink[];
   removeAssumptionLink: (assumptionId: string, linkedEntityId: string) => void;
+  removeAssumptionLinksByAssumptionId: (assumptionId: string) => Promise<void>;
+  removeAssumptionLinksByLinkedEntityId: (linkedEntityId: string) => Promise<void>;
   removeAssumptionLinks: (entities: AssumptionLink[]) => void;
   addAssumptionLink: (entity: AssumptionLink) => void;
   addAssumptionLinks: (entities: AssumptionLink[]) => void;
@@ -36,6 +38,8 @@ const initialState: AssumptionLinksContextApi = {
   getLinkedAssumptionLinks: () => [],
   getAssumptionEntityLinks: () => [],
   removeAssumptionLink: () => { },
+  removeAssumptionLinksByAssumptionId: () => Promise.resolve(),
+  removeAssumptionLinksByLinkedEntityId: () => Promise.resolve(),
   removeAssumptionLinks: () => { },
   addAssumptionLink: () => { },
   addAssumptionLinks: () => { },

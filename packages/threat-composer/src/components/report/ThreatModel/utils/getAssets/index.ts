@@ -14,10 +14,10 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { DataExchangeFormat, TemplateThreatStatement } from '../../../../../customTypes';
+import escapeMarkdown from '../../../../../utils/escapeMarkdown';
 import standardizeNumericId from '../../../../../utils/standardizeNumericId';
-import parseTableCellContent from '../parseTableCellContent';
 
-export const getAssetsContent = (
+export const getAssetsContent = async (
   data: DataExchangeFormat,
 ) => {
   const rows: string[] = [];
@@ -41,16 +41,18 @@ export const getAssetsContent = (
       assetThreatMap[ia].push(t);
     }));
 
-    Object.keys(assetThreatMap).forEach((at, index) => {
+    const promises = Object.keys(assetThreatMap).map(async (at, index) => {
       const atId = `AS-${standardizeNumericId(index + 1)}`;
 
       const threatsContent = assetThreatMap[at].map(t => {
         const threatId = `T-${standardizeNumericId(t.numericId)}`;
-        return `[**${threatId}**](#${threatId}): ${(t.statement)}`;
+        return `[**${threatId}**](#${threatId}): ${escapeMarkdown((t.statement || ''))}`;
       }).join('<br/>');
 
-      rows.push(`| ${atId} | ${parseTableCellContent(at)} | ${parseTableCellContent(threatsContent)} |`);
+      return `| ${atId} | ${escapeMarkdown(at)} | ${threatsContent} |`;
     });
+
+    rows.push(...(await Promise.all(promises)));
   }
 
   rows.push('\n');

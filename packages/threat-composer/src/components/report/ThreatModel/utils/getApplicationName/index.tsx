@@ -14,9 +14,10 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { DataExchangeFormat } from '../../../../../customTypes';
+import escapeMarkdown from '../../../../../utils/escapeMarkdown';
 
-export const getApplicationName = (
+export const getApplicationName = async (
   data: DataExchangeFormat,
 ) => {
-  return data.applicationInfo?.name ? `# ${data.applicationInfo?.name}` : '';
+  return data.applicationInfo?.name ? `# ${escapeMarkdown(data.applicationInfo?.name)}` : '';
 };

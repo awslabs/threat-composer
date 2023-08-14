@@ -82,6 +82,7 @@ const GenericEntityCreationCard: FC<GenericEntityCreationCardProps> = ({
             content: detail.value,
           })}
           validateData={validateData}
+          singleLine
         />
         {customEditors}
       </ColumnLayout>

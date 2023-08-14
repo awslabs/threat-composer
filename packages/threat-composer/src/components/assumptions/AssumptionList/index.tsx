@@ -29,7 +29,7 @@ import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY }
 import AssumptionCard from '../AssumptionCard';
 import AssumptionCreationCard from '../AssumptionCreationCard';
 
-const ThreatStatementList: FC = () => {
+const AssumptionList: FC = () => {
   const {
     assumptionList,
     removeAssumption,
@@ -39,6 +39,7 @@ const ThreatStatementList: FC = () => {
   const {
     assumptionLinkList,
     addAssumptionLinks,
+    removeAssumptionLinksByAssumptionId,
   } = useAssumptionLinksContext();
 
   const [filteringText, setFilteringText] = useState('');
@@ -67,6 +68,11 @@ const ThreatStatementList: FC = () => {
     const updated = removeTagFromEntity(assumption, tag);
     saveAssumption(updated as Assumption);
   }, []);
+
+  const handleRemove = useCallback(async (assumptionId: string) => {
+    removeAssumption(assumptionId);
+    await removeAssumptionLinksByAssumptionId(assumptionId);
+  }, [removeAssumption, removeAssumptionLinksByAssumptionId]);
 
   const filteredList = useMemo(() => {
     let output = assumptionList;
@@ -222,7 +228,7 @@ const ThreatStatementList: FC = () => {
       {filteredList?.map(entity => (<AssumptionCard
         key={entity.id}
         assumption={entity}
-        onRemove={removeAssumption}
+        onRemove={handleRemove}
         onEdit={saveAssumption}
         onAddTagToAssumption={handleAddTagToEntity}
         onRemoveTagFromAssumption={handleRemoveTagFromEntity}
@@ -234,4 +240,4 @@ const ThreatStatementList: FC = () => {
   </div>);
 };
 
-export default ThreatStatementList;
+export default AssumptionList;

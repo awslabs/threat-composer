@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { DataExchangeFormat } from '../../../../../customTypes';
 
-export const getDataflowContent = (
+export const getDataflowContent = async (
   data: DataExchangeFormat,
 ) => {
   const rows: string[] = [];

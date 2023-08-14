@@ -107,9 +107,9 @@ export class ApplicationStack extends Stack {
           // Here allow users to override to cater for specific use cases.
           contentSecurityPolicy: contentSecurityPolicyOverride
             ? {
-              contentSecurityPolicy: contentSecurityPolicyOverride,
-              override: true,
-            }
+                contentSecurityPolicy: contentSecurityPolicyOverride,
+                override: true,
+              }
             : undefined,
           frameOptions: {
             frameOption: HeadersFrameOption.DENY,
@@ -220,9 +220,10 @@ export class ApplicationStack extends Stack {
       webAclProps: {
         cidrAllowList: {
           cidrType: cidrType === "IPV6" ? "IPV6" : "IPV4",
-          cidrRanges: (cidrRanges?.split(",")
+          cidrRanges: cidrRanges
+            ?.split(",")
             .map((x) => x.trim())
-            .filter((x) => !!x)) || ['192.168.0.0/24'],
+            .filter((x) => !!x) || ["192.168.0.0/24"],
         },
       },
       distributionProps,

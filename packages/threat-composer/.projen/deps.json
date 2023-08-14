@@ -242,6 +242,10 @@
       "type": "runtime"
     },
     {
+      "name": "rehype-stringify",
+      "type": "runtime"
+    },
+    {
       "name": "remark-frontmatter",
       "type": "runtime"
     },
@@ -250,7 +254,19 @@
       "type": "runtime"
     },
     {
+      "name": "remark-parse",
+      "type": "runtime"
+    },
+    {
+      "name": "remark-rehype",
+      "type": "runtime"
+    },
+    {
       "name": "sanitize-html",
+      "type": "runtime"
+    },
+    {
+      "name": "unified",
       "type": "runtime"
     },
     {

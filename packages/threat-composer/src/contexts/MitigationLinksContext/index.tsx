@@ -58,6 +58,18 @@ const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContex
     });
   }, [setMitigationLinkList]);
 
+  const handlRemoveMitigationLinksByMitigationId = useCallback(async (mitigationId: string) => {
+    setMitigationLinkList((prevList) => prevList.filter(x => !(
+      x.mitigationId === mitigationId
+    )));
+  }, [setMitigationLinkList]);
+
+  const handlRemoveMitigationLinksByLinkedEntityId = useCallback(async (linkedEntityId: string) => {
+    setMitigationLinkList((prevList) => prevList.filter(x => !(
+      x.linkedId === linkedEntityId
+    )));
+  }, [setMitigationLinkList]);
+
   const handleAddMitigationLink = useCallback((mitigationLink: MitigationLink) => {
     setMitigationLinkList((prevList) => {
       const foundIndex = prevList.findIndex(st =>
@@ -105,6 +117,8 @@ const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContex
     getLinkedMitigationLinks: handleGetLinkedMitigationLinks,
     getMitigtaionThreatLinks: handleGetMitigationThreatLinks,
     removeMitigationLink: handlRemoveMitigationLink,
+    removeMitigationLinksByMitigationId: handlRemoveMitigationLinksByMitigationId,
+    removeMitigationLinksByLinkedEntityId: handlRemoveMitigationLinksByLinkedEntityId,
     removeMitigationLinks: handleRemoveMitigationLinks,
     addMitigationLink: handleAddMitigationLink,
     addMitigationLinks: handleAddMitigationLinks,
