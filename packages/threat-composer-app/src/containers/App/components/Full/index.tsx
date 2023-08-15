@@ -63,6 +63,10 @@ const Full: FC = () => {
     navigate(generateUrl(ROUTE_WORKSPACE_HOME, searchParms, newWorkspaceId));
   }, [navigate, workspaceId, searchParms]);
 
+  const handleNavigationView = useCallback((route: string) => {
+    navigate(generateUrl(route, searchParms, workspaceId));
+  }, [navigate]);
+
   const handleThreatListView = useCallback((filter?: ThreatStatementListFilter) => {
     navigate(generateUrl(ROUTE_THREAT_LIST, searchParms, workspaceId), {
       state: filter ? {
@@ -143,6 +147,11 @@ const Full: FC = () => {
     <ContextAggregator
       composerMode='Full'
       onWorkspaceChanged={handleWorkspaceChanged}
+      onApplicationInfoView={() => handleNavigationView(ROUTE_APPLICATION_INFO)}
+      onArchitectureView={() => handleNavigationView(ROUTE_ARCHITECTURE_INFO)}
+      onDataflowView={() => handleNavigationView(ROUTE_DATAFLOW_INFO)}
+      onAssumptionListView={() => handleNavigationView(ROUTE_ASSUMPTION_LIST)}
+      onMitigationListView={() => handleNavigationView(ROUTE_MITIGATION_LIST)}
       onThreatListView={handleThreatListView}
       onThreatEditorView={handleThreatEditorView}
       onPreview={handlePreview}

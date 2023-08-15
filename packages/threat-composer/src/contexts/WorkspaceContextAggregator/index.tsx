@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren } from 'react';
-import { ComposerMode, DataExchangeFormat } from '../../customTypes';
+import { ComposerMode, DataExchangeFormat, ViewNavigationEvent } from '../../customTypes';
 import ApplicationInfoContextProvider from '../ApplicationContext';
 import ArchitectureInfoContextProvider from '../ArchitectureContext';
 import AssumptionLinksContextProvider from '../AssumptionLinksContext';
@@ -23,14 +23,12 @@ import DataflowInfoContextProvider from '../DataflowContext';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import MitigationLinksContextProvider from '../MitigationLinksContext';
 import MitigationsContextProvider from '../MitigationsContext';
-import ThreatsContextProvider, { ThreatsContextProviderProps } from '../ThreatsContext';
+import ThreatsContextProvider from '../ThreatsContext';
 
-export interface WorkspaceContextAggregatorProps {
+export interface WorkspaceContextAggregatorProps extends ViewNavigationEvent {
   workspaceId: string | null;
   composerMode?: ComposerMode;
   requiredGlobalSetupContext?: boolean;
-  onThreatEditorView?: ThreatsContextProviderProps['onThreatEditorView'];
-  onThreatListView?: ThreatsContextProviderProps['onThreatListView'];
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
   onImported?: () => void;

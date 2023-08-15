@@ -36,3 +36,13 @@ export const DataExchangeFormatSchema = z.object({
 }).strict();
 
 export type DataExchangeFormat = z.infer<typeof DataExchangeFormatSchema>;
+
+export interface HasContentDetails {
+  applicationName: boolean;
+  applicationInfo: boolean;
+  architecture: boolean;
+  dataflow: boolean;
+  assumptions: boolean;
+  mitigations: boolean;
+  threats: boolean;
+}
