@@ -85,11 +85,6 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
       })),
     });
 
-    options.push({
-      label: 'Add new workspace',
-      value: '[AddNewWorkspace]',
-    });
-
     return options;
   }, [workspaceList]);
 
@@ -97,8 +92,6 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     const selectedItem = detail.selectedOption;
     if (selectedItem.value === DEFAULT_WORKSPACE_ID) {
       switchWorkspace(null);
-    } else if (selectedItem.value === '[AddNewWorkspace]') {
-      setAddWorkspaceModalVisible(true);
     } else {
       selectedItem.value && selectedItem.label && switchWorkspace({
         id: selectedItem.value,
@@ -109,6 +102,9 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
 
   const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(async ({ detail }) => {
     switch (detail.id) {
+      case 'add':
+        setAddWorkspaceModalVisible(true);
+        break;
       case 'import':
         setFileImportModalVisible(true);
         break;
@@ -139,6 +135,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     currentWorkspace,
     setRemoveDataModalVisible,
     setRemoveWorkspaceModalVisible,
+    setAddWorkspaceModalVisible,
   ]);
 
   const handleRemoveData = useCallback(async () => {
@@ -184,6 +181,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
       <ButtonDropdown
         items={[
           ...[
+            { id: 'add', text: 'Add new workspace' },
             { id: 'import', text: 'Import' },
             {
               id: 'exportAll',
