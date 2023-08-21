@@ -18,18 +18,24 @@ import Container from '@cloudscape-design/components/container';
 import FormField from '@cloudscape-design/components/form-field';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { FC, useState, useCallback, useMemo } from 'react';
+import { FC, useState, useCallback, useMemo, useEffect } from 'react';
 import { useApplicationInfoContext } from '../../../contexts/ApplicationContext/context';
-import { ApplicationInfoSchema } from '../../../customTypes';
+import { ApplicationInfoSchema, EditableComponentBaseProps } from '../../../customTypes';
 import Input from '../../generic/Input';
 import MarkdownEditor from '../../generic/MarkdownEditor';
 import MarkdownViewer from '../../generic/MarkdownViewer';
 
-const ApplicationInfo: FC = () => {
+const ApplicationInfo: FC<EditableComponentBaseProps> = ({
+  onEditModeChange,
+}) => {
   const { applicationInfo, setApplicationInfo } = useApplicationInfoContext();
   const [editMode, setEditMode] = useState(!applicationInfo.name && !applicationInfo.description );
   const [content, setContent] = useState('');
   const [name, setName] = useState('');
+
+  useEffect(() => {
+    onEditModeChange?.(editMode);
+  }, [editMode]);
 
   const handleSaveApplicationInfo = useCallback(() => {
     setApplicationInfo(prev => ({

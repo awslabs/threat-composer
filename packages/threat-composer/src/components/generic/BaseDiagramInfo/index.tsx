@@ -18,14 +18,14 @@ import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { FC, useCallback, useState, useMemo } from 'react';
-import { BaseImageInfo } from '../../../customTypes';
+import { FC, useCallback, useState, useMemo, useEffect } from 'react';
+import { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
 import imageStyles from '../../../styles/image';
 import ImageEdit from '../ImageEdit';
 import MarkdownEditor, { MarkdownEditorProps } from '../MarkdownEditor';
 import MarkdownViewer from '../MarkdownViewer';
 
-export interface BaseDiagramInfoProps {
+export interface BaseDiagramInfoProps extends EditableComponentBaseProps {
   entity: BaseImageInfo;
   headerTitle: string;
   diagramTitle: string;
@@ -39,10 +39,15 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
   entity,
   onConfirm,
   validateData,
+  onEditModeChange,
 }) => {
   const [editMode, setEditMode] = useState(!entity.description && !entity.image);
   const [image, setImage] = useState<string>('');
   const [content, setContent] = useState('');
+
+  useEffect(() => {
+    onEditModeChange?.(editMode);
+  }, [editMode]);
 
   const handleSaveDiagramInfo = useCallback(() => {
     onConfirm({

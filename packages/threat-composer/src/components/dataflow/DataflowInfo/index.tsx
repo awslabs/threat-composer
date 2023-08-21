@@ -15,12 +15,13 @@
  ******************************************************************************************************************** */
 import { FC } from 'react';
 import { useDataflowInfoContext } from '../../../contexts/DataflowContext/context';
-import { DataflowInfoSchema } from '../../../customTypes';
+import { DataflowInfoSchema, EditableComponentBaseProps } from '../../../customTypes';
 import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
 
-const DataflowInfo: FC = () => {
+const DataflowInfo: FC<EditableComponentBaseProps> = (props) => {
   const { dataflowInfo, setDataflowInfo } = useDataflowInfoContext();
   return <BaseDiagramInfo
+    {...props}
     headerTitle='Dataflow'
     diagramTitle='Dataflow Diagram'
     entity={dataflowInfo}
