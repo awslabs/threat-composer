@@ -2,29 +2,59 @@
 
 ## Goal
 
-A threat modeling tool to help humans to reduce time-to-value when threat modeling
+A simple threat modeling tool to help humans to reduce time-to-value when threat modeling
+
+![Animated gif of Full mode](/docs/threat-composer.gif)
+
+
+----> [Live demo](https://awslabs.github.io/threat-composer?mode=Full) <----
 
 ## Summary
 
-[Threat modeling](https://catalog.workshops.aws/threatmodel/en-US/introduction) helps you identify security issues and develop a strategy to address them in the context of your system.
+The process of [threat modeling](https://catalog.workshops.aws/threatmodel/en-US/introduction) helps you identify security issues and develop a strategy to address them in the *context* of your system.  A threat model directly supports your ability to define, agree upon, and communicate what is necessary in order to deliver a secure product or service. You can threat model very early in your design phase. These early insights put you in a better position to identify sensible design choices early in the cycle, and efficiently build and ship your workload securely. Identifying and fixing security issues at design time is exponentially easier to do than doing so once the workload has been built.
 
-A threat model directly supports your ability to define, and agree upon what is necessary in order to deliver a secure product or service. You can threat model very early in your design phase. These early insights put you in a better position to efficiently build and ship your workload securely. Identifying and fixing issues at design time is exponentially easier to do than doing so once the workload has been built.
+There are many ways to perform threat modeling. Much like programming languages, there are advantages and disadvantages to each. You should choose the approach that works for you, and communicate it within your organization. A good place to start is [Shostack’s 4 Question Frame for Threat Modeling](https://github.com/adamshostack/4QuestionFrame) which proposes four simple open ended questions.
 
-A key phase of the [threat modeling process](https://catalog.workshops.aws/threatmodel/en-US/introduction/how-to-threat-model) is the "What can go wrong?" step. Feedback from builders is that there are two key challenges in this step, firstly there is little industry guidance on what a 'good' threat statement looks like. Secondly, no canonical list of possible things that can wrong hence it necessitates brainstorming and collaboration between the individuals involved in the threat modeling process often starting from a "blank page".
+The Threat composer tool has been built for the following reasons:
 
-threat-composer provides a prescriptive threat articulation structure, this helps users create threat statements with less effort. The tool supports starting from any part of the threat statement, and encourages the user to be more complete and descriptive to help ensure the threat statement allows for both for prioritization for mitigation and sufficient information to devise mitigation strategies. In addition, the tools aims to aid the brainstorming and collaboration process by including full threat statement examples and per field examples which a customer can use as inspiration or as a starting point for their own custom and contextual threat statements.
 
-![Screenshot of ThreatsOnly mode](/docs/screenshot-threatsonly-mode.png)
+1. **Coming up with useful threats is often tougher than coming up with mitigations.** Feedback from builders regarding the "What can go wrong?" question is that there are two key challenges in this step - firstly, no generally agreed standard on what 'good' looks like. This is contextual based on the system being assessed and the ownership model of the teams involved; and, secondly, there is no canonical list of possible things that could go wrong. Hence, threat identification necessitates brainstorming and collaboration between the individuals involved in the threat modeling process, and often involves starting from a "blank page". Threat composer provides a prescriptive threat articulation structure, this helps users create threat statements with less effort. The tool supports starting from any part of the threat statement, and encourages the user to be more complete and descriptive to help ensure the threat statement allows for both for prioritization for mitigation and sufficient information to devise mitigation strategies. In addition, the Threat Composer tool aims to aid the brainstorming and collaboration process by including full threat statement examples and per field examples which a customer can use as inspiration or as a starting point for their own custom and contextual threat statements.
+2. **Improve quality and coverage.** One of the toughest questions to answer is “did we do a good enough job?” because it can be highly subjective. Threat composer includes an ‘insights dashboard’ to help you quickly answer some of the easier questions, including (a) threats without linked mitigations, (b) unprioritized threats, (c) threat category distribution, and (d) based on threat grammar usage, potential improvement to inputs for mitigation or prioritisation.
+3. **Threat modeling is non-linear.** The theory of threat modeling is often taught as a linear process, where a person or team works on each of the threat modeling questions separately. However, in practice ones thoughts and conversations naturally flow from one to the other in a non-linear fashion. For example, it’s often the case that you may think of a mitigation (“what are we going to do about?”) immediately after you’ve thought of a threat (“what can go wrong?). Threat composer aims to support this kind of non-linear and natural workflow. 
+4. **Threat modeling is iterative.** The process is iterative both at a micro and at the macro level. For example, at a micro level, you may iterate on a given threat to the point you find you could [decompose](https://catalog.workshops.aws/threatmodel/en-US/what-can-go-wrong/threat-grammar/decomposition) it into two discrete threats. At a macro level, a threat model can (and should) evolve and mature as the thing you are threat modeling evolves through the software/hardware development lifecycle. In the early stages of design you may need to make a lot of [assumptions](https://catalog.workshops.aws/threatmodel/en-US/what-are-we-working-on/exercise/state-your-assumptions), and as time passes previous assumptions may become [invalidated](https://catalog.workshops.aws/threatmodel/en-US/introduction/when-to-threat-model). As new design decisions are made, new threats are thought of and mitigations go from being planned to being implemented. Threat composer has been designed to support this iterative design and development lifecycle, and to support the ability of having a “living” threat model-as-code as your feature or service evolves and matures.
 
 ## Features
 
-* Renders structured threat statements based on user input
-* Adaptive threat statement structure, this helps create progressively more complete threats.
-* Dynamic suggestions based on supplied and missing user input
-* Complete threat statement examples to aid contextual brainstorming and re-use
-* Data persisted only client-side with the browser
-* Import/export capabilities to enable persistent storage and sharing
-* Workspace separation to cater for multiple solution requirements
+* Capture and store systems description, architecture diagram, and dataflow diagram.
+* Capture and store assumptions related to the systems design, threats and/or mitigations, along with mapping of assumptions to threats to mitigations.
+* Help iteratively compose useful threats, and encourage brainstorming. This feature is also available via a dedicated [‘Threats Only’](https://awslabs.github.io/threat-composer?mode=ThreatsOnly) mode. 
+    * Rendering structured threat statements (aligned to a prescriptive threat grammar) based on user input.
+    * Supporting an adaptive threat statement structure, this helps create progressively more complete threats.
+    * Provide dynamic suggestions based on supplied and missing user input.
+    * Provide complete threat statement examples to aid contextual brainstorming.
+* Capture and store mitigation candidates and mapping to threats.
+* Create a threat model document based on user-supplied input.
+* Help users answer "Did we do a good enough job" by providing insights and suggestions for bar-raising actions via an 'Insights dashboard'
+* Data persisted only client-side within the browser (100% local storage).
+* JSON import/export capabilities to enable persistent storage, sharing, and version control outside of the web browser (e.g. by using git).
+* Markdown and PDF static downloads of the threat model document.
+* Workspace separation to allow working on multiple threat models.
+
+## Threat model example
+
+We've included an example of how you could use Threat composer to create a threat model, we have chosen the threat composer tool itself as an example to illustrate this. This threat model does not claim to be 100% complete for every possible interaction. It aims to give the reader an example of what a set of threats, assumptions and mitigations could look like. We've chosen to share this example as it provides a common reference point for people who are starting off with Threat composer. You may have different perspectives on the assumptions, threats and mitigations. This is ok, and could be used to start conversations in your organization with the context of your risk appetite. You may want to use this as he base threat model as a starting point to generate a contextualised threat model for your own specific needs and deployment of Threat composer. You are responsible for making your own independent assessment of this threat model and its applicability to your organization.
+
+To view and import the base threat model:
+
+1. Create a new Workspace
+2. Download the [example threat model file](https://github.com/awslabs/threat-composer/blob/main/packages/threat-composer/src/data/threatModelExample.json)
+3. Import the example threat model
+
+## Feedback
+
+We value your input! Please take a moment to provide us with your [feedback](https://www.pulse.aws/survey/3AGEAOXZ). Thank you for helping us improve!
+
+For bugs, issues and feature requests, please use [GitHub issues](https://github.com/awslabs/threat-composer/issues).
 
 ## **Usage**
 
@@ -32,7 +62,7 @@ You can try the threat-composer demo via the [Github Pages](https://awslabs.gith
 
 ## Security considerations
 
->The sample code; software libraries; command line tools; proofs of concept; templates; or other related technology (including any of the foregoing that are provided by our personnel) is provided to you as AWS Content under the AWS Customer Agreement, or the relevant written agreement between you and AWS (whichever applies). You should not use this AWS Content in your production accounts, or on production or other critical data. You are responsible for testing, securing, and optimizing the AWS Content, such as sample code, as appropriate for production grade use based on your specific quality control practices and standards. Deploying AWS Content may incur AWS charges for creating or using AWS chargeable resources, such as running Amazon EC2 instances or using Amazon S3 storage.
+>If you use threat-composer via your AWS account, please note that any sample code, software libraries, command line tools, proofs of concept, templates, or other related technology are provided as AWS Content or Third-Party Content under the AWS Customer Agreement, or the relevant written agreement between you and AWS (whichever applies). You should not use this AWS Content or Third-Party Content in your production accounts, or on production or other critical data. You are responsible for testing, securing, and optimizing the AWS Content or Third-Party Content, such as sample code, as appropriate for production grade use based on your specific quality control practices and standards. Deploying AWS Content or Third-Party Content may incur AWS charges for creating or using AWS chargeable resources, such as running Amazon EC2 instances or using Amazon S3 storage.
 
 ### Data protection
 
@@ -142,21 +172,6 @@ When using the default CloudFront domain and certificate (*.[cloudfront.net](htt
 
 The [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html) helps you understand the pros and cons of decisions you make while building systems on AWS. By using the Framework you will learn architectural best practices for designing and [operating](https://docs.aws.amazon.com/wellarchitected/latest/framework/operational-excellence.html) [reliable](https://docs.aws.amazon.com/wellarchitected/latest/framework/reliability.html), [secure](https://docs.aws.amazon.com/wellarchitected/latest/framework/security.html), [efficient](https://docs.aws.amazon.com/wellarchitected/latest/framework/performance-efficiency.html), [cost-effective](https://docs.aws.amazon.com/wellarchitected/latest/framework/cost-optimization.html), and [sustainable](https://docs.aws.amazon.com/wellarchitected/latest/framework/sustainability.html) systems in the cloud.
 
-## Preview of future direction
-
-We have begun laying the foundations to address the end-to-end threat modeling workflow, this includes coverage of:
-
-* The [“What are we working on?”](https://catalog.workshops.aws/threatmodel/en-US/what-are-we-working-on) step - Allowing you to provide and store application information, architecture diagram and data flow diagram
-* The [“What are we going to about it?”](https://catalog.workshops.aws/threatmodel/en-US/what-are-we-going-to-do-about-it) step allowing you to capture mitigation candidates and link to threats
-* Supporting the capture and linkage of assumptions that you can link back to both threats and mitigations
-* And bringing it all together, will generate a threat model document based off of your input.
-
-This application only uses browser storage, hence it does not send user supplied input anywhere. The tool provides import and export capabilities where we envision you storing and version controlling your threat model in your version control system; effectively having a threat model as code along side your application code.
-
-![Screenshot of full mode](/docs/screenshot-full-mode.png)
-
-You can preview the above functionality [here](https://awslabs.github.io/threat-composer/?mode=Full).
-
 ## Learn how to threat model
 
 * [Threat modeling for builders training - AWS Skill Builder](https://explore.skillbuilder.aws/learn/course/external/view/elearning/13274/threat-modeling-the-right-way-for-builders-workshop) - This free eLearning aims to teach you the fundamentals of performing threat modeling, with knowledge checks and exercises that use the threat-composer tool.
@@ -164,9 +179,9 @@ You can preview the above functionality [here](https://awslabs.github.io/threat-
 
 ## **Deployment**
 
-****Important****: This application uses various AWS services and there are costs associated with these services after the Free Tier usage - please see the AWS Pricing page for details. You are responsible for any AWS costs incurred. 
+**Important**: This application uses various AWS services and there are costs associated with these services after the Free Tier usage - please see the AWS Pricing page for details. You are responsible for any AWS costs incurred. 
 
-### **Prerequisites**
+### Prerequisites
 
 * [NodeJS](https://nodejs.org/en/) (version  16 or higher)
 * [Yarn](https://yarnpkg.com/) (installed  via `npm install -g yarn`)
