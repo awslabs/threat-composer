@@ -13,56 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback } from 'react';
-import useLocalStorageState from 'use-local-storage-state';
-import { ApplicationInfoContext, useApplicationInfoContext } from './context';
-import { LOCAL_STORAGE_KEY_APPLICATION_INFO } from '../../configs/localStorageKeys';
-import { ApplicationInfo } from '../../customTypes';
-import removeLocalStorageKey from '../../utils/removeLocalStorageKey';
+import { FC, PropsWithChildren } from 'react';
+import ApplicationLocalStateContextProvider from './components/LocalStateContextProvider';
+import ApplicationLocalStorageContextProvider from './components/LocalStorageContextProvider';
+import { useApplicationInfoContext } from './context';
+import { ApplicationContextProviderProps } from './types';
+import { EXAMPLE_WORKSPACE_ID } from '../../configs/constants';
 
-export interface ApplicationContextProviderProps {
-  workspaceId: string | null;
-}
-
-const getLocalStorageKey = (workspaceId: string | null) => {
-  if (workspaceId) {
-    return `${LOCAL_STORAGE_KEY_APPLICATION_INFO}_${workspaceId}`;
-  }
-
-  return LOCAL_STORAGE_KEY_APPLICATION_INFO;
-};
-
-const DEFAULT_VALUE = {
-  description: '',
-};
-
-const ApplicationContextProvider: FC<PropsWithChildren<ApplicationContextProviderProps>> = ({
-  children,
-  workspaceId: currentWorkspaceId,
-}) => {
-  const [applicationInfo, setApplicationInfo, { removeItem }] = useLocalStorageState<ApplicationInfo>(getLocalStorageKey(currentWorkspaceId), {
-    defaultValue: DEFAULT_VALUE,
-  });
-
-  const handleRemoveApplicationInfo = useCallback(async () => {
-    removeItem();
-  }, [removeItem]);
-
-  const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
-    window.setTimeout(() => {
-      // to delete after the workspace is switched. Otherwise the default value is set again.
-      removeLocalStorageKey(getLocalStorageKey(workspaceId));
-    }, 1000);
-  }, []);
-
-  return (<ApplicationInfoContext.Provider value={{
-    applicationInfo,
-    setApplicationInfo,
-    removeApplicationInfo: handleRemoveApplicationInfo,
-    onDeleteWorkspace: handleDeleteWorkspace,
-  }}>
-    {children}
-  </ApplicationInfoContext.Provider>);
+const ApplicationContextProvider: FC<PropsWithChildren<ApplicationContextProviderProps>> = (props) => {
+  return props.workspaceId === EXAMPLE_WORKSPACE_ID ?
+    (<ApplicationLocalStateContextProvider {...props} />) :
+    (<ApplicationLocalStorageContextProvider {...props} />);
 };
 
 export default ApplicationContextProvider;

@@ -13,123 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback } from 'react';
-import useLocalStorageState from 'use-local-storage-state';
-import { AssumptionLinksContext, useAssumptionLinksContext } from './context';
-import { LOCAL_STORAGE_KEY_ASSUMPTION_LINK_LIST } from '../../configs/localStorageKeys';
-import { AssumptionLink } from '../../customTypes';
-import removeLocalStorageKey from '../../utils/removeLocalStorageKey';
+import { FC, PropsWithChildren } from 'react';
+import AssumptionLinksLocalStateContextProvider from './components/LocalStateContextProvider';
+import AssumptionLinksLocalStorageContextProvider from './components/LocalStorageContextProvider';
+import { useAssumptionLinksContext } from './context';
+import { AssumptionLinksContextProviderProps } from './types';
+import { EXAMPLE_WORKSPACE_ID } from '../../configs/constants';
 
-export interface AssumptionLinksContextProviderProps {
-  workspaceId: string | null;
-}
-
-const getLocalStorageKey = (workspaceId: string | null) => {
-  if (workspaceId) {
-    return `${LOCAL_STORAGE_KEY_ASSUMPTION_LINK_LIST}_${workspaceId}`;
-  }
-
-  return LOCAL_STORAGE_KEY_ASSUMPTION_LINK_LIST;
-};
-
-export const isSameAssumptionLink = (entity1: AssumptionLink, entity2: AssumptionLink) => {
-  return entity1.assumptionId === entity2.assumptionId
-    && entity1.linkedId === entity2.linkedId
-    && entity1.type === entity2.type;
-};
-
-const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContextProviderProps>> = ({
-  children,
-  workspaceId: currentWorkspaceId,
-}) => {
-  const [assumptionLinkList, setAssumptionLinkList, { removeItem }] = useLocalStorageState<AssumptionLink[]>(getLocalStorageKey(currentWorkspaceId), {
-    defaultValue: [],
-  });
-
-  const handlRemoveAssumptionLink = useCallback((assumptionId: string, linkedEntityId: string) => {
-    setAssumptionLinkList((prevList) => prevList.filter(x =>
-      !(x.linkedId === linkedEntityId && x.assumptionId === assumptionId),
-    ));
-  }, [setAssumptionLinkList]);
-
-  const handleRemoveAssumptionLinks = useCallback((assumptionLinks: AssumptionLink[]) => {
-    setAssumptionLinkList((prevList) => {
-      return prevList.filter(pl =>
-        assumptionLinks.findIndex(al => isSameAssumptionLink(al, pl)) < 0);
-    });
-  }, [setAssumptionLinkList]);
-
-  const handlRemoveAssumptionLinksByAssumptionId = useCallback(async (assumptionId: string) => {
-    setAssumptionLinkList((prevList) => prevList.filter(x =>
-      !(x.assumptionId === assumptionId),
-    ));
-  }, [setAssumptionLinkList]);
-
-  const handlRemoveAssumptionLinksByLinkedEntityId = useCallback(async (linkedEntityId: string) => {
-    setAssumptionLinkList((prevList) => prevList.filter(x =>
-      !(x.linkedId === linkedEntityId),
-    ));
-  }, [setAssumptionLinkList]);
-
-
-  const handleAddAssumptionLink = useCallback((assumptionLink: AssumptionLink) => {
-    setAssumptionLinkList((prevList) => {
-      const foundIndex = prevList.findIndex(st =>
-        st.assumptionId === assumptionLink.assumptionId &&
-          st.linkedId === assumptionLink.linkedId &&
-          st.type === assumptionLink.type,
-      );
-      if (foundIndex < 0) {
-        return [...prevList, assumptionLink];
-      };
-
-      return [...prevList];
-    });
-  }, [setAssumptionLinkList]);
-
-  const handleAddAssumptionLinks = useCallback((assumptionLinks: AssumptionLink[]) => {
-    setAssumptionLinkList((prevList) => {
-      const filteredLinks = assumptionLinks.filter(al =>
-        prevList.findIndex(pl => isSameAssumptionLink(al, pl)) < 0);
-      return [...prevList, ...filteredLinks];
-    });
-  }, [setAssumptionLinkList]);
-
-  const handleGetLinkedAssumptionLinks = useCallback((linkedEntityId: string) => {
-    return assumptionLinkList.filter(x => x.linkedId === linkedEntityId);
-  }, [assumptionLinkList]);
-
-  const handleGetAssumptionEntityLinks = useCallback((assumptionId: string, type: AssumptionLink['type']) => {
-    return assumptionLinkList.filter(x => x.assumptionId === assumptionId && x.type === type);
-  }, [assumptionLinkList]);
-
-  const handleRemoveAllAssumptionLinks = useCallback(async () => {
-    removeItem();
-  }, [removeItem]);
-
-  const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
-    window.setTimeout(() => {
-      // to delete after the workspace is switched. Otherwise the default value is set again.
-      removeLocalStorageKey(getLocalStorageKey(workspaceId));
-    }, 1000);
-  }, []);
-
-  return (<AssumptionLinksContext.Provider value={{
-    assumptionLinkList,
-    setAssumptionLinkList,
-    getLinkedAssumptionLinks: handleGetLinkedAssumptionLinks,
-    getAssumptionEntityLinks: handleGetAssumptionEntityLinks,
-    removeAssumptionLink: handlRemoveAssumptionLink,
-    removeAssumptionLinksByAssumptionId: handlRemoveAssumptionLinksByAssumptionId,
-    removeAssumptionLinksByLinkedEntityId: handlRemoveAssumptionLinksByLinkedEntityId,
-    removeAssumptionLinks: handleRemoveAssumptionLinks,
-    addAssumptionLink: handleAddAssumptionLink,
-    addAssumptionLinks: handleAddAssumptionLinks,
-    removeAllAssumptionLinks: handleRemoveAllAssumptionLinks,
-    onDeleteWorkspace: handleDeleteWorkspace,
-  }}>
-    {children}
-  </AssumptionLinksContext.Provider>);
+const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContextProviderProps>> = (props) => {
+  return props.workspaceId === EXAMPLE_WORKSPACE_ID ?
+    (<AssumptionLinksLocalStateContextProvider {...props} />) :
+    (<AssumptionLinksLocalStorageContextProvider {...props} />);
 };
 
 export default AssumptionLinksContextProvider;
