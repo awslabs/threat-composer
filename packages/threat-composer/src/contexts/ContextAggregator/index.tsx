@@ -31,7 +31,7 @@ export interface ContextAggregatorProps extends ViewNavigationEvent {
 const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
   children,
   onWorkspaceChanged,
-  composerMode = 'ThreatsOnly',
+  composerMode = 'Full',
   onPreview,
   onPreviewClose,
   onImported,

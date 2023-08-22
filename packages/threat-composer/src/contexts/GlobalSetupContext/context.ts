@@ -30,7 +30,7 @@ export interface GlobalSetupContextApi {
 
 const initialState: GlobalSetupContextApi = {
   hasVisitBefore: false,
-  composerMode: 'ThreatsOnly',
+  composerMode: 'Full',
   showInfoModal: () => { },
   showImportUpdate: 0,
 };
