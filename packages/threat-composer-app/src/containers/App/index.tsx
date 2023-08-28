@@ -26,7 +26,7 @@ const DEFAULT_MODE = process.env.REACT_APP_DEFAULT_MODE;
 const App: FC = () => {
   const [searchParams] = useSearchParams();
   const mode = searchParams.get('mode');
-  const composerMode = mode || DEFAULT_MODE;
+  const composerMode = mode || DEFAULT_MODE || 'Full';
   return composerMode === 'ThreatsOnly' || composerMode === 'EditorOnly' ? (
     <Standalone composeMode={composerMode} />
   ) : (

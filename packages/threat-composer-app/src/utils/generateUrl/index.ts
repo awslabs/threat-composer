@@ -17,17 +17,17 @@ import { generatePath } from 'react-router-dom';
 
 const ROUTE_BASE_PATH=process.env.REACT_APP_ROUTE_BASE_PATH || '';
 
-const generateUrl = (path: string, searchParms: URLSearchParams, workspaceId: string, threatId?: string) => {
-  const mode = searchParms.get('mode');
-  if (mode) {
+const generateUrl = (path: string, searchParams: URLSearchParams, workspaceId: string, threatId?: string) => {
+  if (Array.from(searchParams.entries()).length > 0) {
     return `${ROUTE_BASE_PATH}${generatePath(path, {
       workspaceId,
       threatId,
-    })}?mode=${mode}`;
+    })}?${searchParams.toString()}`;
   }
 
   return `${ROUTE_BASE_PATH}${generatePath(path, {
-    workspaceId: workspaceId,
+    workspaceId,
+    threatId,
   })}`;
 };
 
