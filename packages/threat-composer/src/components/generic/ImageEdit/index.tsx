@@ -87,7 +87,7 @@ const ImageEdit: FC<ImageUploadProps> = ({
         value={imageSource}
         items={[
           { value: 'file', label: 'From file upload' },
-          { value: 'url', label: 'Form url' },
+          { value: 'url', label: 'From url' },
           { value: 'no', label: 'No Image' },
         ]}
       />

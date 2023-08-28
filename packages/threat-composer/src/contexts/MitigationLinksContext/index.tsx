@@ -13,120 +13,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback } from 'react';
-import useLocalStorageState from 'use-local-storage-state';
-import { MitigationLinksContext, useMitigationLinksContext } from './context';
-import { LOCAL_STORAGE_KEY_MITIGATION_LINK_LIST } from '../../configs/localStorageKeys';
-import { MitigationLink } from '../../customTypes';
-import removeLocalStorageKey from '../../utils/removeLocalStorageKey';
+import { FC, PropsWithChildren } from 'react';
+import MitigationLinksLocalStateContextProvider from './components/LocalStateContextProvider';
+import MitigationLinksLocalStorageContextProvider from './components/LocalStorageContextProvider';
+import { useMitigationLinksContext } from './context';
+import { MitigationLinksContextProviderProps } from './types';
+import { EXAMPLE_WORKSPACE_ID } from '../../configs/constants';
+import { useExampleContext } from '../ExampleContext';
 
-export interface MitigationLinksContextProviderProps {
-  workspaceId: string | null;
-}
+const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContextProviderProps>> = (props) => {
+  const { mitigationLinks } = useExampleContext();
 
-const getLocalStorageKey = (workspaceId: string | null) => {
-  if (workspaceId) {
-    return `${LOCAL_STORAGE_KEY_MITIGATION_LINK_LIST}_${workspaceId}`;
-  }
-
-  return LOCAL_STORAGE_KEY_MITIGATION_LINK_LIST;
-};
-
-export const isSameMitigationLink = (entity1: MitigationLink, entity2: MitigationLink) => {
-  return entity1.mitigationId === entity2.mitigationId
-    && entity1.linkedId === entity2.linkedId;
-};
-
-const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContextProviderProps>> = ({
-  children,
-  workspaceId: currentWorkspaceId,
-}) => {
-  const [mitigationLinkList, setMitigationLinkList, { removeItem }] = useLocalStorageState<MitigationLink[]>(getLocalStorageKey(currentWorkspaceId), {
-    defaultValue: [],
-  });
-
-  const handlRemoveMitigationLink = useCallback((mitigationId: string, linkedEntityId: string) => {
-    setMitigationLinkList((prevList) => prevList.filter(x => !(
-      x.mitigationId === mitigationId && x.linkedId === linkedEntityId
-    )));
-  }, [setMitigationLinkList]);
-
-  const handleRemoveMitigationLinks = useCallback((mitigationLinks: MitigationLink[]) => {
-    setMitigationLinkList((prevList) => {
-      return prevList.filter(pl =>
-        mitigationLinks.findIndex(ml => isSameMitigationLink(ml, pl)) < 0);
-    });
-  }, [setMitigationLinkList]);
-
-  const handlRemoveMitigationLinksByMitigationId = useCallback(async (mitigationId: string) => {
-    setMitigationLinkList((prevList) => prevList.filter(x => !(
-      x.mitigationId === mitigationId
-    )));
-  }, [setMitigationLinkList]);
-
-  const handlRemoveMitigationLinksByLinkedEntityId = useCallback(async (linkedEntityId: string) => {
-    setMitigationLinkList((prevList) => prevList.filter(x => !(
-      x.linkedId === linkedEntityId
-    )));
-  }, [setMitigationLinkList]);
-
-  const handleAddMitigationLink = useCallback((mitigationLink: MitigationLink) => {
-    setMitigationLinkList((prevList) => {
-      const foundIndex = prevList.findIndex(st =>
-        st.mitigationId === mitigationLink.mitigationId &&
-          st.linkedId === mitigationLink.linkedId,
-      );
-      if (foundIndex < 0) {
-        return [...prevList, mitigationLink];
-      };
-
-      return [...prevList];
-    });
-  }, [setMitigationLinkList]);
-
-  const handleAddMitigationLinks = useCallback((mitigationLinks: MitigationLink[]) => {
-    setMitigationLinkList((prevList) => {
-      const filteredLinks = mitigationLinks.filter(al =>
-        prevList.findIndex(pl => pl.mitigationId === al.mitigationId && pl.linkedId === al.mitigationId) < 0);
-      return [...prevList, ...filteredLinks];
-    });
-  }, [setMitigationLinkList]);
-
-  const handleGetLinkedMitigationLinks = useCallback((linkedEntityId: string) => {
-    return mitigationLinkList.filter(x => x.linkedId === linkedEntityId);
-  }, [mitigationLinkList]);
-
-  const handleGetMitigationThreatLinks = useCallback((mitigationId: string) => {
-    return mitigationLinkList.filter(x => x.mitigationId === mitigationId);
-  }, [mitigationLinkList]);
-
-  const handleRemoveAllMitigationLinks = useCallback(async () => {
-    removeItem();
-  }, [removeItem]);
-
-  const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
-    window.setTimeout(() => {
-      // to delete after the workspace is switched. Otherwise the default value is set again.
-      removeLocalStorageKey(getLocalStorageKey(workspaceId));
-    }, 1000);
-  }, []);
-
-  return (<MitigationLinksContext.Provider value={{
-    mitigationLinkList,
-    setMitigationLinkList,
-    getLinkedMitigationLinks: handleGetLinkedMitigationLinks,
-    getMitigtaionThreatLinks: handleGetMitigationThreatLinks,
-    removeMitigationLink: handlRemoveMitigationLink,
-    removeMitigationLinksByMitigationId: handlRemoveMitigationLinksByMitigationId,
-    removeMitigationLinksByLinkedEntityId: handlRemoveMitigationLinksByLinkedEntityId,
-    removeMitigationLinks: handleRemoveMitigationLinks,
-    addMitigationLink: handleAddMitigationLink,
-    addMitigationLinks: handleAddMitigationLinks,
-    removeAllMitigationLinks: handleRemoveAllMitigationLinks,
-    onDeleteWorkspace: handleDeleteWorkspace,
-  }}>
-    {children}
-  </MitigationLinksContext.Provider>);
+  return props.workspaceId === EXAMPLE_WORKSPACE_ID ?
+    (<MitigationLinksLocalStateContextProvider initialValue={mitigationLinks} {...props} />) :
+    (<MitigationLinksLocalStorageContextProvider {...props} />);
 };
 
 export default MitigationLinksContextProvider;

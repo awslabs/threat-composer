@@ -15,6 +15,8 @@
  ******************************************************************************************************************** */
 export const DEFAULT_WORKSPACE_ID = 'default';
 export const DEFAULT_WORKSPACE_LABEL = 'Default';
+export const EXAMPLE_WORKSPACE_ID = 'example';
+export const EXAMPLE_WORKSPACE_LABEL = 'Example';
 export const DEFAULT_NEW_ENTITY_ID = 'new';
 
 // Tags

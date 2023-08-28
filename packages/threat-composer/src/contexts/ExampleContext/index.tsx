@@ -13,24 +13,25 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import { FC, PropsWithChildren } from 'react';
-import AssumptionLinksLocalStateContextProvider from './components/LocalStateContextProvider';
-import AssumptionLinksLocalStorageContextProvider from './components/LocalStorageContextProvider';
-import { useAssumptionLinksContext } from './context';
-import { AssumptionLinksContextProviderProps } from './types';
-import { EXAMPLE_WORKSPACE_ID } from '../../configs/constants';
-import { useExampleContext } from '../ExampleContext';
+import { ExampleContext, useExampleContext } from './context';
+import { DataExchangeFormat } from '../../customTypes';
+import threatModelExamples from '../../data/threatModelExample.json';
 
-const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContextProviderProps>> = (props) => {
-  const { assumptionLinks } = useExampleContext();
-
-  return props.workspaceId === EXAMPLE_WORKSPACE_ID ?
-    (<AssumptionLinksLocalStateContextProvider initialValue={assumptionLinks} {...props} />) :
-    (<AssumptionLinksLocalStorageContextProvider {...props} />);
+const ExampleContextProvider: FC<PropsWithChildren<{}>> = ({
+  children,
+}) => {
+  return (<ExampleContext.Provider value={{
+    ...(threatModelExamples as DataExchangeFormat),
+  }}>
+    {children}
+  </ExampleContext.Provider>);
 };
 
-export default AssumptionLinksContextProvider;
+export default ExampleContextProvider;
 
 export {
-  useAssumptionLinksContext,
+  useExampleContext,
 };
+

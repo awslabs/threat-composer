@@ -21,7 +21,7 @@ export interface ApplicationInfoProps {
   workspaceId?: string;
 }
 
-const Architecture: FC<ApplicationInfoProps> = ({ workspaceId }) => {
+const ApplicationInfo: FC<ApplicationInfoProps> = ({ workspaceId }) => {
   return (<WorkspaceContextAggregator
     workspaceId={workspaceId || null}
     composerMode='Full'
@@ -31,4 +31,4 @@ const Architecture: FC<ApplicationInfoProps> = ({ workspaceId }) => {
   </WorkspaceContextAggregator>);
 };
 
-export default Architecture;
+export default ApplicationInfo;

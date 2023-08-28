@@ -21,7 +21,12 @@ import { CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-d
 import Select, { SelectProps } from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo, useState, useCallback, PropsWithChildren, useEffect } from 'react';
-import { DEFAULT_WORKSPACE_ID, DEFAULT_WORKSPACE_LABEL } from '../../../configs/constants';
+import {
+  DEFAULT_WORKSPACE_ID,
+  DEFAULT_WORKSPACE_LABEL,
+  EXAMPLE_WORKSPACE_ID,
+  EXAMPLE_WORKSPACE_LABEL,
+} from '../../../configs/constants';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext';
 import { DataExchangeFormat, TemplateThreatStatement } from '../../../customTypes';
@@ -74,6 +79,10 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
       {
         label: DEFAULT_WORKSPACE_LABEL,
         value: DEFAULT_WORKSPACE_ID,
+      },
+      {
+        label: EXAMPLE_WORKSPACE_LABEL,
+        value: EXAMPLE_WORKSPACE_ID,
       },
     ];
 
@@ -182,7 +191,11 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         items={[
           ...[
             { id: 'add', text: 'Add new workspace' },
-            { id: 'import', text: 'Import' },
+            {
+              id: 'import',
+              text: 'Import',
+              disabled: currentWorkspace?.id === EXAMPLE_WORKSPACE_ID,
+            },
             {
               id: 'exportAll',
               text: embededMode ? 'Export all statements from current workspace' : 'Export data from current workspace',
@@ -198,17 +211,17 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
           {
             id: 'removeAll',
             text: embededMode ? 'Remove all statements from current workspace' : 'Remove data from current workspace',
-            disabled: embededMode && !enabledRemoveAll,
+            disabled: (embededMode && !enabledRemoveAll) || currentWorkspace?.id === EXAMPLE_WORKSPACE_ID,
           },
           {
             id: 'delete',
             text: 'Delete workspace',
-            disabled: !currentWorkspace,
+            disabled: !currentWorkspace || currentWorkspace.id === EXAMPLE_WORKSPACE_ID,
           },
           {
             id: 'renameWorkspace',
             text: 'Rename workspace',
-            disabled: !currentWorkspace,
+            disabled: !currentWorkspace || currentWorkspace.id === EXAMPLE_WORKSPACE_ID,
           },
         ]}
         ariaLabel="More actions"
