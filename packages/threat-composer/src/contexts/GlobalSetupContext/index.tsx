@@ -33,7 +33,7 @@ export interface GlobalSetupContextProviderProps {
 
 const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProviderProps>> = ({
   children,
-  composerMode = 'ThreatsOnly',
+  composerMode = 'Full',
   onPreview,
   onPreviewClose,
   onImported,
