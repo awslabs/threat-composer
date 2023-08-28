@@ -122,7 +122,7 @@
       "description": "Runs after successful compilation",
       "steps": [
         {
-          "exec": "rsync -arv --prune-empty-dirs --include=*/ --include=*.css --include=*.png --exclude=* ./src/* ./lib"
+          "exec": "rsync -arv --prune-empty-dirs --include=*/ --include=*.css --include=*.png --include=*.gif --exclude=* ./src/* ./lib"
         },
         {
           "exec": "yarn run storybook:build"
