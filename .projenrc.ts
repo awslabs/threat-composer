@@ -158,7 +158,7 @@ uiProject.addTask('storybook:build', {
 });
 
 uiProject.preCompileTask.reset('rm -rf {lib,dist}')
-uiProject.postCompileTask.reset('rsync -arv --prune-empty-dirs --include=*/ --include=*.css --include=*.png --exclude=* ./src/* ./lib');
+uiProject.postCompileTask.reset('rsync -arv --prune-empty-dirs --include=*/ --include=*.css --include=*.png --include=*.gif --exclude=* ./src/* ./lib');
 uiProject.postCompileTask.exec('yarn run storybook:build');
 
 uiProject.eslint?.addPlugins('header');
