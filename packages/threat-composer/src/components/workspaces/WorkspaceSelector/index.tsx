@@ -191,7 +191,11 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         items={[
           ...[
             { id: 'add', text: 'Add new workspace' },
-            { id: 'import', text: 'Import' },
+            {
+              id: 'import',
+              text: 'Import',
+              disabled: currentWorkspace?.id === EXAMPLE_WORKSPACE_ID,
+            },
             {
               id: 'exportAll',
               text: embededMode ? 'Export all statements from current workspace' : 'Export data from current workspace',
@@ -207,17 +211,17 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
           {
             id: 'removeAll',
             text: embededMode ? 'Remove all statements from current workspace' : 'Remove data from current workspace',
-            disabled: embededMode && !enabledRemoveAll,
+            disabled: (embededMode && !enabledRemoveAll) || currentWorkspace?.id === EXAMPLE_WORKSPACE_ID,
           },
           {
             id: 'delete',
             text: 'Delete workspace',
-            disabled: !currentWorkspace,
+            disabled: !currentWorkspace || currentWorkspace.id === EXAMPLE_WORKSPACE_ID,
           },
           {
             id: 'renameWorkspace',
             text: 'Rename workspace',
-            disabled: !currentWorkspace,
+            disabled: !currentWorkspace || currentWorkspace.id === EXAMPLE_WORKSPACE_ID,
           },
         ]}
         ariaLabel="More actions"
