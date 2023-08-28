@@ -14,11 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, useCallback, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { ThreatModel, ThreatModelView } from 'threat-composer';
 
 const ThreatModelReport: FC = () => {
-  const [searchParms] = useSearchParams();
   const [isPreview] = useState(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const previewParams = urlParams.get('preview');
@@ -48,7 +46,7 @@ const ThreatModelReport: FC = () => {
   }, []);
 
   return (data
-    ? (<ThreatModelView composerMode={searchParms.get('mode') || ''} data={data} onPrintButtonClick={isPreview ? undefined : handlePrintButtonClick} />)
+    ? (<ThreatModelView composerMode='Full' data={data} onPrintButtonClick={isPreview ? undefined : handlePrintButtonClick} />)
     : (<ThreatModel
       onPrintButtonClick={isPreview ? undefined : handlePrintButtonClick}
     />));
