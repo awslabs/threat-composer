@@ -16,13 +16,16 @@
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
 import { DataflowInfo } from '../../../../customTypes';
 import { INFO_DEFAULT_VALUE } from '../../../constants';
+import { LocalStateContextProviderBaseProps } from '../../../types';
 import { DataflowInfoContext } from '../../context';
 import { DataflowContextProviderProps } from '../../types';
 
-const ApplicationLocalStateContextProvider: FC<PropsWithChildren<DataflowContextProviderProps>> = ({
+const ApplicationLocalStateContextProvider: FC<PropsWithChildren<
+DataflowContextProviderProps & LocalStateContextProviderBaseProps<DataflowInfo>>> = ({
   children,
+  initialValue,
 }) => {
-  const [dataflowInfo, setDataflowInfo] = useState<DataflowInfo>(INFO_DEFAULT_VALUE);
+  const [dataflowInfo, setDataflowInfo] = useState<DataflowInfo>(initialValue || INFO_DEFAULT_VALUE);
 
   const handleRemoveDataflowInfo = useCallback(async () => {
     setDataflowInfo(INFO_DEFAULT_VALUE);

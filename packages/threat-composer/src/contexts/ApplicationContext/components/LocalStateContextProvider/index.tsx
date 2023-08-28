@@ -16,13 +16,16 @@
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
 import { ApplicationInfo } from '../../../../customTypes';
 import { INFO_DEFAULT_VALUE } from '../../../constants';
+import { LocalStateContextProviderBaseProps } from '../../../types';
 import { ApplicationInfoContext } from '../../context';
 import { ApplicationContextProviderProps } from '../../types';
 
-const ApplicationLocalStateContextProvider: FC<PropsWithChildren<ApplicationContextProviderProps>> = ({
+const ApplicationLocalStateContextProvider: FC<
+PropsWithChildren<ApplicationContextProviderProps & LocalStateContextProviderBaseProps<ApplicationInfo>>> = ({
   children,
+  initialValue,
 }) => {
-  const [applicationInfo, setApplicationInfo] = useState<ApplicationInfo>(INFO_DEFAULT_VALUE);
+  const [applicationInfo, setApplicationInfo] = useState<ApplicationInfo>(initialValue || INFO_DEFAULT_VALUE);
 
   const handleRemoveApplicationInfo = useCallback(async () => {
     setApplicationInfo(INFO_DEFAULT_VALUE);

@@ -15,11 +15,11 @@
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren, useCallback, useEffect } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
-import { ThreatsContext } from '../../context';
 import { LOCAL_STORAGE_KEY_STATEMENT_LIST, LOCAL_STORAGE_KEY_EDITING_STATEMENT } from '../../../../configs/localStorageKeys';
 import { TemplateThreatStatement } from '../../../../customTypes';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { useGlobalSetupContext } from '../../../GlobalSetupContext/context';
+import { ThreatsContext } from '../../context';
 import useThreatExamples from '../../hooks/useThreatExamples';
 import useThreats from '../../hooks/useThreats';
 import { ThreatsContextProviderProps } from '../../types';
@@ -74,7 +74,7 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
     editingStatement,
     setEditingStatement,
     onThreatEditorView,
-  )
+  );
 
   const handleRemoveAllStatements = useCallback(async () => {
     removeStatementList();

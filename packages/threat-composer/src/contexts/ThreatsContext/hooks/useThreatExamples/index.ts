@@ -14,16 +14,16 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useMemo } from 'react';
+import { TemplateThreatStatement } from '../../../../customTypes';
+import threatStatementExamplesData from '../../../../data/threatStatementExamples.json';
+import renderThreatStatement from '../../../../utils/renderThreatStatement';
+import { PerFieldExamplesType, DEFAULT_PER_FIELD_EXAMPLES } from '../../context';
 import {
   addNewValueToStringArray,
   addNewValueArrayToStringArray,
   addNewValueArrayToStringArrayArray,
   addNewValueToPerFieldExampleArray,
 } from '../../utils';
-import threatStatementExamplesData from '../../../../data/threatStatementExamples.json';
-import { TemplateThreatStatement } from '../../../../customTypes';
-import { PerFieldExamplesType, DEFAULT_PER_FIELD_EXAMPLES } from '../../context';
-import renderThreatStatement from '../../../../utils/renderThreatStatement';
 
 const useThreatExamples = (
   statementList: TemplateThreatStatement[],
@@ -71,7 +71,7 @@ const useThreatExamples = (
     threatStatementExamples,
     perFieldExamples,
     previousInputs,
-  }
-}
+  };
+};
 
 export default useThreatExamples;

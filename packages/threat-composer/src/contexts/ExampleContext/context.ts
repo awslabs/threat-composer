@@ -13,16 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { Stage, StageProps } from "aws-cdk-lib";
-import { Construct } from "constructs";
-import { ApplicationStack } from "./application-stack";
+import { useContext, createContext } from 'react';
+import { DataExchangeFormat } from '../../customTypes';
 
-export class ApplicationStage extends Stage {
-  constructor(scope: Construct, id: string, props?: StageProps) {
-    super(scope, id, props);
-
-    new ApplicationStack(this, "ThreatComposerAppStack", {
-      terminationProtection: this.stageName === "Prod",
-    });
-  }
+export interface ExampleContextApi extends DataExchangeFormat {
 }
+
+const initialState: ExampleContextApi = {
+  schema: -1,
+};
+
+export const ExampleContext = createContext<ExampleContextApi>(initialState);
+
+export const useExampleContext = () => useContext(ExampleContext);

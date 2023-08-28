@@ -14,15 +14,18 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { ThreatsContext } from '../../context';
 import { TemplateThreatStatement } from '../../../../customTypes';
 import { useGlobalSetupContext } from '../../../GlobalSetupContext/context';
+import { LocalStateContextProviderBaseProps } from '../../../types';
+import { ThreatsContext } from '../../context';
 import useThreatExamples from '../../hooks/useThreatExamples';
 import useThreats from '../../hooks/useThreats';
 import { ThreatsContextProviderProps } from '../../types';
 
-const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>> = ({
+const ThreatsContextProvider: FC<PropsWithChildren<
+ThreatsContextProviderProps & LocalStateContextProviderBaseProps<TemplateThreatStatement[]>>> = ({
   children,
+  initialValue,
   onThreatListView,
   onThreatEditorView,
 }) => {
@@ -30,7 +33,7 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
     setEditingStatement] = useState<TemplateThreatStatement | null>(null);
 
   const [statementList,
-    setStatementList] = useState<TemplateThreatStatement[]>([]);
+    setStatementList] = useState<TemplateThreatStatement[]>(initialValue || []);
 
   const { composerMode } = useGlobalSetupContext();
 
@@ -54,7 +57,7 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
     editingStatement,
     setEditingStatement,
     onThreatEditorView,
-  )
+  );
 
   const handleRemoveAllStatements = useCallback(async () => {
     setStatementList([]);

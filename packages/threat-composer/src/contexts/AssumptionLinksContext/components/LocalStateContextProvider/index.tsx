@@ -15,14 +15,17 @@
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
 import { AssumptionLink } from '../../../../customTypes';
+import { LocalStateContextProviderBaseProps } from '../../../types';
 import { AssumptionLinksContext } from '../../context';
 import { AssumptionLinksContextProviderProps } from '../../types';
 import useAssumptionLinks from '../../useAssumptionLinks';
 
-const AssumptionLinksLocalStorageContextProvider: FC<PropsWithChildren<AssumptionLinksContextProviderProps>> = ({
+const AssumptionLinksLocalStorageContextProvider: FC<PropsWithChildren<
+AssumptionLinksContextProviderProps & LocalStateContextProviderBaseProps<AssumptionLink[]>>> = ({
   children,
+  initialValue,
 }) => {
-  const [assumptionLinkList, setAssumptionLinkList] = useState<AssumptionLink[]>([]);
+  const [assumptionLinkList, setAssumptionLinkList] = useState<AssumptionLink[]>(initialValue || []);
 
   const {
     handlRemoveAssumptionLink,

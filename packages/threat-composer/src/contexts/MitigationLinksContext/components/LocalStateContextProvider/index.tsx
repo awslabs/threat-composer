@@ -14,15 +14,18 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { MitigationLinksContext } from '../../context';
 import { MitigationLink } from '../../../../customTypes';
-import useMitigationLinks from '../../useMitigationLinks';
+import { LocalStateContextProviderBaseProps } from '../../../types';
+import { MitigationLinksContext } from '../../context';
 import { MitigationLinksContextProviderProps } from '../../types';
+import useMitigationLinks from '../../useMitigationLinks';
 
-const MitigationLinksLocalStateContextProvider: FC<PropsWithChildren<MitigationLinksContextProviderProps>> = ({
+const MitigationLinksLocalStateContextProvider: FC<PropsWithChildren<
+MitigationLinksContextProviderProps & LocalStateContextProviderBaseProps<MitigationLink[]>>> = ({
   children,
+  initialValue,
 }) => {
-  const [mitigationLinkList, setMitigationLinkList] = useState<MitigationLink[]>([]);
+  const [mitigationLinkList, setMitigationLinkList] = useState<MitigationLink[]>(initialValue || []);
 
   const {
     handlRemoveMitigationLink,

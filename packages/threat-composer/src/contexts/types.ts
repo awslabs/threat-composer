@@ -16,3 +16,7 @@
 export interface ContextProviderBaseProps {
   workspaceId: string | null;
 }
+
+export interface LocalStateContextProviderBaseProps<T> {
+  initialValue?: T;
+}

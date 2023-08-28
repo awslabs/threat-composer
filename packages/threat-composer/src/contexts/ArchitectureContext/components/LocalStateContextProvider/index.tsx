@@ -16,13 +16,16 @@
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
 import { ArchitectureInfo } from '../../../../customTypes';
 import { INFO_DEFAULT_VALUE } from '../../../constants';
+import { LocalStateContextProviderBaseProps } from '../../../types';
 import { ArchitectureInfoContext } from '../../context';
 import { ArchitectureContextProviderProps } from '../../types';
 
-const ArchitectureLocalStateContextProvider: FC<PropsWithChildren<ArchitectureContextProviderProps>> = ({
+const ArchitectureLocalStateContextProvider: FC<PropsWithChildren<
+ArchitectureContextProviderProps & LocalStateContextProviderBaseProps<ArchitectureInfo>>> = ({
   children,
+  initialValue,
 }) => {
-  const [architectureInfo, setArchitectureInfo] = useState<ArchitectureInfo>(INFO_DEFAULT_VALUE);
+  const [architectureInfo, setArchitectureInfo] = useState<ArchitectureInfo>(initialValue || INFO_DEFAULT_VALUE);
 
   const handleRemoveArchitectureInfo = useCallback(async () => {
     setArchitectureInfo(INFO_DEFAULT_VALUE);

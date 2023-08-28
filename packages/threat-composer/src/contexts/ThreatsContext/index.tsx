@@ -14,19 +14,20 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren } from 'react';
-import { useThreatsContext } from './context';
-import ThreatsMigration from '../../migrations/ThreatsMigration';
 import ThreatsLocalStateContextProvider from './components/LocalStateContextProvider';
 import ThreatsLocalStorageContextProvider from './components/LocalStorageContextProvider';
-import { EXAMPLE_WORKSPACE_ID } from '../../configs/constants';
+import { useThreatsContext } from './context';
 import { ThreatsContextProviderProps } from './types';
+import { EXAMPLE_WORKSPACE_ID } from '../../configs/constants';
+import ThreatsMigration from '../../migrations/ThreatsMigration';
+import { useExampleContext } from '../ExampleContext';
 
 const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>> = ({ children, ...props }) => {
+  const { threats } = useExampleContext();
+
   return props.workspaceId === EXAMPLE_WORKSPACE_ID ?
-    (<ThreatsLocalStateContextProvider {...props} >
-      <ThreatsMigration>
-        {children}
-      </ThreatsMigration>
+    (<ThreatsLocalStateContextProvider initialValue={threats} {...props} >
+      {children}
     </ThreatsLocalStateContextProvider>) :
     (<ThreatsLocalStorageContextProvider {...props} >
       <ThreatsMigration>

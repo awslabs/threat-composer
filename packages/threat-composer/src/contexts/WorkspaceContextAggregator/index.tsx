@@ -20,6 +20,7 @@ import ArchitectureInfoContextProvider from '../ArchitectureContext';
 import AssumptionLinksContextProvider from '../AssumptionLinksContext';
 import AssumptionsContextProvider from '../AssumptionsContext';
 import DataflowInfoContextProvider from '../DataflowContext';
+import ExampleContextProvider from '../ExampleContext';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import MitigationLinksContextProvider from '../MitigationLinksContext';
 import MitigationsContextProvider from '../MitigationsContext';
@@ -41,28 +42,29 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
   onThreatListView,
 }) => {
   return (
-    <ThreatsContextProvider
-      workspaceId={workspaceId || null}
-      onThreatEditorView={onThreatEditorView}
-      onThreatListView={onThreatListView}
-    >
-      <MitigationsContextProvider workspaceId={workspaceId}>
-        <AssumptionsContextProvider workspaceId={workspaceId}>
-          <MitigationLinksContextProvider workspaceId={workspaceId}>
-            <AssumptionLinksContextProvider workspaceId={workspaceId}>
-              <ApplicationInfoContextProvider workspaceId={workspaceId}>
-                <ArchitectureInfoContextProvider workspaceId={workspaceId}>
-                  <DataflowInfoContextProvider workspaceId={workspaceId}>
-                    {children}
-                  </DataflowInfoContextProvider>
-                </ArchitectureInfoContextProvider>
-              </ApplicationInfoContextProvider>
-            </AssumptionLinksContextProvider>
-          </MitigationLinksContextProvider>
-        </AssumptionsContextProvider >
-
-      </MitigationsContextProvider>
-    </ThreatsContextProvider>
+    <ExampleContextProvider>
+      <ThreatsContextProvider
+        workspaceId={workspaceId || null}
+        onThreatEditorView={onThreatEditorView}
+        onThreatListView={onThreatListView}
+      >
+        <MitigationsContextProvider workspaceId={workspaceId}>
+          <AssumptionsContextProvider workspaceId={workspaceId}>
+            <MitigationLinksContextProvider workspaceId={workspaceId}>
+              <AssumptionLinksContextProvider workspaceId={workspaceId}>
+                <ApplicationInfoContextProvider workspaceId={workspaceId}>
+                  <ArchitectureInfoContextProvider workspaceId={workspaceId}>
+                    <DataflowInfoContextProvider workspaceId={workspaceId}>
+                      {children}
+                    </DataflowInfoContextProvider>
+                  </ArchitectureInfoContextProvider>
+                </ApplicationInfoContextProvider>
+              </AssumptionLinksContextProvider>
+            </MitigationLinksContextProvider>
+          </AssumptionsContextProvider >
+        </MitigationsContextProvider>
+      </ThreatsContextProvider>
+    </ExampleContextProvider>
   );
 };
 
