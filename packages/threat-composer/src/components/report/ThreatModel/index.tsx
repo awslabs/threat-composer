@@ -13,11 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import ThreatModelView from './components/ThreatModelView';
 import { useGlobalSetupContext, useWorkspacesContext } from '../../../contexts';
 import useImportExport from '../../../hooks/useExportImport';
 import useHasContent from '../../../hooks/useHasContent';
+import getExportFileName from '../../../utils/getExportFileName';
 
 export interface ThreatModelProps {
   onPrintButtonClick?: () => void;
@@ -29,6 +30,12 @@ const ThreatModel: FC<ThreatModelProps> = ({
   const { getWorkspaceData } = useImportExport();
   const { composerMode } = useGlobalSetupContext();
   const [_, hasContentDetails] = useHasContent();
+  const { currentWorkspace } = useWorkspacesContext();
+
+  const downloadFileName = useMemo(() => {
+    return getExportFileName(composerMode, false, currentWorkspace);
+  }, [composerMode, currentWorkspace]);
+
   const {
     onApplicationInfoView,
     onArchitectureView,
@@ -41,6 +48,7 @@ const ThreatModel: FC<ThreatModelProps> = ({
     onPrintButtonClick={onPrintButtonClick}
     composerMode={composerMode}
     data={getWorkspaceData()}
+    downloadFileName={downloadFileName}
     hasContentDetails={hasContentDetails}
     onApplicationInfoView={onApplicationInfoView}
     onArchitectureView={onArchitectureView}

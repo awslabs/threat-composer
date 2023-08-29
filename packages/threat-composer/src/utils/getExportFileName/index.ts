@@ -13,15 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-const downloadObjectAsJson = (exportObj: any, exportName: string) => {
-  var dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportObj, null, 2));
-  var downloadAnchorNode = document.createElement('a');
-  downloadAnchorNode.setAttribute('href', dataStr);
-  downloadAnchorNode.setAttribute('download', exportName + '.json');
-  document.body.appendChild(downloadAnchorNode);
-  downloadAnchorNode.click();
-  downloadAnchorNode.remove();
+import { EXPORT_FILE_NAME } from '../../configs/export';
+import { ComposerMode, Workspace } from '../../customTypes';
+
+const getExportFileName = (composerMode: ComposerMode, filtered: boolean, currentWorkspace: Workspace | null) => {
+  const exportFileName = `${EXPORT_FILE_NAME}_Workspace_${currentWorkspace ? currentWorkspace.name.replace(' ', '-') : 'Default'}${composerMode !== 'Full' ? '_ThreatsOnly' : ''}${filtered ? '_Filtered' : ''}`;
+  return exportFileName;
 };
 
-
-export default downloadObjectAsJson;
+export default getExportFileName;
