@@ -53,7 +53,6 @@ const useImportExport = () => {
     if (composerMode === 'Full') {
       return {
         schema: SCHEMA_VERSION,
-        workspace: currentWorkspace || undefined,
         applicationInfo,
         architecture: architectureInfo,
         dataflow: dataflowInfo,
