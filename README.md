@@ -43,11 +43,9 @@ The Threat composer tool has been built for the following reasons:
 
 We've included an example of how you could use Threat composer to create a threat model, we have chosen the threat composer tool itself as an example to illustrate this. This threat model does not claim to be 100% complete for every possible interaction. It aims to give the reader an example of what a set of threats, assumptions and mitigations could look like. We've chosen to share this example as it provides a common reference point for people who are starting off with Threat composer. You may have different perspectives on the assumptions, threats and mitigations. This is ok, and could be used to start conversations in your organization with the context of your risk appetite. You may want to use this as he base threat model as a starting point to generate a contextualised threat model for your own specific needs and deployment of Threat composer. You are responsible for making your own independent assessment of this threat model and its applicability to your organization.
 
-To view and import the base threat model:
+To view the example threat model simply switch to the system-defined **Example** Workspace.
 
-1. Create a new Workspace
-2. Download the [example threat model file](https://github.com/awslabs/threat-composer/blob/main/packages/threat-composer/src/data/threatModelExample.json)
-3. Import the example threat model
+No changes you make within Example workspace will be saved. If you wish to modify it or use is a base, it's recommended you Export it, create a new Workspace and Import it.
 
 ## Feedback
 
