@@ -13,15 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-const downloadObjectAsJson = (exportObj: any, exportName: string) => {
-  var dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportObj, null, 2));
+const downloadContentAsMarkdown = (content: any, exportName: string) => {
+  var dataStr = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(content);
   var downloadAnchorNode = document.createElement('a');
   downloadAnchorNode.setAttribute('href', dataStr);
-  downloadAnchorNode.setAttribute('download', exportName + '.json');
+  downloadAnchorNode.setAttribute('download', exportName + '.md');
   document.body.appendChild(downloadAnchorNode);
   downloadAnchorNode.click();
   downloadAnchorNode.remove();
 };
 
-
-export default downloadObjectAsJson;
+export default downloadContentAsMarkdown;

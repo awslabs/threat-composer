@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useCallback } from 'react';
-import { EXPORT_FILE_NAME } from '../../configs/export';
 import { useWorkspacesContext } from '../../contexts';
 import { useApplicationInfoContext } from '../../contexts/ApplicationContext/context';
 import { useArchitectureInfoContext } from '../../contexts/ArchitectureContext/context';
@@ -25,17 +24,13 @@ import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext/context
 import { useMitigationLinksContext } from '../../contexts/MitigationLinksContext/context';
 import { useMitigationsContext } from '../../contexts/MitigationsContext/context';
 import { useThreatsContext } from '../../contexts/ThreatsContext/context';
-import { ComposerMode, DataExchangeFormat, TemplateThreatStatement, Workspace } from '../../customTypes';
+import { DataExchangeFormat, TemplateThreatStatement } from '../../customTypes';
 import downloadObjectAsJson from '../../utils/downloadObjectAsJson';
+import getExportFileName from '../../utils/getExportFileName';
 import sanitizeHtml from '../../utils/sanitizeHtml';
 import validateData from '../../utils/validateData';
 
 const SCHEMA_VERSION = 1.0;
-
-const getExportFileName = (composerMode: ComposerMode, filtered: boolean, currentWorkspace: Workspace | null) => {
-  const exportFileName = `${EXPORT_FILE_NAME}_Workspace_${currentWorkspace ? currentWorkspace.name.replace(' ', '-') : 'Default'}${composerMode !== 'Full' ? '_ThreatsOnly' : ''}${filtered ? '_Filtered' : ''}`;
-  return exportFileName;
-};
 
 const useImportExport = () => {
   const { composerMode } = useGlobalSetupContext();

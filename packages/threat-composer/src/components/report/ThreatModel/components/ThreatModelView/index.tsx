@@ -26,6 +26,7 @@ import { css } from '@emotion/react';
 import { FC, useEffect, useCallback, useState, ReactNode } from 'react';
 import { DataExchangeFormat, HasContentDetails, ViewNavigationEvent } from '../../../../../customTypes';
 import printStyles from '../../../../../styles/print';
+import downloadContentAsMarkdown from '../../../../../utils/downloadObjectAsMarkdown';
 import sanitizeHtml from '../../../../../utils/sanitizeHtml';
 import MarkdownViewer from '../../../../generic/MarkdownViewer';
 import { getApplicationInfoContent } from '../../utils/getApplicationInfo';
@@ -56,6 +57,7 @@ const styles = {
 export interface ThreatModelViewProps extends ViewNavigationEvent {
   composerMode: string;
   data: DataExchangeFormat;
+  downloadFileName?: string;
   onPrintButtonClick?: () => void;
   hasContentDetails?: HasContentDetails;
 }
@@ -63,6 +65,7 @@ export interface ThreatModelViewProps extends ViewNavigationEvent {
 const ThreatModelView: FC<ThreatModelViewProps> = ({
   data,
   composerMode,
+  downloadFileName,
   onPrintButtonClick,
   hasContentDetails,
   ...props
@@ -75,14 +78,14 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
       setLoading(true);
       const sanitizedData = sanitizeHtml(data);
       const processedContent = (composerMode === 'Full' ? [
-        hasContentDetails?.applicationName && await getApplicationName(sanitizedData),
-        hasContentDetails?.applicationInfo && await getApplicationInfoContent(sanitizedData),
-        hasContentDetails?.architecture && await getArchitectureContent(sanitizedData),
-        hasContentDetails?.dataflow && await getDataflowContent(sanitizedData),
-        hasContentDetails?.assumptions && await getAssumptionsContent(sanitizedData),
-        hasContentDetails?.threats && await getThreatsContent(sanitizedData),
-        hasContentDetails?.mitigations && await getMitigationsContent(sanitizedData),
-        hasContentDetails?.threats && await getAssetsContent(sanitizedData),
+        (!hasContentDetails || hasContentDetails.applicationName) && await getApplicationName(sanitizedData),
+        (!hasContentDetails || hasContentDetails.applicationInfo) && await getApplicationInfoContent(sanitizedData),
+        (!hasContentDetails || hasContentDetails.architecture) && await getArchitectureContent(sanitizedData),
+        (!hasContentDetails || hasContentDetails.dataflow) && await getDataflowContent(sanitizedData),
+        (!hasContentDetails || hasContentDetails.assumptions) && await getAssumptionsContent(sanitizedData),
+        (!hasContentDetails || hasContentDetails.threats) && await getThreatsContent(sanitizedData),
+        (!hasContentDetails || hasContentDetails.mitigations) && await getMitigationsContent(sanitizedData),
+        (!hasContentDetails || hasContentDetails.threats) && await getAssetsContent(sanitizedData),
       ] : [await getThreatsContent(sanitizedData, true)]).filter(x => !!x).join('\n');
 
       setContent(processedContent);
@@ -95,6 +98,10 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
   const handleCopyMarkdown = useCallback(async () => {
     await navigator.clipboard.writeText(content);
   }, [content]);
+
+  const handleDownloadMarkdown = useCallback(() => {
+    downloadFileName && downloadContentAsMarkdown(content, downloadFileName);
+  }, [content, downloadFileName]);
 
   const getNextStepButtons = useCallback(() => {
     const buttons: ReactNode[] = [];
@@ -141,6 +148,10 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
                 Copy as Markdown
               </Button>
             </Popover>
+            {downloadFileName && <Button
+              onClick={handleDownloadMarkdown}>
+              Download as Markdown File
+            </Button>}
             <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>
           </SpaceBetween>
         }
