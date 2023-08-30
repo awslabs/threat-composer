@@ -48,6 +48,7 @@ const ThreatModelReport: FC = () => {
   return (data
     ? (<ThreatModelView composerMode='Full' data={data} onPrintButtonClick={isPreview ? undefined : handlePrintButtonClick} />)
     : (<ThreatModel
+      isPreview={isPreview}
       onPrintButtonClick={isPreview ? undefined : handlePrintButtonClick}
     />));
 };

@@ -55,6 +55,7 @@ const styles = {
 };
 
 export interface ThreatModelViewProps extends ViewNavigationEvent {
+  isPreview?: boolean;
   composerMode: string;
   data: DataExchangeFormat;
   downloadFileName?: string;
@@ -64,6 +65,7 @@ export interface ThreatModelViewProps extends ViewNavigationEvent {
 
 const ThreatModelView: FC<ThreatModelViewProps> = ({
   data,
+  isPreview = false,
   composerMode,
   downloadFileName,
   onPrintButtonClick,
@@ -161,7 +163,7 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
         (<MarkdownViewer allowHtml>{content}</MarkdownViewer>) :
         (<Box fontSize='body-m' margin='xxl' fontWeight="bold" css={styles.noData}>{loading ? <Spinner /> : 'No data available'}</Box>)
       }
-      {composerMode === 'Full' && hasContentDetails && Object.values(hasContentDetails).some(x => !x) && <div css={printStyles.hiddenPrint}>
+      {!isPreview && composerMode === 'Full' && hasContentDetails && Object.values(hasContentDetails).some(x => !x) && <div css={printStyles.hiddenPrint}>
         <Box css={styles.nextStepsContainer}>
           <SpaceBetween direction="horizontal" size="xs">
             <Box fontWeight="bold" css={styles.text}>Suggested next steps: </Box>
