@@ -22,10 +22,12 @@ import getExportFileName from '../../../utils/getExportFileName';
 
 export interface ThreatModelProps {
   onPrintButtonClick?: () => void;
+  isPreview?: boolean;
 }
 
 const ThreatModel: FC<ThreatModelProps> = ({
   onPrintButtonClick,
+  ...props
 }) => {
   const { getWorkspaceData } = useImportExport();
   const { composerMode } = useGlobalSetupContext();
@@ -45,6 +47,7 @@ const ThreatModel: FC<ThreatModelProps> = ({
     onMitigationListView,
   } = useWorkspacesContext();
   return <ThreatModelView
+    {...props}
     onPrintButtonClick={onPrintButtonClick}
     composerMode={composerMode}
     data={getWorkspaceData()}
