@@ -20,7 +20,7 @@ import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/componen
 import { CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import Select, { SelectProps } from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { FC, useMemo, useState, useCallback, PropsWithChildren, useEffect } from 'react';
+import { FC, useMemo, useState, useCallback, PropsWithChildren } from 'react';
 import {
   DEFAULT_WORKSPACE_ID,
   DEFAULT_WORKSPACE_LABEL,
@@ -51,7 +51,6 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
   enabledRemoveAll,
   filteredThreats,
 }) => {
-  const [fileImportModalVisible, setFileImportModalVisible] = useState(false);
   const [addWorkspaceModalVisible, setAddWorkspaceModalVisible] = useState(false);
   const [editWorkspaceModalVisible, setEditWorkspaceModalVisible] = useState(false);
   const [removeDataModalVisible, setRemoveDataModalVisible] = useState(false);
@@ -60,11 +59,14 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
 
   const { importData, exportAll, exportSelectedThreats } = useImportExport();
   const { removeData, deleteCurrentWorkspace } = useRemoveData();
-  const { composerMode, onPreview, onPreviewClose, onImported, showImportUpdate } = useGlobalSetupContext();
-
-  useEffect(() => {
-    showImportUpdate && setFileImportModalVisible(true);
-  }, [showImportUpdate]);
+  const {
+    composerMode,
+    onPreview,
+    onPreviewClose,
+    onImported,
+    fileImportModalVisible,
+    setFileImportModalVisible,
+  } = useGlobalSetupContext();
 
   const {
     currentWorkspace,

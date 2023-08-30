@@ -13,26 +13,27 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { useContext, createContext } from 'react';
+import React, { useContext, createContext } from 'react';
 import { ComposerMode, DataExchangeFormat } from '../../customTypes';
 
 export interface GlobalSetupContextApi {
   hasVisitBefore: boolean;
   showInfoModal: () => void;
   composerMode: ComposerMode;
-  showImportUpdate: number;
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
   onImported?: () => void;
-  onShowImport?: () => void;
   onDefineWorkload?: () => void;
+  fileImportModalVisible: boolean;
+  setFileImportModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const initialState: GlobalSetupContextApi = {
   hasVisitBefore: false,
   composerMode: 'Full',
   showInfoModal: () => { },
-  showImportUpdate: 0,
+  fileImportModalVisible: false,
+  setFileImportModalVisible: () => {},
 };
 
 export const GlobalSetupContext = createContext<GlobalSetupContextApi>(initialState);

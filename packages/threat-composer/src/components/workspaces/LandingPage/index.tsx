@@ -28,7 +28,7 @@ import SwitchToExample from '../../../assets/switch-to-example-workspace.gif';
 import { useGlobalSetupContext } from '../../../contexts';
 
 const LandingPage: FC = () => {
-  const { onShowImport, onDefineWorkload } = useGlobalSetupContext();
+  const { setFileImportModalVisible, onDefineWorkload } = useGlobalSetupContext();
   return (
     <ContentLayout
       header={
@@ -37,7 +37,7 @@ const LandingPage: FC = () => {
           description="A threat modeling tool to help humans to reduce time-to-value when threat modeling"
           actions={
             <SpaceBetween direction="horizontal" size="s">
-              <Button onClick={onShowImport}>Import existing</Button>
+              <Button onClick={() => setFileImportModalVisible(true)}>Import existing</Button>
               <Button variant="primary" onClick={onDefineWorkload}>
                 Define workload or feature
               </Button>

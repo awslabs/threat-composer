@@ -39,12 +39,13 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
   onImported,
   onDefineWorkload,
 }) => {
+  const [fileImportModalVisible, setFileImportModalVisible] = useState(false);
+
   const [hasVisitBefore, setHasVisitBefore] = useLocalStorageState<boolean>(LOCAL_STORAGE_KEY_NEW_VISIT_FLAG, {
     defaultValue: false,
   });
 
   const [infoModalVisible, setInfoModalVisible] = useState(false);
-  const [showImportUpdate, setShowImportUpdate] = useState(0);
 
   useEffect(() => {
     if (!hasVisitBefore) {
@@ -61,8 +62,8 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
       onPreview,
       onPreviewClose,
       onImported,
-      showImportUpdate,
-      onShowImport: () => setShowImportUpdate(prev => prev+1),
+      fileImportModalVisible,
+      setFileImportModalVisible,
       onDefineWorkload,
     }}>
       {children}
