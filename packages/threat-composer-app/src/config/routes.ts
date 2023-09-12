@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export const ROUTE_WORKSPACE_HOME = '/workspaces/:workspaceId/home';
+export const ROUTE_WORKSPACE_HOME = '/workspaces/:workspaceId/dashboard';
 export const ROUTE_THREAT_LIST = '/workspaces/:workspaceId/threats';
 export const ROUTE_THREAT_EDITOR = '/workspaces/:workspaceId/threats/:threatId';
 export const ROUTE_MITIGATION_LIST = '/workspaces/:workspaceId/mitigations';
