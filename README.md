@@ -253,7 +253,7 @@ If the script is run successfully, you will see output of your CloudFront domain
 
 #### Maintenance
 
-It is recommended to watch this GitHub repository for any updates and run the commands below periodically from the `threat-composer` directory to deploy the latest changes in our GitHub repository:
+It is recommended to watch this GitHub repository for any updates and run the commands below periodically from the project root directory to deploy the latest changes in our GitHub repository:
 
 `git pull origin main`
 
@@ -267,9 +267,9 @@ This deployment option does create resources beyond what is created in the ‘St
 
 `cdk bootstrap aws://<aws-account-id>/<aws-region> --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess`
 
-You may need to include the `--trust` option when bootstrapping the production account as shown below. This command is run from the AWS account that has been configured in the property `accountProd` in *packages/threat-composer -infra/cdk.context.json*.
+You may need to include the `--trust` option when bootstrapping the dev or production accounts if they are different from the pipeline AWS account shown below. This command is run from the AWS account that has been configured in the property `accountDev` or `accountProd` in *packages/threat-composer -infra/cdk.context.json*. See below for an example. 
 
-`cdk bootstrap aws://<prod-aws-account-id>/us-west-2 --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess --trust <pipeline-aws-account-id>`
+`cdk bootstrap aws://<dev-or-prod-aws-account-id>/us-west-2 --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess --trust <pipeline-aws-account-id>`
 
 #### Deployment Instructions
 
