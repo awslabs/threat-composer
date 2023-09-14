@@ -79,7 +79,7 @@ export const AppLayoutContext = createContext<AppLayoutContextApi>(initialState)
  */
 const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
   title,
-  defaultBreadcrumb = 'home',
+  defaultBreadcrumb = 'dashboard',
   children,
   headerProps,
   breadcrumbGroupHide,

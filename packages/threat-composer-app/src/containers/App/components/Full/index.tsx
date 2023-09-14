@@ -82,7 +82,7 @@ const Full: FC = () => {
   const navigationItems: SideNavigationProps.Item[] = useMemo(() => {
     return [
       {
-        text: 'Home',
+        text: 'Dashboard',
         href: generateUrl(ROUTE_WORKSPACE_HOME, searchParms, workspaceId),
         type: 'link',
       },

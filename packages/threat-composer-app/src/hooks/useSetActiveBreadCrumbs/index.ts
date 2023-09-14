@@ -26,7 +26,7 @@ const useSetActiveBreadcrumbGroup = (additionPaths?: BreadcrumbGroupProps.Item[]
     setActiveBreadcrumbs([
       {
         href: currentPath,
-        text: 'home',
+        text: 'dashboard',
       },
       {
         href: currentPath,
