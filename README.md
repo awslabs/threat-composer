@@ -253,11 +253,11 @@ If the script is run successfully, you will see output of your CloudFront domain
 
 #### Maintenance
 
-It is recommended to watch this GitHub repository for any updates and run the commands below periodically to deploy the latest changes in our GitHub repository:
+It is recommended to watch this GitHub repository for any updates and run the commands below periodically from the project root directory to deploy the latest changes in our GitHub repository:
 
 `git pull origin main`
 
-`/scripts/deployDev.sh`
+`./scripts/deployDev.sh`
 
 ### Deployment – With CI/CD 
 
@@ -266,6 +266,10 @@ If you are planning to customize the configurations or update code to fit your u
 This deployment option does create resources beyond what is created in the ‘Static website only’ deployment, such as CodeCommit repository, CodePipeline and KMS keys, hence requires additional permissions within it’s CloudFormation execution policy. At the time of writing there appears to be a bug with CDK (see [issue](https://github.com/aws/aws-cdk/issues/21973)) when using a cross-account keys within the pipeline that the deployment will only be successful if one attaches the `AdministratorAccess` policy to the CloudFormation execution role, as follows:
 
 `cdk bootstrap aws://<aws-account-id>/<aws-region> --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess`
+
+You may need to include the `--trust` option when bootstrapping the dev or production accounts if they are different from the pipeline AWS account shown below. This command is run from the AWS account that has been configured in the property `accountDev` or `accountProd` in *packages/threat-composer -infra/cdk.context.json*. See below for an example. 
+
+`cdk bootstrap aws://<dev-or-prod-aws-account-id>/us-west-2 --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess --trust <pipeline-aws-account-id>`
 
 #### Deployment Instructions
 
