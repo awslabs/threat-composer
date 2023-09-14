@@ -22,8 +22,7 @@ import useThreatExamples from '../../hooks/useThreatExamples';
 import useThreats from '../../hooks/useThreats';
 import { ThreatsContextProviderProps } from '../../types';
 
-const ThreatsContextProvider: FC<PropsWithChildren<
-ThreatsContextProviderProps & LocalStateContextProviderBaseProps<TemplateThreatStatement[]>>> = ({
+const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps & LocalStateContextProviderBaseProps<TemplateThreatStatement[]>>> = ({
   children,
   initialValue,
   onThreatListView,

@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback, useEffect } from 'react';
+import { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_STATEMENT_LIST, LOCAL_STORAGE_KEY_EDITING_STATEMENT } from '../../../../configs/localStorageKeys';
 import { TemplateThreatStatement } from '../../../../customTypes';
@@ -32,18 +32,21 @@ const getLocalStorageKey = (workspaceId: string | null) => {
   return LOCAL_STORAGE_KEY_STATEMENT_LIST;
 };
 
-const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>> = ({
+interface ThreatsContextProviderInnerProps {
+  editingStatement: TemplateThreatStatement | null;
+  setEditingStatement: React.Dispatch<React.SetStateAction<TemplateThreatStatement | null>>;
+  removeEditingStatement: () => void;
+}
+
+const ThreatsContextProviderInner: FC<PropsWithChildren<ThreatsContextProviderProps & ThreatsContextProviderInnerProps>> = ({
   children,
   workspaceId: currentWorkspaceId,
   onThreatListView,
   onThreatEditorView,
+  editingStatement,
+  setEditingStatement,
+  removeEditingStatement,
 }) => {
-  const [editingStatement,
-    setEditingStatement,
-    { removeItem: removeEditingStatement }] = useLocalStorageState<TemplateThreatStatement | null>(LOCAL_STORAGE_KEY_EDITING_STATEMENT, {
-    defaultValue: null,
-  });
-
   const [statementList,
     setStatementList,
     { removeItem: removeStatementList }] = useLocalStorageState<TemplateThreatStatement[]>(getLocalStorageKey(currentWorkspaceId), {
@@ -120,6 +123,43 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
   }}>
     {children}
   </ThreatsContext.Provider>);
+};
+
+const ThreatsContextProviderInnerFullMode: FC<PropsWithChildren<ThreatsContextProviderProps>> = (props) => {
+  const [editingStatement,
+    setEditingStatement] = useState<TemplateThreatStatement | null>(null);
+
+  return <ThreatsContextProviderInner
+    {...props}
+    editingStatement={editingStatement}
+    setEditingStatement={setEditingStatement}
+    removeEditingStatement={() => setEditingStatement(null)}
+  />;
+};
+
+const ThreatsContextProviderInnerThreatsOnlyMode: FC<PropsWithChildren<ThreatsContextProviderProps>> = (props) => {
+  const [editingStatement,
+    setEditingStatement,
+    { removeItem }] = useLocalStorageState<TemplateThreatStatement | null>(LOCAL_STORAGE_KEY_EDITING_STATEMENT, {
+    defaultValue: null,
+  });
+
+  return <ThreatsContextProviderInner
+    {...props}
+    editingStatement={editingStatement}
+    setEditingStatement={setEditingStatement}
+    removeEditingStatement={removeItem}
+  />;
+};
+
+const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>> = (props) => {
+  const { composerMode } = useGlobalSetupContext();
+
+  if (composerMode === 'Full') {
+    return <ThreatsContextProviderInnerFullMode {...props} />;
+  }
+
+  return <ThreatsContextProviderInnerThreatsOnlyMode {...props}/>;
 };
 
 export default ThreatsContextProvider;
