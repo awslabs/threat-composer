@@ -2,7 +2,7 @@
   "dependencies": [
     {
       "name": "@babel/preset-env",
-      "version": "^7.21.4",
+      "version": "^7.23.2",
       "type": "build"
     },
     {
