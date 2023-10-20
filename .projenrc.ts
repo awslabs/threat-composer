@@ -102,7 +102,7 @@ const uiProject = new TypeScriptProject({
     "merge",
     "react-dom@^18",
     "react@^18",
-    "@babel/preset-env@^7.21.4",
+    "@babel/preset-env@^7.23.2",
     "@babel/preset-react@^7.18.6",
     "@babel/preset-typescript@^7.21.4",
     "@storybook/addon-essentials@^7.0.6",
