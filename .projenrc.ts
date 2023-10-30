@@ -23,6 +23,8 @@ monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.nth-check",
 monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.yaml", "^2.2.2");
 monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.js-yaml", "^3.13.1");
 monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.semver", "^7.5.3");
+monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.@babel/traverse", "^7.23.2");
+monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.postcss", "^8.4.31");
 monorepo.addGitIgnore('.temp/');
 monorepo.addGitIgnore('oss-attribution/');
 monorepo.addGitIgnore('storybook.out/');
@@ -103,8 +105,8 @@ const uiProject = new TypeScriptProject({
     "react-dom@^18",
     "react@^18",
     "@babel/preset-env@^7.23.2",
-    "@babel/preset-react@^7.18.6",
-    "@babel/preset-typescript@^7.21.4",
+    "@babel/preset-react@^7.22.5",
+    "@babel/preset-typescript@^7.23.2",
     "@storybook/addon-essentials@^7.0.6",
     "@storybook/addon-interactions@^7.0.6",
     "@storybook/addon-links@^7.0.6",
