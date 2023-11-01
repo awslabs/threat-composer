@@ -29,6 +29,8 @@ import downloadObjectAsJson from '../../utils/downloadObjectAsJson';
 import getExportFileName from '../../utils/getExportFileName';
 import sanitizeHtml from '../../utils/sanitizeHtml';
 import validateData from '../../utils/validateData';
+import cleanupThreatData from '../../utils/cleanupThreatData';
+import recalculateThreatData from '../../utils/recalculateThreatData';
 
 const SCHEMA_VERSION = 1.0;
 
@@ -45,6 +47,8 @@ const useImportExport = () => {
   const { mitigationLinkList, setMitigationLinkList } = useMitigationLinksContext();
 
   const getWorkspaceData = useCallback((): DataExchangeFormat => {
+    
+    const cleanedThreats = cleanupThreatData(statementList);
     if (composerMode === 'Full') {
       return {
         schema: SCHEMA_VERSION,
@@ -55,13 +59,13 @@ const useImportExport = () => {
         mitigations: mitigationList,
         assumptionLinks: assumptionLinkList,
         mitigationLinks: mitigationLinkList,
-        threats: statementList,
+        threats: cleanedThreats,
       };
     }
-
+    
     return {
       schema: SCHEMA_VERSION,
-      threats: statementList,
+      threats: cleanedThreats,
     };
   }, [composerMode, currentWorkspace, applicationInfo,
     architectureInfo, dataflowInfo,
@@ -111,13 +115,15 @@ const useImportExport = () => {
   }, []);
 
   const importData = useCallback((data: DataExchangeFormat) => {
+    const calculatedThreats = recalculateThreatData(data.threats || []);
+
     if (data.schema > 0) {
       setApplicationInfo(data.applicationInfo || {});
       setArchitectureInfo(data.architecture || {});
       setDataflowInfo(data.dataflow || {});
       setAssumptionList(data.assumptions || []);
       setMitigationList(data.mitigations || []);
-      setStatementList(data.threats || []);
+      setStatementList(calculatedThreats);
       setAssumptionLinkList(data.assumptionLinks || []);
       setMitigationLinkList(data.mitigationLinks || []);
     } else {
