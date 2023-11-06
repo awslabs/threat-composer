@@ -1,0 +1,29 @@
+FROM node:18-alpine
+#FROM node:latest
+WORKDIR /threat-composer
+COPY ./ /threat-composer/
+RUN set -eux \
+    & apk add \
+    --no-cache \
+    nodejs \
+    yarn \
+    rsync
+RUN yarn install --frozen-lockfile && npx projen
+RUN yarn run build
+EXPOSE 3000
+CMD yarn run dev
+
+
+#FROM node:latest AS build
+#WORKDIR /build
+#COPY package.json package.json
+## COPY package-lock.json package-lock.json
+#RUN yarn install --frozen-lockfile && npx projen
+#RUN yarn run build
+#COPY public/ public
+#COPY src/ src
+#RUN projen build
+#
+#FROM httpd:alpine
+#WORKDIR /var/www/html
+#COPY --from=build /build/build/ .
