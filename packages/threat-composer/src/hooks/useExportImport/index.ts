@@ -25,12 +25,12 @@ import { useMitigationLinksContext } from '../../contexts/MitigationLinksContext
 import { useMitigationsContext } from '../../contexts/MitigationsContext/context';
 import { useThreatsContext } from '../../contexts/ThreatsContext/context';
 import { DataExchangeFormat, TemplateThreatStatement } from '../../customTypes';
+import cleanupThreatData from '../../utils/cleanupThreatData';
 import downloadObjectAsJson from '../../utils/downloadObjectAsJson';
 import getExportFileName from '../../utils/getExportFileName';
+import recalculateThreatData from '../../utils/recalculateThreatData';
 import sanitizeHtml from '../../utils/sanitizeHtml';
 import validateData from '../../utils/validateData';
-import cleanupThreatData from '../../utils/cleanupThreatData';
-import recalculateThreatData from '../../utils/recalculateThreatData';
 
 const SCHEMA_VERSION = 1.0;
 
@@ -47,7 +47,7 @@ const useImportExport = () => {
   const { mitigationLinkList, setMitigationLinkList } = useMitigationLinksContext();
 
   const getWorkspaceData = useCallback((): DataExchangeFormat => {
-    
+
     const cleanedThreats = cleanupThreatData(statementList);
     if (composerMode === 'Full') {
       return {
@@ -62,7 +62,7 @@ const useImportExport = () => {
         threats: cleanedThreats,
       };
     }
-    
+
     return {
       schema: SCHEMA_VERSION,
       threats: cleanedThreats,
