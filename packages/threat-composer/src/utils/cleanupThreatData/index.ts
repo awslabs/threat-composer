@@ -13,13 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement } from "../../customTypes";
+import { TemplateThreatStatement } from '../../customTypes';
 
 const cleanupThreatData = (threats: TemplateThreatStatement[]) => {
   return threats.map(t => {
-    const nt = {...t};
+    const nt = { ...t };
     delete nt.displayedStatement;
-    
+
     return nt;
   });
 };

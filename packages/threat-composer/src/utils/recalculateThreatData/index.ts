@@ -13,20 +13,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-  import { TemplateThreatStatement } from "../../customTypes";
-import renderThreatStatement from "../renderThreatStatement";
+import { TemplateThreatStatement } from '../../customTypes';
+import renderThreatStatement from '../renderThreatStatement';
 
-  const recalculateThreatData = (threats: TemplateThreatStatement[]) => {
-    return threats.map(t => {
-      const { displayedStatement } = renderThreatStatement(t);
-      const nt: TemplateThreatStatement = {
-        ...t, 
-        displayedStatement, 
-      };
-    
-      return nt;
-    });
-  };
-  
-  export default recalculateThreatData;
-  
+const recalculateThreatData = (threats: TemplateThreatStatement[]) => {
+  return threats.map(t => {
+    const { displayedStatement } = renderThreatStatement(t);
+    const nt: TemplateThreatStatement = {
+      ...t,
+      displayedStatement,
+    };
+
+    return nt;
+  });
+};
+
+export default recalculateThreatData;

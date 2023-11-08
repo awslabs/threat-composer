@@ -22,6 +22,7 @@ import Overview from './components/Overview';
 import STRIDEAllocation from './components/STRIDEAllocation';
 import ThreatGrammar from './components/ThreatGrammar';
 import ThreatPrioritization from './components/ThreatPrioritization';
+import { useApplicationInfoContext } from '../../../contexts/ApplicationContext';
 
 export interface ItemType {
   title: string;
@@ -72,12 +73,14 @@ const WorkspaceInsights = () => {
     </BoardItem>);
   }, []);
 
+  const { applicationInfo } = useApplicationInfoContext();
+
   return (<ContentLayout
     header={
       <Header
         variant="h1"
       >
-        Insights dashboard
+        {applicationInfo.name ? 'Insights dashboard for: ' + applicationInfo.name : 'Insights dashboard'}
       </Header>
     }
   >
