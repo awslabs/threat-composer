@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, useCallback, useState } from 'react';
-import { ThreatModel, ThreatModelView } from 'threat-composer';
+import { ThreatModel, ThreatModelView } from '@aws/threat-composer';
 
 const ThreatModelReport: FC = () => {
   const [isPreview] = useState(() => {

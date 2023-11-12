@@ -16,7 +16,7 @@
 import Box from '@cloudscape-design/components/box';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { FC, PropsWithChildren, useMemo, ReactNode } from 'react';
-import { useMobileMediaQuery } from 'threat-composer';
+import { useMobileMediaQuery } from '@aws/threat-composer';
 import NavHeader from '../NavHeader';
 
 export interface StandaloneAppLayoutProps {

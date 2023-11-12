@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ApplicationInfoComponent } from 'threat-composer';
+import { ApplicationInfoComponent } from '@aws/threat-composer';
 
 const Application = () => {
   return <ApplicationInfoComponent />;

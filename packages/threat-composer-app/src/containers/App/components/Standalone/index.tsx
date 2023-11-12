@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC } from 'react';
-import { ThreatStatementGenerator } from 'threat-composer';
+import { ThreatStatementGenerator } from '@aws/threat-composer';
 import StandaloneAppLayout from '../../../../components/StandaloneAppLayout';
 import useNotifications from '../../../../hooks/useNotifications';
 

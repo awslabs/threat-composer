@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { MitigationList as MitigationListComponent } from 'threat-composer';
+import { MitigationList as MitigationListComponent } from '@aws/threat-composer';
 
 const MitigationList = () => {
   return <MitigationListComponent />;

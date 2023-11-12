@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { WorkspaceHome as WorkspaceHomeComponent } from 'threat-composer';
+import { WorkspaceHome as WorkspaceHomeComponent } from '@aws/threat-composer';
 
 const WorkspaceHome = () => {
   return <WorkspaceHomeComponent />;

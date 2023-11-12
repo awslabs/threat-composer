@@ -1,5 +1,5 @@
 {
-  "name": "threat-composer",
+  "name": "@aws/threat-composer",
   "scripts": {
     "build": "npx projen build",
     "clobber": "npx projen clobber",

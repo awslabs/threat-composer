@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useLocation } from 'react-router-dom';
-import { ThreatStatementList as ThreatStatementListComponent } from 'threat-composer';
+import { ThreatStatementList as ThreatStatementListComponent } from '@aws/threat-composer';
 
 const ThreatStatementList = () => {
   const { state } = useLocation();

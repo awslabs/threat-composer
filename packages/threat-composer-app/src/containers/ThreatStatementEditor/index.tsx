@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThreatStatementEditor as ThreatStatementEditorComponent } from 'threat-composer';
+import { ThreatStatementEditor as ThreatStatementEditorComponent } from '@aws/threat-composer';
 
 const ThreatStatementEditor = () => {
   return <ThreatStatementEditorComponent />;
