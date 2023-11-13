@@ -93,6 +93,10 @@
       "type": "override"
     },
     {
+      "name": "@aws/threat-composer",
+      "type": "runtime"
+    },
+    {
       "name": "@cloudscape-design/components",
       "type": "runtime"
     },
@@ -119,10 +123,6 @@
     {
       "name": "react-scripts",
       "version": "^5",
-      "type": "runtime"
-    },
-    {
-      "name": "threat-composer",
       "type": "runtime"
     },
     {

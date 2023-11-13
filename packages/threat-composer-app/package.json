@@ -1,5 +1,5 @@
 {
-  "name": "threat-composer-app",
+  "name": "@aws/threat-composer-app",
   "scripts": {
     "build": "npx projen build",
     "clobber": "npx projen clobber",
@@ -38,6 +38,7 @@
     "typescript": "^4.0.3"
   },
   "dependencies": {
+    "@aws/threat-composer": "*",
     "@cloudscape-design/components": "*",
     "@cloudscape-design/design-tokens": "*",
     "@cloudscape-design/global-styles": "*",
@@ -45,7 +46,6 @@
     "react-dom": "*",
     "react-router-dom": "*",
     "react-scripts": "^5",
-    "threat-composer": "*",
     "web-vitals": "*"
   },
   "license": "Apache-2.0",

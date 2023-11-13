@@ -1,5 +1,5 @@
 {
-  "name": "threat-composer",
+  "name": "@aws/threat-composer",
   "root": "packages/threat-composer",
   "targets": {
     "default": {

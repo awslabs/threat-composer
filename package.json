@@ -1,5 +1,5 @@
 {
-  "name": "threat-composer-monorepo",
+  "name": "@aws/threat-composer-monorepo",
   "scripts": {
     "build": "npx projen build",
     "clobber": "npx projen clobber",

@@ -1,5 +1,5 @@
 {
-  "name": "threat-composer-infra",
+  "name": "@aws/threat-composer-infra",
   "scripts": {
     "build": "npx projen build",
     "bundle": "npx projen bundle",

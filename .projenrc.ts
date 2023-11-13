@@ -7,7 +7,7 @@ import { TypeScriptJsxMode, TypeScriptModuleResolution } from "projen/lib/javasc
 
 const monorepo = new NxMonorepoProject({
   defaultReleaseBranch: "main",
-  name: "threat-composer-monorepo",
+  name: "@aws/threat-composer-monorepo",
   devDeps: [
     "@aws-prototyping-sdk/nx-monorepo@^0.19.2", 
     "@aws-prototyping-sdk/pipeline@^0.19.2",
@@ -49,11 +49,11 @@ monorepo.addTask('license:checker', {
 });
 
 monorepo.addTask('dev', {
-  exec: 'GENERATE_SOURCEMAP=false npx nx run threat-composer-app:dev'
+  exec: 'GENERATE_SOURCEMAP=false npx nx run @aws/threat-composer-app:dev'
 });
 
 monorepo.addTask('storybook', {
-  exec: 'GENERATE_SOURCEMAP=false npx nx run threat-composer:storybook'
+  exec: 'GENERATE_SOURCEMAP=false npx nx run @aws/threat-composer:storybook'
 });
 
 monorepo.compileTask.reset('npx nx run-many --target=build --all --skip-nx-cache --nx-bail');
@@ -67,7 +67,7 @@ const uiProject = new TypeScriptProject({
   parent: monorepo,
   outdir: "packages/threat-composer",
   defaultReleaseBranch: "main",
-  name: "threat-composer",
+  name: "@aws/threat-composer",
   sampleCode: false,
   deps: [
     "@cloudscape-design/components",
@@ -172,7 +172,7 @@ const appProject = new ReactTypeScriptProject({
   parent: monorepo,
   outdir: "packages/threat-composer-app",
   defaultReleaseBranch: "main",
-  name: "threat-composer-app",
+  name: "@aws/threat-composer-app",
   deps: [
     "@cloudscape-design/components",
     "@cloudscape-design/global-styles",
@@ -203,7 +203,7 @@ const infraProject = new PDKPipelineTsProject({
   cdkVersion: "2.81.0",
   defaultReleaseBranch: "main",
   devDeps: ["@aws-prototyping-sdk/pipeline@^0.19.2"],
-  name: "threat-composer-infra",
+  name: "@aws/threat-composer-infra",
   parent: monorepo,
   outdir: "packages/threat-composer-infra",
   requireApproval: ApprovalLevel.NEVER,

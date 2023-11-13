@@ -64,7 +64,7 @@
       "name": "dev",
       "steps": [
         {
-          "exec": "GENERATE_SOURCEMAP=false npx nx run threat-composer-app:dev"
+          "exec": "GENERATE_SOURCEMAP=false npx nx run @aws/threat-composer-app:dev"
         }
       ]
     },
@@ -192,7 +192,7 @@
       "name": "storybook",
       "steps": [
         {
-          "exec": "GENERATE_SOURCEMAP=false npx nx run threat-composer:storybook"
+          "exec": "GENERATE_SOURCEMAP=false npx nx run @aws/threat-composer:storybook"
         }
       ]
     },
