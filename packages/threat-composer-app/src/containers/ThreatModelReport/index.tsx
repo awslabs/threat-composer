@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useCallback, useState } from 'react';
 import { ThreatModel, ThreatModelView } from '@aws/threat-composer';
+import { FC, useCallback, useState } from 'react';
 
 const ThreatModelReport: FC = () => {
   const [isPreview] = useState(() => {

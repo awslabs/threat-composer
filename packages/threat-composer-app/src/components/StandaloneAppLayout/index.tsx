@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { useMobileMediaQuery } from '@aws/threat-composer';
 import Box from '@cloudscape-design/components/box';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { FC, PropsWithChildren, useMemo, ReactNode } from 'react';
-import { useMobileMediaQuery } from '@aws/threat-composer';
 import NavHeader from '../NavHeader';
 
 export interface StandaloneAppLayoutProps {

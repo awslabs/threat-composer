@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { useLocation } from 'react-router-dom';
 import { ThreatStatementList as ThreatStatementListComponent } from '@aws/threat-composer';
+import { useLocation } from 'react-router-dom';
 
 const ThreatStatementList = () => {
   const { state } = useLocation();

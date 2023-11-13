@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC } from 'react';
 import { ThreatStatementGenerator } from '@aws/threat-composer';
+import { FC } from 'react';
 import StandaloneAppLayout from '../../../../components/StandaloneAppLayout';
 import useNotifications from '../../../../hooks/useNotifications';
 

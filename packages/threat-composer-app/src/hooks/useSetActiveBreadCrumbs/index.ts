@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { useWorkspacesContext } from '@aws/threat-composer';
 import { BreadcrumbGroupProps } from '@cloudscape-design/components';
 import { useEffect } from 'react';
-import { useWorkspacesContext } from '@aws/threat-composer';
 import { useAppLayoutContext } from '../../components/FullAppLayout';
 
 const useSetActiveBreadcrumbGroup = (additionPaths?: BreadcrumbGroupProps.Item[]) => {
