@@ -178,6 +178,14 @@
         }
       ]
     },
+    "prepare": {
+      "name": "prepare",
+      "steps": [
+        {
+          "exec": "husky install"
+        }
+      ]
+    },
     "run-many": {
       "name": "run-many",
       "description": "Run task against multiple workspace projects",

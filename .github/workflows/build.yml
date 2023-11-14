@@ -18,3 +18,4 @@ jobs:
       - run: npm install -g oss-attribution-generator
       - run: yarn install --immutable && npx projen
       - run: PATH=/tmp/git-secrets/bin:$PATH yarn run build
+      - run: yarn workspaces run eslint
