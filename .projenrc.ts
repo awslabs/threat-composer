@@ -14,6 +14,7 @@ const monorepo = new NxMonorepoProject({
     "@aws-prototyping-sdk/pdk-nag@^0.19.2",
     "eslint-plugin-header",
     "license-checker",
+    "husky",
   ],
 });
 
@@ -36,6 +37,14 @@ monorepo.addTask('export:examples', {
     },
     {
       "exec": 'node ./scripts/exportExamples.js',
+    }
+  ]
+});
+
+monorepo.addTask('prepare', {
+  steps: [
+    {
+      "exec": 'husky install',
     }
   ]
 });
