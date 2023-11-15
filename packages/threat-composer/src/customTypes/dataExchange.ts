@@ -59,3 +59,7 @@ export interface HasContentDetails {
   mitigations: boolean;
   threats: boolean;
 }
+
+export interface ThreatComposerNamespace {
+  getWorkspaceData: () => DataExchangeFormat;
+}
