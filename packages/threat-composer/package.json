@@ -33,6 +33,7 @@
     "@types/d3": "^7",
     "@types/indefinite": "*",
     "@types/jest": "*",
+    "@types/lodash.isequal": "*",
     "@types/node": "^14",
     "@types/react": "18.0.0",
     "@types/react-dom": "18.0.0",
@@ -66,6 +67,7 @@
   "dependencies": {
     "@aws-northstar/ui": "*",
     "@cloudscape-design/board-components": "*",
+    "@cloudscape-design/collection-hooks": "*",
     "@cloudscape-design/components": "*",
     "@cloudscape-design/design-tokens": "*",
     "@cloudscape-design/global-styles": "*",
@@ -73,6 +75,7 @@
     "browser-image-compression": "*",
     "d3": "^7",
     "indefinite": "*",
+    "lodash.isequal": "*",
     "react-markdown": "*",
     "react-simply-carousel": "*",
     "rehype-raw": "*",

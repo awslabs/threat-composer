@@ -68,6 +68,10 @@
       "type": "build"
     },
     {
+      "name": "@types/lodash.isequal",
+      "type": "build"
+    },
+    {
       "name": "@types/node",
       "version": "^14",
       "type": "build"
@@ -201,6 +205,10 @@
       "type": "runtime"
     },
     {
+      "name": "@cloudscape-design/collection-hooks",
+      "type": "runtime"
+    },
+    {
       "name": "@cloudscape-design/components",
       "type": "runtime"
     },
@@ -227,6 +235,10 @@
     },
     {
       "name": "indefinite",
+      "type": "runtime"
+    },
+    {
+      "name": "lodash.isequal",
       "type": "runtime"
     },
     {

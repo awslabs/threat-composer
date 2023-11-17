@@ -33,7 +33,9 @@ export { default as ThreatsContext } from './ThreatsContext';
 export { useThreatsContext } from './ThreatsContext/context';
 export { default as WorkspacesContext } from './WorkspacesContext';
 export { useWorkspacesContext } from './WorkspacesContext/context';
-
+export { default as ThreatPacksContext } from './ThreatPacksContext';
+export { useThreatPacksContext } from './ThreatPacksContext/context';
+export { default as MitigationPacksContext } from './MitigationPacksContext';
+export { useMitigationPacksContext } from './MitigationPacksContext/context';
 export { default as WorkspaceContextAggregator } from './WorkspaceContextAggregator';
 export { default as ContextAggregator } from './ContextAggregator';
-

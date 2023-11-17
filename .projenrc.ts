@@ -80,9 +80,11 @@ const uiProject = new TypeScriptProject({
   sampleCode: false,
   deps: [
     "@cloudscape-design/components",
+    "@cloudscape-design/collection-hooks",
     "@cloudscape-design/global-styles",
     "@cloudscape-design/design-tokens",
     "@cloudscape-design/board-components",
+    "lodash.isequal",
     "use-local-storage-state",
     "indefinite",
     "uuid",
@@ -104,6 +106,7 @@ const uiProject = new TypeScriptProject({
   ],
   devDeps: [
     "@cloudscape-design/jest-preset",
+    "@types/lodash.isequal",
     "@types/indefinite",
     "@types/react-dom@^18",
     "@types/react@^18",
@@ -187,11 +190,13 @@ const appProject = new ReactTypeScriptProject({
     "@cloudscape-design/global-styles",
     "@cloudscape-design/design-tokens",
     "react-router-dom",
+    "uuid",
     uiProject.package.packageName,
   ],
   devDeps: [
     "@cloudscape-design/jest-preset",
     "@types/react-router-dom",
+    "@types/uuid",
     "merge",
   ],
   jestOptions: {

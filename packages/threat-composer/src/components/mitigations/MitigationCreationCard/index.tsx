@@ -15,6 +15,7 @@
  ******************************************************************************************************************** */
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useState, useCallback } from 'react';
+import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { Mitigation } from '../../../customTypes';
@@ -54,7 +55,7 @@ const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => 
       const newAssumption = saveAssumption({
         numericId: -1,
         content: assumptionIdOrNewAssumption,
-        id: 'new',
+        id: DEFAULT_NEW_ENTITY_ID,
       });
       setLinkedAssumptionIds(prev => [...prev, newAssumption.id]);
     }

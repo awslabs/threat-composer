@@ -24,3 +24,7 @@ export { default as WorkspaceSelector } from './workspaces/WorkspaceSelector';
 export { default as ThreatModel } from './report/ThreatModel';
 export { default as ThreatModelView } from './report/ThreatModel/components/ThreatModelView';
 export { default as WorkspaceHome } from './workspaces/WorkspaceHome';
+export { default as ThreatPacksComponent } from './workspaces/ThreatPacks';
+export { default as ThreatPackComponent } from './workspaces/ThreatPack';
+export { default as MitigationPacksComponent } from './workspaces/MitigationPacks';
+export { default as MitigationPackComponent } from './workspaces/MitigationPack';

@@ -21,6 +21,7 @@ import WorkspacesContextProvider, { WorkspacesContextProviderProps } from '../Wo
 
 export interface ContextAggregatorProps extends ViewNavigationEvent {
   composerMode?: ComposerMode;
+  features?: string[];
   onWorkspaceChanged?: WorkspacesContextProviderProps['onWorkspaceChanged'];
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
@@ -32,6 +33,7 @@ const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
   children,
   onWorkspaceChanged,
   composerMode = 'Full',
+  features,
   onPreview,
   onPreviewClose,
   onImported,
@@ -43,6 +45,7 @@ const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
       onPreview={onPreview}
       onPreviewClose={onPreviewClose}
       onImported={onImported}
+      features={features}
       onDefineWorkload={onDefineWorkload}
       composerMode={composerMode}>
       <WorkspacesContextProvider onWorkspaceChanged={onWorkspaceChanged} {...props}>

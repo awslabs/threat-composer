@@ -24,13 +24,21 @@ import {
   ROUTE_THREAT_EDITOR,
   ROUTE_THREAT_LIST,
   ROUTE_VIEW_THREAT_MODEL,
+  ROUTE_THREAT_PACK,
+  ROUTE_THREAT_PACKS,
+  ROUTE_MITIGATION_PACK,
+  ROUTE_MITIGATION_PACKS,
 } from '../config/routes';
 import Application from '../containers/Application';
 import Architecture from '../containers/Architecture';
 import AssumptionList from '../containers/AssumptionList';
 import Dataflow from '../containers/Dataflow';
 import MitigationList from '../containers/MitigationList';
+import MitigationPack from '../containers/MitigationPack';
+import MitigationPacks from '../containers/MitigationPacks';
 import ThreatModelReport from '../containers/ThreatModelReport';
+import ThreatPack from '../containers/ThreatPack';
+import ThreatPacks from '../containers/ThreatPacks';
 import ThreatStatementEditor from '../containers/ThreatStatementEditor';
 import ThreatStatementList from '../containers/ThreatStatementList';
 import WorkspaceHome from '../containers/WorkspaceHome';
@@ -69,6 +77,22 @@ const routes: RouteProps[] = [
   {
     path: getRouteWithBasePath(ROUTE_VIEW_THREAT_MODEL),
     element: <ThreatModelReport />,
+  },
+  {
+    path: getRouteWithBasePath(ROUTE_THREAT_PACK),
+    element: <ThreatPack />,
+  },
+  {
+    path: getRouteWithBasePath(ROUTE_THREAT_PACKS),
+    element: <ThreatPacks />,
+  },
+  {
+    path: getRouteWithBasePath(ROUTE_MITIGATION_PACK),
+    element: <MitigationPack />,
+  },
+  {
+    path: getRouteWithBasePath(ROUTE_MITIGATION_PACKS),
+    element: <MitigationPacks />,
   },
   {
     path: getRouteWithBasePath(ROUTE_THREAT_EDITOR),

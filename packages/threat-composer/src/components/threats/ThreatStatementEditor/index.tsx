@@ -22,7 +22,7 @@ import { css } from '@emotion/react';
 import React, { FC, useCallback, useMemo, useState, useRef, useEffect, ReactNode } from 'react';
 import { v4 as uuidV4 } from 'uuid';
 import { EditorProps } from './types';
-import { DEFAULT_WORKSPACE_LABEL } from '../../../configs/constants';
+import { DEFAULT_NEW_ENTITY_ID, DEFAULT_WORKSPACE_LABEL } from '../../../configs/constants';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
@@ -275,7 +275,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
       setLinkedAssumptionIds(prev => [...prev, assumptionIdOrNewAssumption]);
     } else {
       const newAssumption = saveAssumption({
-        id: 'new',
+        id: DEFAULT_NEW_ENTITY_ID,
         numericId: -1,
         content: assumptionIdOrNewAssumption,
       });
@@ -289,7 +289,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
       setLinkedMitigationIds(prev => [...prev, mitigationIdOrNewMitigation]);
     } else {
       const newMitigation = saveMitigation({
-        id: 'new',
+        id: DEFAULT_NEW_ENTITY_ID,
         numericId: -1,
         content: mitigationIdOrNewMitigation,
       });

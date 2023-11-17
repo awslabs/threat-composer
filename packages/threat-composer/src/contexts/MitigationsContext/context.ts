@@ -14,6 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
+import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
 import { Mitigation } from '../../customTypes';
 export type View = 'list' | 'editor';
 
@@ -31,7 +32,7 @@ const initialState: MitigationsContextApi = {
   setMitigationList: () => { },
   removeMitigation: () => { },
   saveMitigation: () => ({
-    id: 'new',
+    id: DEFAULT_NEW_ENTITY_ID,
     numericId: -1,
     content: '',
   }),

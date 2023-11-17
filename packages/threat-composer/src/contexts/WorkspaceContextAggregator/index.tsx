@@ -23,7 +23,9 @@ import DataflowInfoContextProvider from '../DataflowContext';
 import ExampleContextProvider from '../ExampleContext';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import MitigationLinksContextProvider from '../MitigationLinksContext';
+import MitigationPacksContextProvider from '../MitigationPacksContext';
 import MitigationsContextProvider from '../MitigationsContext';
+import ThreatPacksContextProvider from '../ThreatPacksContext';
 import ThreatsContextProvider from '../ThreatsContext';
 
 export interface WorkspaceContextAggregatorProps extends ViewNavigationEvent {
@@ -55,7 +57,11 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
                 <ApplicationInfoContextProvider workspaceId={workspaceId}>
                   <ArchitectureInfoContextProvider workspaceId={workspaceId}>
                     <DataflowInfoContextProvider workspaceId={workspaceId}>
-                      {children}
+                      <ThreatPacksContextProvider workspaceId={workspaceId}>
+                        <MitigationPacksContextProvider workspaceId={workspaceId}>
+                          {children}
+                        </MitigationPacksContextProvider>
+                      </ThreatPacksContextProvider>
                     </DataflowInfoContextProvider>
                   </ArchitectureInfoContextProvider>
                 </ApplicationInfoContextProvider>

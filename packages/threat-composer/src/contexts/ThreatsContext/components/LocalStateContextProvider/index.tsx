@@ -55,7 +55,6 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps &
     setStatementList,
     editingStatement,
     setEditingStatement,
-    onThreatEditorView,
   );
 
   const handleRemoveAllStatements = useCallback(async () => {

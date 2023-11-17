@@ -261,7 +261,7 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
 
   const handleAddStatement = useCallback((idToCopy?: string) => {
     addStatement(idToCopy);
-    onThreatEditorView?.(DEFAULT_NEW_ENTITY_ID);
+    onThreatEditorView?.(DEFAULT_NEW_ENTITY_ID, idToCopy);
   }, [addStatement, onThreatEditorView]);
 
   const handleEditStatement = useCallback((id: string) => {

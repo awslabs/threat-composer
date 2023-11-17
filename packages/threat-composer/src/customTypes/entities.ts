@@ -53,6 +53,8 @@ export const MetadataSchema = z.object({
   path: [data.key],
 }));
 
+export type Metadata = z.infer<typeof MetadataSchema>;
+
 export const EntityBaseSchema = z.object({
   /**
    * The unique Id of the entity.

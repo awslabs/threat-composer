@@ -13,9 +13,82 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThreatStatementEditor as ThreatStatementEditorComponent } from '@aws/threat-composer';
+import {
+  ThreatStatementEditor as ThreatStatementEditorComponent,
+  useThreatsContext,
+  getThreatFromThreatPacksThreat,
+  TemplateThreatStatement,
+  useThreatPacksContext,
+  DEFAULT_NEW_ENTITY_ID,
+  ThreatPack,
+} from '@aws/threat-composer';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { v4 as uuidV4 } from 'uuid';
 
 const ThreatStatementEditor = () => {
+  const { threatId } = useParams();
+
+  const [idToCopy] = useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('idToCopy');
+  });
+
+  const [{
+    threatPackId,
+    threatPackThreatId,
+  }] = useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return {
+      threatPackId: urlParams.get('threatPackId'),
+      threatPackThreatId: urlParams.get('threatPackThreatId'),
+    };
+  });
+
+  const { statementList, setEditingStatement } = useThreatsContext();
+  const { threatPacks } = useThreatPacksContext();
+
+  const [editingStatement] = useState(() => {
+    let statement: TemplateThreatStatement = {
+      id: uuidV4(),
+      numericId: -1,
+    };
+
+    if (threatId === DEFAULT_NEW_ENTITY_ID && idToCopy) {
+      // Create new threat from copying an existing threat
+      const copiedStatement = statementList.find((st: TemplateThreatStatement) => st.id === idToCopy);
+      if (copiedStatement) {
+        const { id: _id, displayOrder, tags, metadata, ...rest } = copiedStatement;
+        statement = {
+          ...rest,
+          id: uuidV4(),
+          numericId: -1,
+        };
+      }
+    } else if (threatId === DEFAULT_NEW_ENTITY_ID && threatPackId && threatPackThreatId) {
+      // Create new threat from threat pack threat
+      const threatPack = threatPacks.find((tp: ThreatPack) => tp.id === threatPackId);
+      if (threatPack) {
+        const threatPackThreat = threatPack.threats?.find((t: TemplateThreatStatement) => t.id === threatPackThreatId);
+        if (threatPackThreat) {
+          statement = getThreatFromThreatPacksThreat(threatPackId, threatPackThreat);
+        }
+      }
+    } else if (threatId) {
+      // Editing existing threat
+      const threatStatement = statementList.find((st: TemplateThreatStatement) => st.id === threatId);
+      if (threatStatement) {
+        statement = threatStatement;
+      }
+    }
+
+    return statement;
+  });
+
+  useEffect(() => {
+    setEditingStatement(editingStatement);
+  }, [editingStatement]);
+
   return <ThreatStatementEditorComponent />;
 };
 

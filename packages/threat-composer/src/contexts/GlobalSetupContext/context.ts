@@ -20,6 +20,7 @@ export interface GlobalSetupContextApi {
   hasVisitBefore: boolean;
   showInfoModal: () => void;
   composerMode: ComposerMode;
+  features?: string[];
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
   onImported?: () => void;
@@ -31,6 +32,7 @@ export interface GlobalSetupContextApi {
 const initialState: GlobalSetupContextApi = {
   hasVisitBefore: false,
   composerMode: 'Full',
+  features: [],
   showInfoModal: () => { },
   fileImportModalVisible: false,
   setFileImportModalVisible: () => {},
