@@ -40,7 +40,7 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({
   useEffect(() => {
 
   }, []);
-  
+
   const { currentWorkspace, workspaceList } = useWorkspacesContext();
 
   const setWorkspaceData = useCallback(((data: any) => {
