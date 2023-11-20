@@ -39,6 +39,11 @@ export const PLACEHOLDER_EXCHANGE_DATA = {
   schema: PLACEHOLDER_SCHEMA_VERSION,
 };
 
+export const PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE = {
+  id: '',
+  name: '',
+};
+
 const useImportExport = () => {
   const { composerMode } = useGlobalSetupContext();
   const { currentWorkspace } = useWorkspacesContext();

@@ -20,7 +20,8 @@ import { AssumptionSchema, AssumptionLinkSchema } from './assumptions';
 import { DataflowInfoSchema } from './dataflow';
 import { MitigationSchema, MitigationLinkSchema } from './mitigations';
 import { TemplateThreatStatementSchema } from './threats';
-import { WorkspaceSchema } from './workspaces';
+import { WorkspaceSchema, Workspace } from './workspaces';
+import { useWorkspacesContext } from '../contexts';
 
 export const DataExchangeFormatSchema = z.object({
   schema: z.number(),
@@ -49,6 +50,8 @@ export const WorkspaceExampleWithIdSchema = WorkspaceExampleSchema.extend({
 export type WorkspaceExample = z.infer<typeof WorkspaceExampleSchema>;
 
 export type WorkspaceExampleWithId = z.infer<typeof WorkspaceExampleWithIdSchema>;
+const { workspaceList } = useWorkspacesContext();
+export type WorkspaceListFormat = typeof workspaceList;
 
 export interface HasContentDetails {
   applicationName: boolean;
@@ -62,4 +65,7 @@ export interface HasContentDetails {
 
 export interface ThreatComposerNamespace {
   getWorkspaceData: () => DataExchangeFormat;
+  setWorkspaceData: (arg0: DataExchangeFormat) => void;
+  getWorkspaceMetadata: () => Workspace | null;
+  getWorkspaceList: () => WorkspaceListFormat;
 }

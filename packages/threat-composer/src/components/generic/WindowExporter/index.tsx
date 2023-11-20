@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useEffect } from 'react';
+import { useCallback, FC, PropsWithChildren, useEffect } from 'react';
+import { useWorkspacesContext } from '../../../contexts';
 import { ThreatComposerNamespace } from '../../../customTypes/dataExchange';
-import useExportImport, { PLACEHOLDER_EXCHANGE_DATA } from '../../../hooks/useExportImport';
+import useExportImport, { PLACEHOLDER_EXCHANGE_DATA, PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE } from '../../../hooks/useExportImport';
 
 declare global {
   interface Window { threatcomposer: ThreatComposerNamespace }
@@ -23,6 +24,9 @@ declare global {
 
 window.threatcomposer = {
   getWorkspaceData: () => PLACEHOLDER_EXCHANGE_DATA,
+  setWorkspaceData: () => null,
+  getWorkspaceMetadata: () => PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE,
+  getWorkspaceList: () => [PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE],
 };
 
 /**
@@ -31,15 +35,30 @@ window.threatcomposer = {
 const WindowExporter: FC<PropsWithChildren<{}>> = ({
   children,
 }) => {
-  const { getWorkspaceData } = useExportImport();
+  const { getWorkspaceData, parseImportedData, importData } = useExportImport();
+  const { currentWorkspace, workspaceList } = useWorkspacesContext();
+  //const { currentWorkspace, workspaceList, addWorkspace, switchWorkspace } = useWorkspacesContext();
 
-  useEffect(() => {
-
-  }, []);
+  const setWorkspaceData = useCallback(((data: any) => {
+    const parsedData = parseImportedData(data);
+    importData(parsedData);
+  }), []);
 
   useEffect(() => {
     window.threatcomposer.getWorkspaceData = getWorkspaceData;
   }, [getWorkspaceData]);
+
+  useEffect(() => {
+    window.threatcomposer.setWorkspaceData = setWorkspaceData;
+  }, [setWorkspaceData]);
+
+  useEffect(() => {
+    window.threatcomposer.getWorkspaceMetadata = () => currentWorkspace;
+  }, [currentWorkspace]);
+
+  useEffect(() => {
+    window.threatcomposer.getWorkspaceList = () => workspaceList;
+  }, [workspaceList]);
 
   // To-do: Add other exporter method here.
   // useEffect(() => {
