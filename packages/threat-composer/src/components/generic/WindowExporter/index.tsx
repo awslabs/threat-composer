@@ -36,8 +36,12 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({
   children,
 }) => {
   const { getWorkspaceData, parseImportedData, importData } = useExportImport();
+
+  useEffect(() => {
+
+  }, []);
+  
   const { currentWorkspace, workspaceList } = useWorkspacesContext();
-  //const { currentWorkspace, workspaceList, addWorkspace, switchWorkspace } = useWorkspacesContext();
 
   const setWorkspaceData = useCallback(((data: any) => {
     const parsedData = parseImportedData(data);
@@ -50,7 +54,7 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({
 
   useEffect(() => {
     window.threatcomposer.setWorkspaceData = setWorkspaceData;
-  }, [setWorkspaceData]);
+  }, []);
 
   useEffect(() => {
     window.threatcomposer.getWorkspaceMetadata = () => currentWorkspace;

@@ -50,7 +50,6 @@ export const WorkspaceExampleWithIdSchema = WorkspaceExampleSchema.extend({
 export type WorkspaceExample = z.infer<typeof WorkspaceExampleSchema>;
 
 export type WorkspaceExampleWithId = z.infer<typeof WorkspaceExampleWithIdSchema>;
-const { workspaceList } = useWorkspacesContext();
 export type WorkspaceListFormat = typeof workspaceList;
 
 export interface HasContentDetails {
@@ -63,9 +62,11 @@ export interface HasContentDetails {
   threats: boolean;
 }
 
+const { workspaceList } = useWorkspacesContext();
+
 export interface ThreatComposerNamespace {
   getWorkspaceData: () => DataExchangeFormat;
   setWorkspaceData: (arg0: DataExchangeFormat) => void;
   getWorkspaceMetadata: () => Workspace | null;
-  getWorkspaceList: () => WorkspaceListFormat;
+  getWorkspaceList: () => typeof workspaceList;
 }
