@@ -26,6 +26,7 @@
     "@types/react": "*",
     "@types/react-dom": "*",
     "@types/react-router-dom": "*",
+    "@types/uuid": "*",
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
     "eslint": "^8",
@@ -46,6 +47,7 @@
     "react-dom": "*",
     "react-router-dom": "*",
     "react-scripts": "^5",
+    "uuid": "*",
     "web-vitals": "*"
   },
   "license": "Apache-2.0",

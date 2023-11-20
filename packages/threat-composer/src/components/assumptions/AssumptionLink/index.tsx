@@ -14,6 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, useEffect, useState, useCallback } from 'react';
+import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
 import { AssumptionLink } from '../../../customTypes';
@@ -54,7 +55,7 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
       const newAssumption = saveAssumption({
         numericId: -1,
         content: assumptionIdOrNewAssumption,
-        id: 'new',
+        id: DEFAULT_NEW_ENTITY_ID,
       });
       addAssumptionLink({
         type,

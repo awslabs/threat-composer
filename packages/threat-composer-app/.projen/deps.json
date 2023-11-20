@@ -38,6 +38,10 @@
       "type": "build"
     },
     {
+      "name": "@types/uuid",
+      "type": "build"
+    },
+    {
       "name": "@typescript-eslint/eslint-plugin",
       "version": "^5",
       "type": "build"
@@ -123,6 +127,10 @@
     {
       "name": "react-scripts",
       "version": "^5",
+      "type": "runtime"
+    },
+    {
+      "name": "uuid",
       "type": "runtime"
     },
     {

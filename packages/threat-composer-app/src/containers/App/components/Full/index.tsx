@@ -18,7 +18,19 @@ import { SideNavigationProps } from '@cloudscape-design/components/side-navigati
 import React, { FC, useMemo, useCallback, useState, useEffect } from 'react';
 import { Routes, Route, RouteProps, useParams, useSearchParams, useNavigate, Navigate } from 'react-router-dom';
 import AppLayout from '../../../../components/FullAppLayout';
-import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_DATAFLOW_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST, ROUTE_VIEW_THREAT_MODEL, ROUTE_WORKSPACE_HOME } from '../../../../config/routes';
+import {
+  ROUTE_APPLICATION_INFO,
+  ROUTE_ARCHITECTURE_INFO,
+  ROUTE_ASSUMPTION_LIST,
+  ROUTE_DATAFLOW_INFO,
+  ROUTE_THREAT_PACKS,
+  ROUTE_MITIGATION_LIST,
+  ROUTE_THREAT_EDITOR,
+  ROUTE_THREAT_LIST,
+  ROUTE_VIEW_THREAT_MODEL,
+  ROUTE_WORKSPACE_HOME,
+  ROUTE_MITIGATION_PACKS,
+} from '../../../../config/routes';
 import useNotifications from '../../../../hooks/useNotifications';
 import routes from '../../../../routes';
 import generateUrl from '../../../../utils/generateUrl';
@@ -40,9 +52,9 @@ const AppInner: FC<{
   const workspaceHome = generateUrl(ROUTE_WORKSPACE_HOME, searchParms, currentWorkspace?.id || 'default');
 
   return (<Routes>
-    <Route path='/' element={<Navigate replace to={workspaceHome}/>}/>
+    <Route path='/' element={<Navigate replace to={workspaceHome} />} />
     {routes.map((r: RouteProps, index: number) => <Route key={index} {...r} />)}
-    <Route path='*' element={<Navigate replace to={workspaceHome}/>}/>
+    <Route path='*' element={<Navigate replace to={workspaceHome} />} />
   </Routes>);
 };
 
@@ -56,6 +68,16 @@ const Full: FC = () => {
     const previewParams = urlParams.get('preview');
     return previewParams === 'true';
   });
+
+  const [features] = useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const featureParam = urlParams.get('features');
+    return featureParam && featureParam.split(',') || [];
+  });
+
+  const isThreatPackFeatureOn = useMemo(() => {
+    return features.includes('threatPacks');
+  }, [features]);
 
   const [workspaceId, setWorkspaceId] = useState(initialWorkspaceId || 'default');
 
@@ -75,19 +97,21 @@ const Full: FC = () => {
     });
   }, [navigate, workspaceId, searchParms]);
 
-  const handleThreatEditorView = useCallback((newThreatId?: string) => {
-    navigate(generateUrl(ROUTE_THREAT_EDITOR, searchParms, workspaceId, newThreatId));
+  const handleThreatEditorView = useCallback((newThreatId: string, idToCopy?: string) => {
+    navigate(generateUrl(ROUTE_THREAT_EDITOR, searchParms, workspaceId, newThreatId, undefined, idToCopy ? {
+      idToCopy,
+    } : undefined));
   }, [navigate, workspaceId, searchParms]);
 
   const navigationItems: SideNavigationProps.Item[] = useMemo(() => {
-    return [
+    const navItems: SideNavigationProps.Item[] = [
       {
         text: 'Dashboard',
         href: generateUrl(ROUTE_WORKSPACE_HOME, searchParms, workspaceId),
         type: 'link',
       },
       {
-        text: 'Application Info',
+        text: 'Application info',
         href: generateUrl(ROUTE_APPLICATION_INFO, searchParms, workspaceId),
         type: 'link',
       },
@@ -123,7 +147,27 @@ const Full: FC = () => {
         type: 'link',
       },
     ];
-  }, [searchParms, workspaceId]);
+    return isThreatPackFeatureOn ? navItems.concat([
+      { type: 'divider' },
+      {
+        type: 'section',
+        text: 'Reference packs',
+        items: [
+          {
+            text: 'Threat packs',
+            href: generateUrl(ROUTE_THREAT_PACKS, searchParms, workspaceId),
+            type: 'link',
+          },
+          {
+            text: 'Mitigation packs',
+            href: generateUrl(ROUTE_MITIGATION_PACKS, searchParms, workspaceId),
+            type: 'link',
+          },
+        ],
+      },
+    ]) : navItems;
+
+  }, [searchParms, workspaceId, isThreatPackFeatureOn]);
 
   const handlePreview = useCallback((data: DataExchangeFormat) => {
     const urlParams = new URLSearchParams(window.location.search);

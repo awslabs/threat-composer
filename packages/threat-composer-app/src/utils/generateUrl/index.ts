@@ -15,20 +15,47 @@
  ******************************************************************************************************************** */
 import { generatePath } from 'react-router-dom';
 
-const ROUTE_BASE_PATH=process.env.REACT_APP_ROUTE_BASE_PATH || '';
+const ROUTE_BASE_PATH = process.env.REACT_APP_ROUTE_BASE_PATH || '';
 
-const generateUrl = (path: string, searchParams: URLSearchParams, workspaceId: string, threatId?: string) => {
-  if (Array.from(searchParams.entries()).length > 0) {
-    return `${ROUTE_BASE_PATH}${generatePath(path, {
-      workspaceId,
-      threatId,
-    })}?${searchParams.toString()}`;
-  }
+const SEARCH_PARAMS_KEPT = ['mode', 'features'];
 
-  return `${ROUTE_BASE_PATH}${generatePath(path, {
+const generateUrl = (path: string, searchParams: URLSearchParams, workspaceId: string, threatId?: string,
+  additionalParams?: {
+    [key: string]: string;
+  }, additionalSearchParams?: {
+    [key: string]: string;
+  }) => {
+  const baseUrl = `${ROUTE_BASE_PATH}${generatePath(path, {
     workspaceId,
     threatId,
+    ...additionalParams,
   })}`;
+
+  const newSearchParams = new URLSearchParams();
+
+  const existingSearchParams = Array.from(searchParams.entries());
+
+  if (existingSearchParams.length > 0) {
+    existingSearchParams.forEach(pk => {
+      if (pk.length === 2 && SEARCH_PARAMS_KEPT.includes(pk[0])) {
+        newSearchParams.append(...pk);
+      }
+    });
+  }
+
+  if (additionalSearchParams) {
+    Object.keys(additionalSearchParams).forEach(pk =>
+      newSearchParams.append(
+        pk, additionalSearchParams[pk],
+      ));
+  }
+
+  const strSearchParams = newSearchParams.toString();
+  if (strSearchParams.length > 0) {
+    return `${baseUrl}?${strSearchParams}`;
+  }
+
+  return baseUrl;
 };
 
 export default generateUrl;

@@ -90,7 +90,6 @@ export interface ThreatFieldData {
   examples?: string[];
   tokens?: string[];
 }
-
 export interface ThreatStatementListFilter {
   linkedMitigations?: boolean;
   linkedAssumptions?: boolean;

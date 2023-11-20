@@ -14,6 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, useCallback, useEffect, useState } from 'react';
+import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { AssumptionLink } from '../../../customTypes';
@@ -52,7 +53,7 @@ const AssumptionThreatLinkComponent: FC<AssumptionThreatLinkProps> = ({
       const newMitigation = saveMitigation({
         numericId: -1,
         content: mitigationIdOrNewMitigation,
-        id: 'new',
+        id: DEFAULT_NEW_ENTITY_ID,
       });
       addAssumptionLink({
         type: 'Mitigation',

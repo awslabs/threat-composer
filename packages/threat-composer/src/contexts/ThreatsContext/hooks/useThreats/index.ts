@@ -16,7 +16,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { v4 as uuidV4 } from 'uuid';
 import { ComposerMode, TemplateThreatStatement } from '../../../../customTypes';
-import { ThreatsContextProviderProps, View } from '../../types';
+import { View } from '../../types';
 
 const useThreats = (
   composerMode: ComposerMode,
@@ -24,42 +24,43 @@ const useThreats = (
   setStatementList: React.Dispatch<React.SetStateAction<TemplateThreatStatement[]>>,
   editingStatement: TemplateThreatStatement | null,
   setEditingStatement: React.Dispatch<React.SetStateAction<TemplateThreatStatement | null>>,
-  onThreatEditorView: ThreatsContextProviderProps['onThreatEditorView'],
 ) => {
   const [view, setView] = useState<View>('list');
 
   const handleAddStatement = useCallback((idToCopy?: string) => {
-    if (idToCopy) {
-      const copiedStatement = statementList.find(st => st.id === idToCopy);
-      if (copiedStatement) {
-        const { id: _id, displayOrder, tags, metadata, ...rest } = copiedStatement;
-        const newStatement = {
-          ...rest,
+    if (composerMode !== 'Full') { // If Full mode, the value will be set via the route in the app.
+      if (idToCopy) {
+        const copiedStatement = statementList.find(st => st.id === idToCopy);
+        if (copiedStatement) {
+          const { id: _id, displayOrder, tags, metadata, ...rest } = copiedStatement;
+          const newStatement = {
+            ...rest,
+            id: uuidV4(),
+            numericId: -1,
+          };
+
+          setEditingStatement(newStatement);
+        }
+      } else {
+        const newStatement: TemplateThreatStatement = {
           id: uuidV4(),
           numericId: -1,
         };
-
         setEditingStatement(newStatement);
-        onThreatEditorView?.(newStatement.id);
       }
-    } else {
-      const newStatement: TemplateThreatStatement = {
-        id: uuidV4(),
-        numericId: -1,
-      };
-      setEditingStatement(newStatement);
-      onThreatEditorView?.(newStatement.id);
     }
-  }, [statementList, setEditingStatement, onThreatEditorView]);
+  }, [statementList, setEditingStatement]);
 
   const handlRemoveStatement = useCallback((id: string) => {
     setStatementList((prevList) => prevList.filter(x => x.id !== id));
   }, [setStatementList]);
 
   const handleEditStatement = useCallback((id: string) => {
-    const statement = statementList.find(s => s.id === id);
-    if (statement) {
-      setEditingStatement(statement as TemplateThreatStatement);
+    if (composerMode !== 'Full') { // If Full mode, the value will be set via the route in the app.
+      const statement = statementList.find(s => s.id === id);
+      if (statement) {
+        setEditingStatement(statement as TemplateThreatStatement);
+      }
     }
   }, [statementList]);
 

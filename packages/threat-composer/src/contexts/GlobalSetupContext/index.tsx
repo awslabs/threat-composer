@@ -25,6 +25,7 @@ import '@cloudscape-design/global-styles/index.css';
 
 export interface GlobalSetupContextProviderProps {
   composerMode?: ComposerMode;
+  features?: string[];
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
   onImported?: () => void;
@@ -34,6 +35,7 @@ export interface GlobalSetupContextProviderProps {
 const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProviderProps>> = ({
   children,
   composerMode = 'Full',
+  features,
   onPreview,
   onPreviewClose,
   onImported,
@@ -58,6 +60,7 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
     <GlobalSetupContext.Provider value={{
       hasVisitBefore,
       composerMode,
+      features,
       showInfoModal: () => setInfoModalVisible(true),
       onPreview,
       onPreviewClose,
