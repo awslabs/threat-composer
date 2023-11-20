@@ -21,7 +21,6 @@ import { DataflowInfoSchema } from './dataflow';
 import { MitigationSchema, MitigationLinkSchema } from './mitigations';
 import { TemplateThreatStatementSchema } from './threats';
 import { WorkspaceSchema, Workspace } from './workspaces';
-import { useWorkspacesContext } from '../contexts';
 
 export const DataExchangeFormatSchema = z.object({
   schema: z.number(),
@@ -62,11 +61,9 @@ export interface HasContentDetails {
   threats: boolean;
 }
 
-const { workspaceList } = useWorkspacesContext();
-
 export interface ThreatComposerNamespace {
-  getWorkspaceData: () => DataExchangeFormat;
+  getWorkspaceData: (workspaceId?: string) => DataExchangeFormat;
   setWorkspaceData: (arg0: DataExchangeFormat) => void;
-  getWorkspaceMetadata: () => Workspace | null;
-  getWorkspaceList: () => typeof workspaceList;
+  getWorkspaceMetadata: (workspaceId?: string) => Workspace | null;
+  getWorkspaceList: () => any;
 }
