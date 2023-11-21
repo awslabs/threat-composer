@@ -37,6 +37,13 @@ export const DataExchangeFormatSchema = z.object({
 
 export type DataExchangeFormat = z.infer<typeof DataExchangeFormatSchema>;
 
+export const WorkspaceExampleSchema = z.object({
+  name: z.string(),
+  value: DataExchangeFormatSchema,
+});
+
+export type WorkspaceExample = z.infer<typeof WorkspaceExampleSchema>;
+
 export interface HasContentDetails {
   applicationName: boolean;
   applicationInfo: boolean;

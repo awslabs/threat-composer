@@ -18,14 +18,14 @@ import MitigationsLocalStateContextProvider from './components/LocalStateContext
 import MitigationsLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useMitigationsContext } from './context';
 import { MitigationsContextProviderProps } from './types';
-import { EXAMPLE_WORKSPACE_ID } from '../../configs/constants';
-import { useExampleContext } from '../ExampleContext';
+import isWorkspaceExample from '../../utils/isWorkspaceExample';
+import { useWorkspaceExamplesContext } from '../WorkspaceExamplesContext';
 
 const MitigationsContextProvider: FC<PropsWithChildren<MitigationsContextProviderProps>> = (props) => {
-  const { mitigations } = useExampleContext();
+  const { getWorkspaceExample } = useWorkspaceExamplesContext();
 
-  return props.workspaceId === EXAMPLE_WORKSPACE_ID ?
-    (<MitigationsLocalStateContextProvider initialValue={mitigations} {...props} />) :
+  return isWorkspaceExample(props.workspaceId) ?
+    (<MitigationsLocalStateContextProvider initialValue={getWorkspaceExample(props.workspaceId)?.value.mitigations} {...props} />) :
     (<MitigationsLocalStorageContextProvider {...props} />);
 };
 

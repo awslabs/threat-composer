@@ -24,14 +24,16 @@ import { FC, useMemo, useState, useCallback, PropsWithChildren } from 'react';
 import {
   DEFAULT_WORKSPACE_ID,
   DEFAULT_WORKSPACE_LABEL,
-  EXAMPLE_WORKSPACE_ID,
-  EXAMPLE_WORKSPACE_LABEL,
+  EXAMPLES_SECTION_WORKSPACE_LABEL,
+  EXAMPLES_WORKSPACE_ID_PREFIX,
 } from '../../../configs/constants';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext';
+import { useWorkspaceExamplesContext } from '../../../contexts/WorkspaceExamplesContext';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext';
 import { DataExchangeFormat, TemplateThreatStatement } from '../../../customTypes';
 import useImportExport from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
+import isWorkspaceExample from '../../../utils/isWorkspaceExample';
 import AddWorkspace from '../../workspaces/EditWorkspace';
 import FileImport from '../../workspaces/FileImport';
 
@@ -57,6 +59,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
   const [removeWorkspaceModalVisible, setRemoveWorkspaceModalVisible] = useState(false);
   const [isRemovingWorkspace, setIsRemovingWorkspace] = useState(false);
 
+  const { workspaceExamples } = useWorkspaceExamplesContext();
   const { importData, exportAll, exportSelectedThreats } = useImportExport();
   const { removeData, deleteCurrentWorkspace } = useRemoveData();
   const {
@@ -83,8 +86,11 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         value: DEFAULT_WORKSPACE_ID,
       },
       {
-        label: EXAMPLE_WORKSPACE_LABEL,
-        value: EXAMPLE_WORKSPACE_ID,
+        label: EXAMPLES_SECTION_WORKSPACE_LABEL,
+        options: workspaceExamples.map(we => ({
+          label: we.name,
+          value: `${EXAMPLES_WORKSPACE_ID_PREFIX}${we.name}`,
+        })),
       },
     ];
 
@@ -196,7 +202,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
             {
               id: 'import',
               text: 'Import',
-              disabled: currentWorkspace?.id === EXAMPLE_WORKSPACE_ID,
+              disabled: isWorkspaceExample(currentWorkspace?.id),
             },
             {
               id: 'exportAll',
@@ -213,17 +219,17 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
           {
             id: 'removeAll',
             text: embededMode ? 'Remove all statements from current workspace' : 'Remove data from current workspace',
-            disabled: (embededMode && !enabledRemoveAll) || currentWorkspace?.id === EXAMPLE_WORKSPACE_ID,
+            disabled: (embededMode && !enabledRemoveAll) || isWorkspaceExample(currentWorkspace?.id),
           },
           {
             id: 'delete',
             text: 'Delete workspace',
-            disabled: !currentWorkspace || currentWorkspace.id === EXAMPLE_WORKSPACE_ID,
+            disabled: !currentWorkspace || isWorkspaceExample(currentWorkspace.id),
           },
           {
             id: 'renameWorkspace',
             text: 'Rename workspace',
-            disabled: !currentWorkspace || currentWorkspace.id === EXAMPLE_WORKSPACE_ID,
+            disabled: !currentWorkspace || isWorkspaceExample(currentWorkspace.id),
           },
         ]}
         ariaLabel="More actions"

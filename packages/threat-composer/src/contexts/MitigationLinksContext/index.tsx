@@ -18,14 +18,14 @@ import MitigationLinksLocalStateContextProvider from './components/LocalStateCon
 import MitigationLinksLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useMitigationLinksContext } from './context';
 import { MitigationLinksContextProviderProps } from './types';
-import { EXAMPLE_WORKSPACE_ID } from '../../configs/constants';
-import { useExampleContext } from '../ExampleContext';
+import isWorkspaceExample from '../../utils/isWorkspaceExample';
+import { useWorkspaceExamplesContext } from '../WorkspaceExamplesContext';
 
 const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContextProviderProps>> = (props) => {
-  const { mitigationLinks } = useExampleContext();
+  const { getWorkspaceExample } = useWorkspaceExamplesContext();
 
-  return props.workspaceId === EXAMPLE_WORKSPACE_ID ?
-    (<MitigationLinksLocalStateContextProvider initialValue={mitigationLinks} {...props} />) :
+  return isWorkspaceExample(props.workspaceId) ?
+    (<MitigationLinksLocalStateContextProvider initialValue={getWorkspaceExample(props.workspaceId)?.value.mitigationLinks} {...props} />) :
     (<MitigationLinksLocalStorageContextProvider {...props} />);
 };
 
