@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import threatComposer from './ThreatComposer.json';
+import threatComposer from './ThreatComposer.tc.json';
 import { WorkspaceExample } from '../../customTypes';
 
 const workspaceExamples = [
