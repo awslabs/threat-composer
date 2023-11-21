@@ -62,8 +62,12 @@ export interface HasContentDetails {
 }
 
 export interface ThreatComposerNamespace {
-  getWorkspaceData: (workspaceId?: string) => DataExchangeFormat;
-  setWorkspaceData: (arg0: DataExchangeFormat) => void;
-  getWorkspaceMetadata: (workspaceId?: string) => Workspace | null;
-  getWorkspaceList: () => any;
+  getWorkspaceList: () => Workspace[];
+  getCurrentWorkspaceMetadata: () => Workspace | null;
+  getCurrentWorkspaceData: () => DataExchangeFormat;
+  setCurrentWorkspaceData: (arg0: DataExchangeFormat) => void;
+  createWorkspace: (workspaceName: string, id?: string) => void;
+  deleteWorkspace: (id: string) => void;
+  switchWorkspace: (Workspace: Workspace) => void;
+  renameWorkspace: (id: string, newWorkspaceName: string) => void;
 }

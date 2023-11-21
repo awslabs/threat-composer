@@ -23,10 +23,14 @@ declare global {
 }
 
 window.threatcomposer = {
-  getWorkspaceData: () => PLACEHOLDER_EXCHANGE_DATA,
-  setWorkspaceData: () => null,
-  getWorkspaceMetadata: () => PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE,
   getWorkspaceList: () => [PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE],
+  getCurrentWorkspaceMetadata: () => PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE,
+  getCurrentWorkspaceData: () => PLACEHOLDER_EXCHANGE_DATA,
+  setCurrentWorkspaceData: () => null,
+  createWorkspace: () => null,
+  deleteWorkspace: () => null,
+  switchWorkspace: () => null,
+  renameWorkspace: () => null,
 };
 
 /**
@@ -41,7 +45,7 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({
 
   }, []);
 
-  const { currentWorkspace, workspaceList } = useWorkspacesContext();
+  const { currentWorkspace, workspaceList, addWorkspace, removeWorkspace, switchWorkspace, renameWorkspace } = useWorkspacesContext();
 
   const setWorkspaceData = useCallback(((data: any) => {
     const parsedData = parseImportedData(data);
@@ -49,25 +53,36 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({
   }), []);
 
   useEffect(() => {
-    window.threatcomposer.getWorkspaceData = getWorkspaceData;
-  }, [getWorkspaceData]);
-
-  useEffect(() => {
-    window.threatcomposer.setWorkspaceData = setWorkspaceData;
-  }, []);
-
-  useEffect(() => {
-    window.threatcomposer.getWorkspaceMetadata = () => currentWorkspace;
-  }, [currentWorkspace]);
-
-  useEffect(() => {
     window.threatcomposer.getWorkspaceList = () => workspaceList;
   }, [workspaceList]);
 
-  // To-do: Add other exporter method here.
-  // useEffect(() => {
-  //   window.threatcomposer.getWorkspaceData = getWorkspaceData;
-  // }, [getWorkspaceData]);
+  useEffect(() => {
+    window.threatcomposer.getCurrentWorkspaceMetadata = () => currentWorkspace;
+  }, [currentWorkspace]);
+
+  useEffect(() => {
+    window.threatcomposer.getCurrentWorkspaceData = getWorkspaceData;
+  }, [getWorkspaceData]);
+
+  useEffect(() => {
+    window.threatcomposer.setCurrentWorkspaceData = setWorkspaceData;
+  }, []);
+
+  useEffect(() => {
+    window.threatcomposer.createWorkspace = addWorkspace;
+  }, [workspaceList]);
+
+  useEffect(() => {
+    window.threatcomposer.deleteWorkspace = removeWorkspace;
+  }, [workspaceList]);
+
+  useEffect(() => {
+    window.threatcomposer.switchWorkspace = switchWorkspace;
+  }, [workspaceList]);
+
+  useEffect(() => {
+    window.threatcomposer.renameWorkspace = renameWorkspace;
+  }, [workspaceList]);
 
   return <>{children}</>;
 };
