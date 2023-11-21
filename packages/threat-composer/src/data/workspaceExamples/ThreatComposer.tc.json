@@ -387,6 +387,11 @@
       "type": "Threat",
       "assumptionId": "eafa2db3-85b5-4b58-ae2a-1cec604c451a",
       "linkedId": "7b49bdbd-25e9-446f-b44a-46fa2807e182"
+    },
+    {
+      "assumptionId": "08265978-d2c3-4ced-a530-20e4c84692b8",
+      "linkedId": "f29b9a9f-94d9-4d6e-be3e-5fffb874d2a6",
+      "type": "Threat"
     }
   ],
   "mitigationLinks": [
@@ -521,9 +526,89 @@
     {
       "mitigationId": "0ce4e65d-c96c-46b1-988d-57016036bc12",
       "linkedId": "a0f523b0-bbc0-4e6a-9064-500af1f3836e"
+    },
+    {
+      "mitigationId": "0ce4e65d-c96c-46b1-988d-57016036bc12",
+      "linkedId": "2a1052e8-fa0a-499a-9f41-7ae7f860b75e"
+    },
+    {
+      "linkedId": "2a1052e8-fa0a-499a-9f41-7ae7f860b75e",
+      "mitigationId": "135863f3-64e9-4fd7-8d71-4f141c42747f"
+    },
+    {
+      "linkedId": "2a1052e8-fa0a-499a-9f41-7ae7f860b75e",
+      "mitigationId": "3f93baae-0997-4fe0-9d9d-1b10a1ba7973"
     }
   ],
   "threats": [
+    {
+      "numericId": 22,
+      "statement": "A threat actor that is able to trick a user into installing a malicous userscript extension (e.g. tampermonkey, browser extension) can read the contents of local browser storage, which leads to the exfiltration of the contents of browser storage to an endpoint controlled by the actor, resulting in reduced confidentiality of application metadata, threats, mitigations and assumptions",
+      "threatSource": "threat actor",
+      "prerequisites": "that is able to trick a user into installing a malicous userscript extension (e.g. tampermonkey, browser extension)",
+      "threatAction": "read the contents of local browser storage",
+      "threatImpact": "the exfiltration of the contents of browser storage to an endpoint controlled by the actor",
+      "impactedAssets": [
+        "application metadata",
+        "threats",
+        "mitigations",
+        "assumptions"
+      ],
+      "impactedGoal": [
+        "confidentiality"
+      ],
+      "id": "f29b9a9f-94d9-4d6e-be3e-5fffb874d2a6",
+      "displayOrder": 22,
+      "metadata": [
+        {
+          "key": "Priority",
+          "value": "Medium"
+        },
+        {
+          "key": "STRIDE",
+          "value": [
+            "I"
+          ]
+        }
+      ],
+      "tags": [
+        "Social engineering"
+      ]
+    },
+    {
+      "id": "2a1052e8-fa0a-499a-9f41-7ae7f860b75e",
+      "numericId": 21,
+      "statement": "A threat actor that is able to target a user already using a benign userscript extension (e.g. tampermonkey) that integrates directly with local browser storage for quickly viewing a Threat Composer export can trick them into opening a malicious threat model that contains script tags (or similar), which leads to the exfiltration of the contents of browser storage via XSS due to the extension bypassing Threat Composers import validation and sanitisation protection, resulting in reduced confidentiality of application metadata, threats, mitigations and assumptions",
+      "threatSource": "threat actor",
+      "prerequisites": "that is able to target a user already using a benign userscript extension (e.g. tampermonkey) that integrates directly with local browser storage for quickly viewing a Threat Composer export",
+      "threatAction": "trick them into opening a malicious threat model that contains script tags (or similar)",
+      "threatImpact": "the exfiltration of the contents of browser storage via XSS due to the extension bypassing Threat Composers import validation and sanitisation protection",
+      "impactedAssets": [
+        "application metadata",
+        "threats",
+        "mitigations",
+        "assumptions"
+      ],
+      "displayOrder": 21,
+      "metadata": [
+        {
+          "key": "Priority",
+          "value": "Medium"
+        },
+        {
+          "key": "STRIDE",
+          "value": [
+            "I"
+          ]
+        }
+      ],
+      "tags": [
+        "XSS"
+      ],
+      "impactedGoal": [
+        "confidentiality"
+      ]
+    },
     {
       "id": "7b49bdbd-25e9-446f-b44a-46fa2807e182",
       "numericId": 20,
@@ -553,45 +638,7 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor with knowledge of a browser image render vulnerability can trick a user into importing a malicious JSON file containing malicious BASE64 images, which leads to exfiltration the contents of local storage to and end-point controlled by the actor, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": "with knowledge of a browser image render vulnerability"
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": " trick a user into importing a malicious JSON file containing malicious BASE64 images"
-        },
-        ", which leads to ",
-        {
-          "type": "span",
-          "tooltip": "threat impact",
-          "content": "exfiltration the contents of local storage to and end-point controlled by the actor"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "confidentiality"
-        },
-        " of ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threats, mitigations, assumptions and application metadata"
-        }
-      ]
+      "statement": "A threat actor with knowledge of a browser image render vulnerability can trick a user into importing a malicious JSON file containing malicious BASE64 images, which leads to exfiltration the contents of local storage to and end-point controlled by the actor, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata"
     },
     {
       "id": "782adefc-b480-4e8f-83ee-64f6d680df0a",
@@ -618,33 +665,7 @@
       "threatImpact": "the user being unable to use the tool, until they clear the local data (or use a different browser)",
       "impactedGoal": [],
       "impactedAssets": [],
-      "statement": "A threat actor that can trick a user into importing a JSON file can input an unexpected data schema, which leads to the user being unable to use the tool, until they clear the local data (or use a different browser)",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": "that can trick a user into importing a JSON file"
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "input an unexpected data schema"
-        },
-        ", which leads to ",
-        {
-          "type": "span",
-          "tooltip": "threat impact",
-          "content": "the user being unable to use the tool, until they clear the local data (or use a different browser)"
-        }
-      ]
+      "statement": "A threat actor that can trick a user into importing a JSON file can input an unexpected data schema, which leads to the user being unable to use the tool, until they clear the local data (or use a different browser)"
     },
     {
       "id": "a0f523b0-bbc0-4e6a-9064-500af1f3836e",
@@ -675,45 +696,7 @@
       "impactedAssets": [
         "threat composer"
       ],
-      "statement": "A threat actor with access the browser DOM (e.g. via Dev Tools) can disable client-side input validation regex, which leads to allowing them to demonstrate a Cross-site Script (XSS) vulnerability, resulting in reduced integrity of threat composer",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": "with access the browser DOM (e.g. via Dev Tools)"
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "disable client-side input validation regex"
-        },
-        ", which leads to ",
-        {
-          "type": "span",
-          "tooltip": "threat impact",
-          "content": "allowing them to demonstrate a Cross-site Script (XSS) vulnerability"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "integrity"
-        },
-        " of ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threat composer"
-        }
-      ]
+      "statement": "A threat actor with access the browser DOM (e.g. via Dev Tools) can disable client-side input validation regex, which leads to allowing them to demonstrate a Cross-site Script (XSS) vulnerability, resulting in reduced integrity of threat composer"
     },
     {
       "id": "99648023-86fe-4b7d-829a-7011be545fa4",
@@ -743,39 +726,7 @@
       "impactedAssets": [
         "threat composer"
       ],
-      "statement": "A threat actor with access the browser DOM (e.g. via Dev Tools) can can input a datatype not expected by the code, resulting in reduced availability of threat composer",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": "with access the browser DOM (e.g. via Dev Tools)"
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "can input a datatype not expected by the code"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "availability"
-        },
-        " of ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threat composer"
-        }
-      ]
+      "statement": "A threat actor with access the browser DOM (e.g. via Dev Tools) can can input a datatype not expected by the code, resulting in reduced availability of threat composer"
     },
     {
       "id": "6529dd8d-0b40-4eec-b4c4-5ee4f06619c0",
@@ -800,39 +751,7 @@
       "impactedGoal": [
         "confidentiality"
       ],
-      "statement": "A valid user who has forked and modified the source code to include their own data (e.g. additional example threat statements) can deploy Threat composer without network restrictions or authentication, which leads to discovery of the additional data by an adversary, resulting in reduced confidentiality",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "valid user"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": "who has forked and modified the source code to include their own data (e.g. additional example threat statements)"
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "deploy Threat composer without network restrictions or authentication"
-        },
-        ", which leads to ",
-        {
-          "type": "span",
-          "tooltip": "threat impact",
-          "content": "discovery of the additional data by an adversary"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "confidentiality"
-        }
-      ]
+      "statement": "A valid user who has forked and modified the source code to include their own data (e.g. additional example threat statements) can deploy Threat composer without network restrictions or authentication, which leads to discovery of the additional data by an adversary, resulting in reduced confidentiality"
     },
     {
       "id": "1649e8e4-f100-45f2-8c13-51dafc8a8251",
@@ -862,39 +781,7 @@
       "impactedAssets": [
         "threat composer"
       ],
-      "statement": "A threat actor can take advantage of security vulnerability within a 3rd party package used by Threat Composer, resulting in reduced integrity of threat composer",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": ""
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "take advantage of security vulnerability within a 3rd party package used by Threat Composer"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "integrity"
-        },
-        " of ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threat composer"
-        }
-      ]
+      "statement": "A threat actor can take advantage of security vulnerability within a 3rd party package used by Threat Composer, resulting in reduced integrity of threat composer"
     },
     {
       "id": "fec8777c-68b3-4569-84ce-9b9b1b9f5e9c",
@@ -926,39 +813,7 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor can raise a PR (Pull Request) on the source within the Threat Composer GitHub repo, which leads to merging malicious code that exfiltrates user-supplied input to an end-point that they control, negatively impacting threats, mitigations, assumptions and application metadata",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": ""
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "raise a PR (Pull Request) on the source within the Threat Composer GitHub repo"
-        },
-        ", which leads to ",
-        {
-          "type": "span",
-          "tooltip": "threat impact",
-          "content": "merging malicious code that exfiltrates user-supplied input to an end-point that they control"
-        },
-        ", negatively impacting ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threats, mitigations, assumptions and application metadata"
-        }
-      ]
+      "statement": "A threat actor can raise a PR (Pull Request) on the source within the Threat Composer GitHub repo, which leads to merging malicious code that exfiltrates user-supplied input to an end-point that they control, negatively impacting threats, mitigations, assumptions and application metadata"
     },
     {
       "id": "0a264de2-c2e5-45c0-9075-0d437b9defa0",
@@ -985,39 +840,7 @@
       "impactedAssets": [
         "threat composer"
       ],
-      "statement": "A security researcher can provide malicious input (e.g. script tags) into the Threat Composer UI, which leads to to them finding and demonstrating an XSS vulnerability which they make public via social media, negatively impacting threat composer",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "security researcher"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": ""
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "provide malicious input (e.g. script tags) into the Threat Composer UI"
-        },
-        ", which leads to ",
-        {
-          "type": "span",
-          "tooltip": "threat impact",
-          "content": "to them finding and demonstrating an XSS vulnerability which they make public via social media"
-        },
-        ", negatively impacting ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threat composer"
-        }
-      ]
+      "statement": "A security researcher can provide malicious input (e.g. script tags) into the Threat Composer UI, which leads to to them finding and demonstrating an XSS vulnerability which they make public via social media, negatively impacting threat composer"
     },
     {
       "id": "7820db4a-1043-4dfa-bbc2-59774bb1f2fc",
@@ -1050,39 +873,7 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor that can trick a user into importing a malicious JSON file containing script tags (or similar) can exfiltrate the contents of local storage using XSS, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": "that can trick a user into importing a malicious JSON file containing script tags (or similar)"
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "exfiltrate the contents of local storage using XSS"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "confidentiality"
-        },
-        " of ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threats, mitigations, assumptions and application metadata"
-        }
-      ]
+      "statement": "A threat actor that can trick a user into importing a malicious JSON file containing script tags (or similar) can exfiltrate the contents of local storage using XSS, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata"
     },
     {
       "id": "19b98451-70ee-4814-af80-c1293b90cb9f",
@@ -1113,45 +904,7 @@
       "impactedAssets": [
         "threat composer"
       ],
-      "statement": "A threat actor who has access to a dependent software package on a npm remote registry (e.g. yarnpkg.com, npmjs.com) can inject malicious code into the CI/CD process, which leads to untrusted code running in a users browser, resulting in reduced integrity of threat composer",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": "who has access to a dependent software package on a npm remote registry (e.g. yarnpkg.com, npmjs.com)"
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "inject malicious code into the CI/CD process"
-        },
-        ", which leads to ",
-        {
-          "type": "span",
-          "tooltip": "threat impact",
-          "content": "untrusted code running in a users browser"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "integrity"
-        },
-        " of ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threat composer"
-        }
-      ]
+      "statement": "A threat actor who has access to a dependent software package on a npm remote registry (e.g. yarnpkg.com, npmjs.com) can inject malicious code into the CI/CD process, which leads to untrusted code running in a users browser, resulting in reduced integrity of threat composer"
     },
     {
       "id": "cbba3276-5ce2-47e0-bc77-aebc162c519f",
@@ -1182,45 +935,7 @@
       "impactedAssets": [
         "threat composer"
       ],
-      "statement": "A threat actor with a network path to the CloudFront distribution can submit a large number of resource intensive requests, which leads to unnecessary and/or excessive costs, resulting in reduced economy of threat composer",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": "with a network path to the CloudFront distribution"
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "submit a large number of resource intensive requests"
-        },
-        ", which leads to ",
-        {
-          "type": "span",
-          "tooltip": "threat impact",
-          "content": "unnecessary and/or excessive costs"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "economy"
-        },
-        " of ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threat composer"
-        }
-      ]
+      "statement": "A threat actor with a network path to the CloudFront distribution can submit a large number of resource intensive requests, which leads to unnecessary and/or excessive costs, resulting in reduced economy of threat composer"
     },
     {
       "id": "2ffb1f47-743e-4cbc-94e6-62d10817acc0",
@@ -1250,45 +965,7 @@
       "impactedAssets": [
         "threat composer"
       ],
-      "statement": "A threat actor can create or orchestrate a distributed denial of service attack against the CloudFront Distribution serving the static content, which leads to to the web tool being unresponsive to callers, resulting in reduced availability of threat composer",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": ""
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "create or orchestrate a distributed denial of service attack against the CloudFront Distribution serving the static content"
-        },
-        ", which leads to ",
-        {
-          "type": "span",
-          "tooltip": "threat impact",
-          "content": "to the web tool being unresponsive to callers"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "availability"
-        },
-        " of ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threat composer"
-        }
-      ]
+      "statement": "A threat actor can create or orchestrate a distributed denial of service attack against the CloudFront Distribution serving the static content, which leads to to the web tool being unresponsive to callers, resulting in reduced availability of threat composer"
     },
     {
       "id": "a394f5d6-9479-40cc-ae88-b1911a269f0a",
@@ -1321,39 +998,7 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor with possession of a similar domain name can trick our users into interacting with an illegitimate endpoint, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": "with possession of a similar domain name"
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "trick our users into interacting with an illegitimate endpoint"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "confidentiality"
-        },
-        " of ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threats, mitigations, assumptions and application metadata"
-        }
-      ]
+      "statement": "A threat actor with possession of a similar domain name can trick our users into interacting with an illegitimate endpoint, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata"
     },
     {
       "id": "6fb7ef9a-175d-49f1-b85b-652b668581d4",
@@ -1385,45 +1030,7 @@
         "code running in the user's browser",
         "application configuration"
       ],
-      "statement": "An external threat actor who has a sufficiently privileged IAM Principal in the AWS account can modify the configuration of the CloudFront distribution, which leads to the distribution serving content from an origin that is unexpected or contains malicious content, resulting in reduced integrity of code running in the user's browser and application configuration",
-      "displayedStatement": [
-        "An ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "external threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": "who has a sufficiently privileged IAM Principal in the AWS account"
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "modify the configuration of the CloudFront distribution"
-        },
-        ", which leads to ",
-        {
-          "type": "span",
-          "tooltip": "threat impact",
-          "content": "the distribution serving content from an origin that is unexpected or contains malicious content"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "integrity"
-        },
-        " of ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "code running in the user's browser and application configuration"
-        }
-      ]
+      "statement": "An external threat actor who has a sufficiently privileged IAM Principal in the AWS account can modify the configuration of the CloudFront distribution, which leads to the distribution serving content from an origin that is unexpected or contains malicious content, resulting in reduced integrity of code running in the user's browser and application configuration"
     },
     {
       "id": "16c0b3de-a08f-418b-9969-9eb905ddd4e8",
@@ -1457,45 +1064,7 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor with write access to the objects hosted on the static asset S3 Bucket can modify the code, which leads to exfiltration of user-supplied input to an attacker controlled endpoint, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": "with write access to the objects hosted on the static asset S3 Bucket"
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "modify the code"
-        },
-        ", which leads to ",
-        {
-          "type": "span",
-          "tooltip": "threat impact",
-          "content": "exfiltration of user-supplied input to an attacker controlled endpoint"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "confidentiality"
-        },
-        " of ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threats, mitigations, assumptions and application metadata"
-        }
-      ]
+      "statement": "A threat actor with write access to the objects hosted on the static asset S3 Bucket can modify the code, which leads to exfiltration of user-supplied input to an attacker controlled endpoint, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata"
     },
     {
       "id": "79bc7dc9-1038-4516-8f61-0a724bf4776d",
@@ -1528,39 +1097,7 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor who is in a person-in-the-browser position can read or modify locally stored user input, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": "who is in a person-in-the-browser position"
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "read or modify locally stored user input"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "confidentiality"
-        },
-        " of ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threats, mitigations, assumptions and application metadata"
-        }
-      ]
+      "statement": "A threat actor who is in a person-in-the-browser position can read or modify locally stored user input, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata"
     },
     {
       "id": "a84e701e-b370-44e4-aa1a-2c5e6edcf926",
@@ -1593,39 +1130,7 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor with local access to a web browser used by a valid user can read local storage, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": "with local access to a web browser used by a valid user"
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "read local storage"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "confidentiality"
-        },
-        " of ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threats, mitigations, assumptions and application metadata"
-        }
-      ]
+      "statement": "A threat actor with local access to a web browser used by a valid user can read local storage, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata"
     },
     {
       "id": "fb2ff978-1311-4061-a299-0a7f3421e037",
@@ -1660,45 +1165,7 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor who is in a person-in-the-middle position between the User and the hosting endpoint can tamper with, or replace the downloaded client-side code, which leads to to exfiltrating user-specified input to an attacker controlled endpoint, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata",
-      "displayedStatement": [
-        "A ",
-        {
-          "type": "span",
-          "tooltip": "threat source",
-          "content": "threat actor"
-        },
-        " ",
-        {
-          "type": "span",
-          "tooltip": "prerequisites",
-          "content": "who is in a person-in-the-middle position between the User and the hosting endpoint"
-        },
-        " can ",
-        {
-          "type": "b",
-          "tooltip": "threat action",
-          "content": "tamper with, or replace the downloaded client-side code"
-        },
-        ", which leads to ",
-        {
-          "type": "span",
-          "tooltip": "threat impact",
-          "content": "to exfiltrating user-specified input to an attacker controlled endpoint"
-        },
-        ", resulting in reduced ",
-        {
-          "type": "span",
-          "tooltip": "impacted goal",
-          "content": "confidentiality"
-        },
-        " of ",
-        {
-          "type": "span",
-          "tooltip": "impacted assets",
-          "content": "threats, mitigations, assumptions and application metadata"
-        }
-      ]
+      "statement": "A threat actor who is in a person-in-the-middle position between the User and the hosting endpoint can tamper with, or replace the downloaded client-side code, which leads to to exfiltrating user-specified input to an attacker controlled endpoint, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata"
     }
   ]
 }
