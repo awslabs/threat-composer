@@ -18,15 +18,15 @@ import AssumptionLinksLocalStateContextProvider from './components/LocalStateCon
 import AssumptionLinksLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useAssumptionLinksContext } from './context';
 import { AssumptionLinksContextProviderProps } from './types';
-import { EXAMPLE_WORKSPACE_ID } from '../../configs/constants';
-import { useExampleContext } from '../ExampleContext';
+import isWorkspaceExample from '../../utils/isWorkspaceExample';
+import { useWorkspaceExamplesContext } from '../WorkspaceExamplesContext';
 
 const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContextProviderProps>> = (props) => {
-  const { assumptionLinks } = useExampleContext();
+  const { getWorkspaceExample } = useWorkspaceExamplesContext();
 
-  return props.workspaceId === EXAMPLE_WORKSPACE_ID ?
-    (<AssumptionLinksLocalStateContextProvider initialValue={assumptionLinks} {...props} />) :
-    (<AssumptionLinksLocalStorageContextProvider {...props} />);
+  return isWorkspaceExample(props.workspaceId) ?
+    (<AssumptionLinksLocalStateContextProvider initialValue={getWorkspaceExample(props.workspaceId)?.value.assumptionLinks} {...props} />)
+    : (<AssumptionLinksLocalStorageContextProvider {...props} />);
 };
 
 export default AssumptionLinksContextProvider;

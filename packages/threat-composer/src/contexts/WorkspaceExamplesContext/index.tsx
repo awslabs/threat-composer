@@ -14,24 +14,34 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { FC, PropsWithChildren } from 'react';
-import { ExampleContext, useExampleContext } from './context';
-import { DataExchangeFormat } from '../../customTypes';
-import threatModelExamples from '../../data/threatModelExample.json';
+import { FC, PropsWithChildren, useCallback } from 'react';
+import { WorkspaceExamplesContext, useWorkspaceExamplesContext } from './context';
+import { EXAMPLES_WORKSPACE_ID_PREFIX } from '../../configs';
+import workspaceExamples from '../../data/workspaceExamples/workspaceExamples';
 
-const ExampleContextProvider: FC<PropsWithChildren<{}>> = ({
+const WorkspaceExamplesContextProvider: FC<PropsWithChildren<{}>> = ({
   children,
 }) => {
-  return (<ExampleContext.Provider value={{
-    ...(threatModelExamples as DataExchangeFormat),
+  const handleGetWorkspaceExample = useCallback((workspaceExampleId?: string | null) => {
+    if (workspaceExampleId) {
+      const workspaceExampleName = workspaceExampleId.substring(EXAMPLES_WORKSPACE_ID_PREFIX.length);
+      return workspaceExamples.find(x => x.name === workspaceExampleName);
+    }
+
+    return undefined;
+  }, []);
+
+  return (<WorkspaceExamplesContext.Provider value={{
+    workspaceExamples,
+    getWorkspaceExample: handleGetWorkspaceExample,
   }}>
     {children}
-  </ExampleContext.Provider>);
+  </WorkspaceExamplesContext.Provider>);
 };
 
-export default ExampleContextProvider;
+export default WorkspaceExamplesContextProvider;
 
 export {
-  useExampleContext,
+  useWorkspaceExamplesContext,
 };
 

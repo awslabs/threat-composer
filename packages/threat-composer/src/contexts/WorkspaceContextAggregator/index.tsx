@@ -20,13 +20,13 @@ import ArchitectureInfoContextProvider from '../ArchitectureContext';
 import AssumptionLinksContextProvider from '../AssumptionLinksContext';
 import AssumptionsContextProvider from '../AssumptionsContext';
 import DataflowInfoContextProvider from '../DataflowContext';
-import ExampleContextProvider from '../ExampleContext';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import MitigationLinksContextProvider from '../MitigationLinksContext';
 import MitigationPacksContextProvider from '../MitigationPacksContext';
 import MitigationsContextProvider from '../MitigationsContext';
 import ThreatPacksContextProvider from '../ThreatPacksContext';
 import ThreatsContextProvider from '../ThreatsContext';
+import WorkspaceExamplesContext from '../WorkspaceExamplesContext';
 
 export interface WorkspaceContextAggregatorProps extends ViewNavigationEvent {
   workspaceId: string | null;
@@ -44,7 +44,7 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
   onThreatListView,
 }) => {
   return (
-    <ExampleContextProvider>
+    <WorkspaceExamplesContext>
       <ThreatsContextProvider
         workspaceId={workspaceId || null}
         onThreatEditorView={onThreatEditorView}
@@ -70,7 +70,7 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
           </AssumptionsContextProvider >
         </MitigationsContextProvider>
       </ThreatsContextProvider>
-    </ExampleContextProvider>
+    </WorkspaceExamplesContext>
   );
 };
 

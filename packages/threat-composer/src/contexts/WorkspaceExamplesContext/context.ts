@@ -14,15 +14,18 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { DataExchangeFormat } from '../../customTypes';
+import { WorkspaceExample } from '../../customTypes';
 
-export interface ExampleContextApi extends DataExchangeFormat {
+export interface WorkspaceExamplesContextApi {
+  workspaceExamples: WorkspaceExample[];
+  getWorkspaceExample: (workspaceExampleId?: string | null) => WorkspaceExample | undefined;
 }
 
-const initialState: ExampleContextApi = {
-  schema: -1,
+const initialState: WorkspaceExamplesContextApi = {
+  workspaceExamples: [],
+  getWorkspaceExample: () => undefined,
 };
 
-export const ExampleContext = createContext<ExampleContextApi>(initialState);
+export const WorkspaceExamplesContext = createContext<WorkspaceExamplesContextApi>(initialState);
 
-export const useExampleContext = () => useContext(ExampleContext);
+export const useWorkspaceExamplesContext = () => useContext(WorkspaceExamplesContext);
