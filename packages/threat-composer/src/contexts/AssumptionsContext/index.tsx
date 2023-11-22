@@ -25,8 +25,11 @@ const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProvide
   const { getWorkspaceExample } = useWorkspaceExamplesContext();
 
   return isWorkspaceExample(props.workspaceId) ?
-    (<AssumptionsLocalStateContextProvider initialValue={getWorkspaceExample(props.workspaceId)?.value.assumptions} {...props} />) :
-    (<AssumptionsLocalStorageContextProvider {...props} />);
+    (<AssumptionsLocalStateContextProvider
+      key={props.workspaceId}
+      initialValue={getWorkspaceExample(props.workspaceId)?.value.assumptions}
+      {...props} />) :
+    (<AssumptionsLocalStorageContextProvider key={props.workspaceId} {...props} />);
 };
 
 export default AssumptionsContextProvider;

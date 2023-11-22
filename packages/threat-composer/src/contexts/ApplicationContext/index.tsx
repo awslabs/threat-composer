@@ -25,8 +25,11 @@ const ApplicationContextProvider: FC<PropsWithChildren<ApplicationContextProvide
   const { getWorkspaceExample } = useWorkspaceExamplesContext();
 
   return isWorkspaceExample(props.workspaceId) ?
-    (<ApplicationLocalStateContextProvider initialValue={getWorkspaceExample(props.workspaceId)?.value.applicationInfo} {...props} />) :
-    (<ApplicationLocalStorageContextProvider {...props} />);
+    (<ApplicationLocalStateContextProvider
+      key={props.workspaceId}
+      initialValue={getWorkspaceExample(props.workspaceId)?.value.applicationInfo}
+      {...props} />) :
+    (<ApplicationLocalStorageContextProvider key={props.workspaceId} {...props} />);
 };
 
 export default ApplicationContextProvider;

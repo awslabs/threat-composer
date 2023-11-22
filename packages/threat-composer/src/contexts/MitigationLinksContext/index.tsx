@@ -25,8 +25,11 @@ const MitigationLinksContextProvider: FC<PropsWithChildren<MitigationLinksContex
   const { getWorkspaceExample } = useWorkspaceExamplesContext();
 
   return isWorkspaceExample(props.workspaceId) ?
-    (<MitigationLinksLocalStateContextProvider initialValue={getWorkspaceExample(props.workspaceId)?.value.mitigationLinks} {...props} />) :
-    (<MitigationLinksLocalStorageContextProvider {...props} />);
+    (<MitigationLinksLocalStateContextProvider
+      key={props.workspaceId}
+      initialValue={getWorkspaceExample(props.workspaceId)?.value.mitigationLinks}
+      {...props} />) :
+    (<MitigationLinksLocalStorageContextProvider key={props.workspaceId} {...props} />);
 };
 
 export default MitigationLinksContextProvider;

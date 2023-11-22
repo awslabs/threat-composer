@@ -42,7 +42,13 @@ export const WorkspaceExampleSchema = z.object({
   value: DataExchangeFormatSchema,
 });
 
+export const WorkspaceExampleWithIdSchema = WorkspaceExampleSchema.extend({
+  id: z.string(),
+});
+
 export type WorkspaceExample = z.infer<typeof WorkspaceExampleSchema>;
+
+export type WorkspaceExampleWithId = z.infer<typeof WorkspaceExampleWithIdSchema>;
 
 export interface HasContentDetails {
   applicationName: boolean;
