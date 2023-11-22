@@ -25,7 +25,6 @@ import {
   DEFAULT_WORKSPACE_ID,
   DEFAULT_WORKSPACE_LABEL,
   EXAMPLES_SECTION_WORKSPACE_LABEL,
-  EXAMPLES_WORKSPACE_ID_PREFIX,
 } from '../../../configs/constants';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext';
 import { useWorkspaceExamplesContext } from '../../../contexts/WorkspaceExamplesContext';
@@ -89,7 +88,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         label: EXAMPLES_SECTION_WORKSPACE_LABEL,
         options: workspaceExamples.map(we => ({
           label: we.name,
-          value: `${EXAMPLES_WORKSPACE_ID_PREFIX}${we.name}`,
+          value: we.id,
         })),
       },
     ];

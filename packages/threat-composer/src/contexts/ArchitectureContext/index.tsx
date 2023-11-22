@@ -25,8 +25,11 @@ const ArchitectureContextProvider: FC<PropsWithChildren<ArchitectureContextProvi
   const { getWorkspaceExample } = useWorkspaceExamplesContext();
 
   return isWorkspaceExample(props.workspaceId) ?
-    (<ArchitectureLocalStateContextProvider initialValue={getWorkspaceExample(props.workspaceId)?.value.architecture} {...props} />) :
-    (<ArchitectureLocalStorageContextProvider {...props} />);
+    (<ArchitectureLocalStateContextProvider
+      key={props.workspaceId}
+      initialValue={getWorkspaceExample(props.workspaceId)?.value.architecture}
+      {...props} />) :
+    (<ArchitectureLocalStorageContextProvider key={props.workspaceId} {...props} />);
 };
 
 export default ArchitectureContextProvider;

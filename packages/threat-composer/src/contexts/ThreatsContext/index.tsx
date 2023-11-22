@@ -26,10 +26,13 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
   const { getWorkspaceExample } = useWorkspaceExamplesContext();
 
   return isWorkspaceExample(props.workspaceId) ?
-    (<ThreatsLocalStateContextProvider initialValue={getWorkspaceExample(props.workspaceId)?.value.threats} {...props} >
+    (<ThreatsLocalStateContextProvider
+      key={props.workspaceId}
+      initialValue={getWorkspaceExample(props.workspaceId)?.value.threats}
+      {...props} >
       {children}
     </ThreatsLocalStateContextProvider>) :
-    (<ThreatsLocalStorageContextProvider {...props} >
+    (<ThreatsLocalStorageContextProvider key={props.workspaceId} {...props} >
       <ThreatsMigration>
         {children}
       </ThreatsMigration>

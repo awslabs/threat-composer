@@ -25,8 +25,11 @@ const DataflowContextProvider: FC<PropsWithChildren<DataflowContextProviderProps
   const { getWorkspaceExample } = useWorkspaceExamplesContext();
 
   return isWorkspaceExample(props.workspaceId) ?
-    (<DataflowLocalStateContextProvider initialValue={getWorkspaceExample(props.workspaceId)?.value.dataflow} {...props} />) :
-    (<DataflowLocalStorageContextProvider {...props} />);
+    (<DataflowLocalStateContextProvider
+      key={props.workspaceId}
+      initialValue={getWorkspaceExample(props.workspaceId)?.value.dataflow}
+      {...props} />) :
+    (<DataflowLocalStorageContextProvider key={props.workspaceId} {...props} />);
 };
 
 export default DataflowContextProvider;

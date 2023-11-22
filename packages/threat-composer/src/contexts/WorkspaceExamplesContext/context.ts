@@ -14,11 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { WorkspaceExample } from '../../customTypes';
+import { WorkspaceExampleWithId } from '../../customTypes';
 
 export interface WorkspaceExamplesContextApi {
-  workspaceExamples: WorkspaceExample[];
-  getWorkspaceExample: (workspaceExampleId?: string | null) => WorkspaceExample | undefined;
+  workspaceExamples: WorkspaceExampleWithId[];
+  getWorkspaceExample: (workspaceExampleId?: string | null) => WorkspaceExampleWithId | undefined;
 }
 
 const initialState: WorkspaceExamplesContextApi = {

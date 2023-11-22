@@ -14,22 +14,28 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { FC, PropsWithChildren, useCallback } from 'react';
+import { FC, PropsWithChildren, useCallback, useMemo } from 'react';
 import { WorkspaceExamplesContext, useWorkspaceExamplesContext } from './context';
 import { EXAMPLES_WORKSPACE_ID_PREFIX } from '../../configs';
-import workspaceExamples from '../../data/workspaceExamples/workspaceExamples';
+import workspaceExamplesData from '../../data/workspaceExamples/workspaceExamples';
 
 const WorkspaceExamplesContextProvider: FC<PropsWithChildren<{}>> = ({
   children,
 }) => {
+  const workspaceExamples = useMemo(() => {
+    return workspaceExamplesData.map(x => ({
+      ...x,
+      id: `${EXAMPLES_WORKSPACE_ID_PREFIX}${x.name.replace(/\s/g, '')}`,
+    }));
+  }, [workspaceExamplesData]);
+
   const handleGetWorkspaceExample = useCallback((workspaceExampleId?: string | null) => {
     if (workspaceExampleId) {
-      const workspaceExampleName = workspaceExampleId.substring(EXAMPLES_WORKSPACE_ID_PREFIX.length);
-      return workspaceExamples.find(x => x.name === workspaceExampleName);
+      return workspaceExamples.find(x => x.id === workspaceExampleId);
     }
 
     return undefined;
-  }, []);
+  }, [workspaceExamples]);
 
   return (<WorkspaceExamplesContext.Provider value={{
     workspaceExamples,
