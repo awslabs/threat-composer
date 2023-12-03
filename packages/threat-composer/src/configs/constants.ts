@@ -31,7 +31,9 @@ export const FREE_TEXT_INPUT_SMALL_MAX_LENGTH = 1000;
 // Application info, Architecture description, Dataflow description
 export const FREE_TEXT_INPUT_MAX_LENGTH = 100000;
 // Architecture diagram, data flow diagram
-export const IMAGE_BASE64_MAX_LENGTH = 500000;
+export const IMAGE_BASE64_MAX_LENGTH = 2000000;
+// Architecture diagram, data flow diagram max upload size
+export const IMAGE_UPLOAD_MAX_SIZE = 1000 * 1000;
 //  Architecture diagram url, data flow diagram, url
 export const IMAGE_URL_MAX_LENGTH = 2048;
 

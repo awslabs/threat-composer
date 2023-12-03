@@ -20,11 +20,13 @@ import RadioGroup from '@cloudscape-design/components/radio-group';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import imageCompression from 'browser-image-compression';
 import { FC, useCallback, useEffect, useState } from 'react';
+import { IMAGE_UPLOAD_MAX_SIZE } from '../../../configs';
 import { ImageUrlSchema } from '../../../customTypes';
 import imageStyles from '../../../styles/image';
 import getBase64 from '../../../utils/getBase64';
 import Input from '../../generic/Input';
 import FileUpload from '../FileUpload';
+import getDisplaySize from '../FileUpload/utils/getDisplaySize';
 
 export interface ImageUploadProps {
   value: string;
@@ -100,7 +102,9 @@ const ImageEdit: FC<ImageUploadProps> = ({
       <FileUpload
         key='fileUpload'
         label='Image Upload'
+        constraintText={`Maximum file size: ${getDisplaySize(IMAGE_UPLOAD_MAX_SIZE)}`}
         accept='image/png, image/gif, image/jpeg'
+        sizeLimit={IMAGE_UPLOAD_MAX_SIZE}
         files={selectedFiles}
         onChange={handleChange} />
     </SpaceBetween>

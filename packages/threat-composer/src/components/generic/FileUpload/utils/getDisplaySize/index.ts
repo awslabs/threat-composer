@@ -22,7 +22,7 @@ const getDisplaySize = (size?: number | null) => {
 
   const i = Math.floor(Math.log(size) / Math.log(k));
 
-  return `Size: ${parseFloat((size / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+  return `${parseFloat((size / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 };
 
 export default getDisplaySize;
