@@ -20,19 +20,17 @@ import RadioGroup from '@cloudscape-design/components/radio-group';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import imageCompression from 'browser-image-compression';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { IMAGE_UPLOAD_MAX_SIZE } from '../../../configs';
+import { IMAGE_BASE64_MAX_LENGTH } from '../../../configs';
 import { ImageUrlSchema } from '../../../customTypes';
 import imageStyles from '../../../styles/image';
 import getBase64 from '../../../utils/getBase64';
 import Input from '../../generic/Input';
 import FileUpload from '../FileUpload';
-import getDisplaySize from '../FileUpload/utils/getDisplaySize';
 
 export interface ImageUploadProps {
   value: string;
   onChange: (value: string) => void;
 }
-
 
 const ImageEdit: FC<ImageUploadProps> = ({
   value,
@@ -43,6 +41,7 @@ const ImageEdit: FC<ImageUploadProps> = ({
   const [inputValue, setInputValue] = useState(isValueBase64String ? '' : value);
   const [imageSource, setImageSource] = useState<string>(!value ? 'no' : isValueBase64String ? 'file' : 'url');
   const [image, setImage] = useState<string>(isValueBase64String ? value : '');
+  const [errorText, setErrorText] = useState<string>();
 
   useEffect(() => {
     if (imageSource === 'no') {
@@ -73,9 +72,14 @@ const ImageEdit: FC<ImageUploadProps> = ({
 
   const handleChange = useCallback(async (_selectedFiles: File[]) => {
     setSelectedFiles(_selectedFiles);
+    setErrorText(undefined);
     if (_selectedFiles.length > 0) {
       const _image = await handleImageUpload(_selectedFiles[0]);
-      setImage(_image || '');
+      if (_image.length > IMAGE_BASE64_MAX_LENGTH) {
+        setErrorText('Image size limit exceeded');
+      } else {
+        setImage(_image || '');
+      }
     }
   }, []);
 
@@ -102,9 +106,8 @@ const ImageEdit: FC<ImageUploadProps> = ({
       <FileUpload
         key='fileUpload'
         label='Image Upload'
-        constraintText={`Maximum file size: ${getDisplaySize(IMAGE_UPLOAD_MAX_SIZE)}`}
         accept='image/png, image/gif, image/jpeg'
-        sizeLimit={IMAGE_UPLOAD_MAX_SIZE}
+        errorText={errorText}
         files={selectedFiles}
         onChange={handleChange} />
     </SpaceBetween>
