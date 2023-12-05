@@ -16,11 +16,13 @@
 import Button from '@cloudscape-design/components/button';
 import FormField, { FormFieldProps } from '@cloudscape-design/components/form-field';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import React, { FC, useCallback, useRef, useMemo } from 'react';
+import React, { FC, useCallback, useRef, useMemo, useState, useEffect } from 'react';
 import FileTokenLabel from './components/FileTokenLabel';
+import getDisplaySize from './utils/getDisplaySize';
 
 export interface FileUploadProps extends FormFieldProps {
   accept?: string;
+  sizeLimit?: number;
   buttonText?: string;
   name?: string;
   onChange?: (files: File[]) => void;
@@ -33,16 +35,21 @@ const FileUpload: FC<FileUploadProps> = ({
   description,
   constraintText,
   secondaryControl,
-  errorText,
   info,
   buttonText = 'Choose file',
   name,
   accept,
   files,
+  sizeLimit,
   onChange,
   ...props
 }) => {
   const inputElement = useRef<HTMLInputElement | null>(null);
+  const [errorText, setErrorText] = useState<React.ReactNode>(props.errorText);
+
+  useEffect(() => {
+    setErrorText(props.errorText);
+  }, [props.errorText]);
 
   const footer = useMemo(() => {
     if (!files || files.length === 0) {
@@ -64,6 +71,7 @@ const FileUpload: FC<FileUploadProps> = ({
   const handleFileSelectionChange: React.ChangeEventHandler<HTMLInputElement> = useCallback(
     (event) => {
       const newFiles: File[] = [];
+      setErrorText(undefined);
 
       if (event.target.files) {
         const targetFiles = event.target.files;
@@ -71,6 +79,11 @@ const FileUpload: FC<FileUploadProps> = ({
         for (let i = 0; i < len; i++) {
           const file = targetFiles.item(i);
           if (file) {
+            if (sizeLimit && file.size > sizeLimit) {
+              setErrorText(`File ${file.name} exceeds maximum file size limit: ${getDisplaySize(sizeLimit)}`);
+              break;
+            }
+
             newFiles.push(file);
           }
         }

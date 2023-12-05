@@ -33,7 +33,7 @@ const FileTokenLabel: FC<FileTokenLabelProps> = ({ name, size, lastModified }) =
       <TextContent>
         <Spacebetween direction="vertical" size="xxxs">
           <span key='name'><b>{name}</b></span>
-          <span key='size'>{getDisplaySize(size)}</span>
+          <span key='size'>Size: {getDisplaySize(size)}</span>
           {lastModified && <span key='lastModified'>{getDisplayLastModified(lastModified)}</span>}
         </Spacebetween>
       </TextContent>
