@@ -20,6 +20,7 @@ import RadioGroup from '@cloudscape-design/components/radio-group';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import imageCompression from 'browser-image-compression';
 import { FC, useCallback, useEffect, useState } from 'react';
+import { IMAGE_BASE64_MAX_LENGTH } from '../../../configs';
 import { ImageUrlSchema } from '../../../customTypes';
 import imageStyles from '../../../styles/image';
 import getBase64 from '../../../utils/getBase64';
@@ -31,7 +32,6 @@ export interface ImageUploadProps {
   onChange: (value: string) => void;
 }
 
-
 const ImageEdit: FC<ImageUploadProps> = ({
   value,
   onChange,
@@ -41,6 +41,7 @@ const ImageEdit: FC<ImageUploadProps> = ({
   const [inputValue, setInputValue] = useState(isValueBase64String ? '' : value);
   const [imageSource, setImageSource] = useState<string>(!value ? 'no' : isValueBase64String ? 'file' : 'url');
   const [image, setImage] = useState<string>(isValueBase64String ? value : '');
+  const [errorText, setErrorText] = useState<string>();
 
   useEffect(() => {
     if (imageSource === 'no') {
@@ -71,9 +72,14 @@ const ImageEdit: FC<ImageUploadProps> = ({
 
   const handleChange = useCallback(async (_selectedFiles: File[]) => {
     setSelectedFiles(_selectedFiles);
+    setErrorText(undefined);
     if (_selectedFiles.length > 0) {
       const _image = await handleImageUpload(_selectedFiles[0]);
-      setImage(_image || '');
+      if (_image.length > IMAGE_BASE64_MAX_LENGTH) {
+        setErrorText('Image size limit exceeded');
+      } else {
+        setImage(_image || '');
+      }
     }
   }, []);
 
@@ -101,6 +107,7 @@ const ImageEdit: FC<ImageUploadProps> = ({
         key='fileUpload'
         label='Image Upload'
         accept='image/png, image/gif, image/jpeg'
+        errorText={errorText}
         files={selectedFiles}
         onChange={handleChange} />
     </SpaceBetween>
