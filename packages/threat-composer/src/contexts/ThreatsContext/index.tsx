@@ -18,17 +18,17 @@ import ThreatsLocalStateContextProvider from './components/LocalStateContextProv
 import ThreatsLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useThreatsContext } from './context';
 import { ThreatsContextProviderProps } from './types';
+import { STORAGE_LOCAL_STATE } from '../../configs';
+import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
 import ThreatsMigration from '../../migrations/ThreatsMigration';
-import isWorkspaceExample from '../../utils/isWorkspaceExample';
-import { useWorkspaceExamplesContext } from '../WorkspaceExamplesContext';
 
 const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>> = ({ children, ...props }) => {
-  const { getWorkspaceExample } = useWorkspaceExamplesContext();
+  const { storageType, value } = useWorkspaceStorage(props.workspaceId);
 
-  return isWorkspaceExample(props.workspaceId) ?
+  return storageType === STORAGE_LOCAL_STATE ?
     (<ThreatsLocalStateContextProvider
       key={props.workspaceId}
-      initialValue={getWorkspaceExample(props.workspaceId)?.value.threats}
+      initialValue={value?.threats}
       {...props} >
       {children}
     </ThreatsLocalStateContextProvider>) :

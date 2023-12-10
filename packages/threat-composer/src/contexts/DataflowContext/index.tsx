@@ -18,16 +18,16 @@ import DataflowLocalStateContextProvider from './components/LocalStateContextPro
 import DataflowLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useDataflowInfoContext } from './context';
 import { DataflowContextProviderProps } from './types';
-import isWorkspaceExample from '../../utils/isWorkspaceExample';
-import { useWorkspaceExamplesContext } from '../WorkspaceExamplesContext';
+import { STORAGE_LOCAL_STATE } from '../../configs';
+import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
 
 const DataflowContextProvider: FC<PropsWithChildren<DataflowContextProviderProps>> = (props) => {
-  const { getWorkspaceExample } = useWorkspaceExamplesContext();
+  const { storageType, value } = useWorkspaceStorage(props.workspaceId);
 
-  return isWorkspaceExample(props.workspaceId) ?
+  return storageType === STORAGE_LOCAL_STATE ?
     (<DataflowLocalStateContextProvider
       key={props.workspaceId}
-      initialValue={getWorkspaceExample(props.workspaceId)?.value.dataflow}
+      initialValue={value?.dataflow}
       {...props} />) :
     (<DataflowLocalStorageContextProvider key={props.workspaceId} {...props} />);
 };

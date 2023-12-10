@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren } from 'react';
-import WindowExpoerter from '../../components/generic/WindowExporter';
+import WindowExporter from '../../components/generic/WindowExporter';
 import { ComposerMode, DataExchangeFormat, ViewNavigationEvent } from '../../customTypes';
 import ApplicationInfoContextProvider from '../ApplicationContext';
 import ArchitectureInfoContextProvider from '../ArchitectureContext';
@@ -60,9 +60,9 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
                     <DataflowInfoContextProvider workspaceId={workspaceId}>
                       <ThreatPacksContextProvider workspaceId={workspaceId}>
                         <MitigationPacksContextProvider workspaceId={workspaceId}>
-                          <WindowExpoerter>
+                          <WindowExporter>
                             {children}
-                          </WindowExpoerter>
+                          </WindowExporter>
                         </MitigationPacksContextProvider>
                       </ThreatPacksContextProvider>
                     </DataflowInfoContextProvider>

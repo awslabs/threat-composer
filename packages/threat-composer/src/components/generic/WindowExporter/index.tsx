@@ -17,6 +17,7 @@ import { useCallback, FC, PropsWithChildren, useEffect } from 'react';
 import { useWorkspacesContext } from '../../../contexts';
 import { ThreatComposerNamespace } from '../../../customTypes/dataExchange';
 import useExportImport, { PLACEHOLDER_EXCHANGE_DATA, PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE } from '../../../hooks/useExportImport';
+import useRemoveData from '../../../hooks/useRemoveData';
 
 declare global {
   interface Window { threatcomposer: ThreatComposerNamespace }
@@ -26,11 +27,11 @@ window.threatcomposer = {
   getWorkspaceList: () => [PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE],
   getCurrentWorkspaceMetadata: () => PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE,
   getCurrentWorkspaceData: () => PLACEHOLDER_EXCHANGE_DATA,
-  setCurrentWorkspaceData: () => null,
-  createWorkspace: () => null,
-  deleteWorkspace: () => null,
-  switchWorkspace: () => null,
-  renameWorkspace: () => null,
+  setCurrentWorkspaceData: () => Promise.resolve(),
+  switchWorkspace: () => {},
+  createWorkspace: () => Promise.resolve(),
+  deleteWorkspace: () => Promise.resolve(),
+  renameWorkspace: () => Promise.resolve(),
 };
 
 /**
@@ -40,17 +41,13 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({
   children,
 }) => {
   const { getWorkspaceData, parseImportedData, importData } = useExportImport();
+  const { currentWorkspace, workspaceList, addWorkspace, switchWorkspace, renameWorkspace } = useWorkspacesContext();
+  const { deleteWorkspace } = useRemoveData();
 
-  useEffect(() => {
-
-  }, []);
-
-  const { currentWorkspace, workspaceList, addWorkspace, removeWorkspace, switchWorkspace, renameWorkspace } = useWorkspacesContext();
-
-  const setWorkspaceData = useCallback(((data: any) => {
+  const setWorkspaceData = useCallback(async (data: any) => {
     const parsedData = parseImportedData(data);
-    importData(parsedData);
-  }), []);
+    await importData(parsedData);
+  }, [importData]);
 
   useEffect(() => {
     window.threatcomposer.getWorkspaceList = () => workspaceList;
@@ -66,23 +63,23 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({
 
   useEffect(() => {
     window.threatcomposer.setCurrentWorkspaceData = setWorkspaceData;
-  }, []);
+  }, [setWorkspaceData]);
 
   useEffect(() => {
     window.threatcomposer.createWorkspace = addWorkspace;
-  }, [workspaceList]);
+  }, [addWorkspace]);
 
   useEffect(() => {
-    window.threatcomposer.deleteWorkspace = removeWorkspace;
-  }, [workspaceList]);
+    window.threatcomposer.deleteWorkspace = deleteWorkspace;
+  }, [deleteWorkspace]);
 
   useEffect(() => {
     window.threatcomposer.switchWorkspace = switchWorkspace;
-  }, [workspaceList]);
+  }, [switchWorkspace]);
 
   useEffect(() => {
     window.threatcomposer.renameWorkspace = renameWorkspace;
-  }, [workspaceList]);
+  }, [renameWorkspace]);
 
   return <>{children}</>;
 };

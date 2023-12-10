@@ -124,7 +124,7 @@ const useImportExport = () => {
     return importedData;
   }, []);
 
-  const importData = useCallback((data: DataExchangeFormat) => {
+  const importData = useCallback(async (data: DataExchangeFormat) => {
     const calculatedThreats = recalculateThreatData(data.threats || []);
 
     if (data.schema > 0) {

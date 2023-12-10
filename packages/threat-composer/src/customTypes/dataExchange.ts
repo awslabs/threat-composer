@@ -49,7 +49,6 @@ export const WorkspaceExampleWithIdSchema = WorkspaceExampleSchema.extend({
 export type WorkspaceExample = z.infer<typeof WorkspaceExampleSchema>;
 
 export type WorkspaceExampleWithId = z.infer<typeof WorkspaceExampleWithIdSchema>;
-export type WorkspaceListFormat = typeof workspaceList;
 
 export interface HasContentDetails {
   applicationName: boolean;
@@ -65,9 +64,9 @@ export interface ThreatComposerNamespace {
   getWorkspaceList: () => Workspace[];
   getCurrentWorkspaceMetadata: () => Workspace | null;
   getCurrentWorkspaceData: () => DataExchangeFormat;
-  setCurrentWorkspaceData: (arg0: DataExchangeFormat) => void;
-  createWorkspace: (workspaceName: string, id?: string) => void;
-  deleteWorkspace: (id: string) => void;
+  setCurrentWorkspaceData: (arg0: DataExchangeFormat) => Promise<void>;
   switchWorkspace: (Workspace: Workspace) => void;
-  renameWorkspace: (id: string, newWorkspaceName: string) => void;
+  createWorkspace: (workspaceName: string, id?: string) => Promise<void>;
+  deleteWorkspace: (id: string) => Promise<void>;
+  renameWorkspace: (id: string, newWorkspaceName: string) => Promise<void>;
 }

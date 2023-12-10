@@ -20,10 +20,10 @@ export interface WorkspacesContextApi extends ViewNavigationEvent {
   workspaceList: Workspace[];
   setWorkspaceList: (workspace: Workspace[]) => void;
   currentWorkspace: Workspace | null;
-  removeWorkspace: (id: string) => Promise<void>;
-  addWorkspace: (workspaceName: string) => void;
-  renameWorkspace: (id: string, newWorkspaceName: string) => void;
   switchWorkspace: (workspace: Workspace | null) => void;
+  removeWorkspace: (id: string) => Promise<void>;
+  addWorkspace: (workspaceName: string) => Promise<void>;
+  renameWorkspace: (id: string, newWorkspaceName: string) => Promise<void>;
 }
 
 const initialState: WorkspacesContextApi = {
@@ -31,9 +31,9 @@ const initialState: WorkspacesContextApi = {
   setWorkspaceList: () => { },
   currentWorkspace: null,
   switchWorkspace: () => { },
-  addWorkspace: () => { },
+  addWorkspace: () => Promise.resolve(),
   removeWorkspace: () => Promise.resolve(),
-  renameWorkspace: () => { },
+  renameWorkspace: () => Promise.resolve(),
 };
 
 export const WorkspacesContext = createContext<WorkspacesContextApi>(initialState);
