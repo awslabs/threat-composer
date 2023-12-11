@@ -28,11 +28,15 @@ declare global {
   }
 }
 
+const stringifyWorkspaceData = (data: any) => {
+  return JSON.stringify(data, null, 2);
+};
+
 window.threatcomposer = {
   getWorkspaceList: () => [PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE],
   getCurrentWorkspaceMetadata: () => PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE,
   getCurrentWorkspaceData: () => PLACEHOLDER_EXCHANGE_DATA,
-  stringifyWorkspaceData: () => '',
+  stringifyWorkspaceData,
   setCurrentWorkspaceData: () => Promise.resolve(),
   switchWorkspace: () => {},
   createWorkspace: () =>
@@ -63,10 +67,6 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({ children }) => {
     [importData],
   );
 
-  const stringifyWorkspaceData = function (data: any) {
-    return JSON.stringify(data, null, 2);
-  };
-
   useEffect(() => {
     window.threatcomposer.getWorkspaceList = () => workspaceList;
   }, [workspaceList]);
@@ -78,10 +78,6 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({ children }) => {
   useEffect(() => {
     window.threatcomposer.getCurrentWorkspaceData = getWorkspaceData;
   }, [getWorkspaceData]);
-
-  useEffect(() => {
-    window.threatcomposer.stringifyWorkspaceData = stringifyWorkspaceData;
-  }, []);
 
   useEffect(() => {
     window.threatcomposer.setCurrentWorkspaceData = setWorkspaceData;
