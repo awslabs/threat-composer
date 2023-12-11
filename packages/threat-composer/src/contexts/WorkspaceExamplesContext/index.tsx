@@ -16,7 +16,7 @@
 /** @jsxImportSource @emotion/react */
 import { FC, PropsWithChildren, useCallback, useMemo } from 'react';
 import { WorkspaceExamplesContext, useWorkspaceExamplesContext } from './context';
-import { EXAMPLES_WORKSPACE_ID_PREFIX } from '../../configs';
+import { EXAMPLES_WORKSPACE_ID_PREFIX, STORAGE_LOCAL_STATE } from '../../configs';
 import workspaceExamplesData from '../../data/workspaceExamples/workspaceExamples';
 
 const WorkspaceExamplesContextProvider: FC<PropsWithChildren<{}>> = ({
@@ -26,6 +26,7 @@ const WorkspaceExamplesContextProvider: FC<PropsWithChildren<{}>> = ({
     return workspaceExamplesData.map(x => ({
       ...x,
       id: `${EXAMPLES_WORKSPACE_ID_PREFIX}${x.name.replace(/\s/g, '')}`,
+      storageType: STORAGE_LOCAL_STATE,
     }));
   }, [workspaceExamplesData]);
 

@@ -21,6 +21,8 @@ import { DEFAULT_WORKSPACE_ID } from '../../configs/constants';
 import { LOCAL_STORAGE_KEY_CURRENT_WORKSPACE, LOCAL_STORAGE_KEY_WORKSPACE_LIST } from '../../configs/localStorageKeys';
 import { ViewNavigationEvent, Workspace } from '../../customTypes';
 import WorkspacesMigration from '../../migrations/WorkspacesMigration';
+import isWorkspaceExample from '../../utils/isWorkspaceExample';
+import { useWorkspaceExamplesContext } from '../WorkspaceExamplesContext';
 
 export interface WorkspacesContextProviderProps extends ViewNavigationEvent {
   workspaceId?: string;
@@ -42,6 +44,8 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = ({
     defaultValue: [],
   });
 
+  const { workspaceExamples } = useWorkspaceExamplesContext();
+
   useEffect(() => {
     if (workspaceId) {
       if (workspaceId === DEFAULT_WORKSPACE_ID && currentWorkspace !== null) {
@@ -57,29 +61,51 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = ({
     }
   }, [workspaceId, workspaceList, currentWorkspace]);
 
-  const handleSwitchWorkspace = useCallback((workspace: Workspace | null) => {
+  const getWorkspace = useCallback((toBeSwitchedWorkspaceId: string | null) => {
+    const isExample = isWorkspaceExample(toBeSwitchedWorkspaceId);
+    if (isExample) {
+      return workspaceExamples.find(w => w.id === toBeSwitchedWorkspaceId) || null;
+    }
+
+    if (toBeSwitchedWorkspaceId && toBeSwitchedWorkspaceId !== DEFAULT_WORKSPACE_ID) {
+      return workspaceList.find(w => w.id === toBeSwitchedWorkspaceId) || null;
+    }
+
+    return null;
+  }, [
+    workspaceExamples,
+    workspaceList,
+  ]);
+
+  const handleSwitchWorkspace = useCallback((toBeSwitchedWorkspaceId: string | null) => {
+    const workspace = getWorkspace(toBeSwitchedWorkspaceId);
     setCurrentWorkspace(workspace);
     onWorkspaceChanged?.(workspace?.id || DEFAULT_WORKSPACE_ID);
-  }, [onWorkspaceChanged]);
+  }, [onWorkspaceChanged, getWorkspace]);
 
-  const handleAddWorkspace = useCallback((workspaceName: string) => {
+  const handleAddWorkspace = useCallback(async (workspaceName: string,
+    storageType?: Workspace['storageType'],
+    metadata?: Workspace['metadata']) => {
     const newWorkspace = {
       id: uuidv4(),
       name: workspaceName,
+      storageType,
+      metadata,
     };
     setWorkspaceList(prev => prev.find(p => p.name === workspaceName) ? [...prev] : [...prev, newWorkspace]);
     setCurrentWorkspace(newWorkspace);
     onWorkspaceChanged?.(newWorkspace.id);
+    return newWorkspace;
   }, [onWorkspaceChanged]);
 
   const handleRemoveWorkspace = useCallback(async (id: string) => {
     setWorkspaceList(prev => prev.filter(p => p.id !== id));
   }, []);
 
-  const handleRenameWorkspace = useCallback((id: string, newWorkspaceName: string) => {
+  const handleRenameWorkspace = useCallback(async (id: string, newWorkspaceName: string) => {
     setWorkspaceList(prev => {
       const index = prev.findIndex(w => w.id === id);
-      const newList = [...prev.slice(0, index - 1), {
+      const newList = [... index <= 1 ? [] : prev.slice(0, index - 1), {
         id,
         name: newWorkspaceName,
       }, ...prev.slice(index + 1)];

@@ -14,11 +14,18 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { z } from 'zod';
-import { SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH } from '../configs';
+import { MetadataNodeSchema } from './entities';
+import {
+  SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH,
+  STORAGE_LOCAL_STATE,
+  STORAGE_LOCAL_STORAGE,
+} from '../configs';
 
 export const WorkspaceSchema = z.object({
   id: z.string().length(36),
   name: z.string().max(SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH),
+  storageType: z.enum([STORAGE_LOCAL_STATE, STORAGE_LOCAL_STORAGE]).optional(),
+  metadata: MetadataNodeSchema.optional(),
 });
 
 export type Workspace = z.infer<typeof WorkspaceSchema>;

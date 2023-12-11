@@ -17,6 +17,7 @@ import { FC, PropsWithChildren } from 'react';
 import { ComposerMode, DataExchangeFormat, ViewNavigationEvent } from '../../customTypes';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import WorkspaceContextAggregator from '../WorkspaceContextAggregator';
+import WorkspaceExamplesContext from '../WorkspaceExamplesContext';
 import WorkspacesContextProvider, { WorkspacesContextProviderProps } from '../WorkspacesContext';
 
 export interface ContextAggregatorProps extends ViewNavigationEvent {
@@ -48,16 +49,18 @@ const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
       features={features}
       onDefineWorkload={onDefineWorkload}
       composerMode={composerMode}>
-      <WorkspacesContextProvider onWorkspaceChanged={onWorkspaceChanged} {...props}>
-        {(workspaceId) => (<WorkspaceContextAggregator
-          workspaceId={workspaceId}
-          requiredGlobalSetupContext={false}
-          onThreatEditorView={props.onThreatEditorView}
-          onThreatListView={props.onThreatListView}
-        >
-          {children}
-        </WorkspaceContextAggregator>)}
-      </WorkspacesContextProvider>
+      <WorkspaceExamplesContext>
+        <WorkspacesContextProvider onWorkspaceChanged={onWorkspaceChanged} {...props}>
+          {(workspaceId) => (<WorkspaceContextAggregator
+            workspaceId={workspaceId}
+            requiredGlobalSetupContext={false}
+            onThreatEditorView={props.onThreatEditorView}
+            onThreatListView={props.onThreatListView}
+          >
+            {children}
+          </WorkspaceContextAggregator>)}
+        </WorkspacesContextProvider>
+      </WorkspaceExamplesContext>
     </GlobalSetupContextProvider>);
 };
 

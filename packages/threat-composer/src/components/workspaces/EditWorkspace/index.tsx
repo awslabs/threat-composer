@@ -27,7 +27,7 @@ import Input from '../../generic/Input';
 export interface EditWorkspaceProps {
   visible: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  onConfirm: (workspace: string) => void;
+  onConfirm: (workspace: string) => Promise<void>;
   value?: string;
   editMode?: boolean;
 }
@@ -42,8 +42,8 @@ const EditWorkspace: FC<EditWorkspaceProps> = ({
   const inputRef= useRef<InputProps.Ref>();
   const [value, setValue] = useState(props.value || '');
 
-  const handleConfirm = useCallback(() => {
-    onConfirm(value);
+  const handleConfirm = useCallback(async () => {
+    await onConfirm(value);
     setVisible(false);
   }, [onConfirm, value]);
 

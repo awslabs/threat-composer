@@ -18,16 +18,16 @@ import AssumptionsLocalStateContextProvider from './components/LocalStateContext
 import AssumptionsLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useAssumptionsContext } from './context';
 import { AssumptionsContextProviderProps } from './types';
-import isWorkspaceExample from '../../utils/isWorkspaceExample';
-import { useWorkspaceExamplesContext } from '../WorkspaceExamplesContext';
+import { STORAGE_LOCAL_STATE } from '../../configs';
+import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
 
 const AssumptionsContextProvider: FC<PropsWithChildren<AssumptionsContextProviderProps>> = (props) => {
-  const { getWorkspaceExample } = useWorkspaceExamplesContext();
+  const { storageType, value } = useWorkspaceStorage(props.workspaceId);
 
-  return isWorkspaceExample(props.workspaceId) ?
+  return storageType === STORAGE_LOCAL_STATE ?
     (<AssumptionsLocalStateContextProvider
       key={props.workspaceId}
-      initialValue={getWorkspaceExample(props.workspaceId)?.value.assumptions}
+      initialValue={value?.assumptions}
       {...props} />) :
     (<AssumptionsLocalStorageContextProvider key={props.workspaceId} {...props} />);
 };

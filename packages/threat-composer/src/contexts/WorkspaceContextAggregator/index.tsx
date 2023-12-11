@@ -14,6 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren } from 'react';
+import WindowExporter from '../../components/generic/WindowExporter';
 import { ComposerMode, DataExchangeFormat, ViewNavigationEvent } from '../../customTypes';
 import ApplicationInfoContextProvider from '../ApplicationContext';
 import ArchitectureInfoContextProvider from '../ArchitectureContext';
@@ -26,8 +27,6 @@ import MitigationPacksContextProvider from '../MitigationPacksContext';
 import MitigationsContextProvider from '../MitigationsContext';
 import ThreatPacksContextProvider from '../ThreatPacksContext';
 import ThreatsContextProvider from '../ThreatsContext';
-import WorkspaceExamplesContext from '../WorkspaceExamplesContext';
-
 export interface WorkspaceContextAggregatorProps extends ViewNavigationEvent {
   workspaceId: string | null;
   composerMode?: ComposerMode;
@@ -44,33 +43,34 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
   onThreatListView,
 }) => {
   return (
-    <WorkspaceExamplesContext>
-      <ThreatsContextProvider
-        workspaceId={workspaceId || null}
-        onThreatEditorView={onThreatEditorView}
-        onThreatListView={onThreatListView}
-      >
-        <MitigationsContextProvider workspaceId={workspaceId}>
-          <AssumptionsContextProvider workspaceId={workspaceId}>
-            <MitigationLinksContextProvider workspaceId={workspaceId}>
-              <AssumptionLinksContextProvider workspaceId={workspaceId}>
-                <ApplicationInfoContextProvider workspaceId={workspaceId}>
-                  <ArchitectureInfoContextProvider workspaceId={workspaceId}>
-                    <DataflowInfoContextProvider workspaceId={workspaceId}>
-                      <ThreatPacksContextProvider workspaceId={workspaceId}>
-                        <MitigationPacksContextProvider workspaceId={workspaceId}>
+
+    <ThreatsContextProvider
+      workspaceId={workspaceId || null}
+      onThreatEditorView={onThreatEditorView}
+      onThreatListView={onThreatListView}
+    >
+      <MitigationsContextProvider workspaceId={workspaceId}>
+        <AssumptionsContextProvider workspaceId={workspaceId}>
+          <MitigationLinksContextProvider workspaceId={workspaceId}>
+            <AssumptionLinksContextProvider workspaceId={workspaceId}>
+              <ApplicationInfoContextProvider workspaceId={workspaceId}>
+                <ArchitectureInfoContextProvider workspaceId={workspaceId}>
+                  <DataflowInfoContextProvider workspaceId={workspaceId}>
+                    <ThreatPacksContextProvider workspaceId={workspaceId}>
+                      <MitigationPacksContextProvider workspaceId={workspaceId}>
+                        <WindowExporter>
                           {children}
-                        </MitigationPacksContextProvider>
-                      </ThreatPacksContextProvider>
-                    </DataflowInfoContextProvider>
-                  </ArchitectureInfoContextProvider>
-                </ApplicationInfoContextProvider>
-              </AssumptionLinksContextProvider>
-            </MitigationLinksContextProvider>
-          </AssumptionsContextProvider >
-        </MitigationsContextProvider>
-      </ThreatsContextProvider>
-    </WorkspaceExamplesContext>
+                        </WindowExporter>
+                      </MitigationPacksContextProvider>
+                    </ThreatPacksContextProvider>
+                  </DataflowInfoContextProvider>
+                </ArchitectureInfoContextProvider>
+              </ApplicationInfoContextProvider>
+            </AssumptionLinksContextProvider>
+          </MitigationLinksContextProvider>
+        </AssumptionsContextProvider >
+      </MitigationsContextProvider>
+    </ThreatsContextProvider>
   );
 };
 

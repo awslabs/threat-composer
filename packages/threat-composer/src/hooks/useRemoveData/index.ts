@@ -58,7 +58,7 @@ const useRemoveData = () => {
     removeAllStatements, removeAllAssumptionLinks,
     removeAllMitigationLinks]);
 
-  const deleteCurrentWorkspace = useCallback(async (toDeleteWorkspaceId: string) => {
+  const deleteWorkspace = useCallback(async (toDeleteWorkspaceId: string) => {
     if (toDeleteWorkspaceId) {
       await Promise.all([
         removeWorkspace(toDeleteWorkspaceId),
@@ -89,7 +89,7 @@ const useRemoveData = () => {
 
   return {
     removeData,
-    deleteCurrentWorkspace,
+    deleteWorkspace,
   };
 };
 

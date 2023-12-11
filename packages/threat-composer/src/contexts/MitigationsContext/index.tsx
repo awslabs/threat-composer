@@ -18,16 +18,16 @@ import MitigationsLocalStateContextProvider from './components/LocalStateContext
 import MitigationsLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useMitigationsContext } from './context';
 import { MitigationsContextProviderProps } from './types';
-import isWorkspaceExample from '../../utils/isWorkspaceExample';
-import { useWorkspaceExamplesContext } from '../WorkspaceExamplesContext';
+import { STORAGE_LOCAL_STATE } from '../../configs';
+import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
 
 const MitigationsContextProvider: FC<PropsWithChildren<MitigationsContextProviderProps>> = (props) => {
-  const { getWorkspaceExample } = useWorkspaceExamplesContext();
+  const { storageType, value } = useWorkspaceStorage(props.workspaceId);
 
-  return isWorkspaceExample(props.workspaceId) ?
+  return storageType === STORAGE_LOCAL_STATE ?
     (<MitigationsLocalStateContextProvider
       key={props.workspaceId}
-      initialValue={getWorkspaceExample(props.workspaceId)?.value.mitigations} {...props} />) :
+      initialValue={value?.mitigations} {...props} />) :
     (<MitigationsLocalStorageContextProvider key={props.workspaceId} {...props} />);
 };
 

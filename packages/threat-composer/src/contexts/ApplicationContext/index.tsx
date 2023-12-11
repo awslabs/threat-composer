@@ -18,16 +18,16 @@ import ApplicationLocalStateContextProvider from './components/LocalStateContext
 import ApplicationLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useApplicationInfoContext } from './context';
 import { ApplicationContextProviderProps } from './types';
-import isWorkspaceExample from '../../utils/isWorkspaceExample';
-import { useWorkspaceExamplesContext } from '../WorkspaceExamplesContext';
+import { STORAGE_LOCAL_STATE } from '../../configs';
+import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
 
 const ApplicationContextProvider: FC<PropsWithChildren<ApplicationContextProviderProps>> = (props) => {
-  const { getWorkspaceExample } = useWorkspaceExamplesContext();
+  const { storageType, value } = useWorkspaceStorage(props.workspaceId);
 
-  return isWorkspaceExample(props.workspaceId) ?
+  return storageType === STORAGE_LOCAL_STATE ?
     (<ApplicationLocalStateContextProvider
       key={props.workspaceId}
-      initialValue={getWorkspaceExample(props.workspaceId)?.value.applicationInfo}
+      initialValue={value?.applicationInfo}
       {...props} />) :
     (<ApplicationLocalStorageContextProvider key={props.workspaceId} {...props} />);
 };

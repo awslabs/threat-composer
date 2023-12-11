@@ -18,16 +18,16 @@ import ArchitectureLocalStateContextProvider from './components/LocalStateContex
 import ArchitectureLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useArchitectureInfoContext } from './context';
 import { ArchitectureContextProviderProps } from './types';
-import isWorkspaceExample from '../../utils/isWorkspaceExample';
-import { useWorkspaceExamplesContext } from '../WorkspaceExamplesContext';
+import { STORAGE_LOCAL_STATE } from '../../configs';
+import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
 
 const ArchitectureContextProvider: FC<PropsWithChildren<ArchitectureContextProviderProps>> = (props) => {
-  const { getWorkspaceExample } = useWorkspaceExamplesContext();
+  const { storageType, value } = useWorkspaceStorage(props.workspaceId);
 
-  return isWorkspaceExample(props.workspaceId) ?
+  return storageType === STORAGE_LOCAL_STATE ?
     (<ArchitectureLocalStateContextProvider
       key={props.workspaceId}
-      initialValue={getWorkspaceExample(props.workspaceId)?.value.architecture}
+      initialValue={value?.architecture}
       {...props} />) :
     (<ArchitectureLocalStorageContextProvider key={props.workspaceId} {...props} />);
 };

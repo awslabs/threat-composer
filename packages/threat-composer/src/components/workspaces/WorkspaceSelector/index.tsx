@@ -60,7 +60,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
 
   const { workspaceExamples } = useWorkspaceExamplesContext();
   const { importData, exportAll, exportSelectedThreats } = useImportExport();
-  const { removeData, deleteCurrentWorkspace } = useRemoveData();
+  const { removeData, deleteWorkspace } = useRemoveData();
   const {
     composerMode,
     onPreview,
@@ -109,10 +109,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     if (selectedItem.value === DEFAULT_WORKSPACE_ID) {
       switchWorkspace(null);
     } else {
-      selectedItem.value && selectedItem.label && switchWorkspace({
-        id: selectedItem.value,
-        name: selectedItem.label,
-      });
+      selectedItem.value && selectedItem.label && switchWorkspace(selectedItem.value);
     }
   }, [switchWorkspace]);
 
@@ -147,7 +144,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     exportAll,
     exportSelectedThreats,
     filteredThreats,
-    deleteCurrentWorkspace,
+    deleteWorkspace,
     currentWorkspace,
     setRemoveDataModalVisible,
     setRemoveWorkspaceModalVisible,
@@ -168,7 +165,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     setIsRemovingWorkspace(true);
 
     try {
-      await deleteCurrentWorkspace(toDeleteWorkspaceId);
+      await deleteWorkspace(toDeleteWorkspaceId);
     } catch (e) {
       console.log('Error in deleting workspace', e);
     } finally {
@@ -177,8 +174,8 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     }
   }, []);
 
-  const handleImport = useCallback((data: DataExchangeFormat) => {
-    importData(data);
+  const handleImport = useCallback(async (data: DataExchangeFormat) => {
+    await importData(data);
     onImported?.();
   }, [importData, onImported]);
 
@@ -248,7 +245,9 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     {addWorkspaceModalVisible && <AddWorkspace
       visible={addWorkspaceModalVisible}
       setVisible={setAddWorkspaceModalVisible}
-      onConfirm={addWorkspace}
+      onConfirm={async (workspaceName: string) => {
+        await addWorkspace(workspaceName);
+      }}
     />}
     {editWorkspaceModalVisible && currentWorkspace && <AddWorkspace
       visible={editWorkspaceModalVisible}

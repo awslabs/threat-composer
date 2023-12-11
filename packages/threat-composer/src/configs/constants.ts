@@ -35,6 +35,9 @@ export const IMAGE_BASE64_MAX_LENGTH = 1000000;
 //  Architecture diagram url, data flow diagram, url
 export const IMAGE_URL_MAX_LENGTH = 2048;
 
+export const STORAGE_LOCAL_STORAGE = 'LocalStorage';
+export const STORAGE_LOCAL_STATE = 'LocalState';
+
 export const ALL_LEVELS = 'All';
 export const LEVEL_NOT_SET = '-';
 export const LEVEL_HIGH = 'High';

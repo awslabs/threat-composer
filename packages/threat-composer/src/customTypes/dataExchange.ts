@@ -20,7 +20,7 @@ import { AssumptionSchema, AssumptionLinkSchema } from './assumptions';
 import { DataflowInfoSchema } from './dataflow';
 import { MitigationSchema, MitigationLinkSchema } from './mitigations';
 import { TemplateThreatStatementSchema } from './threats';
-import { WorkspaceSchema } from './workspaces';
+import { WorkspaceSchema, Workspace } from './workspaces';
 
 export const DataExchangeFormatSchema = z.object({
   schema: z.number(),
@@ -58,4 +58,18 @@ export interface HasContentDetails {
   assumptions: boolean;
   mitigations: boolean;
   threats: boolean;
+}
+
+export interface ThreatComposerNamespace {
+  getWorkspaceList: () => Workspace[];
+  getCurrentWorkspaceMetadata: () => Workspace | null;
+  getCurrentWorkspaceData: () => DataExchangeFormat;
+  stringifyWorkspaceData: (arg0: any) => string;
+  setCurrentWorkspaceData: (arg0: DataExchangeFormat) => Promise<void>;
+  switchWorkspace: (id: string | null) => void;
+  createWorkspace: (workspaceName: string,
+    storageType?: Workspace['storageType'],
+    metadata?: Workspace['metadata']) => Promise<Workspace>;
+  deleteWorkspace: (id: string) => Promise<void>;
+  renameWorkspace: (id: string, newWorkspaceName: string) => Promise<void>;
 }
