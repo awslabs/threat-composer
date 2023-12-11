@@ -16,20 +16,27 @@
 import { useCallback, FC, PropsWithChildren, useEffect } from 'react';
 import { useWorkspacesContext } from '../../../contexts';
 import { ThreatComposerNamespace } from '../../../customTypes/dataExchange';
-import useExportImport, { PLACEHOLDER_EXCHANGE_DATA, PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE } from '../../../hooks/useExportImport';
+import useExportImport, {
+  PLACEHOLDER_EXCHANGE_DATA,
+  PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE,
+} from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
 
 declare global {
-  interface Window { threatcomposer: ThreatComposerNamespace }
+  interface Window {
+    threatcomposer: ThreatComposerNamespace;
+  }
 }
 
 window.threatcomposer = {
   getWorkspaceList: () => [PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE],
   getCurrentWorkspaceMetadata: () => PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE,
   getCurrentWorkspaceData: () => PLACEHOLDER_EXCHANGE_DATA,
+  stringifyWorkspaceData: () => '',
   setCurrentWorkspaceData: () => Promise.resolve(),
   switchWorkspace: () => {},
-  createWorkspace: () => Promise.resolve(PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE),
+  createWorkspace: () =>
+    Promise.resolve(PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE),
   deleteWorkspace: () => Promise.resolve(),
   renameWorkspace: () => Promise.resolve(),
 };
@@ -37,17 +44,28 @@ window.threatcomposer = {
 /**
  * Export threat-composer functionalities via window object.
  */
-const WindowExporter: FC<PropsWithChildren<{}>> = ({
-  children,
-}) => {
+const WindowExporter: FC<PropsWithChildren<{}>> = ({ children }) => {
   const { getWorkspaceData, parseImportedData, importData } = useExportImport();
-  const { currentWorkspace, workspaceList, addWorkspace, switchWorkspace, renameWorkspace } = useWorkspacesContext();
+  const {
+    currentWorkspace,
+    workspaceList,
+    addWorkspace,
+    switchWorkspace,
+    renameWorkspace,
+  } = useWorkspacesContext();
   const { deleteWorkspace } = useRemoveData();
 
-  const setWorkspaceData = useCallback(async (data: any) => {
-    const parsedData = parseImportedData(data);
-    await importData(parsedData);
-  }, [importData]);
+  const setWorkspaceData = useCallback(
+    async (data: any) => {
+      const parsedData = parseImportedData(data);
+      await importData(parsedData);
+    },
+    [importData],
+  );
+
+  const stringifyWorkspaceData = function (data: any) {
+    return JSON.stringify(data, null, 2);
+  };
 
   useEffect(() => {
     window.threatcomposer.getWorkspaceList = () => workspaceList;
@@ -60,6 +78,10 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({
   useEffect(() => {
     window.threatcomposer.getCurrentWorkspaceData = getWorkspaceData;
   }, [getWorkspaceData]);
+
+  useEffect(() => {
+    window.threatcomposer.stringifyWorkspaceData = stringifyWorkspaceData;
+  }, []);
 
   useEffect(() => {
     window.threatcomposer.setCurrentWorkspaceData = setWorkspaceData;

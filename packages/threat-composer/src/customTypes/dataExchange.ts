@@ -64,8 +64,9 @@ export interface ThreatComposerNamespace {
   getWorkspaceList: () => Workspace[];
   getCurrentWorkspaceMetadata: () => Workspace | null;
   getCurrentWorkspaceData: () => DataExchangeFormat;
+  stringifyWorkspaceData: (arg0: any) => string;
   setCurrentWorkspaceData: (arg0: DataExchangeFormat) => Promise<void>;
-  switchWorkspace: (WorkspaceId: string | null) => void;
+  switchWorkspace: (id: string | null) => void;
   createWorkspace: (workspaceName: string,
     storageType?: Workspace['storageType'],
     metadata?: Workspace['metadata']) => Promise<Workspace>;
