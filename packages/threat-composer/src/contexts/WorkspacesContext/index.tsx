@@ -57,19 +57,28 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = ({
     }
   }, [workspaceId, workspaceList, currentWorkspace]);
 
-  const handleSwitchWorkspace = useCallback((workspace: Workspace | null) => {
+  const handleSwitchWorkspace = useCallback((toBeSwitchedWorkspaceId: string | null) => {
+    const workspace = (toBeSwitchedWorkspaceId
+      && toBeSwitchedWorkspaceId !== DEFAULT_WORKSPACE_ID
+      && workspaceList.find(w => w.id === toBeSwitchedWorkspaceId))
+      || null;
     setCurrentWorkspace(workspace);
     onWorkspaceChanged?.(workspace?.id || DEFAULT_WORKSPACE_ID);
-  }, [onWorkspaceChanged]);
+  }, [onWorkspaceChanged, workspaceList]);
 
-  const handleAddWorkspace = useCallback(async (workspaceName: string, id?: string) => {
+  const handleAddWorkspace = useCallback(async (workspaceName: string,
+    storageType?: Workspace['storageType'],
+    metadata?: Workspace['metadata']) => {
     const newWorkspace = {
-      id: id || uuidv4(),
+      id: uuidv4(),
       name: workspaceName,
+      storageType,
+      metadata,
     };
     setWorkspaceList(prev => prev.find(p => p.name === workspaceName) ? [...prev] : [...prev, newWorkspace]);
     setCurrentWorkspace(newWorkspace);
     onWorkspaceChanged?.(newWorkspace.id);
+    return newWorkspace;
   }, [onWorkspaceChanged]);
 
   const handleRemoveWorkspace = useCallback(async (id: string) => {

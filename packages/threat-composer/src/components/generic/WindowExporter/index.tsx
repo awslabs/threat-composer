@@ -29,7 +29,7 @@ window.threatcomposer = {
   getCurrentWorkspaceData: () => PLACEHOLDER_EXCHANGE_DATA,
   setCurrentWorkspaceData: () => Promise.resolve(),
   switchWorkspace: () => {},
-  createWorkspace: () => Promise.resolve(),
+  createWorkspace: () => Promise.resolve(PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE),
   deleteWorkspace: () => Promise.resolve(),
   renameWorkspace: () => Promise.resolve(),
 };

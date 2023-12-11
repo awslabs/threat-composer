@@ -109,10 +109,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     if (selectedItem.value === DEFAULT_WORKSPACE_ID) {
       switchWorkspace(null);
     } else {
-      selectedItem.value && selectedItem.label && switchWorkspace({
-        id: selectedItem.value,
-        name: selectedItem.label,
-      });
+      selectedItem.value && selectedItem.label && switchWorkspace(selectedItem.value);
     }
   }, [switchWorkspace]);
 
@@ -248,7 +245,9 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     {addWorkspaceModalVisible && <AddWorkspace
       visible={addWorkspaceModalVisible}
       setVisible={setAddWorkspaceModalVisible}
-      onConfirm={addWorkspace}
+      onConfirm={async (workspaceName: string) => {
+        await addWorkspace(workspaceName);
+      }}
     />}
     {editWorkspaceModalVisible && currentWorkspace && <AddWorkspace
       visible={editWorkspaceModalVisible}
