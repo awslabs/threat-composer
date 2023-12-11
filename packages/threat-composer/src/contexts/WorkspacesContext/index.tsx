@@ -105,7 +105,7 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = ({
   const handleRenameWorkspace = useCallback(async (id: string, newWorkspaceName: string) => {
     setWorkspaceList(prev => {
       const index = prev.findIndex(w => w.id === id);
-      const newList = [...prev.slice(0, index - 1), {
+      const newList = [... index <= 1 ? [] : prev.slice(0, index - 1), {
         id,
         name: newWorkspaceName,
       }, ...prev.slice(index + 1)];
