@@ -43,6 +43,7 @@ window.threatcomposer = {
     Promise.resolve(PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE),
   deleteWorkspace: () => Promise.resolve(),
   renameWorkspace: () => Promise.resolve(),
+  apiReady: false,
 };
 
 /**
@@ -69,35 +70,23 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   useEffect(() => {
     window.threatcomposer.getWorkspaceList = () => workspaceList;
-  }, [workspaceList]);
-
-  useEffect(() => {
     window.threatcomposer.getCurrentWorkspaceMetadata = () => currentWorkspace;
-  }, [currentWorkspace]);
-
-  useEffect(() => {
     window.threatcomposer.getCurrentWorkspaceData = getWorkspaceData;
-  }, [getWorkspaceData]);
-
-  useEffect(() => {
     window.threatcomposer.setCurrentWorkspaceData = setWorkspaceData;
-  }, [setWorkspaceData]);
-
-  useEffect(() => {
     window.threatcomposer.createWorkspace = addWorkspace;
-  }, [addWorkspace]);
-
-  useEffect(() => {
     window.threatcomposer.deleteWorkspace = deleteWorkspace;
-  }, [deleteWorkspace]);
-
-  useEffect(() => {
     window.threatcomposer.switchWorkspace = switchWorkspace;
-  }, [switchWorkspace]);
-
-  useEffect(() => {
     window.threatcomposer.renameWorkspace = renameWorkspace;
-  }, [renameWorkspace]);
+    window.threatcomposer.apiReady = true;
+  }, [
+    workspaceList,
+    currentWorkspace,
+    getWorkspaceData,
+    addWorkspace,
+    deleteWorkspace,
+    switchWorkspace,
+    renameWorkspace,
+  ]);
 
   return <>{children}</>;
 };

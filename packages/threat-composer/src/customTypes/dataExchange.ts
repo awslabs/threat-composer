@@ -72,4 +72,5 @@ export interface ThreatComposerNamespace {
     metadata?: Workspace['metadata']) => Promise<Workspace>;
   deleteWorkspace: (id: string) => Promise<void>;
   renameWorkspace: (id: string, newWorkspaceName: string) => Promise<void>;
+  apiReady: boolean;
 }
