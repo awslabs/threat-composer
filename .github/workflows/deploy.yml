@@ -24,7 +24,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: packages/threat-composer-app/build
+          path: packages/threat-composer-app/build/web
   deploy:
     needs: build
     permissions:
@@ -60,4 +60,4 @@ jobs:
         id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        run: npx semantic-release@22

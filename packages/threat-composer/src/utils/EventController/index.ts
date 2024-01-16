@@ -13,27 +13,32 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC } from 'react';
-import WorkspaceSelectorComponent from '../../components/workspaces/WorkspaceSelector';
-import ContextAggregator from '../../contexts/ContextAggregator';
-import { ComposerMode } from '../../customTypes';
+export type EventHandler = (e: CustomEvent) => void;
 
-export interface WorkspaceSelectorProps {
-  composerMode: string;
-  appMode?: string;
+class EventController {
+  private readonly eventStore: {
+    [key: string]: EventHandler[];
+  };
+
+  constructor() {
+    this.eventStore = {};
+  }
+
+  addEventListener(eventName: string, eventHandler: EventHandler) {
+    if (!this.eventStore[eventName]) {
+      this.eventStore[eventName] = [];
+    }
+
+    this.eventStore[eventName].push(eventHandler);
+  }
+
+  dispatchEvent(event: CustomEvent) {
+    if (this.eventStore[event.type]) {
+      this.eventStore[event.type].forEach(x => {
+        x(event);
+      });
+    }
+  }
 }
 
-const WorkspaceSelector: FC<WorkspaceSelectorProps> = ({ composerMode, appMode }) => {
-  return (<ContextAggregator composerMode={composerMode as ComposerMode}>
-    <WorkspaceSelectorComponent
-      embededMode={false}
-      singletonMode={appMode === 'extension' || appMode === 'vscode'}
-      singletonPrimaryActionButtonConfig={appMode === 'vscode' ? {
-        text: 'Save',
-        eventName: 'save',
-      } : undefined}
-    />
-  </ContextAggregator>);
-};
-
-export default WorkspaceSelector;
+export default EventController;

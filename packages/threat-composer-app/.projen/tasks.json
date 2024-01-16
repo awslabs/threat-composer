@@ -58,7 +58,40 @@
       "description": "Only compile",
       "steps": [
         {
-          "exec": "react-scripts build"
+          "exec": "echo Building Artifacts for Web, Browser Extensions and VSCode Plugins"
+        },
+        {
+          "spawn": "complie:web"
+        },
+        {
+          "spawn": "complie:extension"
+        },
+        {
+          "spawn": "complie:vscode"
+        }
+      ]
+    },
+    "complie:extension": {
+      "name": "complie:extension",
+      "steps": [
+        {
+          "exec": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/extension/ REACT_APP_APP_MODE=extension react-scripts build"
+        }
+      ]
+    },
+    "complie:vscode": {
+      "name": "complie:vscode",
+      "steps": [
+        {
+          "exec": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/vscode/ REACT_APP_APP_MODE=vscode react-scripts build"
+        }
+      ]
+    },
+    "complie:web": {
+      "name": "complie:web",
+      "steps": [
+        {
+          "exec": "BUILD_PATH=./build/web/ react-scripts build"
         }
       ]
     },

@@ -42,6 +42,12 @@ export interface WorkspaceSelectorProps {
   enabledRemoveAll?: boolean;
   enabledExportFiltered?: boolean;
   filteredThreats?: TemplateThreatStatement[];
+  singletonMode?: boolean;
+  singletonPrimaryActionButtonConfig?: {
+    text: string;
+    eventName?: string;
+    onClick?: (data: DataExchangeFormat) => void;
+  };
 }
 
 const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
@@ -51,6 +57,8 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
   enabledExportFiltered,
   enabledRemoveAll,
   filteredThreats,
+  singletonMode = false,
+  singletonPrimaryActionButtonConfig,
 }) => {
   const [addWorkspaceModalVisible, setAddWorkspaceModalVisible] = useState(false);
   const [editWorkspaceModalVisible, setEditWorkspaceModalVisible] = useState(false);
@@ -59,8 +67,9 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
   const [isRemovingWorkspace, setIsRemovingWorkspace] = useState(false);
 
   const { workspaceExamples } = useWorkspaceExamplesContext();
-  const { importData, exportAll, exportSelectedThreats } = useImportExport();
+  const { importData, exportAll, exportSelectedThreats, getWorkspaceData } = useImportExport();
   const { removeData, deleteWorkspace } = useRemoveData();
+
   const {
     composerMode,
     onPreview,
@@ -113,6 +122,21 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     }
   }, [switchWorkspace]);
 
+  const handleSingletonPrimaryButtonClick = useCallback(() => {
+    if (singletonPrimaryActionButtonConfig) {
+      const data = getWorkspaceData();
+      singletonPrimaryActionButtonConfig.onClick?.(data);
+      singletonPrimaryActionButtonConfig.eventName &&
+        window.threatcomposer.dispatchEvent(new CustomEvent(
+          singletonPrimaryActionButtonConfig.eventName,
+          {
+            detail: data,
+          }));
+    } else {
+      exportAll();
+    }
+  }, [singletonPrimaryActionButtonConfig, getWorkspaceData, exportAll]);
+
   const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(async ({ detail }) => {
     switch (detail.id) {
       case 'add':
@@ -149,6 +173,8 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     setRemoveDataModalVisible,
     setRemoveWorkspaceModalVisible,
     setAddWorkspaceModalVisible,
+    setEditWorkspaceModalVisible,
+    handleSingletonPrimaryButtonClick,
   ]);
 
   const handleRemoveData = useCallback(async () => {
@@ -179,9 +205,78 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     onImported?.();
   }, [importData, onImported]);
 
+  const buttonDropdownItems = useMemo(() => {
+    const items: ButtonDropdownProps.Item[] = [];
+
+    if (singletonMode && singletonPrimaryActionButtonConfig) {
+      // If primary action button is not specified, use Export data as primary action button in Singleton app mode.
+      items.push({
+        id: 'exportAll',
+        text: 'Export data',
+      });
+    }
+
+    if (!singletonMode) {
+      items.push(
+        { id: 'add', text: 'Add new workspace' },
+        {
+          id: 'import',
+          text: 'Import',
+          disabled: isWorkspaceExample(currentWorkspace?.id),
+        },
+        {
+          id: 'exportAll',
+          text: embededMode ? 'Export all statements from current workspace' : 'Export data from current workspace',
+          disabled: embededMode && !enabledExportAll,
+        },
+      );
+    } else {
+      items.push({
+        id: 'import',
+        text: 'Import',
+      });
+    }
+
+    if (embededMode) {
+      items.push({
+        id: 'exportFilteredList',
+        text: 'Export filtered statement list from current workspace',
+        disabled: !enabledExportFiltered,
+      });
+    }
+
+    if (singletonMode) {
+      items.push({
+        id: 'removeAll',
+        text: 'Remove data',
+      });
+    } else {
+      items.push({
+        id: 'removeAll',
+        text: embededMode ? 'Remove all statements from current workspace' : 'Remove data from current workspace',
+        disabled: (embededMode && !enabledRemoveAll) || isWorkspaceExample(currentWorkspace?.id),
+      });
+    }
+
+    if (!singletonMode) {
+      items.push({
+        id: 'delete',
+        text: 'Delete workspace',
+        disabled: !currentWorkspace || isWorkspaceExample(currentWorkspace.id),
+      },
+      {
+        id: 'renameWorkspace',
+        text: 'Rename workspace',
+        disabled: !currentWorkspace || isWorkspaceExample(currentWorkspace.id),
+      });
+    }
+
+    return items;
+  }, [singletonMode, singletonPrimaryActionButtonConfig, embededMode, enabledRemoveAll, enabledExportAll, enabledExportFiltered, currentWorkspace]);
+
   return (<>
     <SpaceBetween direction="horizontal" size="xs">
-      <Select
+      {!singletonMode && <Select
         controlId='WorkspacesSelect'
         selectedOption={{
           value: currentWorkspace?.id || DEFAULT_WORKSPACE_ID,
@@ -189,49 +284,23 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         }}
         options={workspacesOptions}
         onChange={handleSelectWorkspace}
-      />
+      />}
+      {singletonMode && <Button
+        variant='primary'
+        onClick={handleSingletonPrimaryButtonClick}
+      >
+        {singletonPrimaryActionButtonConfig ?
+          singletonPrimaryActionButtonConfig.text :
+          'Export data'}
+      </Button>
+      }
       {children}
-      <ButtonDropdown
-        items={[
-          ...[
-            { id: 'add', text: 'Add new workspace' },
-            {
-              id: 'import',
-              text: 'Import',
-              disabled: isWorkspaceExample(currentWorkspace?.id),
-            },
-            {
-              id: 'exportAll',
-              text: embededMode ? 'Export all statements from current workspace' : 'Export data from current workspace',
-              disabled: embededMode && !enabledExportAll,
-            },
-          ],
-          ...(embededMode ? [{
-            id: 'exportFilteredList',
-            text: 'Export filtered statement list from current workspace',
-            disabled: !enabledExportFiltered,
-          }] :
-            []),
-          {
-            id: 'removeAll',
-            text: embededMode ? 'Remove all statements from current workspace' : 'Remove data from current workspace',
-            disabled: (embededMode && !enabledRemoveAll) || isWorkspaceExample(currentWorkspace?.id),
-          },
-          {
-            id: 'delete',
-            text: 'Delete workspace',
-            disabled: !currentWorkspace || isWorkspaceExample(currentWorkspace.id),
-          },
-          {
-            id: 'renameWorkspace',
-            text: 'Rename workspace',
-            disabled: !currentWorkspace || isWorkspaceExample(currentWorkspace.id),
-          },
-        ]}
+      {buttonDropdownItems.length > 0 && <ButtonDropdown
+        items={buttonDropdownItems}
         ariaLabel="More actions"
         variant="icon"
         onItemClick={handleMoreActions}
-      />
+      />}
     </SpaceBetween>
     {fileImportModalVisible && <FileImport
       composerMode={composerMode}

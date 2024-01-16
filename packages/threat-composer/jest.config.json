@@ -1,6 +1,6 @@
 {
   "transformIgnorePatterns": [
-    "[/\\\\]node_modules[/\\\\](?!unified).+\\.(js|jsx|mjs|cjs|ts|tsx)$"
+    "[/\\\\]node_modules[/\\\\](?!unified|@aws-northstar/ui).+\\.(js|jsx|mjs|cjs|ts|tsx)$"
   ],
   "testMatch": [
     "<rootDir>/src/**/__tests__/**/*.ts?(x)",
