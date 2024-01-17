@@ -39,6 +39,7 @@ import ThreatModelReport from '../../../ThreatModelReport';
 const TEMP_PREVIEW_DATA_KEY = 'ThreatStatementGenerator.TempPreviewData';
 
 const defaultHref = process.env.PUBLIC_URL || '/';
+const appMode = process.env.REACT_APP_APP_MODE;
 
 const AppInner: FC<{
   setWorkspaceId: React.Dispatch<React.SetStateAction<string>>;
@@ -209,7 +210,14 @@ const Full: FC = () => {
         href={defaultHref}
         navigationItems={navigationItems}
         availableRoutes={routes.map(x => x.path || '')}
-        breadcrumbGroup={<WorkspaceSelector embededMode={false} />}
+        breadcrumbGroup={<WorkspaceSelector
+          singletonMode={appMode === 'browser-extension' || appMode === 'ide-extension'}
+          singletonPrimaryActionButtonConfig={appMode === 'ide-extension' ? {
+            text: 'Save',
+            eventName: 'save',
+          } : undefined}
+          embededMode={false}
+        />}
         notifications={notifications}
       >
         <AppInner setWorkspaceId={setWorkspaceId} />

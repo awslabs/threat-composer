@@ -70,6 +70,7 @@ monorepo.postCompileTask.reset('yarn run generate:attribution && yarn run licens
 
 const uiESModules = [ 
   "unified",
+  "@aws-northstar/ui"
 ].join("|");
 
 const uiProject = new TypeScriptProject({
@@ -210,6 +211,21 @@ appProject.eslint?.addRules({
 });
 
 appProject.testTask.reset('react-scripts test --watchAll=false --passWithNoTests');
+const compileWebsiteTask = appProject.addTask('compile:website', {
+  exec: 'BUILD_PATH=./build/website/ react-scripts build'
+});
+const compileBrowserExtensionTask = appProject.addTask('compile:browser-extension', {
+  exec: 'INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/browser-extension/ REACT_APP_APP_MODE=browser-extension react-scripts build'
+});
+const compileIDEExtensionTask = appProject.addTask('compile:ide-extension', {
+  exec: 'INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/ide-extension/ REACT_APP_APP_MODE=ide-extension react-scripts build'
+});
+
+appProject.compileTask.reset('echo Building Artifacts for Websites, Browser Extensions and IDE Plugins');
+appProject.compileTask.spawn(compileWebsiteTask);
+appProject.compileTask.spawn(compileBrowserExtensionTask);
+appProject.compileTask.spawn(compileIDEExtensionTask);
+
 appProject.postCompileTask.reset(`[ -d ./build/storybook ] || mkdir -p ./build/storybook`);
 appProject.postCompileTask.exec(`cp -r ../threat-composer/storybook.out/ ./build/storybook/`);
 

@@ -21,6 +21,7 @@ import useExportImport, {
   PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE,
 } from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
+import EventController from '../../../utils/EventController';
 
 declare global {
   interface Window {
@@ -31,6 +32,8 @@ declare global {
 const stringifyWorkspaceData = (data: any) => {
   return JSON.stringify(data, null, 2);
 };
+
+const eventController = new EventController();
 
 window.threatcomposer = {
   getWorkspaceList: () => [PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE],
@@ -43,6 +46,8 @@ window.threatcomposer = {
     Promise.resolve(PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE),
   deleteWorkspace: () => Promise.resolve(),
   renameWorkspace: () => Promise.resolve(),
+  addEventListener: (eventName, eventHandler) => eventController.addEventListener(eventName, eventHandler),
+  dispatchEvent: (event) => eventController.dispatchEvent(event),
 };
 
 /**

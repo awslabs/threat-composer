@@ -58,7 +58,40 @@
       "description": "Only compile",
       "steps": [
         {
-          "exec": "react-scripts build"
+          "exec": "echo Building Artifacts for Websites, Browser Extensions and IDE Plugins"
+        },
+        {
+          "spawn": "compile:website"
+        },
+        {
+          "spawn": "compile:browser-extension"
+        },
+        {
+          "spawn": "compile:ide-extension"
+        }
+      ]
+    },
+    "compile:browser-extension": {
+      "name": "compile:browser-extension",
+      "steps": [
+        {
+          "exec": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/browser-extension/ REACT_APP_APP_MODE=browser-extension react-scripts build"
+        }
+      ]
+    },
+    "compile:ide-extension": {
+      "name": "compile:ide-extension",
+      "steps": [
+        {
+          "exec": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/ide-extension/ REACT_APP_APP_MODE=ide-extension react-scripts build"
+        }
+      ]
+    },
+    "compile:website": {
+      "name": "compile:website",
+      "steps": [
+        {
+          "exec": "BUILD_PATH=./build/website/ react-scripts build"
         }
       ]
     },

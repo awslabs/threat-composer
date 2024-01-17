@@ -21,6 +21,7 @@ import { DataflowInfoSchema } from './dataflow';
 import { MitigationSchema, MitigationLinkSchema } from './mitigations';
 import { TemplateThreatStatementSchema } from './threats';
 import { WorkspaceSchema, Workspace } from './workspaces';
+import { EventHandler } from '../utils/EventController';
 
 export const DataExchangeFormatSchema = z.object({
   schema: z.number(),
@@ -72,4 +73,6 @@ export interface ThreatComposerNamespace {
     metadata?: Workspace['metadata']) => Promise<Workspace>;
   deleteWorkspace: (id: string) => Promise<void>;
   renameWorkspace: (id: string, newWorkspaceName: string) => Promise<void>;
+  dispatchEvent: (event: CustomEvent) => void;
+  addEventListener: (eventName: string, eventHandler: EventHandler) => void;
 }

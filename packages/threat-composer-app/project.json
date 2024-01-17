@@ -99,6 +99,27 @@
         "command": "yarn projen dev",
         "cwd": "packages/threat-composer-app"
       }
+    },
+    "compile:website": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn projen compile:website",
+        "cwd": "packages/threat-composer-app"
+      }
+    },
+    "compile:browser-extension": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn projen compile:browser-extension",
+        "cwd": "packages/threat-composer-app"
+      }
+    },
+    "compile:ide-extension": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn projen compile:ide-extension",
+        "cwd": "packages/threat-composer-app"
+      }
     }
   },
   "implicitDependencies": [
