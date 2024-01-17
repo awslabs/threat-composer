@@ -16,12 +16,8 @@
 import { useCallback, FC, PropsWithChildren, useEffect } from 'react';
 import { useWorkspacesContext } from '../../../contexts';
 import { ThreatComposerNamespace } from '../../../customTypes/dataExchange';
-import useExportImport, {
-  PLACEHOLDER_EXCHANGE_DATA,
-  PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE,
-} from '../../../hooks/useExportImport';
+import useExportImport from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
-import EventController from '../../../utils/EventController';
 
 declare global {
   interface Window {
@@ -33,22 +29,7 @@ const stringifyWorkspaceData = (data: any) => {
   return JSON.stringify(data, null, 2);
 };
 
-const eventController = new EventController();
-
-window.threatcomposer = {
-  getWorkspaceList: () => [PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE],
-  getCurrentWorkspaceMetadata: () => PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE,
-  getCurrentWorkspaceData: () => PLACEHOLDER_EXCHANGE_DATA,
-  stringifyWorkspaceData,
-  setCurrentWorkspaceData: () => Promise.resolve(),
-  switchWorkspace: () => {},
-  createWorkspace: () =>
-    Promise.resolve(PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE),
-  deleteWorkspace: () => Promise.resolve(),
-  renameWorkspace: () => Promise.resolve(),
-  addEventListener: (eventName, eventHandler) => eventController.addEventListener(eventName, eventHandler),
-  dispatchEvent: (event) => eventController.dispatchEvent(event),
-};
+window.threatcomposer = {};
 
 /**
  * Export threat-composer functionalities via window object.
@@ -103,6 +84,10 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({ children }) => {
   useEffect(() => {
     window.threatcomposer.renameWorkspace = renameWorkspace;
   }, [renameWorkspace]);
+
+  useEffect(() => {
+    window.threatcomposer.stringifyWorkspaceData = stringifyWorkspaceData;
+  }, []);
 
   return <>{children}</>;
 };

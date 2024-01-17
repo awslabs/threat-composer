@@ -16,8 +16,13 @@
 import DeleteConfirmationDialog from '@aws-northstar/ui/components/DeleteConfirmationDialog';
 import Alert from '@cloudscape-design/components/alert';
 import Button from '@cloudscape-design/components/button';
-import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
-import { CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import ButtonDropdown, {
+  ButtonDropdownProps,
+} from '@cloudscape-design/components/button-dropdown';
+import {
+  CancelableEventHandler,
+  NonCancelableEventHandler,
+} from '@cloudscape-design/components/internal/events';
 import Select, { SelectProps } from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo, useState, useCallback, PropsWithChildren } from 'react';
@@ -29,7 +34,10 @@ import {
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext';
 import { useWorkspaceExamplesContext } from '../../../contexts/WorkspaceExamplesContext';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext';
-import { DataExchangeFormat, TemplateThreatStatement } from '../../../customTypes';
+import {
+  DataExchangeFormat,
+  TemplateThreatStatement,
+} from '../../../customTypes';
 import useImportExport from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
 import isWorkspaceExample from '../../../utils/isWorkspaceExample';
@@ -60,14 +68,18 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
   singletonMode = false,
   singletonPrimaryActionButtonConfig,
 }) => {
-  const [addWorkspaceModalVisible, setAddWorkspaceModalVisible] = useState(false);
-  const [editWorkspaceModalVisible, setEditWorkspaceModalVisible] = useState(false);
+  const [addWorkspaceModalVisible, setAddWorkspaceModalVisible] =
+    useState(false);
+  const [editWorkspaceModalVisible, setEditWorkspaceModalVisible] =
+    useState(false);
   const [removeDataModalVisible, setRemoveDataModalVisible] = useState(false);
-  const [removeWorkspaceModalVisible, setRemoveWorkspaceModalVisible] = useState(false);
+  const [removeWorkspaceModalVisible, setRemoveWorkspaceModalVisible] =
+    useState(false);
   const [isRemovingWorkspace, setIsRemovingWorkspace] = useState(false);
 
   const { workspaceExamples } = useWorkspaceExamplesContext();
-  const { importData, exportAll, exportSelectedThreats, getWorkspaceData } = useImportExport();
+  const { importData, exportAll, exportSelectedThreats, getWorkspaceData } =
+    useImportExport();
   const { removeData, deleteWorkspace } = useRemoveData();
 
   const {
@@ -95,87 +107,99 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
       },
       {
         label: EXAMPLES_SECTION_WORKSPACE_LABEL,
-        options: workspaceExamples.map(we => ({
+        options: workspaceExamples.map((we) => ({
           label: we.name,
           value: we.id,
         })),
       },
     ];
 
-    workspaceList && workspaceList.length > 0 && options.push({
-      label: 'Workspaces',
-      options: workspaceList.map(w => ({
-        label: w.name,
-        value: w.id,
-      })),
-    });
+    workspaceList &&
+      workspaceList.length > 0 &&
+      options.push({
+        label: 'Workspaces',
+        options: workspaceList.map((w) => ({
+          label: w.name,
+          value: w.id,
+        })),
+      });
 
     return options;
   }, [workspaceList]);
 
-  const handleSelectWorkspace: NonCancelableEventHandler<SelectProps.ChangeDetail> = useCallback(({ detail }) => {
-    const selectedItem = detail.selectedOption;
-    if (selectedItem.value === DEFAULT_WORKSPACE_ID) {
-      switchWorkspace(null);
-    } else {
-      selectedItem.value && selectedItem.label && switchWorkspace(selectedItem.value);
-    }
-  }, [switchWorkspace]);
+  const handleSelectWorkspace: NonCancelableEventHandler<SelectProps.ChangeDetail> =
+    useCallback(
+      ({ detail }) => {
+        const selectedItem = detail.selectedOption;
+        if (selectedItem.value === DEFAULT_WORKSPACE_ID) {
+          switchWorkspace(null);
+        } else {
+          selectedItem.value &&
+            selectedItem.label &&
+            switchWorkspace(selectedItem.value);
+        }
+      },
+      [switchWorkspace],
+    );
 
   const handleSingletonPrimaryButtonClick = useCallback(() => {
     if (singletonPrimaryActionButtonConfig) {
       const data = getWorkspaceData();
       singletonPrimaryActionButtonConfig.onClick?.(data);
       singletonPrimaryActionButtonConfig.eventName &&
-        window.threatcomposer.dispatchEvent(new CustomEvent(
-          singletonPrimaryActionButtonConfig.eventName,
-          {
+        window.threatcomposer.dispatchEvent?.(
+          new CustomEvent(singletonPrimaryActionButtonConfig.eventName, {
             detail: data,
-          }));
+          }),
+        );
     } else {
       exportAll();
     }
   }, [singletonPrimaryActionButtonConfig, getWorkspaceData, exportAll]);
 
-  const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(async ({ detail }) => {
-    switch (detail.id) {
-      case 'add':
-        setAddWorkspaceModalVisible(true);
-        break;
-      case 'import':
-        setFileImportModalVisible(true);
-        break;
-      case 'exportAll':
-        exportAll();
-        break;
-      case 'exportFilteredList':
-        exportSelectedThreats(filteredThreats || []);
-        break;
-      case 'removeAll':
-        setRemoveDataModalVisible(true);
-        break;
-      case 'delete':
-        currentWorkspace && setRemoveWorkspaceModalVisible(true);
-        break;
-      case 'renameWorkspace':
-        setEditWorkspaceModalVisible(true);
-        break;
-      default:
-        console.log('Unknown action', detail.id);
-    }
-  }, [
-    setFileImportModalVisible,
-    exportAll,
-    exportSelectedThreats,
-    filteredThreats,
-    deleteWorkspace,
-    currentWorkspace,
-    setRemoveDataModalVisible,
-    setRemoveWorkspaceModalVisible,
-    setAddWorkspaceModalVisible,
-    setEditWorkspaceModalVisible,
-    handleSingletonPrimaryButtonClick,
-  ]);
+  const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> =
+    useCallback(
+      async ({ detail }) => {
+        switch (detail.id) {
+          case 'add':
+            setAddWorkspaceModalVisible(true);
+            break;
+          case 'import':
+            setFileImportModalVisible(true);
+            break;
+          case 'exportAll':
+            exportAll();
+            break;
+          case 'exportFilteredList':
+            exportSelectedThreats(filteredThreats || []);
+            break;
+          case 'removeAll':
+            setRemoveDataModalVisible(true);
+            break;
+          case 'delete':
+            currentWorkspace && setRemoveWorkspaceModalVisible(true);
+            break;
+          case 'renameWorkspace':
+            setEditWorkspaceModalVisible(true);
+            break;
+          default:
+            console.log('Unknown action', detail.id);
+        }
+      },
+      [
+        setFileImportModalVisible,
+        exportAll,
+        exportSelectedThreats,
+        filteredThreats,
+        deleteWorkspace,
+        currentWorkspace,
+        setRemoveDataModalVisible,
+        setRemoveWorkspaceModalVisible,
+        setAddWorkspaceModalVisible,
+        setEditWorkspaceModalVisible,
+        handleSingletonPrimaryButtonClick,
+      ],
+    );
 
   const handleRemoveData = useCallback(async () => {
     try {
@@ -187,23 +211,29 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     }
   }, [removeData]);
 
-  const handleDeleteWorkspace = useCallback(async (toDeleteWorkspaceId: string) => {
-    setIsRemovingWorkspace(true);
+  const handleDeleteWorkspace = useCallback(
+    async (toDeleteWorkspaceId: string) => {
+      setIsRemovingWorkspace(true);
 
-    try {
-      await deleteWorkspace(toDeleteWorkspaceId);
-    } catch (e) {
-      console.log('Error in deleting workspace', e);
-    } finally {
-      setRemoveWorkspaceModalVisible(false);
-      setIsRemovingWorkspace(false);
-    }
-  }, []);
+      try {
+        await deleteWorkspace(toDeleteWorkspaceId);
+      } catch (e) {
+        console.log('Error in deleting workspace', e);
+      } finally {
+        setRemoveWorkspaceModalVisible(false);
+        setIsRemovingWorkspace(false);
+      }
+    },
+    [],
+  );
 
-  const handleImport = useCallback(async (data: DataExchangeFormat) => {
-    await importData(data);
-    onImported?.();
-  }, [importData, onImported]);
+  const handleImport = useCallback(
+    async (data: DataExchangeFormat) => {
+      await importData(data);
+      onImported?.();
+    },
+    [importData, onImported],
+  );
 
   const buttonDropdownItems = useMemo(() => {
     const items: ButtonDropdownProps.Item[] = [];
@@ -226,7 +256,9 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         },
         {
           id: 'exportAll',
-          text: embededMode ? 'Export all statements from current workspace' : 'Export data from current workspace',
+          text: embededMode
+            ? 'Export all statements from current workspace'
+            : 'Export data from current workspace',
           disabled: embededMode && !enabledExportAll,
         },
       );
@@ -253,120 +285,157 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     } else {
       items.push({
         id: 'removeAll',
-        text: embededMode ? 'Remove all statements from current workspace' : 'Remove data from current workspace',
-        disabled: (embededMode && !enabledRemoveAll) || isWorkspaceExample(currentWorkspace?.id),
+        text: embededMode
+          ? 'Remove all statements from current workspace'
+          : 'Remove data from current workspace',
+        disabled:
+          (embededMode && !enabledRemoveAll) ||
+          isWorkspaceExample(currentWorkspace?.id),
       });
     }
 
     if (!singletonMode) {
-      items.push({
-        id: 'delete',
-        text: 'Delete workspace',
-        disabled: !currentWorkspace || isWorkspaceExample(currentWorkspace.id),
-      },
-      {
-        id: 'renameWorkspace',
-        text: 'Rename workspace',
-        disabled: !currentWorkspace || isWorkspaceExample(currentWorkspace.id),
-      });
+      items.push(
+        {
+          id: 'delete',
+          text: 'Delete workspace',
+          disabled:
+            !currentWorkspace || isWorkspaceExample(currentWorkspace.id),
+        },
+        {
+          id: 'renameWorkspace',
+          text: 'Rename workspace',
+          disabled:
+            !currentWorkspace || isWorkspaceExample(currentWorkspace.id),
+        },
+      );
     }
 
     return items;
-  }, [singletonMode, singletonPrimaryActionButtonConfig, embededMode, enabledRemoveAll, enabledExportAll, enabledExportFiltered, currentWorkspace]);
+  }, [
+    singletonMode,
+    singletonPrimaryActionButtonConfig,
+    embededMode,
+    enabledRemoveAll,
+    enabledExportAll,
+    enabledExportFiltered,
+    currentWorkspace,
+  ]);
 
-  return (<>
-    <SpaceBetween direction="horizontal" size="xs">
-      {!singletonMode && <Select
-        controlId='WorkspacesSelect'
-        selectedOption={{
-          value: currentWorkspace?.id || DEFAULT_WORKSPACE_ID,
-          label: `Workspace: ${currentWorkspace?.name || DEFAULT_WORKSPACE_LABEL}`,
-        }}
-        options={workspacesOptions}
-        onChange={handleSelectWorkspace}
-      />}
-      {singletonMode && <Button
-        variant='primary'
-        onClick={handleSingletonPrimaryButtonClick}
-      >
-        {singletonPrimaryActionButtonConfig ?
-          singletonPrimaryActionButtonConfig.text :
-          'Export data'}
-      </Button>
-      }
-      {children}
-      {buttonDropdownItems.length > 0 && <ButtonDropdown
-        items={buttonDropdownItems}
-        ariaLabel="More actions"
-        variant="icon"
-        onItemClick={handleMoreActions}
-      />}
-    </SpaceBetween>
-    {fileImportModalVisible && <FileImport
-      composerMode={composerMode}
-      visible={fileImportModalVisible}
-      setVisible={setFileImportModalVisible}
-      onExport={exportAll}
-      onImport={handleImport}
-      onPreview={onPreview}
-      onPreviewClose={onPreviewClose}
-    />}
-    {addWorkspaceModalVisible && <AddWorkspace
-      visible={addWorkspaceModalVisible}
-      setVisible={setAddWorkspaceModalVisible}
-      onConfirm={async (workspaceName: string) => {
-        await addWorkspace(workspaceName);
-      }}
-    />}
-    {editWorkspaceModalVisible && currentWorkspace && <AddWorkspace
-      visible={editWorkspaceModalVisible}
-      setVisible={setEditWorkspaceModalVisible}
-      editMode
-      value={currentWorkspace.name}
-      onConfirm={(newWorkspaceName) => renameWorkspace(currentWorkspace.id, newWorkspaceName)}
-    />}
-    {removeDataModalVisible && <DeleteConfirmationDialog
-      variant='friction'
-      visible={removeDataModalVisible}
-      title='Delete data from current workspace?'
-      onCancelClicked={() => setRemoveDataModalVisible(false)}
-      onDeleteClicked={handleRemoveData}
-      deleteButtonText='Remove data'
-    >
-      <Alert
-        action={<Button
-          onClick={() => exportAll()}
+  return (
+    <>
+      <SpaceBetween direction="horizontal" size="xs">
+        {!singletonMode && (
+          <Select
+            controlId="WorkspacesSelect"
+            selectedOption={{
+              value: currentWorkspace?.id || DEFAULT_WORKSPACE_ID,
+              label: `Workspace: ${
+                currentWorkspace?.name || DEFAULT_WORKSPACE_LABEL
+              }`,
+            }}
+            options={workspacesOptions}
+            onChange={handleSelectWorkspace}
+          />
+        )}
+        {singletonMode && (
+          <Button variant="primary" onClick={handleSingletonPrimaryButtonClick}>
+            {singletonPrimaryActionButtonConfig
+              ? singletonPrimaryActionButtonConfig.text
+              : 'Export data'}
+          </Button>
+        )}
+        {children}
+        {buttonDropdownItems.length > 0 && (
+          <ButtonDropdown
+            items={buttonDropdownItems}
+            ariaLabel="More actions"
+            variant="icon"
+            onItemClick={handleMoreActions}
+          />
+        )}
+      </SpaceBetween>
+      {fileImportModalVisible && (
+        <FileImport
+          composerMode={composerMode}
+          visible={fileImportModalVisible}
+          setVisible={setFileImportModalVisible}
+          onExport={exportAll}
+          onImport={handleImport}
+          onPreview={onPreview}
+          onPreviewClose={onPreviewClose}
+        />
+      )}
+      {addWorkspaceModalVisible && (
+        <AddWorkspace
+          visible={addWorkspaceModalVisible}
+          setVisible={setAddWorkspaceModalVisible}
+          onConfirm={async (workspaceName: string) => {
+            await addWorkspace(workspaceName);
+          }}
+        />
+      )}
+      {editWorkspaceModalVisible && currentWorkspace && (
+        <AddWorkspace
+          visible={editWorkspaceModalVisible}
+          setVisible={setEditWorkspaceModalVisible}
+          editMode
+          value={currentWorkspace.name}
+          onConfirm={(newWorkspaceName) =>
+            renameWorkspace(currentWorkspace.id, newWorkspaceName)
+          }
+        />
+      )}
+      {removeDataModalVisible && (
+        <DeleteConfirmationDialog
+          variant="friction"
+          visible={removeDataModalVisible}
+          title="Delete data from current workspace?"
+          onCancelClicked={() => setRemoveDataModalVisible(false)}
+          onDeleteClicked={handleRemoveData}
+          deleteButtonText="Remove data"
         >
-          Export data
-        </Button>}
-        type='warning'>
-        Delete <b>Data from {currentWorkspace ? `workspace ${currentWorkspace.name}` : 'Default workspace'}</b> permenantly? This action cannot be undone.
-        <br />
-        You can export the data to a json file as backup.
-      </Alert>
-    </DeleteConfirmationDialog>}
-    {removeWorkspaceModalVisible && currentWorkspace && <DeleteConfirmationDialog
-      variant='friction'
-      visible={removeWorkspaceModalVisible}
-      title='Delete Workspace?'
-      onCancelClicked={() => setRemoveWorkspaceModalVisible(false)}
-      onDeleteClicked={() => handleDeleteWorkspace(currentWorkspace.id)}
-      loading={isRemovingWorkspace}
-      deleteButtonText='Delete workspace'
-    >
-      <Alert
-        action={<Button
-          onClick={() => exportAll()}
+          <Alert
+            action={<Button onClick={() => exportAll()}>Export data</Button>}
+            type="warning"
+          >
+            Delete{' '}
+            <b>
+              Data from{' '}
+              {currentWorkspace
+                ? `workspace ${currentWorkspace.name}`
+                : 'Default workspace'}
+            </b>{' '}
+            permenantly? This action cannot be undone.
+            <br />
+            You can export the data to a json file as backup.
+          </Alert>
+        </DeleteConfirmationDialog>
+      )}
+      {removeWorkspaceModalVisible && currentWorkspace && (
+        <DeleteConfirmationDialog
+          variant="friction"
+          visible={removeWorkspaceModalVisible}
+          title="Delete Workspace?"
+          onCancelClicked={() => setRemoveWorkspaceModalVisible(false)}
+          onDeleteClicked={() => handleDeleteWorkspace(currentWorkspace.id)}
+          loading={isRemovingWorkspace}
+          deleteButtonText="Delete workspace"
         >
-          Export data
-        </Button>}
-        type='warning'>
-        Delete <b>workspace {currentWorkspace?.name}</b> permenantly? All the data inside workspace will be deleted. This action cannot be undone.
-        <br />
-        You can export the data to a json file as backup.
-      </Alert>
-    </DeleteConfirmationDialog>}
-  </>);
+          <Alert
+            action={<Button onClick={() => exportAll()}>Export data</Button>}
+            type="warning"
+          >
+            Delete <b>workspace {currentWorkspace?.name}</b> permenantly? All
+            the data inside workspace will be deleted. This action cannot be
+            undone.
+            <br />
+            You can export the data to a json file as backup.
+          </Alert>
+        </DeleteConfirmationDialog>
+      )}
+    </>
+  );
 };
 
 export default WorkspaceSelector;
