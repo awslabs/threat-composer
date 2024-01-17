@@ -147,7 +147,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
       const data = getWorkspaceData();
       singletonPrimaryActionButtonConfig.onClick?.(data);
       singletonPrimaryActionButtonConfig.eventName &&
-        window.threatcomposer.dispatchEvent?.(
+        window.threatcomposer.dispatchEvent(
           new CustomEvent(singletonPrimaryActionButtonConfig.eventName, {
             detail: data,
           }),
