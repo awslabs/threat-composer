@@ -215,7 +215,8 @@ export class ApplicationStack extends Stack {
       websiteContentPath: path.join(
         PACKAGES_ROOT,
         "threat-composer-app",
-        "build"
+        "build",
+        "website"
       ),
       webAclProps: {
         cidrAllowList: {

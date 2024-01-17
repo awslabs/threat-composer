@@ -27,8 +27,8 @@ const WorkspaceSelector: FC<WorkspaceSelectorProps> = ({ composerMode, appMode }
   return (<ContextAggregator composerMode={composerMode as ComposerMode}>
     <WorkspaceSelectorComponent
       embededMode={false}
-      singletonMode={appMode === 'extension' || appMode === 'vscode'}
-      singletonPrimaryActionButtonConfig={appMode === 'vscode' ? {
+      singletonMode={appMode === 'browser-extension' || appMode === 'ide-extension'}
+      singletonPrimaryActionButtonConfig={appMode === 'ide-extension' ? {
         text: 'Save',
         eventName: 'save',
       } : undefined}

@@ -211,8 +211,8 @@ const Full: FC = () => {
         navigationItems={navigationItems}
         availableRoutes={routes.map(x => x.path || '')}
         breadcrumbGroup={<WorkspaceSelector
-          singletonMode={appMode === 'extension' || appMode === 'vscode'}
-          singletonPrimaryActionButtonConfig={appMode === 'vscode' ? {
+          singletonMode={appMode === 'browser-extension' || appMode === 'ide-extension'}
+          singletonPrimaryActionButtonConfig={appMode === 'ide-extension' ? {
             text: 'Save',
             eventName: 'save',
           } : undefined}

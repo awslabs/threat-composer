@@ -58,40 +58,40 @@
       "description": "Only compile",
       "steps": [
         {
-          "exec": "echo Building Artifacts for Web, Browser Extensions and VSCode Plugins"
+          "exec": "echo Building Artifacts for Websites, Browser Extensions and IDE Plugins"
         },
         {
-          "spawn": "complie:web"
+          "spawn": "compile:website"
         },
         {
-          "spawn": "complie:extension"
+          "spawn": "compile:browser-extension"
         },
         {
-          "spawn": "complie:vscode"
+          "spawn": "compile:ide-extension"
         }
       ]
     },
-    "complie:extension": {
-      "name": "complie:extension",
+    "compile:browser-extension": {
+      "name": "compile:browser-extension",
       "steps": [
         {
-          "exec": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/extension/ REACT_APP_APP_MODE=extension react-scripts build"
+          "exec": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/browser-extension/ REACT_APP_APP_MODE=browser-extension react-scripts build"
         }
       ]
     },
-    "complie:vscode": {
-      "name": "complie:vscode",
+    "compile:ide-extension": {
+      "name": "compile:ide-extension",
       "steps": [
         {
-          "exec": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/vscode/ REACT_APP_APP_MODE=vscode react-scripts build"
+          "exec": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/ide-extension/ REACT_APP_APP_MODE=ide-extension react-scripts build"
         }
       ]
     },
-    "complie:web": {
-      "name": "complie:web",
+    "compile:website": {
+      "name": "compile:website",
       "steps": [
         {
-          "exec": "BUILD_PATH=./build/web/ react-scripts build"
+          "exec": "BUILD_PATH=./build/website/ react-scripts build"
         }
       ]
     },

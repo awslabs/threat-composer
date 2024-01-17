@@ -100,24 +100,24 @@
         "cwd": "packages/threat-composer-app"
       }
     },
-    "complie:web": {
+    "compile:website": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn projen complie:web",
+        "command": "yarn projen compile:website",
         "cwd": "packages/threat-composer-app"
       }
     },
-    "complie:extension": {
+    "compile:browser-extension": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn projen complie:extension",
+        "command": "yarn projen compile:browser-extension",
         "cwd": "packages/threat-composer-app"
       }
     },
-    "complie:vscode": {
+    "compile:ide-extension": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn projen complie:vscode",
+        "command": "yarn projen compile:ide-extension",
         "cwd": "packages/threat-composer-app"
       }
     }
