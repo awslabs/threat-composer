@@ -47,3 +47,5 @@ jspm_packages/
 .temp/
 oss-attribution/
 storybook.out/
+.DS_Store
+.output/

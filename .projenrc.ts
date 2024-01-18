@@ -9,7 +9,7 @@ const monorepo = new NxMonorepoProject({
   defaultReleaseBranch: "main",
   name: "@aws/threat-composer-monorepo",
   devDeps: [
-    "@aws-prototyping-sdk/nx-monorepo@^0.19.2", 
+    "@aws-prototyping-sdk/nx-monorepo@^0.19.2",
     "@aws-prototyping-sdk/pipeline@^0.19.2",
     "@aws-prototyping-sdk/pdk-nag@^0.19.2",
     "eslint-plugin-header",
@@ -26,9 +26,14 @@ monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.js-yaml", "
 monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.semver", "^7.5.3");
 monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.@babel/traverse", "^7.23.2");
 monorepo.tryFindObjectFile("package.json")?.addOverride("resolutions.postcss", "^8.4.31");
+monorepo
+  .tryFindObjectFile("package.json")
+  ?.addOverride("workspaces.nohoist", ["**/wxt"]);
 monorepo.addGitIgnore('.temp/');
 monorepo.addGitIgnore('oss-attribution/');
 monorepo.addGitIgnore('storybook.out/');
+monorepo.addGitIgnore(".DS_Store");
+monorepo.addGitIgnore(".output/");
 
 monorepo.addTask('export:examples', {
   steps: [
@@ -68,7 +73,7 @@ monorepo.addTask('storybook', {
 monorepo.compileTask.reset('npx nx run-many --target=build --all --skip-nx-cache --nx-bail');
 monorepo.postCompileTask.reset('yarn run generate:attribution && yarn run license:checker');
 
-const uiESModules = [ 
+const uiESModules = [
   "unified",
   "@aws-northstar/ui"
 ].join("|");
@@ -143,7 +148,7 @@ const uiProject = new TypeScriptProject({
       transformIgnorePatterns: [
         `[/\\\\]node_modules[/\\\\](?!${uiESModules}).+\\.(js|jsx|mjs|cjs|ts|tsx)$`,
       ],
-    }, 
+    },
   },
   tsconfig: {
     compilerOptions: {
@@ -253,7 +258,63 @@ infraProject.eslint?.addRules({
   "header/header": [2, "../../header.js"],
 });
 
+const browserExtensionProject = new TypeScriptProject({
+  parent: monorepo,
+  outdir: "packages/threat-composer-app-browser-extension",
+  defaultReleaseBranch: "main",
+  name: "@aws/threat-composer-app-browser-extension",
+  deps: [
+    "react-router-dom",
+    "@cloudscape-design/components",
+    "react",
+    "react-dom",
+  ],
+  devDeps: [
+    "wxt@^0.14.0",
+    "@vitejs/plugin-react",
+    "rollup-plugin-copy",
+    "@types/react",
+    "@types/react-dom",
+  ],
+  sampleCode: false,
+  tsconfig: {
+    compilerOptions: {
+      lib: ["dom", "dom.iterable"],
+      jsx: TypeScriptJsxMode.REACT_JSX,
+    },
+    include: ["src", ".wxt/types"],
+  },
+});
+
+browserExtensionProject.addTask("dev", {
+  exec: "wxt",
+});
+
+browserExtensionProject.addTask("dev:firefox", {
+  exec: "wxt --browser firefox",
+});
+
+browserExtensionProject.compileTask.reset("wxt build");
+
+browserExtensionProject.addTask("zip", {
+  exec: "wxt zip",
+});
+
+browserExtensionProject.addTask("zip:firefox", {
+  exec: "wxt zip --browser firefox",
+});
+
+browserExtensionProject.addTask("postinstall", {
+  exec: "wxt prepare",
+});
+
+browserExtensionProject.eslint?.addPlugins("header");
+browserExtensionProject.eslint?.addRules({
+  "header/header": [2, "../../header.js"],
+});
+
 monorepo.addImplicitDependency(appProject, uiProject);
 monorepo.addImplicitDependency(infraProject, appProject);
+monorepo.addImplicitDependency(browserExtensionProject, appProject);
 
 monorepo.synth();
