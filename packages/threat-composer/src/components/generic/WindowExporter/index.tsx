@@ -93,8 +93,6 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({ children }) => {
     window.threatcomposer.renameWorkspace = renameWorkspace;
   }, [renameWorkspace]);
 
-  window.threatcomposer.stringifyWorkspaceData = stringifyWorkspaceData;
-
   return <>{children}</>;
 };
 
