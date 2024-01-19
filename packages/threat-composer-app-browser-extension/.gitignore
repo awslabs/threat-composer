@@ -29,11 +29,10 @@ jspm_packages/
 *.tgz
 .yarn-integrity
 .cache
-.tmp
-.nx/cache
 !/.projenrc.js
-!/.prettierignore
-!/.prettierrc.json
+/test-reports/
+junit.xml
+/coverage/
 !/test/
 !/tsconfig.json
 !/tsconfig.dev.json
@@ -41,11 +40,4 @@ jspm_packages/
 /lib
 /dist/
 !/.eslintrc.json
-!/.syncpackrc.json
-!/nx.json
-!/.nxignore
-.temp/
-oss-attribution/
-storybook.out/
-.DS_Store
-.output/
+!/project.json

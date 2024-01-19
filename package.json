@@ -70,7 +70,11 @@
     "packages": [
       "packages/threat-composer",
       "packages/threat-composer-app",
+      "packages/threat-composer-app-browser-extension",
       "packages/threat-composer-infra"
+    ],
+    "nohoist": [
+      "**/wxt"
     ]
   },
   "resolutions": {
