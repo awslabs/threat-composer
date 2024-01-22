@@ -33,50 +33,55 @@ interface TCCodeBrowserState {
   stopProcessing: boolean;
 }
 
+function forwardFetchToBackground(message: any): Promise<TCJSONSimplifiedSchema> {
+  return browser.runtime.sendMessage(message).then((response: any) => {
+    if (!response) throw browser.runtime.lastError;
+    return response;
+  });
+}
+
 
 function isLikelyThreatComposerSchema(JSONobj: TCJSONSimplifiedSchema) {
   return JSONobj.schema ? true : false;
 };
 
 async function getTCJSONCandidate(url: string, element: HTMLElement, config: TCConfig) {
-  const tcJSONCandidate: TCJSONSimplifiedSchema = await fetch(url)
-    .then(function (response) {
+  return forwardFetchToBackground({ url: url })
+    .then(function (tcJSONCandidate) {
       logDebugMessage(config, 'Able to get a JSON candidate');
-      return response.json();
+      if (tcJSONCandidate && isLikelyThreatComposerSchema(tcJSONCandidate)) {
+        logDebugMessage(config,
+          'Looks like it could be a Threat Composer file, enabling ' +
+          element.textContent +
+          ' button',
+        );
+        element.onclick = function () {
+          logDebugMessage(config,
+            'Sending message with candicate JSON object back service worker / background script',
+          );
+          browser.runtime.sendMessage(tcJSONCandidate);
+        };
+
+        switch (element.tagName) { //"Enable" button / anchor
+          case 'BUTTON':
+            (element as HTMLInputElement).disabled = false;
+            break;
+          case 'A': //Anchor
+            element.style.pointerEvents = 'auto';
+            break;
+        }
+
+      } else {
+        logDebugMessage(config,
+          "Does NOT look like it's a Threat Composer file, NOT enabling " +
+          element.textContent +
+          ' button',
+        );
+      }
     })
     .catch(function (error) {
       logDebugMessage(config, 'Error during fetch: ' + error.message);
     });
-
-  if (tcJSONCandidate && isLikelyThreatComposerSchema(tcJSONCandidate)) {
-    logDebugMessage(config,
-      'Looks like it could be a Threat Composer file, enabling ' +
-      element.textContent +
-      ' button',
-    );
-    element.onclick = function () {
-      logDebugMessage(config,
-        'Sending message with candicate JSON object back service worker / background script',
-      );
-      browser.runtime.sendMessage(tcJSONCandidate);
-    };
-
-    switch (element.tagName) { //"Enable" button / anchor
-      case 'BUTTON':
-        (element as HTMLInputElement).disabled = false;
-        break;
-      case 'A': //Anchor
-        element.style.pointerEvents = 'auto';
-        break;
-    }
-
-  } else {
-    logDebugMessage(config,
-      "Does NOT look like it's a Threat Composer file, NOT enabling " +
-      element.textContent +
-      ' button',
-    );
-  }
 };
 
 async function handleRawFile(config: TCConfig) {

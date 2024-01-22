@@ -52,6 +52,14 @@ export default defineBackground(() => {
             browser.tabs.create({ url: tcUrlCreate });
           }
         });
+      } else if (request.url) {
+        return fetch(request.url)
+          .then((response) => response.json())
+          .catch((error) => {
+            console.log(error);
+          });
+        // As we will reply asynchronously to the request, we need to tell chrome to wait for our response
+        //return true;
       }
     });
   }).catch((error) => {
