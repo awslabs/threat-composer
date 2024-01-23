@@ -15,29 +15,8 @@
  ******************************************************************************************************************** */
 import { useCallback, FC, PropsWithChildren, useEffect } from 'react';
 import { useWorkspacesContext } from '../../../contexts';
-import { ThreatComposerNamespace } from '../../../customTypes/dataExchange';
 import useExportImport from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
-import EventController from '../../../utils/EventController';
-
-declare global {
-  interface Window {
-    threatcomposer: ThreatComposerNamespace;
-  }
-}
-
-const stringifyWorkspaceData = (data: any) => {
-  return JSON.stringify(data, null, 2);
-};
-
-const eventController = new EventController();
-
-window.threatcomposer = {
-  stringifyWorkspaceData,
-  addEventListener: (eventName, eventHandler) =>
-    eventController.addEventListener(eventName, eventHandler),
-  dispatchEvent: (event) => eventController.dispatchEvent(event),
-};
 
 /**
  * Export threat-composer functionalities via window object.
