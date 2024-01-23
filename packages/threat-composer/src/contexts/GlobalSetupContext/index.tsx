@@ -14,12 +14,14 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
+import { applyMode as applyCloudscapeMode, Mode, applyDensity as applyCloudscapeDensity, Density } from '@cloudscape-design/global-styles';
 import { FC, PropsWithChildren, useState, useEffect } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { GlobalSetupContext, useGlobalSetupContext } from './context';
 import InfoModal from '../../components/global/InfoModal';
 import { LOCAL_STORAGE_KEY_NEW_VISIT_FLAG } from '../../configs/localStorageKeys';
 import { ComposerMode, DataExchangeFormat } from '../../customTypes';
+import EventController from '../../utils/EventController';
 
 import '@cloudscape-design/global-styles/index.css';
 
@@ -31,6 +33,30 @@ export interface GlobalSetupContextProviderProps {
   onImported?: () => void;
   onDefineWorkload?: () => void;
 }
+
+const stringifyWorkspaceData = (data: any) => {
+  return JSON.stringify(data, null, 2);
+};
+
+const applyDensity = (density?: string) => {
+  applyCloudscapeDensity(density === 'compact' ? Density.Compact : Density.Comfortable);
+};
+
+const applyTheme = (theme?: string) => {
+  applyCloudscapeMode(theme === 'dark' ? Mode.Dark : Mode.Light);
+};
+
+const eventController = new EventController();
+
+window.threatcomposer = {
+  stringifyWorkspaceData,
+  addEventListener: (eventName, eventHandler) =>
+    eventController.addEventListener(eventName, eventHandler),
+  dispatchEvent: (event) => eventController.dispatchEvent(event),
+  applyDensity,
+  applyTheme,
+};
+
 
 const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProviderProps>> = ({
   children,

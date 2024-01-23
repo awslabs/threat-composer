@@ -108,22 +108,22 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
   const getNextStepButtons = useCallback(() => {
     const buttons: ReactNode[] = [];
     if (!hasContentDetails?.applicationInfo) {
-      buttons.push(<Button onClick={props.onApplicationInfoView}>Add Application Info</Button>);
+      buttons.push(<Button key='addApplicationInfo' onClick={props.onApplicationInfoView}>Add Application Info</Button>);
     }
     if (!hasContentDetails?.architecture) {
-      buttons.push(<Button onClick={props.onArchitectureView}>Add Architecture</Button>);
+      buttons.push(<Button key='addArchitecture' onClick={props.onArchitectureView}>Add Architecture</Button>);
     }
     if (!hasContentDetails?.dataflow) {
-      buttons.push(<Button onClick={props.onDataflowView}>Add Dataflow</Button>);
+      buttons.push(<Button key='addDataflow' onClick={props.onDataflowView}>Add Dataflow</Button>);
     }
     if (!hasContentDetails?.assumptions) {
-      buttons.push(<Button onClick={props.onAssumptionListView}>Add Assumptions</Button>);
+      buttons.push(<Button key='addAssumptions' onClick={props.onAssumptionListView}>Add Assumptions</Button>);
     }
     if (!hasContentDetails?.threats) {
-      buttons.push(<Button onClick={() => props.onThreatListView?.()}>Add Threats</Button>);
+      buttons.push(<Button key='addThreats' onClick={() => props.onThreatListView?.()}>Add Threats</Button>);
     }
-    if (!hasContentDetails?.threats) {
-      buttons.push(<Button onClick={props.onMitigationListView}>Add Mitigations</Button>);
+    if (!hasContentDetails?.mitigations) {
+      buttons.push(<Button key='addMitigations' onClick={props.onMitigationListView}>Add Mitigations</Button>);
     }
     const len = buttons.length;
     return buttons.flatMap((b, index) => index === len - 1 ? <Box>{b}</Box> : [b, <Box fontWeight="bold" css={styles.text}>or</Box>]);
