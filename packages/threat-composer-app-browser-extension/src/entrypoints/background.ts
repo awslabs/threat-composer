@@ -58,7 +58,7 @@ export default defineBackground(() => {
           .then((response) => response.json())
           .catch((error) => {
             console.log(error);
-          }))
+          }));
       }
       // As we will reply asynchronously to the request, we need to tell chrome to wait for our response
       return true;
