@@ -52,14 +52,13 @@ export default defineBackground(() => {
             browser.tabs.create({ url: tcUrlCreate });
           }
         });
-        sendResponse();
+        sendResponse({});
       } else if (request.url) {
-        return fetch(request.url)
+        sendResponse(fetch(request.url)
           .then((response) => response.json())
           .catch((error) => {
             console.log(error);
-          });
-        sendResponse();
+          }))
       }
       // As we will reply asynchronously to the request, we need to tell chrome to wait for our response
       return true;
