@@ -40,7 +40,6 @@ function forwardFetchToBackground(message: any): Promise<TCJSONSimplifiedSchema>
   });
 }
 
-
 function isLikelyThreatComposerSchema(JSONobj: TCJSONSimplifiedSchema) {
   return JSONobj.schema ? true : false;
 };

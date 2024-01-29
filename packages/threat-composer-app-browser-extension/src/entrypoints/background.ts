@@ -21,7 +21,7 @@ export default defineBackground(() => {
   getExtensionConfig().then(config => {
     logDebugMessage(config, 'index.hml is here:' + browser.runtime.getURL('index.html'));
 
-    browser.runtime.onMessage.addListener(function (request: any) {
+    browser.runtime.onMessage.addListener(function (request: any, sender: any, sendResponse: any) {
       const tcViewer = config.target;
       let tcUrlCreate = '';
       let tcUrlUpdate = '';
@@ -52,15 +52,17 @@ export default defineBackground(() => {
             browser.tabs.create({ url: tcUrlCreate });
           }
         });
+        sendResponse();
       } else if (request.url) {
         return fetch(request.url)
           .then((response) => response.json())
           .catch((error) => {
             console.log(error);
           });
-        // As we will reply asynchronously to the request, we need to tell chrome to wait for our response
-        //return true;
+        sendResponse();
       }
+      // As we will reply asynchronously to the request, we need to tell chrome to wait for our response
+      return true;
     });
   }).catch((error) => {
     logDebugMessage({ debug: true } as any, error);
