@@ -16,6 +16,9 @@ const baseManifest = {
     }
   ],
   permissions: ["storage", "tabs", "*://*.github.com/*", "*://code.amazon.com/*"],
+  icons: {
+    128: '/icon-128.png',
+  },
 }
 
 const webAccessibleResources = [
