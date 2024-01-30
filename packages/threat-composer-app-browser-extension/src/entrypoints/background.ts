@@ -38,8 +38,7 @@ export default defineBackground(() => {
         tcUrlUpdate = tcUrlCreate;
       }
 
-      if (request.schema) {
-        //This is likely the JSON from a threat model
+      if (request.schema) { //This is likely the JSON from a threat model
         logDebugMessage(config, 'Message recieved - Threat Model JSON');
 
         browser.storage.local.set({ threatModel: request }).then(() => {
@@ -54,11 +53,11 @@ export default defineBackground(() => {
           }
         });
         sendResponse({});
-      } else if (request.url) {
+      } else if (request.url) { //This is likely the a request to proxy a Fetch
         sendResponse(fetch(request.url)
           .then((response) => response.json())
           .catch((error) => {
-            console.log(error);
+            logDebugMessage({ debug: true } as any, error);
           }));
       }
     }).catch((error) => {

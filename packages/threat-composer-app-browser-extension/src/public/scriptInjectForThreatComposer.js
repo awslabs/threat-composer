@@ -1,17 +1,27 @@
 const browser = window.browser ? window.browser : window.chrome;
 
-const debug = true; //TODO: Get this value from config.
+async function getConfig() {
+  return browser.storage.local.get(["tcConfig"]).then((config) => {
+    if (config.tcConfig) {
+      return config.tcConfig;
+    } else {
+      return { debug: true };
+    }
+  });
+}
 
-function logDebugMessage(msg) {
+async function logDebugMessage(msg) {
+  config = await getConfig();
   const debugPrefix = "ThreatComposerExtension: ";
-  if (debug) console.log(debugPrefix + msg);
+  if (config.debug) console.log(debugPrefix + msg);
 }
 
 function loadThreatModel(source) {
-  logDebugMessage("loadThreatModel: triggered" + " source:" + source);
   if (window.threatcomposer.setCurrentWorkspaceData) {
     logDebugMessage(
-      "loadThreatModel: window.threatcomposer.setCurrentWorkspaceData is NOT undefined"
+      "Attempting to retrieve threat model from local storage" +
+        " source: " +
+        source
     );
     browser.storage.local
       .get("threatModel")
@@ -19,46 +29,48 @@ function loadThreatModel(source) {
         const answer = result.threatModel;
         if (answer != undefined) {
           if (answer.schema) {
-            logDebugMessage(answer);
             logDebugMessage(
-              "loadThreatModel: got valid JSON loading threat model, and disconnecting observer" +
-                " source:" +
+              "Got valid JSON loading threat model, triggering to load into current workspace." +
+                " source: " +
                 source
             );
             window.threatcomposer.setCurrentWorkspaceData(answer);
           } else {
             logDebugMessage(
-              "loadThreatModel: Did NOT get valid JSON loading threat model, NOT disconnecting observer" +
-                " source:" +
+              "Did NOT get valid JSON. Will NOT trigger loading of threat model." +
+                " source: " +
                 source
             );
           }
         } else {
           logDebugMessage(
-            "loadThreatModel: Did NOT get JSON object, NOT disconnecting observer" +
-              " source:" +
+            "Did NOT get JSON object. Will NOT trigger loading of threat model." +
+              " source: " +
               source
           );
         }
       })
       .catch((error) => {
-        console.log(debugPrefix + error);
+        logDebugMessage(
+          "Error during when attempting to retrieve threat model from local storage: " +
+            error.message
+        );
       });
   } else {
     logDebugMessage(
-      "loadThreatModel: window.threatcomposer.setCurrentWorkspaceData is undefined" +
-        " source:" +
+      "window.threatcomposer.setCurrentWorkspaceData is undefined. Cannot proceed until it is" +
+        " source: " +
         source
     );
   }
 }
 
 logDebugMessage(
-  "Adding visibility event listener and mutation observer to trigger load of threat model"
+  "Adding DOMContentLoaded and visibility event listener to trigger load of threat model"
 );
 
 document.addEventListener("visibilitychange", (event) => {
-  loadThreatModel("visibility change");
+  loadThreatModel("visibilitychange");
 });
 
 async function sleep(ms) {
@@ -70,9 +82,9 @@ async function sleep(ms) {
 document.addEventListener("DOMContentLoaded", async (event) => {
   while (!window.threatcomposer.setCurrentWorkspaceData) {
     logDebugMessage(
-      "Waiting for window.threatcomposer.setCurrentWorkspaceData"
+      "Waiting for window.threatcomposer.setCurrentWorkspaceData to be ready."
     );
     await sleep(50);
   }
-  loadThreatModel("onload");
+  loadThreatModel("DOMContentLoaded");
 });
