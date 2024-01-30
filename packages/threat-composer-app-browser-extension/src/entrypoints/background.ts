@@ -14,14 +14,15 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { getExtensionConfig, ThreatComposerTarget } from './popup/config';
+import { ThreatComposerTarget, getExtensionConfig } from './popup/config';
 import { logDebugMessage } from '../debugLogger';
 
-export default defineBackground(() => {
-  getExtensionConfig().then(config => {
-    logDebugMessage(config, 'index.hml is here:' + browser.runtime.getURL('index.html'));
 
-    browser.runtime.onMessage.addListener(function (request: any, sender: any, sendResponse: any) {
+export default defineBackground(() => {
+
+  browser.runtime.onMessage.addListener(function (request: any, sender: any, sendResponse: any) {
+
+    getExtensionConfig().then(config => {
       const tcViewer = config.target;
       let tcUrlCreate = '';
       let tcUrlUpdate = '';
@@ -60,10 +61,11 @@ export default defineBackground(() => {
             console.log(error);
           }));
       }
-      // As we will reply asynchronously to the request, we need to tell chrome to wait for our response
-      return true;
+    }).catch((error) => {
+      logDebugMessage({ debug: true } as any, error);
     });
-  }).catch((error) => {
-    logDebugMessage({ debug: true } as any, error);
+
+    // As we will reply asynchronously to the request, we need to tell chrome to wait for our response
+    return true;
   });
 });
