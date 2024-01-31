@@ -58,7 +58,7 @@
       "description": "Only compile",
       "steps": [
         {
-          "exec": "wxt build"
+          "exec": "wxt build -b chrome; wxt build -b firefox"
         }
       ]
     },

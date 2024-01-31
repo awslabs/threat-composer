@@ -6,12 +6,11 @@ A simple threat modeling tool to help humans to reduce time-to-value when threat
 
 ![Animated gif of Full mode](/docs/threat-composer.gif)
 
-
 ----> [Live demo](https://awslabs.github.io/threat-composer?mode=Full) <----
 
 ## Summary
 
-The process of [threat modeling](https://catalog.workshops.aws/threatmodel/en-US/introduction) helps you identify security issues and develop a strategy to address them in the *context* of your system.  A threat model directly supports your ability to define, agree upon, and communicate what is necessary in order to deliver a secure product or service. You can threat model very early in your design phase. These early insights put you in a better position to identify sensible design choices early in the cycle, and efficiently build and ship your workload securely. Identifying and fixing security issues at design time is exponentially easier to do than doing so once the workload has been built.
+The process of [threat modeling](https://catalog.workshops.aws/threatmodel/en-US/introduction) helps you identify security issues and develop a strategy to address them in the _context_ of your system. A threat model directly supports your ability to define, agree upon, and communicate what is necessary in order to deliver a secure product or service. You can threat model very early in your design phase. These early insights put you in a better position to identify sensible design choices early in the cycle, and efficiently build and ship your workload securely. Identifying and fixing security issues at design time is exponentially easier to do than doing so once the workload has been built.
 
 There are many ways to perform threat modeling. Much like programming languages, there are advantages and disadvantages to each. You should choose the approach that works for you, and communicate it within your organization. A good place to start is [Shostack’s 4 Question Frame for Threat Modeling](https://github.com/adamshostack/4QuestionFrame) which proposes four simple open ended questions.
 
@@ -19,25 +18,25 @@ The Threat composer tool has been built for the following reasons:
 
 1. **Coming up with useful threats can be hard.** Feedback from builders regarding the "What can go wrong?" question is that there are two key challenges in this step - firstly, no generally agreed standard on what 'good' looks like. This is contextual based on the system being assessed and the ownership model of the teams involved; and, secondly, there is no canonical list of possible things that could go wrong. Hence, threat identification necessitates brainstorming and collaboration between the individuals involved in the threat modeling process, and often involves starting from a "blank page". Threat composer uses ["Threat Grammar"](https://catalog.workshops.aws/threatmodel/en-US/what-can-go-wrong/threat-grammar), a prescriptive way to write threats, with the aim of making it easier to iteratively write useful threats. Threat Composer includes full examples to help the customer understand what good might look like. Customers can use these as inspiration or as a starting point for their own threats.
 2. **Provide insights on how to improve quality and coverage.** One of the toughest questions to answer is “did we do a good enough job?” because it can be highly subjective. Threat composer includes an ‘insights dashboard’ to help you quickly identify areas for improvement, including (a) threats without linked mitigations, (b) unprioritized threats, (c) threat category distribution, and (d) based on threat grammar usage, potential improvement to inputs for mitigation or prioritisation.
-3. **Threat modeling is non-linear.** Threat modeling is often taught as a linear process, where a person or team works on each of the threat modeling questions separately. In practice, threat modeling can be very non-linear. For example, you may think of a mitigation (“what are we going to do about?”) immediately after you’ve thought of a threat (“what can go wrong?), this may lead you to re-evaluate specific aspects of your design (”what are we building?“). Threat composer aims to support this kind of non-linear and natural workflow. 
+3. **Threat modeling is non-linear.** Threat modeling is often taught as a linear process, where a person or team works on each of the threat modeling questions separately. In practice, threat modeling can be very non-linear. For example, you may think of a mitigation (“what are we going to do about?”) immediately after you’ve thought of a threat (“what can go wrong?), this may lead you to re-evaluate specific aspects of your design (”what are we building?“). Threat composer aims to support this kind of non-linear and natural workflow.
 4. **Threat modeling is iterative.** both at a micro and a macro level. For example, at a micro level, you may iterate on a given threat to the point you find you could [decompose](https://catalog.workshops.aws/threatmodel/en-US/what-can-go-wrong/threat-grammar/decomposition) it into two discrete threats. At a macro level, a threat model can (and should) evolve and mature as the system you are threat modeling evolves through the software/hardware development lifecycle. In the early stages of design you may need to make a lot of [assumptions](https://catalog.workshops.aws/threatmodel/en-US/what-are-we-working-on/exercise/state-your-assumptions), and as time passes previous assumptions may become invalidated which is a [trigger to review the threat model](https://catalog.workshops.aws/threatmodel/en-US/introduction/when-to-threat-model). Additionally, as you progress it’s likely that new design decisions are made, new threats are thought of and mitigations go from being “planned”, to being “implemented”. Threat composer has been designed to support this iterative design and development lifecycle, and to support the ability of having a “living” threat model-as-code as your feature or service evolves and matures.
 
 ## Features
 
-* Capture and store systems description, architecture diagram, and dataflow diagram.
-* Capture and store assumptions related to the systems design, threats and/or mitigations, along with mapping of assumptions to threats to mitigations.
-* Help iteratively compose useful threats, and encourage brainstorming. This feature is also available via a dedicated [‘Threats Only’](https://awslabs.github.io/threat-composer?mode=ThreatsOnly) mode. 
-    * Rendering structured threat statements (aligned to a prescriptive threat grammar) based on user input.
-    * Supporting an adaptive threat statement structure, this helps create progressively more complete threats.
-    * Provide dynamic suggestions based on supplied and missing user input.
-    * Provide complete threat statement examples to aid contextual brainstorming.
-* Capture and store mitigation candidates and mapping to threats.
-* Create a threat model document based on user-supplied input.
-* Help users answer "Did we do a good enough job" by providing insights and suggestions for bar-raising actions via an 'Insights dashboard'
-* Data persisted only client-side within the browser (100% local storage).
-* JSON import/export capabilities to enable persistent storage, sharing, and version control outside of the web browser (e.g. by using git).
-* Markdown and PDF static downloads of the threat model document.
-* Workspace separation to allow working on multiple threat models.
+- Capture and store systems description, architecture diagram, and dataflow diagram.
+- Capture and store assumptions related to the systems design, threats and/or mitigations, along with mapping of assumptions to threats to mitigations.
+- Help iteratively compose useful threats, and encourage brainstorming. This feature is also available via a dedicated [‘Threats Only’](https://awslabs.github.io/threat-composer?mode=ThreatsOnly) mode.
+  - Rendering structured threat statements (aligned to a prescriptive threat grammar) based on user input.
+  - Supporting an adaptive threat statement structure, this helps create progressively more complete threats.
+  - Provide dynamic suggestions based on supplied and missing user input.
+  - Provide complete threat statement examples to aid contextual brainstorming.
+- Capture and store mitigation candidates and mapping to threats.
+- Create a threat model document based on user-supplied input.
+- Help users answer "Did we do a good enough job" by providing insights and suggestions for bar-raising actions via an 'Insights dashboard'
+- Data persisted only client-side within the browser (100% local storage).
+- JSON import/export capabilities to enable persistent storage, sharing, and version control outside of the web browser (e.g. by using git).
+- Markdown and PDF static downloads of the threat model document.
+- Workspace separation to allow working on multiple threat models.
 
 ## Threat model example
 
@@ -59,7 +58,7 @@ You can try the threat-composer demo via the [Github Pages](https://awslabs.gith
 
 ## Security considerations
 
->If you use threat-composer via your AWS account, please note that any sample code, software libraries, command line tools, proofs of concept, templates, or other related technology are provided as AWS Content or Third-Party Content under the AWS Customer Agreement, or the relevant written agreement between you and AWS (whichever applies). You should not use this AWS Content or Third-Party Content in your production accounts, or on production or other critical data. You are responsible for testing, securing, and optimizing the AWS Content or Third-Party Content, such as sample code, as appropriate for production grade use based on your specific quality control practices and standards. Deploying AWS Content or Third-Party Content may incur AWS charges for creating or using AWS chargeable resources, such as running Amazon EC2 instances or using Amazon S3 storage.
+> If you use threat-composer via your AWS account, please note that any sample code, software libraries, command line tools, proofs of concept, templates, or other related technology are provided as AWS Content or Third-Party Content under the AWS Customer Agreement, or the relevant written agreement between you and AWS (whichever applies). You should not use this AWS Content or Third-Party Content in your production accounts, or on production or other critical data. You are responsible for testing, securing, and optimizing the AWS Content or Third-Party Content, such as sample code, as appropriate for production grade use based on your specific quality control practices and standards. Deploying AWS Content or Third-Party Content may incur AWS charges for creating or using AWS chargeable resources, such as running Amazon EC2 instances or using Amazon S3 storage.
 
 ### Data protection
 
@@ -77,10 +76,9 @@ In the default configuration there is no authentication to reach the static web 
 
 ### Identity and Access Management (IAM) permissions for CDK
 
-It’s recommended that you use a scoped down [IAM policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html) to when interacting with CDK and it’s recommended that you consider customising and attaching the below example to the IAM Principal being used. This policy is scoped down, but does include some powerful permissive actions such as `iam:*`  as CDK requires a role to do things like create IAM Roles, S3 Buckets, ECR repositories and SSM parameters when [bootstrapping](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html). The policy does scope each of the allowed actions to resources typically associated with CDK only (specifically, `CDKToolkit/*` stack, and resources with a `cdk-` prefix). 
+It’s recommended that you use a scoped down [IAM policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html) to when interacting with CDK and it’s recommended that you consider customising and attaching the below example to the IAM Principal being used. This policy is scoped down, but does include some powerful permissive actions such as `iam:*` as CDK requires a role to do things like create IAM Roles, S3 Buckets, ECR repositories and SSM parameters when [bootstrapping](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html). The policy does scope each of the allowed actions to resources typically associated with CDK only (specifically, `CDKToolkit/*` stack, and resources with a `cdk-` prefix).
 
 **Note:** You’d need to change the `<aws-account-id>` and `<aws-region>` to align to your values.
-
 
 ```
 {
@@ -138,7 +136,7 @@ It’s recommended that you use a scoped down [IAM policy](https://docs.aws.amaz
                 "arn:aws:ecr:<aws-region>:<aws-account-id>:repository/cdk-*"
             ]
         }
-   
+
 ```
 
 ### GitHub Pages
@@ -157,13 +155,13 @@ You should only import content into threat-composer from sources that you trust.
 
 ### Vulnerability management
 
-Like all software, it’s important that you have an on-going process in place to ensure that you are performing vulnerability management of the code included in this package and all of it’s dependencies. In this GitHub repository, we leverage [dependabot security alerts](https://docs.github.com/en/code-security/dependabot/dependabot-alerts/about-dependabot-alerts) and [dependabot security updates](https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates) to detect and update vulnerable dependencies. 
+Like all software, it’s important that you have an on-going process in place to ensure that you are performing vulnerability management of the code included in this package and all of it’s dependencies. In this GitHub repository, we leverage [dependabot security alerts](https://docs.github.com/en/code-security/dependabot/dependabot-alerts/about-dependabot-alerts) and [dependabot security updates](https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates) to detect and update vulnerable dependencies.
 
-Watch this repository for updates and deploy the latest changes. See ‘Maintenance’ section for each Deployment option below on how to deploy the latest changes. 
+Watch this repository for updates and deploy the latest changes. See ‘Maintenance’ section for each Deployment option below on how to deploy the latest changes.
 
 ### CloudFront Security Policy
 
-When using the default CloudFront domain and certificate (*.[cloudfront.net](http://cloudfront.net/)), CloudFront automatically sets the security policy to [TLSv1](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html). It’s recommended that you use a [custom domain](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html) and certificate with the CloudFront distribution and configure it to use use a [Security Policy](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html) that does not allow older protocols such as TLS 1.0. Consider using the  `TLSv1.2_2021` Security Policy.
+When using the default CloudFront domain and certificate (\*.[cloudfront.net](http://cloudfront.net/)), CloudFront automatically sets the security policy to [TLSv1](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html). It’s recommended that you use a [custom domain](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html) and certificate with the CloudFront distribution and configure it to use use a [Security Policy](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html) that does not allow older protocols such as TLS 1.0. Consider using the `TLSv1.2_2021` Security Policy.
 
 ### AWS Well-Architected Framework
 
@@ -171,59 +169,59 @@ The [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected
 
 ## Learn how to threat model
 
-* [Threat modeling for builders training - AWS Skill Builder](https://explore.skillbuilder.aws/learn/course/external/view/elearning/13274/threat-modeling-the-right-way-for-builders-workshop) - This free eLearning aims to teach you the fundamentals of performing threat modeling, with knowledge checks and exercises that use the threat-composer tool.
-* [How to approach threat modeling - AWS Security Blog](https://aws.amazon.com/blogs/security/how-to-approach-threat-modeling/) provides observations and tips for practical ways to incorporate threat modeling into your organization, which center around communication, collaboration, and human-led expertise to find and address threats that your end customer expects.
+- [Threat modeling for builders training - AWS Skill Builder](https://explore.skillbuilder.aws/learn/course/external/view/elearning/13274/threat-modeling-the-right-way-for-builders-workshop) - This free eLearning aims to teach you the fundamentals of performing threat modeling, with knowledge checks and exercises that use the threat-composer tool.
+- [How to approach threat modeling - AWS Security Blog](https://aws.amazon.com/blogs/security/how-to-approach-threat-modeling/) provides observations and tips for practical ways to incorporate threat modeling into your organization, which center around communication, collaboration, and human-led expertise to find and address threats that your end customer expects.
 
 ## **Deployment**
 
-**Important**: This application uses various AWS services and there are costs associated with these services after the Free Tier usage - please see the AWS Pricing page for details. You are responsible for any AWS costs incurred. 
+**Important**: This application uses various AWS services and there are costs associated with these services after the Free Tier usage - please see the AWS Pricing page for details. You are responsible for any AWS costs incurred.
 
 ### Prerequisites
 
-* [NodeJS](https://nodejs.org/en/) (version  16 or higher)
-* [Yarn](https://yarnpkg.com/) (installed  via `npm install -g yarn`)
-* [AWS CLI](https://aws.amazon.com/cli/) (version 2 or higher)
-* [AWS  CLI Configuration](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html) (configured via `aws  configure`)
-* [AWS  CDK v2](https://aws.amazon.com/cdk/) CLI  (installed via `npm install -g aws-cdk`)
-* [CDK Bootstrapping](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html) (e.g. `cdk bootstrap aws://<your_aws_account_id>/<aws-region>)`
+- [NodeJS](https://nodejs.org/en/) (version 16 or higher)
+- [Yarn](https://yarnpkg.com/) (installed via `npm install -g yarn`)
+- [AWS CLI](https://aws.amazon.com/cli/) (version 2 or higher)
+- [AWS CLI Configuration](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html) (configured via `aws  configure`)
+- [AWS CDK v2](https://aws.amazon.com/cdk/) CLI (installed via `npm install -g aws-cdk`)
+- [CDK Bootstrapping](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html) (e.g. `cdk bootstrap aws://<your_aws_account_id>/<aws-region>)`
 
 See Deployment section below for more instructions about CDK bootstrapping.
 
-* [git-remote-codecommit](https://docs.aws.amazon.com/codecommit/latest/userguide/setting-up-git-remote-codecommit.html) (e.g. `pip install git-remote-codecommit`)
+- [git-remote-codecommit](https://docs.aws.amazon.com/codecommit/latest/userguide/setting-up-git-remote-codecommit.html) (e.g. `pip install git-remote-codecommit`)
 
-### Configuration 
+### Configuration
 
-The threat-composer Infra CDK app support customization like custom domain name. You can update the configuration in the configuration file to set it up. The configuration file is located at *packages/threat-composer -infra/cdk.context.json*. 
+The threat-composer Infra CDK app support customization like custom domain name. You can update the configuration in the configuration file to set it up. The configuration file is located at _packages/threat-composer -infra/cdk.context.json_.
 Note that all the configurations are **OPTIONAL**.
 
 **Important note:** The default values for `cidrRangesDev` and `cidrRangesProd` are non-routable CIDR ranges. In order to access threat-composer you've need to update these values to ranges that align with your access needs.
 
-** **** **
+---
 
-| Configuration Property	| Description	|
-|---	|---	|
-| repositoryName	| (Optional) The CodeCommit repository name  if Deployment with CI/CD option is used	|
-| accountPipeline	| (Optional) The AWS account for deploying CodeCommit  repository and CI/CD pipeline if Deployment with CI/CD option is used. Default  value: current account	|
-| accountDev	| (Optional) The AWS account for deploying  dev instance of application stack. Default value: current account	|
-| accountProd	| (Optional) The AWS account for deploying prod  instance of application stack if Deployment with CI/CD option is used.	|
-| cidrTypeDev	| (Optional) The IP address type for dev instance of [WAF WebAcl IPSet](https://docs.aws.amazon.com/waf/latest/developerguide/waf-ip-set-managing.html). Options are IPV4 or IPV6. Default value: IPV4.	|
-| cidrTypeProd	|(Optional) The IP address type for prod instance of [WAF WebAcl IPSet](https://docs.aws.amazon.com/waf/latest/developerguide/waf-ip-set-managing.html). Options are IPV4 or IPV6. Default value: IPV4.	|
-| cidrRangesDev	|(Optional) The IP address ranges for dev instance of [WAF WebAcl IPSet](https://docs.aws.amazon.com/waf/latest/developerguide/waf-ip-set-managing.html). Multiple values is supported via `,` separator. Default value: `192.168.0.0/24`. |
-| cidrRangesProd |(Optional) The IP address ranges for prod instance of [WAF WebAcl IPSet](https://docs.aws.amazon.com/waf/latest/developerguide/waf-ip-set-managing.html). Multiple values is supported via `,` separator. Default value: `192.168.0.0/24`.	|
-| domainNameDev	| (Optional) The custom domain name for dev deployment |
-| domainNameProd	|(Optional) The custom domain name for prod deployment |
-| certificateDev	| (Optional) The AWS Certificate Manager certificate ARN for the custom domain name of dev deployment if custom domain name is used |
-| certificateProd	| (Optional) The AWS Certificate Manager certificate ARN for the custom domain name of prod deployment if custom domain name is used |
-| hostZoneNameDev	| (Optional) The Route 53 host zone for the custom domain name of prod deployment if host zone record creation is required |
-| hostZoneNameProd | (Optional) The Route 53 host zone for the custom domain name of prod deployment if host zone record creation is required |
-| lambdaEdgeDev	|(Optional) The lambda edge function ARN attached to CloudFront VIEWER_REQUEST event for CloudFront dev instance or the AWS Systems Manbager(SSM) parameter name (in us-east-1) storing the Lambda edge function ARN |
-| lambdaEdgeProd |(Optional) The lambda edge function ARN attached to CloudFront VIEWER_REQUEST event for CloudFront prod instance or the AWS Systems Manbager(SSM) parameter name (in us-east-1) storing the Lambda edge function ARN |
+| Configuration Property | Description                                                                                                                                                                                                                                |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| repositoryName         | (Optional) The CodeCommit repository name if Deployment with CI/CD option is used                                                                                                                                                          |
+| accountPipeline        | (Optional) The AWS account for deploying CodeCommit repository and CI/CD pipeline if Deployment with CI/CD option is used. Default value: current account                                                                                  |
+| accountDev             | (Optional) The AWS account for deploying dev instance of application stack. Default value: current account                                                                                                                                 |
+| accountProd            | (Optional) The AWS account for deploying prod instance of application stack if Deployment with CI/CD option is used.                                                                                                                       |
+| cidrTypeDev            | (Optional) The IP address type for dev instance of [WAF WebAcl IPSet](https://docs.aws.amazon.com/waf/latest/developerguide/waf-ip-set-managing.html). Options are IPV4 or IPV6. Default value: IPV4.                                      |
+| cidrTypeProd           | (Optional) The IP address type for prod instance of [WAF WebAcl IPSet](https://docs.aws.amazon.com/waf/latest/developerguide/waf-ip-set-managing.html). Options are IPV4 or IPV6. Default value: IPV4.                                     |
+| cidrRangesDev          | (Optional) The IP address ranges for dev instance of [WAF WebAcl IPSet](https://docs.aws.amazon.com/waf/latest/developerguide/waf-ip-set-managing.html). Multiple values is supported via `,` separator. Default value: `192.168.0.0/24`.  |
+| cidrRangesProd         | (Optional) The IP address ranges for prod instance of [WAF WebAcl IPSet](https://docs.aws.amazon.com/waf/latest/developerguide/waf-ip-set-managing.html). Multiple values is supported via `,` separator. Default value: `192.168.0.0/24`. |
+| domainNameDev          | (Optional) The custom domain name for dev deployment                                                                                                                                                                                       |
+| domainNameProd         | (Optional) The custom domain name for prod deployment                                                                                                                                                                                      |
+| certificateDev         | (Optional) The AWS Certificate Manager certificate ARN for the custom domain name of dev deployment if custom domain name is used                                                                                                          |
+| certificateProd        | (Optional) The AWS Certificate Manager certificate ARN for the custom domain name of prod deployment if custom domain name is used                                                                                                         |
+| hostZoneNameDev        | (Optional) The Route 53 host zone for the custom domain name of prod deployment if host zone record creation is required                                                                                                                   |
+| hostZoneNameProd       | (Optional) The Route 53 host zone for the custom domain name of prod deployment if host zone record creation is required                                                                                                                   |
+| lambdaEdgeDev          | (Optional) The lambda edge function ARN attached to CloudFront VIEWER_REQUEST event for CloudFront dev instance or the AWS Systems Manbager(SSM) parameter name (in us-east-1) storing the Lambda edge function ARN                        |
+| lambdaEdgeProd         | (Optional) The lambda edge function ARN attached to CloudFront VIEWER_REQUEST event for CloudFront prod instance or the AWS Systems Manbager(SSM) parameter name (in us-east-1) storing the Lambda edge function ARN                       |
 
 ### Deployment - Static Website Only
 
-Following the steps to deploy an instance of application CloudFormation stack into your AWS account. The application CloudFormation stack include a [CloudFront distribution](https://aws.amazon.com/cloudfront/), [S3 website bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html), and an associated [AWS WAF WebACL](https://docs.aws.amazon.com/waf/latest/developerguide/web-acl.html). 
- 
-We recommend you bootstrap your CDK project by [specifying the specific AWS Managed Policies](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html#bootstrapping-customizing) required for the ‘Static Website Only’ deployment to create the required resources, including Amazon S3 Buckets, IAM Roles, CloudFront Distribution etc. This will ensure that CloudFormation does not use the ‘Admin’ policy: 
+Following the steps to deploy an instance of application CloudFormation stack into your AWS account. The application CloudFormation stack include a [CloudFront distribution](https://aws.amazon.com/cloudfront/), [S3 website bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html), and an associated [AWS WAF WebACL](https://docs.aws.amazon.com/waf/latest/developerguide/web-acl.html).
+
+We recommend you bootstrap your CDK project by [specifying the specific AWS Managed Policies](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html#bootstrapping-customizing) required for the ‘Static Website Only’ deployment to create the required resources, including Amazon S3 Buckets, IAM Roles, CloudFront Distribution etc. This will ensure that CloudFormation does not use the ‘Admin’ policy:
 
 `cdk bootstrap aws://<aws-account-id>/<aws-region> --cloudformation-execution-policies "arn:aws:iam::aws:policy/IAMFullAccess,arn:aws:iam::aws:policy/AWSLambda_FullAccess,arn:aws:iam::aws:policy/AmazonS3FullAccess,arn:aws:iam::aws:policy/CloudFrontFullAccess,arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"`
 
@@ -231,25 +229,23 @@ We recommend you bootstrap your CDK project by [specifying the specific AWS Mana
 
 Learn more about customising CDK bootstrap [here](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html#bootstrapping-customizing).
 
-
 #### Deployment Instructions
 
 1. Clone the repository
 
-    `git clone https://github.com/awslabs/threat-composer.git `
+   `git clone https://github.com/awslabs/threat-composer.git `
 
-    `cd threat-composer`
+   `cd threat-composer`
 
-1. Run script: 
+1. Run script:
 
-    `./scripts/deployDev.sh`
+   `./scripts/deployDev.sh`
 
 ![Screenshot of deployDev.sh](/docs/screenshot-deployDev.png)
 
-The script will install dependencies, build the project, and deploy the application CloudFormation stack. 
- 
-If the script is run successfully, you will see output of your CloudFront domain name. Visit the URL or specified custom domain name (if provided) in a web browser to access the deployed website. 
+The script will install dependencies, build the project, and deploy the application CloudFormation stack.
 
+If the script is run successfully, you will see output of your CloudFront domain name. Visit the URL or specified custom domain name (if provided) in a web browser to access the deployed website.
 
 #### Maintenance
 
@@ -259,7 +255,7 @@ It is recommended to watch this GitHub repository for any updates and run the co
 
 `./scripts/deployDev.sh`
 
-### Deployment – With CI/CD 
+### Deployment – With CI/CD
 
 If you are planning to customize the configurations or update code to fit your use cases, it is recommended to deploy the whole CI/CD infrastructure CloudFormation Stack. The CI/CD infrastructure includes a [CodeCommit](https://aws.amazon.com/codecommit/) repository and a [CodePipeline](https://aws.amazon.com/codepipeline/). The CodePipeline deploys the application stack ([CloudFront distribution](https://aws.amazon.com/cloudfront/) + [S3 website bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html) + [AWS WAF WebACL](https://docs.aws.amazon.com/waf/latest/developerguide/web-acl.html)) into the nominated dev and prod environments.
 
@@ -267,7 +263,7 @@ This deployment option does create resources beyond what is created in the ‘St
 
 `cdk bootstrap aws://<aws-account-id>/<aws-region> --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess`
 
-You may need to include the `--trust` option when bootstrapping the dev or production accounts if they are different from the pipeline AWS account shown below. This command is run from the AWS account that has been configured in the property `accountDev` or `accountProd` in *packages/threat-composer -infra/cdk.context.json*. See below for an example. 
+You may need to include the `--trust` option when bootstrapping the dev or production accounts if they are different from the pipeline AWS account shown below. This command is run from the AWS account that has been configured in the property `accountDev` or `accountProd` in _packages/threat-composer -infra/cdk.context.json_. See below for an example.
 
 `cdk bootstrap aws://<dev-or-prod-aws-account-id>/us-west-2 --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess --trust <pipeline-aws-account-id>`
 
@@ -285,11 +281,11 @@ You may need to include the `--trust` option when bootstrapping the dev or produ
 
 ![Screenshot of deployAll.sh](/docs/screenshot-deployAll.png)
 
-The script will install dependencies, build the project, and deploy the CI/CD infrastructure CloudFormation stack. 
- 
-If the script is run successfully, you will see output of your CodeCommit repository GRC URL. 
+The script will install dependencies, build the project, and deploy the CI/CD infrastructure CloudFormation stack.
 
-1. Add the newly created CodeCommit repo as a git remote. 
+If the script is run successfully, you will see output of your CodeCommit repository GRC URL.
+
+1. Add the newly created CodeCommit repo as a git remote.
 
    `git remote add codecommit <CodeCommitGRCUrl>`
 
@@ -298,12 +294,12 @@ If the script is run successfully, you will see output of your CodeCommit reposi
 3. Push the code to the newly created CodeCommit repo
 
    `git push codecommit main`
- 
-The CodePipeline will be automatically triggered to build the project and deploy the application stack to your nominated dev and prod environments. 
+
+The CodePipeline will be automatically triggered to build the project and deploy the application stack to your nominated dev and prod environments.
 
 #### Maintenance
 
-It is recommended to watch this GitHub repository for any updates and run the commands below periodically to sync the latest changes in our GitHub repository to the mirrored CodeCommit repository. 
+It is recommended to watch this GitHub repository for any updates and run the commands below periodically to sync the latest changes in our GitHub repository to the mirrored CodeCommit repository.
 
 `git pull --no-rebase origin main`
 
@@ -312,57 +308,54 @@ It is recommended to watch this GitHub repository for any updates and run the co
 ## **Development**
 
 This monorepo hosts the code for threat-composer UI components, a [create-react-app](https://create-react-app.dev/) website, and a [CDK app](https://docs.aws.amazon.com/cdk/v2/guide/apps.html) to allow you to deploy the website to your AWS account.
- 
+
 The repository is defined and maintained using [projen](https://github.com/projen/projen) and [aws-prototyping-sdk](https://github.com/aws/aws-prototyping-sdk).
 
-### Repository Structure 
+### Repository Structure
 
-|Project	|Path	|Description	|Tech stack	|
-|---	|---	|---	|---	|
-|threat-composer	|packages/threat-composer	|UI components for threat-composer	|[React](https://react.dev/), [CloudScape design system](https://cloudscape.design/)	|
-|threat-composer-app	|packages/threat-composer-app	|threat-composer Single Page App (SPA) bootstraped by [create-react-app](https://create-react-app.dev/)	|React	|
-|threat-composer-infra	|packages/threat-composer-infra	|threat-composer Infrastructure CDK App 	|[aws-prototyping-sdk constructs](https://github.com/aws/aws-prototyping-sdk)	|
+| Project                               | Path                                           | Description                                                                                            | Tech stack                                                                          |
+| ------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| threat-composer                       | packages/threat-composer                       | UI components for threat-composer                                                                      | [React](https://react.dev/), [CloudScape design system](https://cloudscape.design/) |
+| threat-composer-app                   | packages/threat-composer-app                   | threat-composer Single Page App (SPA) bootstraped by [create-react-app](https://create-react-app.dev/) | React                                                                               |
+| threat-composer-infra                 | packages/threat-composer-infra                 | threat-composer Infrastructure CDK App                                                                 | [aws-prototyping-sdk constructs](https://github.com/aws/aws-prototyping-sdk)        |
+| threat-composer-app-browser-extension | packages/threat-composer-app-browser-extension | threat-composer browser extension                                                                      | [wxt](https://wxt.dev/), React                                                      |
 
 ### Prerequisites
 
-* [git-secrets](https://github.com/awslabs/git-secrets#installing-git-secrets)
-* [oss-attribution-generator](https://www.npmjs.com/package/oss-attribution-generator)
+- [git-secrets](https://github.com/awslabs/git-secrets#installing-git-secrets)
+- [oss-attribution-generator](https://www.npmjs.com/package/oss-attribution-generator)
 
 `npm install -g oss-attribution-generator`
 
 ### Commands
 
-* Install dependencies
+- Install dependencies
 
-    `yarn install --frozen-lockfile & npx projen`
- 
+  `yarn install --frozen-lockfile & npx projen`
 
-* Build all the projects
+- Build all the projects
 
-    `yarn run build`
- 
+  `yarn run build`
 
-* Run Storybook
+- Run Storybook
 
-    `yarn run storybook`
- 
-    Runs storybook to navigate all the threat-composer UI components
-    Open [http://localhost:6006](http://localhost:6006/) to view it in the browser. The page will reload if you make edits.
+  `yarn run storybook`
 
+  Runs storybook to navigate all the threat-composer UI components
+  Open [http://localhost:6006](http://localhost:6006/) to view it in the browser. The page will reload if you make edits.
 
-    **It is recommended to use storybook as development environment.**
- 
-* Start website in dev mode
+  **It is recommended to use storybook as development environment.**
 
-    `yarn run dev`
+- Start website in dev mode
 
-## **Contribution guide** 
+  `yarn run dev`
+
+- For the browser extension (Chrome and Firefox) please see [this README](./packages/threat-composer-app-browser-extension/README.md)
+
+## **Contribution guide**
 
 Contribution guide are available at the [Contributing Guidelines](https://github.com/awslabs/threat-composer/blob/main/CONTRIBUTING.md).
 
 ## License
 
 This project is licensed under the Apache-2.0 License.
-
-
-

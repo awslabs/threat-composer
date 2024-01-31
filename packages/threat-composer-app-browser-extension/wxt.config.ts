@@ -1,8 +1,32 @@
-import { defineConfig } from 'wxt';
+import { defineConfig, TargetManifestVersion } from 'wxt';
 import react from '@vitejs/plugin-react';
 import copy from 'rollup-plugin-copy';
 
 const tcScriptInjectForThreatComposer = 'scriptInjectForThreatComposer.js'
+
+const baseManifest = {
+  name: 'Threat Composer Viewer',
+  description: "View a Threat Composer JSON export in Threat Composer",
+  version_name: "0.0.3-alpha",
+  content_scripts: [
+    {
+      matches: ["*://*/*.tc.json*", "*://*.github.com/*"],
+      js: ['content-script.js'],
+      run_at: "document_end"
+    }
+  ],
+  permissions: ["storage", "tabs", "*://*.github.com/*", "*://code.amazon.com/*"],
+  icons: {
+    128: '/icon-128.png',
+  },
+}
+
+const webAccessibleResources = [
+  {
+    "resources": ["scriptInjectForCodeCatalyst.js"],
+    "matches": ["https://codecatalyst.aws/*"]
+  }
+];
 
 export default defineConfig({
   vite: () => ({
@@ -29,23 +53,10 @@ export default defineConfig({
     ]
   }),
   srcDir: 'src',
-  manifest: {
-    name: 'Threat Composer Viewer',
-    description: "View a Threat Composer JSON export in Threat Composer",
-    version_name: "0.0.2-alpha",
-    content_scripts: [
-      {
-        matches: ["*://*/*.tc.json*", "*://*.github.com/*"],
-        js: ['content-script.js'],
-        run_at: "document_end"
-      }
-    ],
-    web_accessible_resources: [
-      {
-        "resources": ["scriptInjectForCodeCatalyst.js"],
-        "matches": ["https://codecatalyst.aws/*"]
-      }
-    ],
-    permissions: ["storage", "tabs"],
-  }
+  manifest: ({ manifestVersion }) => ({
+    ...baseManifest,
+    web_accessible_resources: manifestVersion === 3
+      ? webAccessibleResources
+      : webAccessibleResources.flatMap(entry => entry.resources),
+  })
 });
