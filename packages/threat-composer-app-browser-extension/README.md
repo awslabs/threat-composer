@@ -17,12 +17,28 @@ The extension supports the following integrations where a ‘View in Threat Comp
 
 For any other guidance see the [Development](../../README.md#development) section of the main [README](../../README.md)
 
+## Load locally
+
+### Google Chrome
+
+1. Open Chrome, then goto `chrome://extensions`
+1. Enable 'Developer mode'
+1. Click on 'Load unpacked'
+1. Point it at the `./.output/chrome-mv3` directory and click Open
+
+### Mozilla Firefox
+
+1. Open Firefox, then goto `about:debugging`
+2. Click on 'This Firefox' then 'Load Temporary Add-on...'
+3. Point it at any file with the `./.output/firefox-mv2` and click Open
+
 ## Create ZIP file
 
 ### Google Chrome
 
 1. Go to the root of the extension package - `cd ./packages/threat-composer-app-browser-extension`
 1. Run `yarn run zip` - look in `./.output/` for ZIP file
+1. To load locally open Chrome, then goto `chrome://extensions`, enable developer mode, then drag-and-drop the ZIP file onto the page to load.
 
 ### Mozilla Firefox
 
