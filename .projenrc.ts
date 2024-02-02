@@ -294,7 +294,8 @@ browserExtensionProject.addTask("dev:firefox", {
   exec: "wxt --browser firefox",
 });
 
-browserExtensionProject.compileTask.reset("wxt build -b chrome; wxt build -b firefox");
+browserExtensionProject.compileTask.reset("wxt build -b chrome");
+browserExtensionProject.compileTask.exec("wxt build -b firefox");
 
 browserExtensionProject.addTask("zip", {
   exec: "wxt zip",
