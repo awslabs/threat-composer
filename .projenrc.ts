@@ -216,7 +216,6 @@ const appProject = new ReactTypeScriptProject({
     "@cloudscape-design/components",
     "@cloudscape-design/global-styles",
     "@cloudscape-design/design-tokens",
-    "@aws-northstar/ui",
     "react-router-dom",
     "uuid",
     uiProject.package.packageName,
@@ -318,7 +317,8 @@ browserExtensionProject.addTask("dev:firefox", {
   exec: "wxt --browser firefox",
 });
 
-browserExtensionProject.compileTask.reset("wxt build");
+browserExtensionProject.compileTask.reset("wxt build -b chrome");
+browserExtensionProject.compileTask.exec("wxt build -b firefox");
 
 browserExtensionProject.addTask("zip", {
   exec: "wxt zip",
