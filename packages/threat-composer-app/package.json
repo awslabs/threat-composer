@@ -42,6 +42,7 @@
     "typescript": "^4.0.3"
   },
   "dependencies": {
+    "@aws-northstar/ui": "*",
     "@aws/threat-composer": "*",
     "@cloudscape-design/components": "*",
     "@cloudscape-design/design-tokens": "*",
@@ -65,12 +66,18 @@
     "production": [
       ">0.2%",
       "not dead",
-      "not op_mini all"
+      "not ie 11",
+      "not chrome < 51",
+      "not safari < 10",
+      "not android < 51"
     ],
     "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+      ">0.2%",
+      "not dead",
+      "not ie 11",
+      "not chrome < 51",
+      "not safari < 10",
+      "not android < 51"
     ]
   },
   "resolutions": {
