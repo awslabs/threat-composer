@@ -14,7 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { applyMode as applyCloudscapeMode, Mode, applyDensity as applyCloudscapeDensity, Density } from '@cloudscape-design/global-styles';
+import { useNorthStarThemeContext } from '@aws-northstar/ui';
+import { Mode, Density } from '@cloudscape-design/global-styles';
 import { FC, PropsWithChildren, useState, useEffect } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { GlobalSetupContext, useGlobalSetupContext } from './context';
@@ -22,8 +23,6 @@ import InfoModal from '../../components/global/InfoModal';
 import { LOCAL_STORAGE_KEY_NEW_VISIT_FLAG } from '../../configs/localStorageKeys';
 import { ComposerMode, DataExchangeFormat } from '../../customTypes';
 import EventController from '../../utils/EventController';
-
-import '@cloudscape-design/global-styles/index.css';
 
 export interface GlobalSetupContextProviderProps {
   composerMode?: ComposerMode;
@@ -38,14 +37,6 @@ const stringifyWorkspaceData = (data: any) => {
   return JSON.stringify(data, null, 2);
 };
 
-const applyDensity = (density?: string) => {
-  applyCloudscapeDensity(density === 'compact' ? Density.Compact : Density.Comfortable);
-};
-
-const applyTheme = (theme?: string) => {
-  applyCloudscapeMode(theme === 'dark' ? Mode.Dark : Mode.Light);
-};
-
 const eventController = new EventController();
 
 window.threatcomposer = {
@@ -53,10 +44,7 @@ window.threatcomposer = {
   addEventListener: (eventName, eventHandler) =>
     eventController.addEventListener(eventName, eventHandler),
   dispatchEvent: (event) => eventController.dispatchEvent(event),
-  applyDensity,
-  applyTheme,
 };
-
 
 const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProviderProps>> = ({
   children,
@@ -68,6 +56,17 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
   onDefineWorkload,
 }) => {
   const [fileImportModalVisible, setFileImportModalVisible] = useState(false);
+  const { setTheme, setDensity } = useNorthStarThemeContext();
+
+  useEffect(() => {
+    window.threatcomposer.applyDensity = (density?: string) => {
+      setDensity(density === 'compact' ? Density.Compact : Density.Comfortable);
+    };
+
+    window.threatcomposer.applyTheme = (theme?: string) => {
+      setTheme(theme === 'dark' ? Mode.Dark : Mode.Light);
+    };
+  }, [setDensity, setTheme]);
 
   const [hasVisitBefore, setHasVisitBefore] = useLocalStorageState<boolean>(LOCAL_STORAGE_KEY_NEW_VISIT_FLAG, {
     defaultValue: false,
@@ -81,6 +80,7 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
       window.setTimeout(() => setHasVisitBefore(true), 1000);
     }
   }, [hasVisitBefore, composerMode]);
+
 
   return (<div>
     <GlobalSetupContext.Provider value={{

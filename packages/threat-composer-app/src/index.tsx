@@ -13,18 +13,26 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { APP_MODE_IDE_EXTENSION } from '@aws/threat-composer';
+import NorthStarThemeProvider from '@aws-northstar/ui/components/NorthStarThemeProvider';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, MemoryRouter } from 'react-router-dom';
 import App from './containers/App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
+const appMode = process.env.REACT_APP_APP_MODE;
+
+const Router = appMode === APP_MODE_IDE_EXTENSION ? MemoryRouter : BrowserRouter;
+
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <Router>
+      <NorthStarThemeProvider>
+        <App />
+      </NorthStarThemeProvider>
+    </Router>
   </React.StrictMode>,
   document.getElementById('root'),
 );

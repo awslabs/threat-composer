@@ -75,6 +75,6 @@ export interface ThreatComposerNamespace {
   renameWorkspace?: (id: string, newWorkspaceName: string) => Promise<void>;
   dispatchEvent: (event: CustomEvent) => void;
   addEventListener: (eventName: string, eventHandler: EventHandler) => void;
-  applyDensity: (density?: string) => void;
-  applyTheme: (theme?: string) => void;
+  applyDensity?: (density?: string) => void;
+  applyTheme?: (theme?: string) => void;
 }
