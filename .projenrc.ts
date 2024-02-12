@@ -216,6 +216,7 @@ const appProject = new ReactTypeScriptProject({
     "@cloudscape-design/components",
     "@cloudscape-design/global-styles",
     "@cloudscape-design/design-tokens",
+    "@aws-northstar/ui",
     "react-router-dom",
     "uuid",
     uiProject.package.packageName,

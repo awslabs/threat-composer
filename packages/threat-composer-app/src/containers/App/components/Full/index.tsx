@@ -13,7 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ContextAggregator, DataExchangeFormat, ThreatStatementListFilter, WorkspaceSelector, useWorkspacesContext } from '@aws/threat-composer';
+import {
+  ContextAggregator,
+  DataExchangeFormat,
+  ThreatStatementListFilter,
+  WorkspaceSelector,
+  useWorkspacesContext,
+  APP_MODE_BROWSER_EXTENSION,
+  APP_MODE_IDE_EXTENSION,
+} from '@aws/threat-composer';
 import { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
 import React, { FC, useMemo, useCallback, useState, useEffect } from 'react';
 import { Routes, Route, RouteProps, useParams, useSearchParams, useNavigate, Navigate } from 'react-router-dom';
@@ -31,6 +39,7 @@ import {
   ROUTE_WORKSPACE_HOME,
   ROUTE_MITIGATION_PACKS,
 } from '../../../../config/routes';
+import { SEARCH_PARAM_FEATURES } from '../../../../config/searchParams';
 import useNotifications from '../../../../hooks/useNotifications';
 import routes from '../../../../routes';
 import generateUrl from '../../../../utils/generateUrl';
@@ -72,7 +81,7 @@ const Full: FC = () => {
 
   const [features] = useState(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const featureParam = urlParams.get('features');
+    const featureParam = urlParams.get(SEARCH_PARAM_FEATURES);
     return featureParam && featureParam.split(',') || [];
   });
 
@@ -211,8 +220,8 @@ const Full: FC = () => {
         navigationItems={navigationItems}
         availableRoutes={routes.map(x => x.path || '')}
         breadcrumbGroup={<WorkspaceSelector
-          singletonMode={appMode === 'browser-extension' || appMode === 'ide-extension'}
-          singletonPrimaryActionButtonConfig={appMode === 'ide-extension' ? {
+          singletonMode={appMode === APP_MODE_BROWSER_EXTENSION || appMode === APP_MODE_IDE_EXTENSION}
+          singletonPrimaryActionButtonConfig={appMode === APP_MODE_IDE_EXTENSION ? {
             text: 'Save',
             eventName: 'save',
           } : undefined}

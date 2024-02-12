@@ -97,6 +97,10 @@
       "type": "override"
     },
     {
+      "name": "@aws-northstar/ui",
+      "type": "runtime"
+    },
+    {
       "name": "@aws/threat-composer",
       "type": "runtime"
     },

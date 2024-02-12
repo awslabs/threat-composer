@@ -13,11 +13,5 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export * from './constants';
-export * from './export';
-export * from './localStorageKeys';
-export * from './content';
-export * from './styles';
-export * from './options';
-export * from './metadata';
-export * from './appMode';
+export const APP_MODE_IDE_EXTENSION='ide-extension';
+export const APP_MODE_BROWSER_EXTENSION ='browser-extension';

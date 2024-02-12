@@ -23,6 +23,7 @@ import SideNavigation, { SideNavigationProps } from '@cloudscape-design/componen
 import { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
 import { FC, ReactNode, useState, useCallback, createContext, PropsWithChildren, ReactElement, useContext, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { SEARCH_PARAM_MODE } from '../../config/searchParams';
 import { NavHeaderProps } from '../NavHeader';
 
 export type AppLayoutProps = (NavHeaderProps | { header: ReactElement<TopNavigationProps> })
@@ -96,7 +97,7 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
   const location = useLocation();
 
   const headerHref = useMemo(() => {
-    const mode = searchParams.get('mode');
+    const mode = searchParams.get(SEARCH_PARAM_MODE);
     const href = 'href' in props ? props.href : '/';
     return mode ? `${href}/?mode=${mode}` : href;
   }, [searchParams]);

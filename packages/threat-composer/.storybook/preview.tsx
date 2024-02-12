@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { Preview } from "@storybook/react";
-import { applyMode } from '@cloudscape-design/global-styles';
+import { Mode } from '@cloudscape-design/global-styles';
+import NorthStarThemeProvider from '@aws-northstar/ui/components/NorthStarThemeProvider';
 
 const preview: Preview = {
   parameters: {
@@ -27,13 +28,16 @@ const preview: Preview = {
   },
   decorators: [
     (Story, args) => {
+      const [colorMode, setColorMode] = useState('light');
+
       useEffect(() => {
         const color = args.globals.backgrounds?.value;
         const matchColorMode = color && args.parameters?.backgrounds?.values?.find((v) => v.value === color)?.name;
-        matchColorMode && applyMode(matchColorMode);
-    }, [args.globals.backgrounds?.value]);
+        matchColorMode && setColorMode(matchColorMode);
+      }, [args.globals.backgrounds?.value]);
 
-      return <Story/>;
+      return (<NorthStarThemeProvider theme={colorMode === 'light' ? Mode.Light : Mode.Dark}>
+        <Story /></NorthStarThemeProvider>);
     }
   ]
 };

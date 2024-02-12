@@ -15,6 +15,7 @@
  ******************************************************************************************************************** */
 import React, { FC } from 'react';
 import WorkspaceSelectorComponent from '../../components/workspaces/WorkspaceSelector';
+import { APP_MODE_BROWSER_EXTENSION, APP_MODE_IDE_EXTENSION } from '../../configs';
 import ContextAggregator from '../../contexts/ContextAggregator';
 import { ComposerMode } from '../../customTypes';
 
@@ -27,8 +28,8 @@ const WorkspaceSelector: FC<WorkspaceSelectorProps> = ({ composerMode, appMode }
   return (<ContextAggregator composerMode={composerMode as ComposerMode}>
     <WorkspaceSelectorComponent
       embededMode={false}
-      singletonMode={appMode === 'browser-extension' || appMode === 'ide-extension'}
-      singletonPrimaryActionButtonConfig={appMode === 'ide-extension' ? {
+      singletonMode={appMode === APP_MODE_BROWSER_EXTENSION || appMode === APP_MODE_IDE_EXTENSION}
+      singletonPrimaryActionButtonConfig={appMode === APP_MODE_IDE_EXTENSION ? {
         text: 'Save',
         eventName: 'save',
       } : undefined}

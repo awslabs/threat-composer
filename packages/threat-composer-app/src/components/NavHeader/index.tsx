@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { useNorthStarThemeContext } from '@aws-northstar/ui/components/NorthStarThemeProvider';
 import TopNavigation, { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
-import { applyMode, Mode, applyDensity, Density } from '@cloudscape-design/global-styles';
-import { FC, useMemo, useState, useEffect } from 'react';
+import { Mode, Density } from '@cloudscape-design/global-styles';
+import { FC, useMemo } from 'react';
 
 /**
  * Props for Top Navigation Header
@@ -39,8 +40,7 @@ export interface NavHeaderProps extends Partial<TopNavigationProps> {
  * Top Navigation Header displayed on AppLayout.
  */
 const NavHeader: FC<NavHeaderProps> = ({ title, href, logo, ...props }) => {
-  const [theme, setTheme] = useState(Mode.Light);
-  const [density, setDensity] = useState(Density.Comfortable);
+  const { theme, setTheme, density, setDensity } = useNorthStarThemeContext();
   const utilities: TopNavigationProps.Utility[] = useMemo(() => {
     const menu: TopNavigationProps.Utility[] = [
       {
@@ -109,14 +109,6 @@ const NavHeader: FC<NavHeaderProps> = ({ title, href, logo, ...props }) => {
 
     return menu;
   }, [theme, density]);
-
-  useEffect(() => {
-    applyMode(theme);
-  }, [theme]);
-
-  useEffect(() => {
-    applyDensity(density);
-  }, [density]);
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1002, margin: 0 }}>

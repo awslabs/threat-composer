@@ -14,10 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { generatePath } from 'react-router-dom';
+import { SEARCH_PARAM_FEATURES, SEARCH_PARAM_MODE } from '../../config/searchParams';
 
 const ROUTE_BASE_PATH = process.env.REACT_APP_ROUTE_BASE_PATH || '';
 
-const SEARCH_PARAMS_KEPT = ['mode', 'features'];
+const SEARCH_PARAMS_KEPT = [SEARCH_PARAM_MODE, SEARCH_PARAM_FEATURES];
 
 const generateUrl = (path: string, searchParams: URLSearchParams, workspaceId: string, threatId?: string,
   additionalParams?: {
