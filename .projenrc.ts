@@ -78,6 +78,25 @@ const uiESModules = [
   "@aws-northstar/ui"
 ].join("|");
 
+const browsersList = {
+  production: [
+    ">0.2%",
+    "not dead",
+    "not ie 11",
+    "not chrome < 51",
+    "not safari < 10",
+    "not android < 51",
+  ],
+  development: [
+    ">0.2%",
+    "not dead",
+    "not ie 11",
+    "not chrome < 51",
+    "not safari < 10",
+    "not android < 51",
+  ],
+};
+
 const uiProject = new TypeScriptProject({
   parent: monorepo,
   outdir: "packages/threat-composer",
@@ -186,6 +205,8 @@ uiProject.eslint?.addRules({
   "header/header": [2, "../../header.js"],
 });
 
+uiProject.package.addField("browserslist", browsersList);
+
 const appProject = new ReactTypeScriptProject({
   parent: monorepo,
   outdir: "packages/threat-composer-app",
@@ -233,6 +254,8 @@ appProject.compileTask.spawn(compileIDEExtensionTask);
 
 appProject.postCompileTask.reset(`[ -d ./build/storybook ] || mkdir -p ./build/storybook`);
 appProject.postCompileTask.exec(`cp -r ../threat-composer/storybook.out/ ./build/storybook/`);
+
+appProject.package.addField("browserslist", browsersList);
 
 const infraProject = new PDKPipelineTsProject({
   cdkVersion: "2.81.0",
@@ -313,6 +336,8 @@ browserExtensionProject.eslint?.addPlugins("header");
 browserExtensionProject.eslint?.addRules({
   "header/header": [2, "../../header.js"],
 });
+
+browserExtensionProject.package.addField("browserslist", browsersList);
 
 monorepo.addImplicitDependency(appProject, uiProject);
 monorepo.addImplicitDependency(infraProject, appProject);
