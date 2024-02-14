@@ -52,19 +52,30 @@ export default defineConfig({
     plugins: [
       react(),
       copy({
-        targets: [{
-          src: '../threat-composer-app/build/browser-extension/index.html',
-          dest: env.browser === 'chrome' ? ['./.output/chrome-mv3'] : ['./.output/firefox-mv2'],
-          transform: (contents) => contents.toString().replace('<\/body><\/html>', '<script src=\"' + tcScriptInjectForThreatComposer + '\"><\/script><\/body><\/html>')
-        }],
-        copyOnce: true
-      }),
-      copy({
-        targets: [{
-          src: ['../threat-composer-app/build/browser-extension/**/*', '!../threat-composer-app/build/browser-extension/index.html'],
-          dest: env.browser === 'chrome' ? ['./.output/chrome-mv3'] : ['./.output/firefox-mv2'],
-        }],
-        copyOnce: true
+        targets: [
+          {
+            src: ['../threat-composer-app/build/browser-extension/*'],
+            dest: env.browser === 'chrome' ? ['./.output/chrome-mv3'] : ['./.output/firefox-mv2'],
+          },
+          {
+            src: '../threat-composer-app/build/browser-extension/index.html',
+            dest: env.browser === 'chrome' ? ['./.output/chrome-mv3'] : ['./.output/firefox-mv2'],
+            transform: (contents) => contents.toString().replace('<\/body><\/html>', '<script src=\"' + tcScriptInjectForThreatComposer + '\"><\/script><\/body><\/html>')
+          },
+          {
+            src: '../threat-composer-app/build/browser-extension/*.js',
+            dest: env.browser === 'chrome' ? ['./.output/chrome-mv3'] : ['./.output/firefox-mv2'],
+            transform: (contents) =>
+              contents.toString().replace(/<script src="https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/html5shiv\/[0-9]+\.[0-9]+\.[0-9]+\/html5shiv[a-zA-Z-]*.min.js"><\\\/script>/g, '')
+          },
+          {
+            src: '../threat-composer-app/build/browser-extension/static/js/*.js',
+            dest: env.browser === 'chrome' ? ['./.output/chrome-mv3/static/js/'] : ['./.output/firefox-mv2/static/js/'],
+            transform: (contents) =>
+              contents.toString().replace(/\|\|"https:\/\/cdn.jsdelivr.net\/npm\/browser-image-compression@[0-9]+\.[0-9]+\.[0-9]+\/dist\/browser-image-compression\.js"/g, '')
+          },
+        ],
+        copySync: true
       })
     ]
   }),
