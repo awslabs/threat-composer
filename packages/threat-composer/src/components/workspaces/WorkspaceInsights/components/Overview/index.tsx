@@ -32,9 +32,12 @@ import useLinkClicked from '../../hooks/useLinkClicked';
 
 const styles = {
   container: css({
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
+    'height': '100%',
+    'display': 'flex',
+    'flexDirection': 'column',
+    '& a': {
+      textDecoration: 'none !important',
+    },
   }),
   contentContainer: css({
     flex: 1,

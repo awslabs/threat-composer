@@ -23,13 +23,19 @@ import {
   ThreatPack,
 } from '@aws/threat-composer';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { v4 as uuidV4 } from 'uuid';
+import isMemoryRouterUsed from '../../utils/isMemoryRouterUsed';
 
 const ThreatStatementEditor = () => {
   const { threatId } = useParams();
+  const location = useLocation();
 
   const [idToCopy] = useState(() => {
+    if (isMemoryRouterUsed()) {
+      return location.state?.idToCopy;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('idToCopy');
   });
@@ -38,6 +44,13 @@ const ThreatStatementEditor = () => {
     threatPackId,
     threatPackThreatId,
   }] = useState(() => {
+    if (isMemoryRouterUsed()) {
+      return {
+        threatPackId: location.state?.threatPackId,
+        threatPackThreatId: location.state?.threatPackThreatId,
+      };
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     return {
       threatPackId: urlParams.get('threatPackId'),

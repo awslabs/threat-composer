@@ -110,7 +110,11 @@ const Full: FC = () => {
   const handleThreatEditorView = useCallback((newThreatId: string, idToCopy?: string) => {
     navigate(generateUrl(ROUTE_THREAT_EDITOR, searchParms, workspaceId, newThreatId, undefined, idToCopy ? {
       idToCopy,
-    } : undefined));
+    } : undefined), {
+      state: {
+        idToCopy,
+      },
+    });
   }, [navigate, workspaceId, searchParms]);
 
   const navigationItems: SideNavigationProps.Item[] = useMemo(() => {

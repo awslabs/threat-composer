@@ -13,33 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThreatPacksComponent } from '@aws/threat-composer';
-import { FC, useCallback } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ROUTE_THREAT_PACK } from '../../config/routes';
-import generateUrl from '../../utils/generateUrl';
+import { APP_MODE_IDE_EXTENSION } from '@aws/threat-composer';
 
-const ThreatPacks: FC = () => {
-  const [searchParms] = useSearchParams();
-  const { workspaceId } = useParams();
-  const navigate = useNavigate();
+const appMode = process.env.REACT_APP_APP_MODE;
 
-  const handleThreatPackLinkClick = useCallback((threatPackId: string) => {
-    workspaceId && navigate(generateUrl(
-      ROUTE_THREAT_PACK,
-      searchParms,
-      workspaceId,
-      undefined,
-      {
-        threatPackId,
-      }));
-  }, []);
-
-  if (!workspaceId) {
-    return null;
-  }
-
-  return (<ThreatPacksComponent onThreatPackLinkClicked={handleThreatPackLinkClick} />);
+const isMemoryRouterUsed = () => {
+  return appMode === APP_MODE_IDE_EXTENSION;
 };
 
-export default ThreatPacks;
+export default isMemoryRouterUsed;
