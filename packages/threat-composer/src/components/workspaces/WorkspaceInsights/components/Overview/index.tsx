@@ -14,12 +14,10 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { SpaceBetween } from '@cloudscape-design/components';
 import Badge from '@cloudscape-design/components/badge';
 import Box from '@cloudscape-design/components/box';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
-import Icon from '@cloudscape-design/components/icon';
-import Link, { LinkProps } from '@cloudscape-design/components/link';
+import { LinkProps } from '@cloudscape-design/components/link';
 import { css } from '@emotion/react';
 import { useMemo, FC, ReactNode } from 'react';
 import { LEVEL_HIGH, LEVEL_LOW, LEVEL_MEDIUM, LEVEL_NOT_SET } from '../../../../../configs';
@@ -27,41 +25,20 @@ import { useAssumptionLinksContext } from '../../../../../contexts';
 import { useMitigationLinksContext } from '../../../../../contexts/MitigationLinksContext';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
+import DashboardNumber from '../../../../generic/DashboardNumber';
 import useLinkClicked from '../../hooks/useLinkClicked';
-
 
 const styles = {
   container: css({
-    'height': '100%',
-    'display': 'flex',
-    'flexDirection': 'column',
-    '& a': {
-      textDecoration: 'none !important',
-    },
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
   }),
   contentContainer: css({
     flex: 1,
     display: 'flex',
     alignItems: 'flex-end',
   }),
-};
-
-const NumberWithWarningSign: FC<{
-  displayedNumber: number;
-  onLinkClicked: LinkProps['onFollow'];
-}> = ({ displayedNumber, onLinkClicked }) => {
-  return displayedNumber > 0 ? (
-    <SpaceBetween direction="horizontal" size="xxs">
-      <Link variant="awsui-value-large" href="#" onFollow={onLinkClicked}>
-        {displayedNumber}
-      </Link>
-      <Icon name="status-warning" variant="warning" />
-    </SpaceBetween>
-  ) : (
-    <Link variant="awsui-value-large" href="#" onFollow={onLinkClicked}>
-      {displayedNumber}
-    </Link>
-  );
 };
 
 const LabelValuePair: FC<{
@@ -73,14 +50,11 @@ const LabelValuePair: FC<{
   return (<div css={styles.container} >
     <Box variant="awsui-key-label">{label}</Box>
     <div css={styles.contentContainer}>
-      {showWarning ? (<NumberWithWarningSign displayedNumber={value} onLinkClicked={onLinkFollow} />) : (
-        <Link
-          variant="awsui-value-large"
-          href="#"
-          onFollow={onLinkFollow}
-        >
-          {value}
-        </Link>)}
+      <DashboardNumber
+        showWarning={showWarning}
+        displayedNumber={value}
+        onLinkClicked={onLinkFollow}
+      />
     </div>
   </div>);
 };

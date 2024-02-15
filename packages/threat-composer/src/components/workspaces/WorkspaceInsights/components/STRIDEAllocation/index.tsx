@@ -16,12 +16,9 @@
 import {
   Button,
   Box,
-  SpaceBetween,
   FormField,
   Select,
   ColumnLayout,
-  Link,
-  Icon,
   BarChart,
   BarChartProps,
 } from '@cloudscape-design/components';
@@ -33,6 +30,7 @@ import {
 } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
+import DashboardNumber from '../../../../generic/DashboardNumber';
 import useLinkClicked from '../../hooks/useLinkClicked';
 
 const STRIDEAllocation = () => {
@@ -176,18 +174,13 @@ const STRIDEAllocation = () => {
       {missingStride > 0 ? (
         <div>
           <Box variant="awsui-key-label">Missing STRIDE</Box>
-          <SpaceBetween direction="horizontal" size="xxs">
-            <Link
-              variant="awsui-value-large"
-              href="#"
-              onFollow={handleLinkClicked({
-                stride: LEVEL_NOT_SET,
-              })}
-            >
-              {missingStride}
-            </Link>
-            <Icon name="status-warning" variant="warning" />
-          </SpaceBetween>
+          <DashboardNumber
+            showWarning
+            displayedNumber={missingStride}
+            onLinkClicked={handleLinkClicked({
+              stride: LEVEL_NOT_SET,
+            })}
+          />
         </div>
       ) : null}
     </ColumnLayout>
