@@ -16,10 +16,7 @@
 import {
   Button,
   Box,
-  SpaceBetween,
   ColumnLayout,
-  Link,
-  Icon,
 } from '@cloudscape-design/components';
 import PieChart from '@cloudscape-design/components/pie-chart';
 import {
@@ -38,6 +35,7 @@ import {
 } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
+import DashboardNumber from '../../../../generic/DashboardNumber';
 import useLinkClicked from '../../hooks/useLinkClicked';
 
 const ThreatPrioritization = () => {
@@ -136,18 +134,13 @@ const ThreatPrioritization = () => {
       {missingPriority > 0 ? (
         <div>
           <Box variant="awsui-key-label">Missing priority</Box>
-          <SpaceBetween direction="horizontal" size="xxs">
-            <Link
-              variant="awsui-value-large"
-              href="#"
-              onFollow={handleLinkClicked({
-                priority: LEVEL_NOT_SET,
-              })}
-            >
-              {missingPriority}
-            </Link>
-            <Icon name="status-warning" variant="warning" />
-          </SpaceBetween>
+          <DashboardNumber
+            showWarning
+            displayedNumber={missingPriority}
+            onLinkClicked={handleLinkClicked({
+              priority: LEVEL_NOT_SET,
+            })}
+          />
         </div>
       ) : null}
     </ColumnLayout>

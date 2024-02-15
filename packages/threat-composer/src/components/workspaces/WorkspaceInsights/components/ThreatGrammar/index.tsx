@@ -16,12 +16,9 @@
 import {
   Button,
   Box,
-  SpaceBetween,
   FormField,
   Select,
   ColumnLayout,
-  Link,
-  Icon,
   BarChart,
   BarChartProps,
 } from '@cloudscape-design/components';
@@ -36,6 +33,7 @@ import {
 } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
+import DashboardNumber from '../../../../generic/DashboardNumber';
 
 const ThreatGrammar = () => {
   const { statementList, addStatement } = useThreatsContext();
@@ -193,12 +191,10 @@ const ThreatGrammar = () => {
       {notUsingGrammar > 0 ? (
         <div>
           <Box variant="awsui-key-label">Not using grammar</Box>
-          <SpaceBetween direction="horizontal" size="xxs">
-            <Link variant="awsui-value-large" href="#">
-              {notUsingGrammar}
-            </Link>
-            <Icon name="status-warning" variant="warning" />
-          </SpaceBetween>
+          <DashboardNumber
+            showWarning
+            displayedNumber={notUsingGrammar}
+          />
         </div>
       ) : null}
     </ColumnLayout>

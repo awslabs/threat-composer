@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Box from '@cloudscape-design/components/box';
-import Link from '@cloudscape-design/components/link';
+import Button from '@cloudscape-design/components/button';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo } from 'react';
 import GeneralInfo from './components/GeneralInfo';
@@ -23,11 +23,11 @@ import { ThreatPack } from '../../../customTypes/referencePacks';
 import Table, { ColumnDefinition } from '../../generic/Table';
 
 export interface ThreatPacksProps {
-  getThreatPackLinkHref?: (id: string) => string;
+  onThreatPackLinkClicked?: (id: string) => void;
 }
 
 const ThreatPacks: FC<ThreatPacksProps> = ({
-  getThreatPackLinkHref,
+  onThreatPackLinkClicked,
 }) => {
   const { threatPackUsage, threatPacks } = useThreatPacksContext();
 
@@ -36,7 +36,7 @@ const ThreatPacks: FC<ThreatPacksProps> = ({
       id: 'id',
       minWidth: 100,
       header: 'Id',
-      cell: (data) => <Link href={getThreatPackLinkHref?.(data.id)}>{data.id}</Link>,
+      cell: (data) => <Button variant="inline-link" onClick={() => onThreatPackLinkClicked?.(data.id)}>{data.id}</Button>,
       sortingField: 'id',
       isRowHeader: true,
     },
@@ -64,7 +64,7 @@ const ThreatPacks: FC<ThreatPacksProps> = ({
       header: 'Referenced threats',
       cell: (data) => (threatPackUsage[data.id] && Object.keys(threatPackUsage[data.id]).length) || 0,
     },
-  ], [threatPackUsage, getThreatPackLinkHref]);
+  ], [threatPackUsage, onThreatPackLinkClicked]);
 
   return (<SpaceBetween direction='vertical' size='s'>
     <GeneralInfo />

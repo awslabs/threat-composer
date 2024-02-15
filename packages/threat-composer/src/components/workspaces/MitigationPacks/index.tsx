@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Box from '@cloudscape-design/components/box';
-import Link from '@cloudscape-design/components/link';
+import Button from '@cloudscape-design/components/button';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo } from 'react';
 import GeneralInfo from './components/GeneralInfo';
@@ -23,11 +23,11 @@ import { MitigationPack } from '../../../customTypes/referencePacks';
 import Table, { ColumnDefinition } from '../../generic/Table';
 
 export interface MitigationPacksProps {
-  getMitigationPackLinkHref?: (id: string) => string;
+  onMitigationPackLinkClicked?: (id: string) => void;
 }
 
 const MitigationPacks: FC<MitigationPacksProps> = ({
-  getMitigationPackLinkHref,
+  onMitigationPackLinkClicked,
 }) => {
   const { mitigationPackUsage, mitigationPacks } = useMitigationPacksContext();
 
@@ -36,7 +36,9 @@ const MitigationPacks: FC<MitigationPacksProps> = ({
       id: 'id',
       minWidth: 100,
       header: 'Id',
-      cell: (data) => <Link href={getMitigationPackLinkHref?.(data.id)}>{data.id}</Link>,
+      cell: (data) => (<Button variant="inline-link" onClick={() => onMitigationPackLinkClicked?.(data.id)}>
+        {data.id}
+      </Button>),
       sortingField: 'id',
       isRowHeader: true,
     },
@@ -62,9 +64,9 @@ const MitigationPacks: FC<MitigationPacksProps> = ({
     {
       id: 'countReferencedMitigations',
       header: 'Referenced mitigations',
-      cell: (data) =>(mitigationPackUsage[data.id] && Object.keys(mitigationPackUsage[data.id]).length) || 0,
+      cell: (data) => (mitigationPackUsage[data.id] && Object.keys(mitigationPackUsage[data.id]).length) || 0,
     },
-  ], [mitigationPackUsage, getMitigationPackLinkHref]);
+  ], [mitigationPackUsage, onMitigationPackLinkClicked]);
 
   return (<SpaceBetween direction='vertical' size='s'>
     <GeneralInfo />

@@ -32,7 +32,12 @@ const ThreatPack: FC = () => {
         threatPackId: selectedThreatPackId,
         threatPackThreatId: threat.id,
       });
-    navigate(url);
+    navigate(url, {
+      state: {
+        threatPackId: selectedThreatPackId,
+        threatPackThreatId: threat.id,
+      },
+    });
   }, [workspaceId, searchParms]);
 
   if (!threatPackId) {

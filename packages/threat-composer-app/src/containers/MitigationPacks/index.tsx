@@ -14,28 +14,33 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { MitigationPacksComponent } from '@aws/threat-composer';
-import { FC } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { FC, useCallback } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ROUTE_MITIGATION_PACK } from '../../config/routes';
 import generateUrl from '../../utils/generateUrl';
 
 const MitigationPacks: FC = () => {
   const [searchParms] = useSearchParams();
   const { workspaceId } = useParams();
+  const navigate = useNavigate();
+
+  const handleMitigationPackLinkClicked = useCallback((mitigationPackId: string) => {
+    workspaceId && navigate(generateUrl(
+      ROUTE_MITIGATION_PACK,
+      searchParms,
+      workspaceId,
+      undefined,
+      {
+        mitigationPackId,
+      },
+    ));
+  }, []);
 
   if (!workspaceId) {
     return null;
   }
 
-  return (<MitigationPacksComponent getMitigationPackLinkHref={(mitigationPackId) => generateUrl(
-    ROUTE_MITIGATION_PACK,
-    searchParms,
-    workspaceId,
-    undefined,
-    {
-      mitigationPackId,
-    },
-  )} />);
+  return (<MitigationPacksComponent onMitigationPackLinkClicked={handleMitigationPackLinkClicked} />);
 };
 
 export default MitigationPacks;
