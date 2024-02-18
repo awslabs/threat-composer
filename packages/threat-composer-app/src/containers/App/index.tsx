@@ -30,6 +30,7 @@ const App: FC = () => {
   const [searchParams] = useSearchParams();
   const mode = searchParams.get(SEARCH_PARAM_MODE);
   const composerMode = mode || DEFAULT_MODE || 'Full';
+
   return composerMode === 'ThreatsOnly' || composerMode === 'EditorOnly' ? (
     <Standalone composeMode={composerMode} />
   ) : (

@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { useNorthStarThemeContext } from '@aws-northstar/ui/components/NorthStarThemeProvider';
+import { useThemeContext } from '@aws/threat-composer';
 import TopNavigation, { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
 import { Mode, Density } from '@cloudscape-design/global-styles';
 import { FC, useMemo } from 'react';
@@ -40,7 +40,7 @@ export interface NavHeaderProps extends Partial<TopNavigationProps> {
  * Top Navigation Header displayed on AppLayout.
  */
 const NavHeader: FC<NavHeaderProps> = ({ title, href, logo, ...props }) => {
-  const { theme, setTheme, density, setDensity } = useNorthStarThemeContext();
+  const { theme, setTheme, density, setDensity } = useThemeContext();
   const utilities: TopNavigationProps.Utility[] = useMemo(() => {
     const menu: TopNavigationProps.Utility[] = [
       {

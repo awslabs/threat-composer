@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import NorthStarThemeProvider from '@aws-northstar/ui/components/NorthStarThemeProvider';
+import { ThemeProvider } from '@aws/threat-composer';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
@@ -26,11 +26,11 @@ const Router = isMemoryRouterUsed() ? MemoryRouter : BrowserRouter;
 
 ReactDOM.render(
   <React.StrictMode>
-    <Router>
-      <NorthStarThemeProvider>
+    <ThemeProvider themeDetectionEnabled>
+      <Router>
         <App />
-      </NorthStarThemeProvider>
-    </Router>
+      </Router>
+    </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );
