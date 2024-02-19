@@ -42,7 +42,7 @@ const PriorityEdit: FC<PriorityEditProps> = React.forwardRef<React.ForwardedRef<
       ref={ref}
       {...props}
       allowNoValue
-      placeholder='Select Prority'
+      placeholder='Select Priority'
       label={showLabel ? 'Priority' : undefined}
       selectedLevel={priority}
       setSelectedLevel={(selectedLevel) => onEditMetadata(editingStatement, 'Priority', selectedLevel)}
