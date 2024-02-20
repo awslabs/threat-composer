@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThemeProvider } from '@aws/threat-composer';
+import { ThemeProvider, Mode, APP_MODE_IDE_EXTENSION } from '@aws/threat-composer';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
@@ -24,9 +24,21 @@ import isMemoryRouterUsed from './utils/isMemoryRouterUsed';
 
 const Router = isMemoryRouterUsed() ? MemoryRouter : BrowserRouter;
 
+const initialThemeString = (document.querySelector('meta[name="dark-mode"]') as HTMLMetaElement)?.content;
+
+console.log(document.querySelector('meta[name="dark-mode"]'), initialThemeString);
+
+const initialTheme = initialThemeString ?
+  (initialThemeString === 'true' ? Mode.Dark : Mode.Light) :
+  undefined;
+
+// Notes: For the IDE Extension app, the theme is set using html meta tag.
+// Disable the theme detection.
+const themeDetectionEnabled = (process.env.REACT_APP_APP_MODE !== APP_MODE_IDE_EXTENSION);
+
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider themeDetectionEnabled>
+    <ThemeProvider themeDetectionEnabled={themeDetectionEnabled} theme={initialTheme}>
       <Router>
         <App />
       </Router>
