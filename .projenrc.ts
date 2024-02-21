@@ -9,9 +9,6 @@ const monorepo = new MonorepoTsProject({
   name: "@aws/threat-composer-monorepo",
   devDeps: [
     "@aws/pdk",
-    "@aws-prototyping-sdk/nx-monorepo",
-    "@aws-prototyping-sdk/pipeline",
-    "@aws-prototyping-sdk/pdk-nag",
     "eslint-plugin-header",
     "license-checker",
     "husky",

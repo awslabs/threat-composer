@@ -178,27 +178,6 @@
     use-debounce "^9.0.4"
     uuid "^9.0.0"
 
-"@aws-prototyping-sdk/nx-monorepo@^0.19.2":
-  version "0.19.3"
-  resolved "https://registry.yarnpkg.com/@aws-prototyping-sdk/nx-monorepo/-/nx-monorepo-0.19.3.tgz#a838be0070069e96edbc10f3db4ef09be908149a"
-  integrity sha512-hnIKJicf5Zxv88z13GWckWyf9boI6PzPZooUUMml35Lkh8Rsu3ANWlHEa5I0CEwEbyR8466gjU+HNQtxHC3icw==
-  dependencies:
-    "@pnpm/reviewing.dependencies-hierarchy" "^2.0.4"
-    fs-extra "^11.1.1"
-    semver "^7.5.0"
-
-"@aws-prototyping-sdk/pdk-nag@^0.19.2":
-  version "0.19.2"
-  resolved "https://registry.yarnpkg.com/@aws-prototyping-sdk/pdk-nag/-/pdk-nag-0.19.2.tgz#c8351523eb9ead283932b0124ba3881de4c1d353"
-  integrity sha512-jTcMLuySIAkTQj8G8uBBvxy86hEIz3mJs+FWYyO2jV2BgNV/BSIQu5dAaZ7egheO6dJim5Ishbv/OCGCuiPpFA==
-
-"@aws-prototyping-sdk/pipeline@^0.19.2":
-  version "0.19.2"
-  resolved "https://registry.yarnpkg.com/@aws-prototyping-sdk/pipeline/-/pipeline-0.19.2.tgz#d5ea9a8e4dab997226faf0e66b22f1b90267efc3"
-  integrity sha512-Y5KknoIyIrYNMPdcT03dIvNagXe2agJHVkrz36KKPZHYOb6hhviUyw+O6PNx5DgMeDbzGtFdQwLRyksRJVoqOA==
-  dependencies:
-    "@aws-prototyping-sdk/pdk-nag" "^0.19.2"
-
 "@aws-sdk/client-cognito-identity-provider@^3.357.0":
   version "3.515.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/client-cognito-identity-provider/-/client-cognito-identity-provider-3.515.0.tgz#86bfdb6acd0cadc60de56c79e0e8a8bc425409cb"
@@ -4777,11 +4756,6 @@
     schema-utils "^3.0.0"
     source-map "^0.7.3"
 
-"@pnpm/constants@7.1.0":
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/@pnpm/constants/-/constants-7.1.0.tgz#42c268b695d0dc9ae8c42329935bde9990fec035"
-  integrity sha512-PzpiPtGF+bIrmkNaHgOIfBZw669+rkUtt/5UFzHukiETwI4/+BTYz8FAr+m5Dfuns531Y+fYRFOpB0PdbAU0+w==
-
 "@pnpm/constants@7.1.1":
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/@pnpm/constants/-/constants-7.1.1.tgz#3db261425fe15425aa213a2b003f4f60c9378b43"
@@ -4794,16 +4768,6 @@
   dependencies:
     rfc4648 "^1.5.2"
 
-"@pnpm/dependency-path@2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@pnpm/dependency-path/-/dependency-path-2.1.2.tgz#bf220342a6d978d0e24f4a00f6ad89e64cfa15b6"
-  integrity sha512-BXEMdGHZG2y8z7hZAVn+r0z+IdszFZbVPpAp3xyDH3gDN30A4HCVhhCUUf0mthqQZsT131jK4HW82EUwEiW01A==
-  dependencies:
-    "@pnpm/crypto.base32-hash" "2.0.0"
-    "@pnpm/types" "9.1.0"
-    encode-registry "^3.0.0"
-    semver "^7.5.0"
-
 "@pnpm/dependency-path@2.1.8":
   version "2.1.8"
   resolved "https://registry.yarnpkg.com/@pnpm/dependency-path/-/dependency-path-2.1.8.tgz#974ea3c66724916ccf1531a908ac8c206be0c8f4"
@@ -4813,13 +4777,6 @@
     "@pnpm/types" "9.4.2"
     encode-registry "^3.0.1"
     semver "^7.5.4"
-
-"@pnpm/error@5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@pnpm/error/-/error-5.0.1.tgz#63024ee9742c64cd702cd4b2399fd166a9ce4894"
-  integrity sha512-JQSOeSEqrV6k6+kKgrlSJ7gddJRcjxtNCxSVJRIqwckkGSdSTNpXmKEdGgLlaDuEwElPAZUmLDGSqk5InJ5pMA==
-  dependencies:
-    "@pnpm/constants" "7.1.0"
 
 "@pnpm/error@5.0.2":
   version "5.0.2"
@@ -4834,29 +4791,6 @@
   integrity sha512-lUI+XrzOJN4zdPGOGnFUrmtXAXpXi8wD8OI0nWOZmlh+raqbLzC3VkXu1zgaduOK6YonOcnQW88O+ojav1rAdA==
   dependencies:
     execa "npm:safe-execa@0.1.2"
-
-"@pnpm/lockfile-file@8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@pnpm/lockfile-file/-/lockfile-file-8.1.0.tgz#239e2cdd1e6e4126323bc2419d23cdaa3fdde3b8"
-  integrity sha512-N9zMQPz0Uo7hKwpHRQAtF+0Dq263/HCOqkQCaNRxusHqgWIk8+f/w/j5fZaGzJ/Sr8nVeW1l6jpElE2UzawoMw==
-  dependencies:
-    "@pnpm/constants" "7.1.0"
-    "@pnpm/dependency-path" "2.1.2"
-    "@pnpm/error" "5.0.1"
-    "@pnpm/git-utils" "1.0.0"
-    "@pnpm/lockfile-types" "5.1.0"
-    "@pnpm/merge-lockfile-changes" "5.0.2"
-    "@pnpm/types" "9.1.0"
-    "@pnpm/util.lex-comparator" "1.0.0"
-    "@zkochan/rimraf" "^2.1.2"
-    comver-to-semver "^1.0.0"
-    js-yaml "npm:@zkochan/js-yaml@0.0.6"
-    normalize-path "^3.0.0"
-    ramda "npm:@pnpm/ramda@0.28.1"
-    semver "^7.5.0"
-    sort-keys "^4.2.0"
-    strip-bom "^4.0.0"
-    write-file-atomic "^5.0.1"
 
 "@pnpm/lockfile-file@8.1.7":
   version "8.1.7"
@@ -4881,31 +4815,12 @@
     strip-bom "^4.0.0"
     write-file-atomic "^5.0.1"
 
-"@pnpm/lockfile-types@5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@pnpm/lockfile-types/-/lockfile-types-5.1.0.tgz#8133fa0cea79f49961d56d1a1c85c8c4fac7218e"
-  integrity sha512-14eYp9iOdJ7SyOIVXomXhbVnc14DEhzMLS3eKqxYxi9LkANUfxx1/pwRiRY/lTiP9RFS+OkIcTm2QiLsmNEctw==
-  dependencies:
-    "@pnpm/types" "9.1.0"
-
 "@pnpm/lockfile-types@5.1.5":
   version "5.1.5"
   resolved "https://registry.yarnpkg.com/@pnpm/lockfile-types/-/lockfile-types-5.1.5.tgz#14b85c976ddcf7474f5a6a29351cb579959d0ec8"
   integrity sha512-02FP0HynzX+2DcuPtuMy7PH+kLIC0pevAydAOK+zug2bwdlSLErlvSkc+4+3dw60eRWgUXUqyfO2eR/Ansdbng==
   dependencies:
     "@pnpm/types" "9.4.2"
-
-"@pnpm/lockfile-utils@8.0.1":
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/@pnpm/lockfile-utils/-/lockfile-utils-8.0.1.tgz#f5526c70ad440a6aac228543c8affbe8d3a87fce"
-  integrity sha512-yAgfpKObMXi/7mJXZcqMoHZJ6FqEBtpoDIa4Oxo8PX8DOlOaWEHouPDsw9KL+1mjvJufO4YDdYXOAcTvFTd1MQ==
-  dependencies:
-    "@pnpm/dependency-path" "2.1.2"
-    "@pnpm/lockfile-types" "5.1.0"
-    "@pnpm/resolver-base" "10.0.1"
-    "@pnpm/types" "9.1.0"
-    get-npm-tarball-url "^2.0.3"
-    ramda "npm:@pnpm/ramda@0.28.1"
 
 "@pnpm/lockfile-utils@9.0.6":
   version "9.0.6"
@@ -4927,16 +4842,6 @@
   dependencies:
     escape-string-regexp "^4.0.0"
 
-"@pnpm/merge-lockfile-changes@5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@pnpm/merge-lockfile-changes/-/merge-lockfile-changes-5.0.2.tgz#838a6a9a2e21c9d3f531fe102a83038310525d0a"
-  integrity sha512-cswnzLUxumc1MzZp7ZxEiyV9LvEne4h2AtvSwtjdx8BU/+vbj/kjvBueqPw1t+QJl/lual9Kmem0hQaL8v57wQ==
-  dependencies:
-    "@pnpm/lockfile-types" "5.1.0"
-    comver-to-semver "^1.0.0"
-    ramda "npm:@pnpm/ramda@0.28.1"
-    semver "^7.5.0"
-
 "@pnpm/merge-lockfile-changes@5.0.7":
   version "5.0.7"
   resolved "https://registry.yarnpkg.com/@pnpm/merge-lockfile-changes/-/merge-lockfile-changes-5.0.7.tgz#b9664db4b496af00b1a0101e190532330e1e1b12"
@@ -4946,17 +4851,6 @@
     comver-to-semver "^1.0.0"
     ramda "npm:@pnpm/ramda@0.28.1"
     semver "^7.5.4"
-
-"@pnpm/modules-yaml@12.1.1":
-  version "12.1.1"
-  resolved "https://registry.yarnpkg.com/@pnpm/modules-yaml/-/modules-yaml-12.1.1.tgz#fe91a8db9256aff4d8016a83897c00a5d3871658"
-  integrity sha512-K/le4dsBeWj0mygMJwzaDlUpx2pGlPnoPmLWQlm3ZiW5qLLlI1AV1+z7ddIXovHWyrALWVfSbJEAlWevAeFKKw==
-  dependencies:
-    "@pnpm/types" "9.1.0"
-    is-windows "^1.0.2"
-    ramda "npm:@pnpm/ramda@0.28.1"
-    read-yaml-file "^2.1.0"
-    write-yaml-file "^5.0.0"
 
 "@pnpm/modules-yaml@12.1.7":
   version "12.1.7"
@@ -4975,15 +4869,6 @@
   integrity sha512-YcPQ8a0jwYU9bTdJDpXjMi7Brhkr1mXsXrUJvjqM2mQDgkRiz8jFaQGOdaLxgjtUfQgZhKy/O3cG/YwmgKaxLA==
   dependencies:
     graceful-fs "4.2.10"
-
-"@pnpm/normalize-registries@5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@pnpm/normalize-registries/-/normalize-registries-5.0.1.tgz#d1785fafddd30fa55a82a4752c35c04d8ddc28eb"
-  integrity sha512-0TYcuw4+Djl6LFYI5wh7y7n/YEVEJEAJov0MejFpJuuW1BYd059xS+BWOJ45/R/DgEZs40fkXiE3VllagZRfNw==
-  dependencies:
-    "@pnpm/types" "9.1.0"
-    normalize-registry-url "2.0.0"
-    ramda "npm:@pnpm/ramda@0.28.1"
 
 "@pnpm/normalize-registries@5.0.6":
   version "5.0.6"
@@ -5016,29 +4901,12 @@
   resolved "https://registry.yarnpkg.com/@pnpm/pick-fetcher/-/pick-fetcher-2.0.1.tgz#830b76c575c24cddc6ba93f748a794aa63c9d6fb"
   integrity sha512-rW9IqroTLSdrFgCRfxDOyL845e3ju0Lt8HmfljgJLIR8mIoCE6PUR7+JouoSUcauAx28mSMbYbbRYXKlxacdiA==
 
-"@pnpm/read-modules-dir@6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@pnpm/read-modules-dir/-/read-modules-dir-6.0.0.tgz#cc50135149a43b50f5ea7e81f5b82833694f5dee"
-  integrity sha512-aV+lNTe9rkKEDzjejt6M7XVDLpmmC0s8jrk+ckUv5zsIReiQPoMj209ZbsY3Q+STWVxgisNkWyiAfJFa6ZdytQ==
-  dependencies:
-    graceful-fs "^4.2.11"
-
 "@pnpm/read-modules-dir@6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@pnpm/read-modules-dir/-/read-modules-dir-6.0.1.tgz#4580ab105c0b5fa4d9cd50454e3351c9270c097e"
   integrity sha512-/h+3VB1j+hhUlEYkE+dAH5WbhR/qYDDvliqWQxN/AA0CYAFwMud5z4FOKzYHgY6RD+KVVgEelLquxCi7fKvT8A==
   dependencies:
     graceful-fs "^4.2.11"
-
-"@pnpm/read-package-json@8.0.1":
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/@pnpm/read-package-json/-/read-package-json-8.0.1.tgz#a24e96be0a733d51c05ebb9f27dbf6102e866da8"
-  integrity sha512-tttbVOsLulg0gxhl3aNo++U10N7vYIR6imP8dvr8ZChF7g8xh0qEcTfzvDhDAbFdvF4yleJMHFS1s5KH/gMQaw==
-  dependencies:
-    "@pnpm/error" "5.0.1"
-    "@pnpm/types" "9.1.0"
-    load-json-file "^6.2.0"
-    normalize-package-data "^5.0.0"
 
 "@pnpm/read-package-json@8.0.7":
   version "8.0.7"
@@ -5050,36 +4918,12 @@
     load-json-file "^6.2.0"
     normalize-package-data "^5.0.0"
 
-"@pnpm/resolver-base@10.0.1":
-  version "10.0.1"
-  resolved "https://registry.yarnpkg.com/@pnpm/resolver-base/-/resolver-base-10.0.1.tgz#0342829211450e84fb5d0fb61286ebab1df0451d"
-  integrity sha512-2yufLOpiPKQyNVLbL3dgoytkDuuURB5yBOrFtafiuZieGZJid2AeHmFfPhU9hNc/ZM1+wqH3EuVHe/1DdEgm4Q==
-  dependencies:
-    "@pnpm/types" "9.1.0"
-
 "@pnpm/resolver-base@11.1.0":
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/@pnpm/resolver-base/-/resolver-base-11.1.0.tgz#e640ba9ae096bf05a0b905496a63509556322618"
   integrity sha512-y2qKaj18pwe1VWc3YXEitdYFo+WqOOt60aqTUuOVkJAirUzz0DzuYh3Ifct4znYWPdgUXHaN5DMphNF5iL85rA==
   dependencies:
     "@pnpm/types" "9.4.2"
-
-"@pnpm/reviewing.dependencies-hierarchy@^2.0.4":
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/@pnpm/reviewing.dependencies-hierarchy/-/reviewing.dependencies-hierarchy-2.0.6.tgz#4a70c7b3db57c18118f16822ab9e55f78e64e1f6"
-  integrity sha512-kO7hxmEPpC7lROahokIPNbpZtAzx2h+njtLElkm3I3qDBgCbetaOyqK76DLlGA6bP762MS8yxIJ52dkaZ8eJCQ==
-  dependencies:
-    "@pnpm/dependency-path" "2.1.2"
-    "@pnpm/lockfile-file" "8.1.0"
-    "@pnpm/lockfile-utils" "8.0.1"
-    "@pnpm/modules-yaml" "12.1.1"
-    "@pnpm/normalize-registries" "5.0.1"
-    "@pnpm/read-modules-dir" "6.0.0"
-    "@pnpm/read-package-json" "8.0.1"
-    "@pnpm/types" "9.1.0"
-    normalize-path "^3.0.0"
-    realpath-missing "^1.1.0"
-    resolve-link-target "^2.0.0"
 
 "@pnpm/reviewing.dependencies-hierarchy@^2.1.3":
   version "2.1.10"
@@ -5100,11 +4944,6 @@
     realpath-missing "^1.1.0"
     resolve-link-target "^2.0.0"
     semver "^7.5.4"
-
-"@pnpm/types@9.1.0":
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/@pnpm/types/-/types-9.1.0.tgz#7d5a1c3acf4585d8d57c4dcf767d332e926e08d4"
-  integrity sha512-MMPDMLOY17bfNhLhR9Qmq6/2keoocnR5DWXZfZDC4dKXugrMsE1jB6RnuU8swJIo4zyCsMT/iVSAtl/XK+9Z+A==
 
 "@pnpm/types@9.4.2":
   version "9.4.2"
@@ -8136,13 +7975,6 @@
   dependencies:
     argparse "^2.0.1"
 
-"@zkochan/rimraf@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@zkochan/rimraf/-/rimraf-2.1.2.tgz#84b502594321360e4a4ca864b9e6457af2f5212d"
-  integrity sha512-Lc2oK51J6aQWcLWTloobJun5ZF41BbTDdLvE+aMcexoVWFoFqvZmnZoyXR2IZk6NJEVoZW8tjgtvQLfTsmRs2Q==
-  dependencies:
-    rimraf "^3.0.2"
-
 "@zkochan/rimraf@^2.1.3":
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/@zkochan/rimraf/-/rimraf-2.1.3.tgz#1074cb72d6e4997275285b04296a343b6ac7046b"
@@ -11137,13 +10969,6 @@ emojis-list@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/emojis-list/-/emojis-list-3.0.0.tgz#5570662046ad29e2e916e71aae260abdff4f6a78"
   integrity sha512-/kyM18EfinwXZbno9FyUGeFh87KC8HRQBQGildHZbEuRyWFOmv1U10o9BBp8XVZDVNNuQKyIGIu5ZYAAXJ0V2Q==
-
-encode-registry@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/encode-registry/-/encode-registry-3.0.0.tgz#6e67162a37dca9542bdf8432f1579c462b90b647"
-  integrity sha512-2fRYji8K6FwYuQ6EPBKR/J9mcqb7kIoNqt1vGvJr3NrvKfncRiNm00Oxo6gi/YJF8R5Sp2bNFSFdGKTG0rje1Q==
-  dependencies:
-    mem "^8.0.0"
 
 encode-registry@^3.0.1:
   version "3.0.1"
@@ -19543,7 +19368,7 @@ semver-utils@^1.1.4:
   resolved "https://registry.yarnpkg.com/semver-utils/-/semver-utils-1.1.4.tgz#cf0405e669a57488913909fc1c3f29bf2a4871e2"
   integrity sha512-EjnoLE5OGmDAVV/8YDoN5KiajNadjzIp9BAHOhYeQHt7j0UWxjmgsx4YD48wp4Ue1Qogq38F1GNUJNqF1kKKxA==
 
-"semver@2 || 3 || 4 || 5", semver@7.3.4, semver@7.5.4, semver@^5.5.0, semver@^5.6.0, semver@^6.0.0, semver@^6.1.1, semver@^6.1.2, semver@^6.3.0, semver@^6.3.1, semver@^7.0.0, semver@^7.1.1, semver@^7.3.2, semver@^7.3.5, semver@^7.3.7, semver@^7.3.8, semver@^7.5.0, semver@^7.5.3, semver@^7.5.4, semver@^7.6.0, semver@~7.0.0:
+"semver@2 || 3 || 4 || 5", semver@7.3.4, semver@7.5.4, semver@^5.5.0, semver@^5.6.0, semver@^6.0.0, semver@^6.1.1, semver@^6.1.2, semver@^6.3.0, semver@^6.3.1, semver@^7.0.0, semver@^7.1.1, semver@^7.3.2, semver@^7.3.5, semver@^7.3.7, semver@^7.3.8, semver@^7.5.3, semver@^7.5.4, semver@^7.6.0, semver@~7.0.0:
   version "7.5.4"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.5.4.tgz#483986ec4ed38e1c6c48c34894a9182dbff68a6e"
   integrity sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==

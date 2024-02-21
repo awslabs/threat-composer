@@ -222,13 +222,13 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@aws-prototyping-sdk/nx-monorepo,@aws-prototyping-sdk/pdk-nag,@aws-prototyping-sdk/pipeline,@aws/pdk,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-header,eslint-plugin-import,eslint-plugin-prettier,husky,license-checker,npm-check-updates,prettier,ts-node,typescript,@aws-cdk/aws-cognito-identitypool-alpha,aws-cdk-lib,cdk-nag"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@aws/pdk,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-header,eslint-plugin-import,eslint-plugin-prettier,husky,license-checker,npm-check-updates,prettier,ts-node,typescript,@aws-cdk/aws-cognito-identitypool-alpha,aws-cdk-lib,cdk-nag"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @aws-prototyping-sdk/nx-monorepo @aws-prototyping-sdk/pdk-nag @aws-prototyping-sdk/pipeline @aws/pdk @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser constructs eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-header eslint-plugin-import eslint-plugin-prettier eslint husky license-checker npm-check-updates nx prettier projen syncpack ts-node typescript @aws-cdk/aws-cognito-identitypool-alpha aws-cdk-lib cdk-nag"
+          "exec": "yarn upgrade @aws/pdk @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser constructs eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-header eslint-plugin-import eslint-plugin-prettier eslint husky license-checker npm-check-updates nx prettier projen syncpack ts-node typescript @aws-cdk/aws-cognito-identitypool-alpha aws-cdk-lib cdk-nag"
         },
         {
           "exec": "npx projen"

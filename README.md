@@ -332,7 +332,7 @@ The repository is defined and maintained using [projen](https://github.com/proje
 
 - Install dependencies
 
-  `pdk install --frozen-lockfile & pdk`
+  `pdk install --frozen-lockfile`
 
 - Build all the projects
 

@@ -27,9 +27,6 @@
     "synth-workspace": "yarn projen"
   },
   "devDependencies": {
-    "@aws-prototyping-sdk/nx-monorepo": "^0.19.2",
-    "@aws-prototyping-sdk/pdk-nag": "^0.19.2",
-    "@aws-prototyping-sdk/pipeline": "^0.19.2",
     "@aws/pdk": "^0.23.5",
     "@types/node": "^18",
     "@typescript-eslint/eslint-plugin": "^6",

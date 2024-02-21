@@ -1,18 +1,6 @@
 {
   "dependencies": [
     {
-      "name": "@aws-prototyping-sdk/nx-monorepo",
-      "type": "build"
-    },
-    {
-      "name": "@aws-prototyping-sdk/pdk-nag",
-      "type": "build"
-    },
-    {
-      "name": "@aws-prototyping-sdk/pipeline",
-      "type": "build"
-    },
-    {
       "name": "@aws/pdk",
       "type": "build"
     },
