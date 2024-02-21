@@ -19,7 +19,7 @@ jobs:
       - run: npm install -g typescript
       - run: npm install -g yarn
       - run: npm install -g oss-attribution-generator
-      - run: pdk install --frozen-lockfile && pdk
+      - run: pdk install --frozen-lockfile
       - run: REACT_APP_ROUTE_BASE_PATH=/threat-composer REACT_APP_GITHUB_PAGES=true PUBLIC_URL=https://awslabs.github.io/threat-composer PATH=/tmp/git-secrets/bin:$PATH pdk run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
