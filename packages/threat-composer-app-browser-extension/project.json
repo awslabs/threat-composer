@@ -9,13 +9,6 @@
         "cwd": "packages/threat-composer-app-browser-extension"
       }
     },
-    "eject": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn projen eject",
-        "cwd": "packages/threat-composer-app-browser-extension"
-      }
-    },
     "pre-compile": {
       "executor": "nx:run-commands",
       "options": {
@@ -55,13 +48,6 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn projen build",
-        "cwd": "packages/threat-composer-app-browser-extension"
-      }
-    },
-    "clobber": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn projen clobber",
         "cwd": "packages/threat-composer-app-browser-extension"
       }
     },

@@ -1,44 +1,31 @@
 {
   "dependencies": [
     {
-      "name": "@aws-prototyping-sdk/pipeline",
-      "version": "^0.19.2",
-      "type": "build"
-    },
-    {
       "name": "@types/jest",
       "type": "build"
     },
     {
       "name": "@types/node",
-      "version": "^14",
+      "version": "^18",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/eslint-plugin",
-      "version": "^5",
+      "version": "^6",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/parser",
-      "version": "^5",
+      "version": "^6",
       "type": "build"
     },
     {
       "name": "aws-cdk",
-      "version": "^2.81.0",
+      "version": "^2.128.0",
       "type": "build"
     },
     {
       "name": "esbuild",
-      "type": "build"
-    },
-    {
-      "name": "eslint-config-prettier",
-      "type": "build"
-    },
-    {
-      "name": "eslint-import-resolver-node",
       "type": "build"
     },
     {
@@ -47,10 +34,6 @@
     },
     {
       "name": "eslint-plugin-import",
-      "type": "build"
-    },
-    {
-      "name": "eslint-plugin-prettier",
       "type": "build"
     },
     {
@@ -64,20 +47,12 @@
     },
     {
       "name": "jest-junit",
-      "version": "^13",
-      "type": "build"
-    },
-    {
-      "name": "npm-check-updates",
-      "version": "^16",
-      "type": "build"
-    },
-    {
-      "name": "prettier",
+      "version": "^15",
       "type": "build"
     },
     {
       "name": "projen",
+      "version": "^0.79.6",
       "type": "build"
     },
     {
@@ -93,21 +68,12 @@
       "type": "build"
     },
     {
-      "name": "@aws-prototyping-sdk/pdk-nag",
-      "type": "runtime"
-    },
-    {
-      "name": "@aws-prototyping-sdk/pipeline",
-      "type": "runtime"
-    },
-    {
-      "name": "@aws-prototyping-sdk/static-website",
-      "version": "^0.18.18",
+      "name": "@aws/pdk",
       "type": "runtime"
     },
     {
       "name": "aws-cdk-lib",
-      "version": "^2.81.0",
+      "version": "^2.128.0",
       "type": "runtime"
     },
     {

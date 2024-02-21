@@ -21,38 +21,6 @@
         }
       ]
     },
-    "clobber": {
-      "name": "clobber",
-      "description": "hard resets to HEAD of origin and cleans the local repo",
-      "env": {
-        "BRANCH": "$(git branch --show-current)"
-      },
-      "steps": [
-        {
-          "exec": "git checkout -b scratch",
-          "name": "save current HEAD in \"scratch\" branch"
-        },
-        {
-          "exec": "git checkout $BRANCH"
-        },
-        {
-          "exec": "git fetch origin",
-          "name": "fetch latest changes from origin"
-        },
-        {
-          "exec": "git reset --hard origin/$BRANCH",
-          "name": "hard reset to origin commit"
-        },
-        {
-          "exec": "git clean -fdx",
-          "name": "clean all untracked files"
-        },
-        {
-          "say": "ready to rock! (unpushed commits are under the \"scratch\" branch)"
-        }
-      ],
-      "condition": "git diff --exit-code > /dev/null"
-    },
     "compile": {
       "name": "compile",
       "description": "Only compile",
@@ -66,24 +34,13 @@
       "name": "default",
       "description": "Synthesize project files"
     },
-    "eject": {
-      "name": "eject",
-      "description": "Remove projen from the project",
-      "env": {
-        "PROJEN_EJECTING": "true"
-      },
-      "steps": [
-        {
-          "spawn": "default"
-        }
-      ]
-    },
     "eslint": {
       "name": "eslint",
       "description": "Runs eslint against the codebase",
       "steps": [
         {
-          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools .projenrc.js"
+          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ src test build-tools",
+          "receiveArgs": true
         }
       ]
     },
@@ -188,28 +145,13 @@
       },
       "steps": [
         {
-          "exec": "yarn upgrade npm-check-updates"
-        },
-        {
-          "exec": "npm-check-updates --dep dev --upgrade --target=minor --reject='@types/react-dom,@types/react,react-dom,react'"
-        },
-        {
-          "exec": "npm-check-updates --dep optional --upgrade --target=minor --reject='@types/react-dom,@types/react,react-dom,react'"
-        },
-        {
-          "exec": "npm-check-updates --dep peer --upgrade --target=minor --reject='@types/react-dom,@types/react,react-dom,react'"
-        },
-        {
-          "exec": "npm-check-updates --dep prod --upgrade --target=minor --reject='@types/react-dom,@types/react,react-dom,react'"
-        },
-        {
-          "exec": "npm-check-updates --dep bundle --upgrade --target=minor --reject='@types/react-dom,@types/react,react-dom,react'"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@babel/preset-env,@babel/preset-react,@babel/preset-typescript,@cloudscape-design/jest-preset,@storybook/addon-essentials,@storybook/addon-interactions,@storybook/addon-links,@storybook/blocks,@storybook/react,@storybook/react-webpack5,@storybook/testing-library,@types/d3,@types/indefinite,@types/jest,@types/lodash.isequal,@types/sanitize-html,@types/uuid,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-storybook,jest,merge,prop-types,storybook,ts-jest,typescript,@aws-northstar/ui,@cloudscape-design/board-components,@cloudscape-design/collection-hooks,@cloudscape-design/components,@cloudscape-design/design-tokens,@cloudscape-design/global-styles,@emotion/react,browser-image-compression,d3,indefinite,lodash.isequal,react-markdown,react-simply-carousel,rehype-raw,rehype-stringify,remark-frontmatter,remark-gfm,remark-parse,remark-rehype,sanitize-html,unified,use-local-storage-state,uuid,zod"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade"
+          "exec": "yarn upgrade @babel/preset-env @babel/preset-react @babel/preset-typescript @cloudscape-design/jest-preset @storybook/addon-essentials @storybook/addon-interactions @storybook/addon-links @storybook/blocks @storybook/react @storybook/react-webpack5 @storybook/testing-library @types/d3 @types/indefinite @types/jest @types/lodash.isequal @types/node @types/react-dom @types/react @types/sanitize-html @types/uuid @typescript-eslint/eslint-plugin @typescript-eslint/parser constructs eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-storybook eslint jest jest-junit merge projen prop-types react-dom react storybook ts-jest typescript @aws-northstar/ui @cloudscape-design/board-components @cloudscape-design/collection-hooks @cloudscape-design/components @cloudscape-design/design-tokens @cloudscape-design/global-styles @emotion/react browser-image-compression d3 indefinite lodash.isequal react-markdown react-simply-carousel rehype-raw rehype-stringify remark-frontmatter remark-gfm remark-parse remark-rehype sanitize-html unified use-local-storage-state uuid zod"
         },
         {
           "exec": "npx projen"
@@ -230,7 +172,7 @@
     }
   },
   "env": {
-    "PATH": "$(npx -c \"node -e \\\"console.log(process.env.PATH)\\\"\")"
+    "PATH": "$(npx -c \"node --print process.env.PATH\")"
   },
   "//": "~~ Generated by projen. To modify, edit .projenrc.js and run \"npx projen\"."
 }

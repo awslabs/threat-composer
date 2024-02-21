@@ -2,17 +2,14 @@
   "dependencies": [
     {
       "name": "@babel/preset-env",
-      "version": "^7.23.2",
       "type": "build"
     },
     {
       "name": "@babel/preset-react",
-      "version": "^7.22.5",
       "type": "build"
     },
     {
       "name": "@babel/preset-typescript",
-      "version": "^7.23.2",
       "type": "build"
     },
     {
@@ -21,42 +18,34 @@
     },
     {
       "name": "@storybook/addon-essentials",
-      "version": "^7.0.6",
       "type": "build"
     },
     {
       "name": "@storybook/addon-interactions",
-      "version": "^7.0.6",
       "type": "build"
     },
     {
       "name": "@storybook/addon-links",
-      "version": "^7.0.6",
       "type": "build"
     },
     {
       "name": "@storybook/blocks",
-      "version": "^7.0.6",
-      "type": "build"
-    },
-    {
-      "name": "@storybook/react-webpack5",
-      "version": "^7.0.6",
       "type": "build"
     },
     {
       "name": "@storybook/react",
-      "version": "^7.0.6",
+      "type": "build"
+    },
+    {
+      "name": "@storybook/react-webpack5",
       "type": "build"
     },
     {
       "name": "@storybook/testing-library",
-      "version": "^0.0.14-next.2",
       "type": "build"
     },
     {
       "name": "@types/d3",
-      "version": "^7",
       "type": "build"
     },
     {
@@ -73,17 +62,17 @@
     },
     {
       "name": "@types/node",
-      "version": "^14",
+      "version": "^18",
       "type": "build"
     },
     {
       "name": "@types/react-dom",
-      "version": "18.0.0",
+      "version": "^18",
       "type": "build"
     },
     {
       "name": "@types/react",
-      "version": "18.0.0",
+      "version": "^18",
       "type": "build"
     },
     {
@@ -96,16 +85,17 @@
     },
     {
       "name": "@typescript-eslint/eslint-plugin",
-      "version": "^5",
+      "version": "^6",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/parser",
-      "version": "^5",
+      "version": "^6",
       "type": "build"
     },
     {
-      "name": "eslint-import-resolver-node",
+      "name": "constructs",
+      "version": "^10.0.0",
       "type": "build"
     },
     {
@@ -118,7 +108,6 @@
     },
     {
       "name": "eslint-plugin-storybook",
-      "version": "^0.6.11",
       "type": "build"
     },
     {
@@ -132,7 +121,7 @@
     },
     {
       "name": "jest-junit",
-      "version": "^13",
+      "version": "^15",
       "type": "build"
     },
     {
@@ -140,32 +129,26 @@
       "type": "build"
     },
     {
-      "name": "npm-check-updates",
-      "version": "^16",
-      "type": "build"
-    },
-    {
       "name": "projen",
+      "version": "^0.79.6",
       "type": "build"
     },
     {
       "name": "prop-types",
-      "version": "^15.8.1",
       "type": "build"
     },
     {
       "name": "react-dom",
-      "version": "18.0.0",
+      "version": "^18",
       "type": "build"
     },
     {
       "name": "react",
-      "version": "18.0.0",
+      "version": "^18",
       "type": "build"
     },
     {
       "name": "storybook",
-      "version": "^7.0.6",
       "type": "build"
     },
     {
@@ -230,7 +213,6 @@
     },
     {
       "name": "d3",
-      "version": "^7",
       "type": "runtime"
     },
     {

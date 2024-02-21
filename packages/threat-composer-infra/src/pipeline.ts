@@ -13,21 +13,21 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { PDKNag } from "@aws-prototyping-sdk/pdk-nag";
-import { ManualApprovalStep } from "aws-cdk-lib/pipelines";
-import { ApplicationStage } from "./application-stage";
-import { PipelineStack } from "./pipeline-stack";
+import { PDKNag } from '@aws/pdk/pdk-nag';
+import { ManualApprovalStep } from 'aws-cdk-lib/pipelines';
+import { ApplicationStage } from './application-stage';
+import { PipelineStack } from './pipeline-stack';
 
 const app = PDKNag.app();
 
 const pipelineAccount =
-  app.node.tryGetContext("accountPipeline") || process.env.CDK_DEFAULT_ACCOUNT;
+  app.node.tryGetContext('accountPipeline') || process.env.CDK_DEFAULT_ACCOUNT;
 const devAccount =
-  app.node.tryGetContext("accountDev") || process.env.CDK_DEFAULT_ACCOUNT;
-const prodAccount = app.node.tryGetContext("accountProd");
+  app.node.tryGetContext('accountDev') || process.env.CDK_DEFAULT_ACCOUNT;
+const prodAccount = app.node.tryGetContext('accountProd');
 const region = process.env.CDK_DEFAULT_REGION;
 
-const pipelineStack = new PipelineStack(app, "ThreatComposerInfraStack", {
+const pipelineStack = new PipelineStack(app, 'ThreatComposerInfraStack', {
   env: {
     account: pipelineAccount,
     region: region,
@@ -35,7 +35,7 @@ const pipelineStack = new PipelineStack(app, "ThreatComposerInfraStack", {
 });
 
 if (devAccount) {
-  const devStage = new ApplicationStage(app, "Dev", {
+  const devStage = new ApplicationStage(app, 'Dev', {
     env: {
       account: devAccount,
       region,
@@ -46,7 +46,7 @@ if (devAccount) {
 }
 
 if (prodAccount) {
-  const prodStage = new ApplicationStage(app, "Prod", {
+  const prodStage = new ApplicationStage(app, 'Prod', {
     env: {
       account: prodAccount,
       region,
@@ -54,7 +54,7 @@ if (prodAccount) {
   });
 
   pipelineStack.pipeline.addStage(prodStage, {
-    pre: [new ManualApprovalStep("Prod Deployment Approval")],
+    pre: [new ManualApprovalStep('Prod Deployment Approval')],
   });
 }
 

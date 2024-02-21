@@ -13,13 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { App } from "aws-cdk-lib";
-import { Template } from "aws-cdk-lib/assertions";
-import { PipelineStack } from "../src/pipeline-stack";
+import { App } from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
+import { PipelineStack } from '../src/pipeline-stack';
 
-test("Snapshot", () => {
+test('Snapshot', () => {
   const app = new App();
-  const stack = new PipelineStack(app, "pipeline-test", {
+  const stack = new PipelineStack(app, 'pipeline-test', {
     env: {
       account: process.env.CDK_DEFAULT_ACCOUNT!,
       region: process.env.CDK_DEFAULT_REGION!,

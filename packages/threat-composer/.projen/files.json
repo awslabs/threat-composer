@@ -1,6 +1,5 @@
 {
   "files": [
-    "./jest.config.json",
     ".eslintrc.json",
     ".gitattributes",
     ".gitignore",
@@ -8,6 +7,7 @@
     ".projen/deps.json",
     ".projen/files.json",
     ".projen/tasks.json",
+    "jest.config.json",
     "LICENSE",
     "project.json",
     "tsconfig.dev.json",

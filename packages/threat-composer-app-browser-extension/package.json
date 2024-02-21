@@ -2,12 +2,10 @@
   "name": "@aws/threat-composer-app-browser-extension",
   "scripts": {
     "build": "npx projen build",
-    "clobber": "npx projen clobber",
     "compile": "npx projen compile",
     "default": "npx projen default",
     "dev": "npx projen dev",
     "dev:firefox": "npx projen dev:firefox",
-    "eject": "npx projen eject",
     "eslint": "npx projen eslint",
     "package": "npx projen package",
     "post-compile": "npx projen post-compile",
@@ -22,31 +20,30 @@
     "zip:firefox": "npx projen zip:firefox"
   },
   "devDependencies": {
-    "@types/jest": "*",
-    "@types/node": "^14",
-    "@types/react": "*",
-    "@types/react-dom": "*",
-    "@typescript-eslint/eslint-plugin": "^5",
-    "@typescript-eslint/parser": "^5",
-    "@vitejs/plugin-react": "*",
+    "@types/jest": "^29.4.0",
+    "@types/node": "^18",
+    "@types/react": "^18.2.33",
+    "@types/react-dom": "^18.2.4",
+    "@typescript-eslint/eslint-plugin": "^6",
+    "@typescript-eslint/parser": "^6",
+    "@vitejs/plugin-react": "^4.2.1",
+    "constructs": "^10.0.0",
     "eslint": "^8",
-    "eslint-import-resolver-node": "*",
-    "eslint-import-resolver-typescript": "*",
-    "eslint-plugin-import": "*",
-    "jest": "*",
-    "jest-junit": "^13",
-    "npm-check-updates": "^16",
-    "projen": "*",
-    "rollup-plugin-copy": "*",
-    "ts-jest": "*",
-    "typescript": "*",
+    "eslint-import-resolver-typescript": "^3.5.5",
+    "eslint-plugin-import": "^2.27.5",
+    "jest": "^29.5.0",
+    "jest-junit": "^15",
+    "projen": "^0.79.6",
+    "rollup-plugin-copy": "^3.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.4",
     "wxt": "^0.14.0"
   },
   "dependencies": {
-    "@cloudscape-design/components": "*",
-    "react": "*",
-    "react-dom": "*",
-    "react-router-dom": "*"
+    "@cloudscape-design/components": "^3.0.517",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.11.2"
   },
   "main": "lib/index.js",
   "license": "Apache-2.0",
@@ -84,11 +81,13 @@
         }
       ]
     ],
-    "preset": "ts-jest",
-    "globals": {
-      "ts-jest": {
-        "tsconfig": "tsconfig.dev.json"
-      }
+    "transform": {
+      "^.+\\.[t]sx?$": [
+        "ts-jest",
+        {
+          "tsconfig": "tsconfig.dev.json"
+        }
+      ]
     }
   },
   "types": "lib/index.d.ts",

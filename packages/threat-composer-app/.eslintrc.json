@@ -36,7 +36,6 @@
   },
   "ignorePatterns": [
     "*.js",
-    "!.projenrc.js",
     "*.d.ts",
     "node_modules/",
     "*.generated.ts",
@@ -223,15 +222,5 @@
       "../../header.js"
     ]
   },
-  "overrides": [
-    {
-      "files": [
-        ".projenrc.js"
-      ],
-      "rules": {
-        "@typescript-eslint/no-require-imports": "off",
-        "import/no-extraneous-dependencies": "off"
-      }
-    }
-  ]
+  "overrides": []
 }
