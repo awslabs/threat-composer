@@ -29,10 +29,9 @@ jspm_packages/
 *.tgz
 .yarn-integrity
 .cache
-!/.projenrc.js
 /test-reports/
 junit.xml
-!/./jest.config.json
+!/jest.config.json
 /coverage/
 !/test/
 !/tsconfig.json

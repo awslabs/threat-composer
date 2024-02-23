@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { PDKPipeline } from "@aws-prototyping-sdk/pipeline";
-import { Stack, StackProps } from "aws-cdk-lib";
-import { Construct } from "constructs";
+import { PDKPipeline } from '@aws/pdk/pipeline';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
 export class PipelineStack extends Stack {
   readonly pipeline: PDKPipeline;
@@ -23,14 +23,14 @@ export class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps) {
     super(scope, id, props);
 
-    this.pipeline = new PDKPipeline(this, "ApplicationPipeline", {
-      primarySynthDirectory: "packages/threat-composer-infra/cdk.out",
-      repositoryName: this.node.tryGetContext("repositoryName") || "monorepo",
-      defaultBranchName: "main",
+    this.pipeline = new PDKPipeline(this, 'ApplicationPipeline', {
+      primarySynthDirectory: 'packages/threat-composer-infra/cdk.out',
+      repositoryName: this.node.tryGetContext('repositoryName') || 'monorepo',
+      defaultBranchName: 'main',
       publishAssetsInParallel: false,
       crossAccountKeys: true,
       synth: {},
-      sonarCodeScannerConfig: this.node.tryGetContext("sonarqubeScannerConfig"),
+      sonarCodeScannerConfig: this.node.tryGetContext('sonarqubeScannerConfig'),
     });
   }
 }

@@ -13,13 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import path from "path";
-import { PDKNag } from "@aws-prototyping-sdk/pdk-nag";
+import path from 'path';
+import { PDKNag } from '@aws/pdk/pdk-nag';
 import {
   StaticWebsite,
   StaticWebsiteOrigin,
   StaticWebsiteProps,
-} from "@aws-prototyping-sdk/static-website";
+} from '@aws/pdk/static-website';
 import {
   Stack,
   StackProps,
@@ -27,31 +27,31 @@ import {
   Stage,
   Duration,
   Arn,
-} from "aws-cdk-lib";
-import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
+} from 'aws-cdk-lib';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import {
   DistributionProps,
   LambdaEdgeEventType,
   ResponseHeadersPolicy,
   HeadersFrameOption,
   HeadersReferrerPolicy,
-} from "aws-cdk-lib/aws-cloudfront";
-import { Version } from "aws-cdk-lib/aws-lambda";
-import { HostedZone, ARecord, RecordTarget } from "aws-cdk-lib/aws-route53";
-import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
+} from 'aws-cdk-lib/aws-cloudfront';
+import { Version } from 'aws-cdk-lib/aws-lambda';
+import { HostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import {
   AwsSdkCall,
   PhysicalResourceId,
   AwsCustomResource,
   AwsCustomResourcePolicy,
-} from "aws-cdk-lib/custom-resources";
-import { NagSuppressions } from "cdk-nag";
-import { Construct } from "constructs";
+} from 'aws-cdk-lib/custom-resources';
+import { NagSuppressions } from 'cdk-nag';
+import { Construct } from 'constructs';
 
-const PACKAGES_ROOT = path.join(__dirname, "..", "..");
+const PACKAGES_ROOT = path.join(__dirname, '..', '..');
 
 const removeLeadingSlash = (value: string): string => {
-  return value.slice(0, 1) == "/" ? value.slice(1) : value;
+  return value.slice(0, 1) == '/' ? value.slice(1) : value;
 };
 
 export class ApplicationStack extends Stack {
@@ -63,41 +63,41 @@ export class ApplicationStack extends Stack {
     const domainName = this.node.tryGetContext(`domainName${stageName}`);
     const certificate = this.node.tryGetContext(`certificate${stageName}`);
     const hostedZoneId = this.node.tryGetContext(
-      `hostZone${stageName}`
+      `hostZone${stageName}`,
     ) as string;
     const hostedZoneName = this.node.tryGetContext(
-      `hostZoneName${stageName}`
+      `hostZoneName${stageName}`,
     ) as string;
     const lambdaEdge = this.node.tryGetContext(
-      `lambdaEdge${stageName}`
+      `lambdaEdge${stageName}`,
     ) as string;
     const cidrType = this.node.tryGetContext(`cidrType${stageName}`) as string;
     const cidrRanges = this.node.tryGetContext(
-      `cidrRanges${stageName}`
+      `cidrRanges${stageName}`,
     ) as string;
 
     const contentSecurityPolicyOverride = this.node.tryGetContext(
-      `contentSecurityPolicyOverride`
+      'contentSecurityPolicyOverride',
     ) as string;
 
     const responseHeadersPolicy = new ResponseHeadersPolicy(
       this,
-      "ResourceHeadersPolicy",
+      'ResourceHeadersPolicy',
       {
         responseHeadersPolicyName: `ThreatComposerResourceHeadersPolicy${stageName}`,
         corsBehavior: {
           accessControlAllowCredentials: false,
-          accessControlAllowMethods: ["ALL"],
-          accessControlAllowOrigins: ["*"],
-          accessControlAllowHeaders: ["*"],
+          accessControlAllowMethods: ['ALL'],
+          accessControlAllowOrigins: ['*'],
+          accessControlAllowHeaders: ['*'],
           originOverride: true,
         },
         customHeadersBehavior: {
           customHeaders: [
-            { header: "pragma", value: "no-cache", override: true },
+            { header: 'pragma', value: 'no-cache', override: true },
             {
-              header: "cache-control",
-              value: "no-store, no-cache",
+              header: 'cache-control',
+              value: 'no-store, no-cache',
               override: true,
             },
           ],
@@ -107,9 +107,9 @@ export class ApplicationStack extends Stack {
           // Here allow users to override to cater for specific use cases.
           contentSecurityPolicy: contentSecurityPolicyOverride
             ? {
-                contentSecurityPolicy: contentSecurityPolicyOverride,
-                override: true,
-              }
+              contentSecurityPolicy: contentSecurityPolicyOverride,
+              override: true,
+            }
             : undefined,
           frameOptions: {
             frameOption: HeadersFrameOption.DENY,
@@ -127,7 +127,7 @@ export class ApplicationStack extends Stack {
           },
           contentTypeOptions: { override: true },
         },
-      }
+      },
     );
 
     let distributionProps: DistributionProps = {
@@ -143,8 +143,8 @@ export class ApplicationStack extends Stack {
         domainNames: [domainName],
         certificate: Certificate.fromCertificateArn(
           this,
-          "cloudfrontDistributionFromCertificateArn",
-          certificate
+          'cloudfrontDistributionFromCertificateArn',
+          certificate,
         ),
       };
     }
@@ -152,13 +152,13 @@ export class ApplicationStack extends Stack {
     if (lambdaEdge) {
       let lambdaEdgeArn = lambdaEdge;
 
-      if (!lambdaEdgeArn.includes(":lambda:")) {
-        const lambdaEdgeRegion = "us-east-1";
+      if (!lambdaEdgeArn.includes(':lambda:')) {
+        const lambdaEdgeRegion = 'us-east-1';
 
         // The provided value is expected to be SSM Parameter in us-east-1 (where the lambda edge is deployed)
         const ssmAwsSdkCall: AwsSdkCall = {
-          service: "SSM",
-          action: "getParameter",
+          service: 'SSM',
+          action: 'getParameter',
           parameters: {
             Name: lambdaEdge,
           },
@@ -168,7 +168,7 @@ export class ApplicationStack extends Stack {
 
         const ssmAwsSdkCallCustomResource = new AwsCustomResource(
           this,
-          "SSMAWSSDKCallCustomResource",
+          'SSMAWSSDKCallCustomResource',
           {
             onCreate: ssmAwsSdkCall,
             onUpdate: ssmAwsSdkCall,
@@ -176,20 +176,20 @@ export class ApplicationStack extends Stack {
               resources: [
                 Arn.format(
                   {
-                    service: "ssm",
+                    service: 'ssm',
                     region: lambdaEdgeRegion,
-                    resource: "parameter",
+                    resource: 'parameter',
                     resourceName: removeLeadingSlash(lambdaEdge),
                   },
-                  Stack.of(this)
+                  Stack.of(this),
                 ),
               ],
             }),
-          }
+          },
         );
 
         lambdaEdgeArn = ssmAwsSdkCallCustomResource
-          .getResponseField("Parameter.Value")
+          .getResponseField('Parameter.Value')
           .toString();
       }
 
@@ -201,8 +201,8 @@ export class ApplicationStack extends Stack {
             {
               functionVersion: Version.fromVersionArn(
                 this,
-                "LambdaEdgeFunctionVersion",
-                lambdaEdgeArn
+                'LambdaEdgeFunctionVersion',
+                lambdaEdgeArn,
               ),
               eventType: LambdaEdgeEventType.VIEWER_REQUEST,
             },
@@ -214,72 +214,66 @@ export class ApplicationStack extends Stack {
     const websiteProps: StaticWebsiteProps = {
       websiteContentPath: path.join(
         PACKAGES_ROOT,
-        "threat-composer-app",
-        "build",
-        "website"
+        'threat-composer-app',
+        'build',
+        'website',
       ),
       webAclProps: {
         cidrAllowList: {
-          cidrType: cidrType === "IPV6" ? "IPV6" : "IPV4",
+          cidrType: cidrType === 'IPV6' ? 'IPV6' : 'IPV4',
           cidrRanges: cidrRanges
-            ?.split(",")
+            ?.split(',')
             .map((x) => x.trim())
-            .filter((x) => !!x) || ["192.168.0.0/24"],
+            .filter((x) => !!x) || ['192.168.0.0/24'],
         },
       },
       distributionProps,
     };
 
-    const website = new StaticWebsite(this, "StaticWebsite", websiteProps);
+    const website = new StaticWebsite(this, 'StaticWebsite', websiteProps);
 
     if (hostedZoneId && hostedZoneName) {
       const hostZone = HostedZone.fromHostedZoneAttributes(
         this,
-        "HostZoneLookup",
+        'HostZoneLookup',
         {
           hostedZoneId,
           zoneName: hostedZoneName,
-        }
+        },
       );
-      new ARecord(this, "Route53Record", {
+      new ARecord(this, 'Route53Record', {
         zone: hostZone,
         recordName: domainName,
         target: RecordTarget.fromAlias(
-          new CloudFrontTarget(website.cloudFrontDistribution)
+          new CloudFrontTarget(website.cloudFrontDistribution),
         ),
       });
     }
 
     this.suppressCDKNagViolations(websiteProps, website);
 
-    new CfnOutput(this, "WebsiteCloudfrontDomainName", {
+    new CfnOutput(this, 'WebsiteCloudfrontDomainName', {
       value: website.cloudFrontDistribution.domainName,
     });
   }
 
-  private suppressCDKNagViolations = (
-    props: StaticWebsiteProps,
-    website: StaticWebsite
-  ) => {
+  private suppressCDKNagViolations = (props: StaticWebsiteProps, website: StaticWebsite) => {
     const stack = Stack.of(this);
     !props.distributionProps?.certificate &&
       [
-        "AwsSolutions-CFR4",
-        "AwsPrototyping-CloudFrontDistributionHttpsViewerNoOutdatedSSL",
+        'AwsSolutions-CFR4',
+        'AwsPrototyping-CloudFrontDistributionHttpsViewerNoOutdatedSSL',
       ].forEach((RuleId) => {
-        NagSuppressions.addResourceSuppressions(
-          website.cloudFrontDistribution,
-          [
-            {
-              id: RuleId,
-              reason:
-                "Certificate is not mandatory therefore the Cloudfront certificate will be used.",
-            },
-          ]
-        );
+        NagSuppressions.addResourceSuppressions(website.cloudFrontDistribution, [
+          {
+            id: RuleId,
+            reason:
+              'Certificate is not mandatory therefore the Cloudfront certificate will be used.',
+          },
+        ]);
       });
 
-    ["AwsSolutions-L1", "AwsPrototyping-LambdaLatestVersion"].forEach(
+    ['AwsSolutions-L1', 'AwsPrototyping-LambdaLatestVersion'].forEach(
       (RuleId) => {
         NagSuppressions.addResourceSuppressions(
           this,
@@ -287,15 +281,15 @@ export class ApplicationStack extends Stack {
             {
               id: RuleId,
               reason:
-                "Latest runtime cannot be configured. CDK will need to upgrade the BucketDeployment construct accordingly.",
+                'Latest runtime cannot be configured. CDK will need to upgrade the BucketDeployment construct accordingly.',
             },
           ],
-          true
+          true,
         );
-      }
+      },
     );
 
-    ["AwsSolutions-IAM5", "AwsPrototyping-IAMNoWildcardPermissions"].forEach(
+    ['AwsSolutions-IAM5', 'AwsPrototyping-IAMNoWildcardPermissions'].forEach(
       (RuleId) => {
         NagSuppressions.addResourceSuppressions(
           this,
@@ -303,23 +297,23 @@ export class ApplicationStack extends Stack {
             {
               id: RuleId,
               reason:
-                "All Policies have been scoped to a Bucket. Given Buckets can contain arbitrary content, wildcard resources with bucket scope are required.",
+                'All Policies have been scoped to a Bucket. Given Buckets can contain arbitrary content, wildcard resources with bucket scope are required.',
               appliesTo: [
                 {
-                  regex: "/^Action::s3:.*$/g",
+                  regex: '/^Action::s3:.*$/g',
                 },
                 {
-                  regex: `/^Resource::.*$/g`,
+                  regex: '/^Resource::.*$/g',
                 },
               ],
             },
           ],
-          true
+          true,
         );
-      }
+      },
     );
 
-    ["AwsSolutions-IAM4", "AwsPrototyping-IAMNoManagedPolicies"].forEach(
+    ['AwsSolutions-IAM4', 'AwsPrototyping-IAMNoManagedPolicies'].forEach(
       (RuleId) => {
         NagSuppressions.addResourceSuppressions(
           this,
@@ -327,34 +321,34 @@ export class ApplicationStack extends Stack {
             {
               id: RuleId,
               reason:
-                "Buckets can contain arbitrary content, therefore wildcard resources under a bucket are required.",
+                'Buckets can contain arbitrary content, therefore wildcard resources under a bucket are required.',
               appliesTo: [
                 {
                   regex: `/^Policy::arn:${PDKNag.getStackPartitionRegex(
-                    stack
+                    stack,
                   )}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole$/g`,
                 },
               ],
             },
           ],
-          true
+          true,
         );
-      }
+      },
     );
 
-    ["AwsSolutions-S1", "AwsPrototyping-S3BucketLoggingEnabled"].forEach(
+    ['AwsSolutions-S1', 'AwsPrototyping-S3BucketLoggingEnabled'].forEach(
       (RuleId) => {
         NagSuppressions.addResourceSuppressions(
           this,
           [
             {
               id: RuleId,
-              reason: "Access Log buckets should not have s3 bucket logging",
+              reason: 'Access Log buckets should not have s3 bucket logging',
             },
           ],
-          true
+          true,
         );
-      }
+      },
     );
   };
 }

@@ -2,7 +2,7 @@
 /.projen/
 /test-reports/
 junit.xml
-/./jest.config.json
+/jest.config.json
 /coverage/
 /test/
 /tsconfig.dev.json
@@ -18,3 +18,4 @@ dist
 /.projenrc.js
 tsconfig.tsbuildinfo
 /.eslintrc.json
+/.gitattributes

@@ -22,7 +22,7 @@
     },
     {
       "name": "@types/node",
-      "version": "^14",
+      "version": "^18",
       "type": "build"
     },
     {
@@ -43,16 +43,17 @@
     },
     {
       "name": "@typescript-eslint/eslint-plugin",
-      "version": "^5",
+      "version": "^6",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/parser",
-      "version": "^5",
+      "version": "^6",
       "type": "build"
     },
     {
-      "name": "eslint-import-resolver-node",
+      "name": "constructs",
+      "version": "^10.0.0",
       "type": "build"
     },
     {
@@ -73,12 +74,8 @@
       "type": "build"
     },
     {
-      "name": "npm-check-updates",
-      "version": "^16",
-      "type": "build"
-    },
-    {
       "name": "projen",
+      "version": "^0.79.6",
       "type": "build"
     },
     {

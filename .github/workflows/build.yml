@@ -16,6 +16,7 @@ jobs:
       - run: npm install -g typescript
       - run: npm install -g yarn
       - run: npm install -g oss-attribution-generator
-      - run: yarn install --immutable && npx projen
-      - run: PATH=/tmp/git-secrets/bin:$PATH yarn run build
-      - run: yarn workspaces run eslint
+      - run: npm install -g @aws/pdk
+      - run: pdk install --frozen-lockfile
+      - run: PATH=/tmp/git-secrets/bin:$PATH pdk run build
+      - run: pdk workspaces run eslint

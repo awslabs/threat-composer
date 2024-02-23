@@ -178,8 +178,9 @@ The [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected
 
 ### Prerequisites
 
-- [NodeJS](https://nodejs.org/en/) (version 16 or higher)
+- [NodeJS](https://nodejs.org/en/) (version 18 or higher)
 - [Yarn](https://yarnpkg.com/) (installed via `npm install -g yarn`)
+- [PDK](https://aws.github.io/aws-pdk/overview/index.html) (installed via `npm install -g @aws/pdk`)
 - [AWS CLI](https://aws.amazon.com/cli/) (version 2 or higher)
 - [AWS CLI Configuration](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html) (configured via `aws  configure`)
 - [AWS CDK v2](https://aws.amazon.com/cdk/) CLI (installed via `npm install -g aws-cdk`)
@@ -331,15 +332,15 @@ The repository is defined and maintained using [projen](https://github.com/proje
 
 - Install dependencies
 
-  `yarn install --frozen-lockfile & npx projen`
+  `pdk install --frozen-lockfile`
 
 - Build all the projects
 
-  `yarn run build`
+  `pdk build`
 
 - Run Storybook
 
-  `yarn run storybook`
+  `pdk run storybook`
 
   Runs storybook to navigate all the threat-composer UI components
   Open [http://localhost:6006](http://localhost:6006/) to view it in the browser. The page will reload if you make edits.
@@ -348,7 +349,7 @@ The repository is defined and maintained using [projen](https://github.com/proje
 
 - Start website in dev mode
 
-  `yarn run dev`
+  `pdk run dev`
 
 - For the browser extension (Chrome and Firefox) please see [this README](./packages/threat-composer-app-browser-extension/README.md)
 

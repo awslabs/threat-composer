@@ -2,6 +2,6 @@
 
 set -e
 
-yarn install --frozen-lockfile && npx projen
-yarn run build
-yarn workspaces run eslint
+pdk install --frozen-lockfile
+pdk build
+pdk workspaces run eslint

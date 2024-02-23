@@ -1,17 +1,14 @@
-import { NxMonorepoProject } from "@aws-prototyping-sdk/nx-monorepo";
-import { PDKPipelineTsProject } from "@aws-prototyping-sdk/pipeline"
-import { ApprovalLevel } from "projen/lib/awscdk";
+import { MonorepoTsProject } from "@aws/pdk/monorepo";
+import { ApprovalLevel, AwsCdkTypeScriptApp } from "projen/lib/awscdk";
 import { ReactTypeScriptProject } from "projen/lib/web";
 import { TypeScriptProject } from "projen/lib/typescript";
 import { TypeScriptJsxMode, TypeScriptModuleResolution } from "projen/lib/javascript";
 
-const monorepo = new NxMonorepoProject({
+const monorepo = new MonorepoTsProject({
   defaultReleaseBranch: "main",
   name: "@aws/threat-composer-monorepo",
   devDeps: [
-    "@aws-prototyping-sdk/nx-monorepo@^0.19.2",
-    "@aws-prototyping-sdk/pipeline@^0.19.2",
-    "@aws-prototyping-sdk/pdk-nag@^0.19.2",
+    "@aws/pdk",
     "eslint-plugin-header",
     "license-checker",
     "husky",
@@ -121,7 +118,7 @@ const uiProject = new TypeScriptProject({
     "rehype-stringify",
     'remark-frontmatter',
     'react-markdown',
-    "d3@^7",
+    "d3",
     "sanitize-html",
     "rehype-raw",
     "@aws-northstar/ui",
@@ -137,23 +134,23 @@ const uiProject = new TypeScriptProject({
     "@types/react@^18",
     "@types/uuid",
     "@types/sanitize-html",
-    "@types/d3@^7",
+    "@types/d3",
     "merge",
     "react-dom@^18",
     "react@^18",
-    "@babel/preset-env@^7.23.2",
-    "@babel/preset-react@^7.22.5",
-    "@babel/preset-typescript@^7.23.2",
-    "@storybook/addon-essentials@^7.0.6",
-    "@storybook/addon-interactions@^7.0.6",
-    "@storybook/addon-links@^7.0.6",
-    "@storybook/blocks@^7.0.6",
-    "@storybook/react@^7.0.6",
-    "@storybook/react-webpack5@^7.0.6",
-    "@storybook/testing-library@^0.0.14-next.2",
-    "eslint-plugin-storybook@^0.6.11",
-    "prop-types@^15.8.1",
-    "storybook@^7.0.6",
+    "@babel/preset-env",
+    "@babel/preset-react",
+    "@babel/preset-typescript",
+    "@storybook/addon-essentials",
+    "@storybook/addon-interactions",
+    "@storybook/addon-links",
+    "@storybook/blocks",
+    "@storybook/react",
+    "@storybook/react-webpack5",
+    "@storybook/testing-library",
+    "eslint-plugin-storybook",
+    "prop-types",
+    "storybook",
   ],
   peerDeps: [
     "@types/react-dom@^18",
@@ -258,17 +255,19 @@ appProject.postCompileTask.exec(`cp -r ../threat-composer/storybook.out/ ./build
 
 appProject.package.addField("browserslist", browsersList);
 
-const infraProject = new PDKPipelineTsProject({
-  cdkVersion: "2.81.0",
+const infraProject = new AwsCdkTypeScriptApp({
+  cdkVersion: "2.128.0",
   defaultReleaseBranch: "main",
-  devDeps: ["@aws-prototyping-sdk/pipeline@^0.19.2"],
+  deps: [
+    "@aws/pdk",
+    "cdk-nag",
+  ],
   name: "@aws/threat-composer-infra",
   parent: monorepo,
   outdir: "packages/threat-composer-infra",
+  appEntrypoint: "pipeline.ts",
+  sampleCode: false,
   requireApproval: ApprovalLevel.NEVER,
-  deps: [
-    "@aws-prototyping-sdk/static-website@^0.18.18",
-  ],
   tsconfig: {
     compilerOptions: {
       lib: ['es2019', 'es2020', 'dom'],
@@ -294,7 +293,7 @@ const browserExtensionProject = new TypeScriptProject({
     "react-dom",
   ],
   devDeps: [
-    "wxt@^0.14.0",
+    "wxt",
     "@vitejs/plugin-react",
     "rollup-plugin-copy",
     "@types/react",

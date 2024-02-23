@@ -34,7 +34,6 @@
     "moduleResolution": "node"
   },
   "include": [
-    ".projenrc.js",
     "src/**/*.ts",
     "test/**/*.ts",
     "src"
