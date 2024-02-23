@@ -26,8 +26,6 @@ const Router = isMemoryRouterUsed() ? MemoryRouter : BrowserRouter;
 
 const initialThemeString = (document.querySelector('meta[name="dark-mode"]') as HTMLMetaElement)?.content;
 
-console.log(document.querySelector('meta[name="dark-mode"]'), initialThemeString);
-
 const initialTheme = initialThemeString ?
   (initialThemeString === 'true' ? Mode.Dark : Mode.Light) :
   undefined;
