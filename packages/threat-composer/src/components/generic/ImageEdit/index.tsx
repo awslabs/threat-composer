@@ -32,6 +32,18 @@ export interface ImageUploadProps {
   onChange: (value: string) => void;
 }
 
+const IMAGE_COMPRESSION_OPTIONS = {
+  maxSizeMB: 0.5,
+  maxWidthOrHeight: 1024,
+  useWebWorker: true,
+};
+
+const IMAGE_COMPRESSION_TYPES = [
+  'image/png',
+  'image/gif',
+  'image/jpeg',
+];
+
 const ImageEdit: FC<ImageUploadProps> = ({
   value,
   onChange,
@@ -54,16 +66,15 @@ const ImageEdit: FC<ImageUploadProps> = ({
   }, [onChange, imageSource, image, inputValue]);
 
   const handleImageUpload = useCallback(async (imageFile: File) => {
-    const options = {
-      maxSizeMB: 0.5,
-      maxWidthOrHeight: 1024,
-      useWebWorker: true,
-    };
-
     try {
-      const compressedFile = await imageCompression(imageFile, options);
-      const base64String = await getBase64(compressedFile);
-      return base64String;
+      // Compress the image if it is supported by browser-image-compression
+      if (IMAGE_COMPRESSION_TYPES.includes(imageFile.type)) {
+        const compressedFile = await imageCompression(imageFile, IMAGE_COMPRESSION_OPTIONS);
+        const base64String = await getBase64(compressedFile);
+        return base64String;
+      }
+
+      return await getBase64(imageFile);
     } catch (error) {
       console.log(error);
       return '';
@@ -106,7 +117,7 @@ const ImageEdit: FC<ImageUploadProps> = ({
       <FileUpload
         key='fileUpload'
         label='Image Upload'
-        accept='image/png, image/gif, image/jpeg'
+        accept='image/*'
         errorText={errorText}
         files={selectedFiles}
         onChange={handleChange} />
