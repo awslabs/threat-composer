@@ -13,6 +13,5 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export const SEARCH_PARAM_THEME = 'theme';
 export const SEARCH_PARAM_MODE = 'mode';
 export const SEARCH_PARAM_FEATURES = 'features';

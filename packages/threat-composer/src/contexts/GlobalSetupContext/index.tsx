@@ -14,11 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { useNorthStarThemeContext } from '@aws-northstar/ui';
 import { Mode, Density } from '@cloudscape-design/global-styles';
 import { FC, PropsWithChildren, useState, useEffect } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { GlobalSetupContext, useGlobalSetupContext } from './context';
+import { useThemeContext } from '../../components/generic/ThemeProvider';
 import InfoModal from '../../components/global/InfoModal';
 import { LOCAL_STORAGE_KEY_NEW_VISIT_FLAG } from '../../configs/localStorageKeys';
 import { ComposerMode, DataExchangeFormat } from '../../customTypes';
@@ -56,7 +56,7 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
   onDefineWorkload,
 }) => {
   const [fileImportModalVisible, setFileImportModalVisible] = useState(false);
-  const { setTheme, setDensity } = useNorthStarThemeContext();
+  const { setTheme, setDensity } = useThemeContext();
 
   useEffect(() => {
     window.threatcomposer.applyDensity = (density?: string) => {

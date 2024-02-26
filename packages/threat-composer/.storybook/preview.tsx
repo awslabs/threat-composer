@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { Preview } from "@storybook/react";
 import { Mode } from '@cloudscape-design/global-styles';
-import NorthStarThemeProvider from '@aws-northstar/ui/components/NorthStarThemeProvider';
+import ThemeProvider from '../src/components/generic/ThemeProvider';
 
 const preview: Preview = {
   parameters: {
@@ -17,11 +17,11 @@ const preview: Preview = {
       values: [
         {
           name: 'light',
-          value: '#ffffff',
+          value: '#f2f3f3',
         },
         {
           name: 'dark',
-          value: '#0f1b2a',
+          value: '#16191f',
         },
       ],
     },
@@ -36,8 +36,11 @@ const preview: Preview = {
         matchColorMode && setColorMode(matchColorMode);
       }, [args.globals.backgrounds?.value]);
 
-      return (<NorthStarThemeProvider theme={colorMode === 'light' ? Mode.Light : Mode.Dark}>
-        <Story /></NorthStarThemeProvider>);
+      return (
+        <ThemeProvider theme={colorMode === 'light' ? Mode.Light : Mode.Dark}>
+          <Story />
+        </ThemeProvider>
+      );
     }
   ]
 };

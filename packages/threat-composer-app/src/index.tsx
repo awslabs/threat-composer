@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import NorthStarThemeProvider from '@aws-northstar/ui/components/NorthStarThemeProvider';
+import { ThemeProvider, Mode } from '@aws/threat-composer';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
@@ -24,13 +24,19 @@ import isMemoryRouterUsed from './utils/isMemoryRouterUsed';
 
 const Router = isMemoryRouterUsed() ? MemoryRouter : BrowserRouter;
 
+const initialThemeString = (document.querySelector('meta[name="dark-mode"]') as HTMLMetaElement)?.content;
+
+const initialTheme = initialThemeString ?
+  (initialThemeString === 'true' ? Mode.Dark : Mode.Light) :
+  undefined;
+
 ReactDOM.render(
   <React.StrictMode>
-    <Router>
-      <NorthStarThemeProvider>
+    <ThemeProvider theme={initialTheme}>
+      <Router>
         <App />
-      </NorthStarThemeProvider>
-    </Router>
+      </Router>
+    </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );

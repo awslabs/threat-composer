@@ -32,11 +32,10 @@ import recalculateThreatData from '../../utils/recalculateThreatData';
 import sanitizeHtml from '../../utils/sanitizeHtml';
 import validateData from '../../utils/validateData';
 
-const PLACEHOLDER_SCHEMA_VERSION = 0;
 const SCHEMA_VERSION = 1.0;
 
 export const PLACEHOLDER_EXCHANGE_DATA = {
-  schema: PLACEHOLDER_SCHEMA_VERSION,
+  schema: SCHEMA_VERSION,
 };
 
 export const PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE = {
