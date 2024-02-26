@@ -15,12 +15,10 @@
  ******************************************************************************************************************** */
 import { applyDensity, applyMode, Density, Mode } from '@cloudscape-design/global-styles';
 import { FC, createContext, useState, useEffect, useContext, PropsWithChildren } from 'react';
-import useMediaQuery from '../../../hooks/useMediaQuery';
 
 import '@cloudscape-design/global-styles/index.css';
 
 export interface ThemeProviderProps {
-  themeDetectionEnabled?: boolean;
   theme?: Mode;
   densitiy?: Density;
 }
@@ -42,18 +40,11 @@ const initialState: ThemeContextApi = {
 const ThemeContext = createContext<ThemeContextApi>(initialState);
 
 const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
-  themeDetectionEnabled = false,
   children,
   ...props
 }) => {
-  const isUseDarkTheme = useMediaQuery('(prefers-color-scheme: dark)');
-
   const [theme, setTheme] = useState<Mode>(() => {
-    if (props.theme === Mode.Dark || ( isUseDarkTheme && themeDetectionEnabled)) {
-      return Mode.Dark;
-    }
-
-    return Mode.Light;
+    return props.theme || Mode.Light;
   });
 
   const [density, setDensity] = useState<Density>(() => {
@@ -63,10 +54,6 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
 
     return Density.Comfortable;
   });
-
-  useEffect(() => {
-    themeDetectionEnabled && setTheme(isUseDarkTheme ? Mode.Dark : Mode.Light);
-  }, [themeDetectionEnabled && isUseDarkTheme]);
 
   useEffect(() => {
     typeof props.theme !== 'undefined' && setTheme(props.theme);
