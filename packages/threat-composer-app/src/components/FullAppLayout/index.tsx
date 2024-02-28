@@ -121,6 +121,7 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
       (e) => {
         if (!e.detail.external) {
           e.preventDefault();
+          e.stopPropagation();
           setContentType(undefined);
           navigate(e.detail.href);
         }
