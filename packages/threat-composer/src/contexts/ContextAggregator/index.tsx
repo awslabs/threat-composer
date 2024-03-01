@@ -50,7 +50,10 @@ const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
       onDefineWorkload={onDefineWorkload}
       composerMode={composerMode}>
       <WorkspaceExamplesContext>
-        <WorkspacesContextProvider onWorkspaceChanged={onWorkspaceChanged} {...props}>
+        <WorkspacesContextProvider
+          onWorkspaceChanged={onWorkspaceChanged}
+          {...props}
+        >
           {(workspaceId) => (<WorkspaceContextAggregator
             workspaceId={workspaceId}
             requiredGlobalSetupContext={false}

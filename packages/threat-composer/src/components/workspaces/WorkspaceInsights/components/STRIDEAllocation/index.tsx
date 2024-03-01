@@ -22,19 +22,23 @@ import {
   BarChart,
   BarChartProps,
 } from '@cloudscape-design/components';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   ALL_LEVELS,
   LEVEL_NOT_SET,
   LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL,
+  DEFAULT_NEW_ENTITY_ID,
 } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
+import { useWorkspacesContext } from '../../../../../contexts/WorkspacesContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 import DashboardNumber from '../../../../generic/DashboardNumber';
 import useLinkClicked from '../../hooks/useLinkClicked';
 
 const STRIDEAllocation = () => {
   const { statementList, addStatement } = useThreatsContext();
+  const { onThreatEditorView } = useWorkspacesContext();
+
   const [selectedPriority, setSelectedPriority] = useState<string | undefined>(
     ALL_LEVELS,
   );
@@ -42,6 +46,11 @@ const STRIDEAllocation = () => {
   const filteredStatementList = useMemo(() => {
     return filterThreatsByMetadata(statementList, 'Priority', selectedPriority);
   }, [statementList, selectedPriority]);
+
+  const handleAddStatement = useCallback(() => {
+    addStatement();
+    onThreatEditorView?.(DEFAULT_NEW_ENTITY_ID);
+  }, [addStatement, onThreatEditorView]);
 
   const missingStride = useMemo(
     () => filterThreatsByMetadata(filteredStatementList, 'STRIDE').length,
@@ -120,7 +129,7 @@ const STRIDEAllocation = () => {
           <Box variant="p" color="text-body-secondary">
             Start by adding a threat to this workspace
           </Box>
-          <Button variant="primary" onClick={() => addStatement()}>Add a threat</Button>
+          <Button variant="primary" onClick={() => handleAddStatement()}>Add a threat</Button>
         </Box>
       ) : (
         <div>
