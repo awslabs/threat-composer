@@ -18,7 +18,7 @@ import { FC, useState, useCallback } from 'react';
 import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { Mitigation } from '../../../customTypes';
+import { Mitigation, MitigationSchema } from '../../../customTypes';
 import AssumptionLinkView from '../../assumptions/AssumptionLinkView';
 import GenericEntityCreationCard, { DEFAULT_ENTITY } from '../../generic/GenericEntityCreationCard';
 import ThreatLinkView from '../../threats/ThreatLinkView';
@@ -67,6 +67,7 @@ const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => 
     header='Add new mitigation'
     onSave={handleSave}
     onReset={handleReset}
+    validateData={MitigationSchema.shape.content.safeParse}
     customEditors={<SpaceBetween direction='vertical' size='s'>
       <ThreatLinkView
         linkedThreatIds={linkedThreatIds}

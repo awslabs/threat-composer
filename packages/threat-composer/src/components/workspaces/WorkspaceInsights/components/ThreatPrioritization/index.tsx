@@ -25,21 +25,23 @@ import {
   colorChartsStatusHigh,
   colorChartsStatusNeutral,
 } from '@cloudscape-design/design-tokens';
-import { useMemo } from 'react';
-
+import { useMemo, useCallback } from 'react';
 import {
   LEVEL_HIGH,
   LEVEL_LOW,
   LEVEL_MEDIUM,
   LEVEL_NOT_SET,
+  DEFAULT_NEW_ENTITY_ID,
 } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
+import { useWorkspacesContext } from '../../../../../contexts/WorkspacesContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 import DashboardNumber from '../../../../generic/DashboardNumber';
 import useLinkClicked from '../../hooks/useLinkClicked';
 
 const ThreatPrioritization = () => {
   const { statementList, addStatement } = useThreatsContext();
+  const { onThreatEditorView } = useWorkspacesContext();
 
   const handleLinkClicked = useLinkClicked();
 
@@ -62,6 +64,11 @@ const ThreatPrioritization = () => {
     [statementList],
   );
 
+  const handleAddStatement = useCallback(() => {
+    addStatement();
+    onThreatEditorView?.(DEFAULT_NEW_ENTITY_ID);
+  }, [addStatement, onThreatEditorView]);
+
   return (
     <ColumnLayout columns={1} borders="horizontal">
       {!statementList.length ? (
@@ -75,7 +82,7 @@ const ThreatPrioritization = () => {
           <Box variant="p" color="text-body-secondary">
             Start by adding a threat to this workspace
           </Box>
-          <Button variant="primary" onClick={() => addStatement()}>Add a threat</Button>
+          <Button variant="primary" onClick={() => handleAddStatement()}>Add a threat</Button>
         </Box>
       ) : (
         <Box padding="s">
