@@ -69,10 +69,6 @@ logDebugMessage(
   "Adding DOMContentLoaded and visibility event listener to trigger load of threat model"
 );
 
-document.addEventListener("visibilitychange", (event) => {
-  loadThreatModel("visibilitychange");
-});
-
 async function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
