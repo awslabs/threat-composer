@@ -42,10 +42,10 @@ jspm_packages/
 .nx/cache
 !/nx.json
 !/.nxignore
-!/.syncpackrc.json
 .temp/
 oss-attribution/
 storybook.out/
 .DS_Store
 .output/
+!/.syncpackrc.json
 !/.projenrc.ts
