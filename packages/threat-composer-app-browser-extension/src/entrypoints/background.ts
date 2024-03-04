@@ -24,18 +24,14 @@ export default defineBackground(() => {
 
     getExtensionConfig().then(config => {
       const tcViewer = config.target;
-      let tcUrlCreate = '';
-      let tcUrlUpdate = '';
+      let tcUrl = '';
 
       if (tcViewer == ThreatComposerTarget.BUILT_IN) {
-        tcUrlCreate = browser.runtime.getURL('index.html');
-        tcUrlUpdate = browser.runtime.getURL('*');
+        tcUrl = browser.runtime.getURL('');
       } else if (tcViewer == ThreatComposerTarget.GITHUB_PAGES) {
-        tcUrlCreate = 'https://awslabs.github.io/threat-composer';
-        tcUrlUpdate = tcUrlCreate;
+        tcUrl = 'https://awslabs.github.io/threat-composer';
       } else if (tcViewer == ThreatComposerTarget.CUSTOM_HOST) {
-        tcUrlCreate = config.customUrl ?? '';
-        tcUrlUpdate = tcUrlCreate;
+        tcUrl = config.customUrl ?? '';
       }
 
       if (request.schema) { //This is likely the JSON from a threat model
@@ -45,11 +41,11 @@ export default defineBackground(() => {
           logDebugMessage(config, 'Saved to browser storage');
         });
 
-        browser.tabs.query({ url: tcUrlUpdate }).then((tabs: any) => {
+        browser.tabs.query({ url: tcUrl + '*' }).then((tabs: any) => {
           if (tabs.length > 0) {
-            browser.tabs.update(tabs[0].id, { active: true });
+            browser.tabs.update(tabs[0].id, { active: true, url: tcUrl + 'index.html' });
           } else {
-            browser.tabs.create({ url: tcUrlCreate });
+            browser.tabs.create({ url: tcUrl + 'index.html' });
           }
         });
         sendResponse({});
