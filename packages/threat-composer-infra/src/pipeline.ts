@@ -16,6 +16,7 @@
 import { PDKNag } from '@aws/pdk/pdk-nag';
 import { ManualApprovalStep } from 'aws-cdk-lib/pipelines';
 import { ApplicationStage } from './application-stage';
+import { STAGE_PREFIX_IDE_EXTENSION_ENV } from './constants';
 import { PipelineStack } from './pipeline-stack';
 
 const app = PDKNag.app();
@@ -55,6 +56,28 @@ if (prodAccount) {
 
   pipelineStack.pipeline.addStage(prodStage, {
     pre: [new ManualApprovalStep('Prod Deployment Approval')],
+  });
+}
+
+const ideExtensionDevAccount =
+  app.node.tryGetContext(`account${STAGE_PREFIX_IDE_EXTENSION_ENV}Dev`) || process.env.CDK_DEFAULT_ACCOUNT;
+const ideExtensionProdAccount = app.node.tryGetContext(`account${STAGE_PREFIX_IDE_EXTENSION_ENV}Prod`);
+
+if (ideExtensionDevAccount) {
+  new ApplicationStage(app, `${STAGE_PREFIX_IDE_EXTENSION_ENV}Dev`, {
+    env: {
+      account: ideExtensionDevAccount,
+      region,
+    },
+  });
+}
+
+if (ideExtensionProdAccount) {
+  new ApplicationStage(app, `${STAGE_PREFIX_IDE_EXTENSION_ENV}Prod`, {
+    env: {
+      account: ideExtensionProdAccount,
+      region,
+    },
   });
 }
 
