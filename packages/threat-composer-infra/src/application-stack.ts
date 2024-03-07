@@ -47,6 +47,7 @@ import {
 } from 'aws-cdk-lib/custom-resources';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
+import { STAGE_PREFIX_IDE_EXTENSION_ENV } from './constants';
 
 const PACKAGES_ROOT = path.join(__dirname, '..', '..');
 
@@ -58,7 +59,23 @@ export class ApplicationStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const stageName = Stage.of(this)?.stageName;
+    const stageName = Stage.of(this)?.stageName || 'Dev';
+
+    let assetPath = path.join(
+      PACKAGES_ROOT,
+      'threat-composer-app',
+      'build',
+      'website',
+    );
+
+    if (stageName?.startsWith(STAGE_PREFIX_IDE_EXTENSION_ENV)) {
+      assetPath = path.join(
+        PACKAGES_ROOT,
+        'threat-composer-app',
+        'build',
+        'ide-extension',
+      );
+    }
 
     const domainName = this.node.tryGetContext(`domainName${stageName}`);
     const certificate = this.node.tryGetContext(`certificate${stageName}`);
@@ -212,12 +229,7 @@ export class ApplicationStack extends Stack {
     }
 
     const websiteProps: StaticWebsiteProps = {
-      websiteContentPath: path.join(
-        PACKAGES_ROOT,
-        'threat-composer-app',
-        'build',
-        'website',
-      ),
+      websiteContentPath: assetPath,
       webAclProps: {
         cidrAllowList: {
           cidrType: cidrType === 'IPV6' ? 'IPV6' : 'IPV4',
