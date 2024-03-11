@@ -22,7 +22,7 @@ export class ApplicationStage extends Stage {
     super(scope, id, props);
 
     new ApplicationStack(this, 'ThreatComposerAppStack', {
-      terminationProtection: this.stageName === 'Prod',
+      terminationProtection: this.stageName.endsWith('Prod'),
     });
   }
 }
