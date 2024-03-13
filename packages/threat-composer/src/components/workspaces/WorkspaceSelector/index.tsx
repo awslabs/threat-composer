@@ -41,7 +41,7 @@ import {
 import useImportExport from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
 import isWorkspaceExample from '../../../utils/isWorkspaceExample';
-import AddWorkspace from '../../workspaces/EditWorkspace';
+import EditWorkspace from '../../workspaces/EditWorkspace';
 import FileImport from '../../workspaces/FileImport';
 
 export interface WorkspaceSelectorProps {
@@ -367,16 +367,17 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         />
       )}
       {addWorkspaceModalVisible && (
-        <AddWorkspace
+        <EditWorkspace
           visible={addWorkspaceModalVisible}
           setVisible={setAddWorkspaceModalVisible}
           onConfirm={async (workspaceName: string) => {
             await addWorkspace(workspaceName);
           }}
+          workspaceList={workspaceList}
         />
       )}
       {editWorkspaceModalVisible && currentWorkspace && (
-        <AddWorkspace
+        <EditWorkspace
           visible={editWorkspaceModalVisible}
           setVisible={setEditWorkspaceModalVisible}
           editMode
@@ -384,6 +385,8 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
           onConfirm={(newWorkspaceName) =>
             renameWorkspace(currentWorkspace.id, newWorkspaceName)
           }
+          currentWorkspace={currentWorkspace}
+          workspaceList={workspaceList}
         />
       )}
       {removeDataModalVisible && (

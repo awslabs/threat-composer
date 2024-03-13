@@ -21,7 +21,7 @@ import { InputProps } from '@cloudscape-design/components/input';
 import Modal from '@cloudscape-design/components/modal';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import React, { FC, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { WorkspaceSchema } from '../../../customTypes';
+import { WorkspaceSchema, Workspace } from '../../../customTypes';
 import Input from '../../generic/Input';
 
 export interface EditWorkspaceProps {
@@ -30,6 +30,8 @@ export interface EditWorkspaceProps {
   onConfirm: (workspace: string) => Promise<void>;
   value?: string;
   editMode?: boolean;
+  currentWorkspace?: Workspace;
+  workspaceList: Workspace[];
 }
 
 const EditWorkspace: FC<EditWorkspaceProps> = ({
@@ -37,15 +39,27 @@ const EditWorkspace: FC<EditWorkspaceProps> = ({
   setVisible,
   onConfirm,
   editMode = false,
+  workspaceList,
+  currentWorkspace,
   ...props
 }) => {
-  const inputRef= useRef<InputProps.Ref>();
+  const inputRef = useRef<InputProps.Ref>();
   const [value, setValue] = useState(props.value || '');
+  const [errorText, setErrorText] = useState('');
+
+  useEffect(() => {
+    setErrorText('');
+  }, [value]);
 
   const handleConfirm = useCallback(async () => {
-    await onConfirm(value);
-    setVisible(false);
-  }, [onConfirm, value]);
+    setErrorText('');
+    if (workspaceList.find(x => x.name === value && (!currentWorkspace || currentWorkspace.id !== x.id))) {
+      setErrorText('A workspace already exists with that name');
+    } else {
+      await onConfirm(value);
+      setVisible(false);
+    }
+  }, [onConfirm, value, workspaceList, currentWorkspace]);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -71,6 +85,7 @@ const EditWorkspace: FC<EditWorkspaceProps> = ({
     <SpaceBetween direction="vertical" size="m">
       <FormField
         label="Workspace name"
+        errorText={errorText}
       >
         <Input ref={inputRef as RefObject<InputProps.Ref>}
           value={value}
