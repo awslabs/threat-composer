@@ -92,7 +92,7 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = ({
       storageType,
       metadata,
     };
-    setWorkspaceList(prev => prev.find(p => p.name === workspaceName) ? [...prev] : [...prev, newWorkspace]);
+    setWorkspaceList(prev => [...prev, newWorkspace]);
     setCurrentWorkspace(newWorkspace);
     onWorkspaceChanged?.(newWorkspace.id);
     return newWorkspace;
@@ -105,7 +105,7 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = ({
   const handleRenameWorkspace = useCallback(async (id: string, newWorkspaceName: string) => {
     setWorkspaceList(prev => {
       const index = prev.findIndex(w => w.id === id);
-      const newList = [... index <= 1 ? [] : prev.slice(0, index - 1), {
+      const newList = [... index < 1 ? [] : prev.slice(0, index), {
         id,
         name: newWorkspaceName,
       }, ...prev.slice(index + 1)];
