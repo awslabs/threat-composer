@@ -15,4 +15,4 @@
  ******************************************************************************************************************** */
 export const REGEX_CONTENT_NOT_HTML_TAG = /(<.*?>)/i;
 export const REGEX_CONTENT_IMAGE_URL = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*)/i;
-export const REGEX_CONTENT_IMAGE_BASE64 = /^(?:data:image\/[a-z]{3,};base64,)(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/gi;
+export const REGEX_CONTENT_IMAGE_BASE64 = /^(?:data:image\/[a-z+]{3,};base64,)(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/gi;
