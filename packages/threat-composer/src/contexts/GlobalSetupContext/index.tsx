@@ -21,11 +21,12 @@ import { GlobalSetupContext, useGlobalSetupContext } from './context';
 import { useThemeContext } from '../../components/generic/ThemeProvider';
 import InfoModal from '../../components/global/InfoModal';
 import { LOCAL_STORAGE_KEY_NEW_VISIT_FLAG } from '../../configs/localStorageKeys';
-import { ComposerMode, DataExchangeFormat } from '../../customTypes';
+import { ComposerMode, DataExchangeFormat, AppMode } from '../../customTypes';
 import EventController from '../../utils/EventController';
 
 export interface GlobalSetupContextProviderProps {
   composerMode?: ComposerMode;
+  appMode?: AppMode;
   features?: string[];
   onPreview?: (content: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
@@ -49,6 +50,7 @@ window.threatcomposer = {
 const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProviderProps>> = ({
   children,
   composerMode = 'Full',
+  appMode,
   features,
   onPreview,
   onPreviewClose,
@@ -81,11 +83,11 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
     }
   }, [hasVisitBefore, composerMode]);
 
-
   return (<div>
     <GlobalSetupContext.Provider value={{
       hasVisitBefore,
       composerMode,
+      appMode,
       features,
       showInfoModal: () => setInfoModalVisible(true),
       onPreview,

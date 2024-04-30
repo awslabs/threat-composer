@@ -14,7 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useMemo } from 'react';
-import { STORAGE_LOCAL_STATE, STORAGE_LOCAL_STORAGE } from '../../configs';
+import { APP_MODE_IDE_EXTENSION, STORAGE_LOCAL_STATE, STORAGE_LOCAL_STORAGE } from '../../configs';
+import { useGlobalSetupContext } from '../../contexts';
 import { useWorkspaceExamplesContext } from '../../contexts/WorkspaceExamplesContext';
 import { useWorkspacesContext } from '../../contexts/WorkspacesContext';
 import { DataExchangeFormat } from '../../customTypes';
@@ -28,8 +29,15 @@ const useWorkspaceStorage = (workspaceId: string | null): {
 } => {
   const { workspaceList } = useWorkspacesContext();
   const { getWorkspaceExample } = useWorkspaceExamplesContext();
+  const { appMode } = useGlobalSetupContext();
 
   return useMemo(() => {
+    if (appMode === APP_MODE_IDE_EXTENSION) {
+      return {
+        storageType: STORAGE_LOCAL_STATE,
+      };
+    }
+
     if (workspaceId && isWorkspaceExample(workspaceId)) {
       return {
         storageType: STORAGE_LOCAL_STATE,
