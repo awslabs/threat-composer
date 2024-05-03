@@ -97,6 +97,8 @@ export class ApplicationStack extends Stack {
       'contentSecurityPolicyOverride',
     ) as string;
 
+    const cacheControlNoCache = (this.node.tryGetContext('cacheControlNoCache') as string) !== 'false';
+
     const responseHeadersPolicy = new ResponseHeadersPolicy(
       this,
       'ResourceHeadersPolicy',
@@ -109,7 +111,7 @@ export class ApplicationStack extends Stack {
           accessControlAllowHeaders: ['*'],
           originOverride: true,
         },
-        customHeadersBehavior: {
+        customHeadersBehavior: cacheControlNoCache ? {
           customHeaders: [
             { header: 'pragma', value: 'no-cache', override: true },
             {
@@ -118,7 +120,7 @@ export class ApplicationStack extends Stack {
               override: true,
             },
           ],
-        },
+        } : undefined,
         securityHeadersBehavior: {
           // A default content security policy is present in the index.html file to cater for github page hosting.
           // Here allow users to override to cater for specific use cases.

@@ -16,5 +16,6 @@
     "certificateProd": "",
     "hostZoneProd": "",
     "hostZoneNameProd": "",
-    "lambdaEdgeProd": ""
+    "lambdaEdgeProd": "",
+    "cacheControlNoCache": "true"
 }
