@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren } from 'react';
-import { ComposerMode, DataExchangeFormat, ViewNavigationEvent } from '../../customTypes';
+import { AppMode, ComposerMode, DataExchangeFormat, ViewNavigationEvent } from '../../customTypes';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import WorkspaceContextAggregator from '../WorkspaceContextAggregator';
 import WorkspaceExamplesContext from '../WorkspaceExamplesContext';
@@ -22,6 +22,7 @@ import WorkspacesContextProvider, { WorkspacesContextProviderProps } from '../Wo
 
 export interface ContextAggregatorProps extends ViewNavigationEvent {
   composerMode?: ComposerMode;
+  appMode?: AppMode;
   features?: string[];
   onWorkspaceChanged?: WorkspacesContextProviderProps['onWorkspaceChanged'];
   onPreview?: (content: DataExchangeFormat) => void;
@@ -33,6 +34,7 @@ export interface ContextAggregatorProps extends ViewNavigationEvent {
 const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
   children,
   onWorkspaceChanged,
+  appMode,
   composerMode = 'Full',
   features,
   onPreview,
@@ -48,6 +50,7 @@ const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
       onImported={onImported}
       features={features}
       onDefineWorkload={onDefineWorkload}
+      appMode={appMode}
       composerMode={composerMode}>
       <WorkspaceExamplesContext>
         <WorkspacesContextProvider

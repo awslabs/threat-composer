@@ -56,6 +56,7 @@ const styles = {
 
 export interface ThreatModelViewProps extends ViewNavigationEvent {
   isPreview?: boolean;
+  showPrintDownloadButtons?: boolean;
   composerMode: string;
   data: DataExchangeFormat;
   downloadFileName?: string;
@@ -66,6 +67,7 @@ export interface ThreatModelViewProps extends ViewNavigationEvent {
 const ThreatModelView: FC<ThreatModelViewProps> = ({
   data,
   isPreview = false,
+  showPrintDownloadButtons = true,
   composerMode,
   downloadFileName,
   onPrintButtonClick,
@@ -150,11 +152,11 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
                 Copy as Markdown
               </Button>
             </Popover>
-            {downloadFileName && <Button
+            {downloadFileName && showPrintDownloadButtons && <Button
               onClick={handleDownloadMarkdown}>
               Download as Markdown File
             </Button>}
-            <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>
+            {showPrintDownloadButtons && <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>}
           </SpaceBetween>
         }
       >
