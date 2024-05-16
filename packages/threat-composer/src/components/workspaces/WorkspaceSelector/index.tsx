@@ -26,6 +26,7 @@ import {
 import Select, { SelectProps } from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo, useState, useCallback, PropsWithChildren } from 'react';
+import { APP_MODE_IDE_EXTENSION } from '../../../configs';
 import {
   DEFAULT_WORKSPACE_ID,
   DEFAULT_WORKSPACE_LABEL,
@@ -83,6 +84,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
   const { removeData, deleteWorkspace } = useRemoveData();
 
   const {
+    appMode,
     composerMode,
     onPreview,
     onPreviewClose,
@@ -238,7 +240,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
   const buttonDropdownItems = useMemo(() => {
     const items: ButtonDropdownProps.Item[] = [];
 
-    if (singletonMode && singletonPrimaryActionButtonConfig) {
+    if (singletonMode && singletonPrimaryActionButtonConfig && appMode !== APP_MODE_IDE_EXTENSION) {
       // If primary action button is not specified, use Export data as primary action button in Singleton app mode.
       items.push({
         id: 'exportAll',
@@ -330,8 +332,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
             controlId="WorkspacesSelect"
             selectedOption={{
               value: currentWorkspace?.id || DEFAULT_WORKSPACE_ID,
-              label: `Workspace: ${
-                currentWorkspace?.name || DEFAULT_WORKSPACE_LABEL
+              label: `Workspace: ${currentWorkspace?.name || DEFAULT_WORKSPACE_LABEL
               }`,
             }}
             options={workspacesOptions}

@@ -48,7 +48,12 @@ import ThreatModelReport from '../../../ThreatModelReport';
 const TEMP_PREVIEW_DATA_KEY = 'ThreatStatementGenerator.TempPreviewData';
 
 const defaultHref = process.env.PUBLIC_URL || '/';
-const appMode = process.env.REACT_APP_APP_MODE;
+const appModeEnv = process.env.REACT_APP_APP_MODE;
+
+const appMode = appModeEnv === APP_MODE_BROWSER_EXTENSION ?
+  APP_MODE_BROWSER_EXTENSION :
+  (appModeEnv === APP_MODE_IDE_EXTENSION ?
+    APP_MODE_IDE_EXTENSION : undefined);
 
 const AppInner: FC<{
   setWorkspaceId: React.Dispatch<React.SetStateAction<string>>;
@@ -203,6 +208,7 @@ const Full: FC = () => {
 
   return (
     <ContextAggregator
+      appMode={appMode}
       composerMode='Full'
       onWorkspaceChanged={handleWorkspaceChanged}
       onApplicationInfoView={() => handleNavigationView(ROUTE_APPLICATION_INFO)}
