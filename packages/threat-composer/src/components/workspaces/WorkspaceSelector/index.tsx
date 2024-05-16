@@ -315,6 +315,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
 
     return items;
   }, [
+    appMode,
     singletonMode,
     singletonPrimaryActionButtonConfig,
     embededMode,
