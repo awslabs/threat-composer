@@ -21,10 +21,10 @@ import {
   useThreatPacksContext,
   DEFAULT_NEW_ENTITY_ID,
   ThreatPack,
+  getNewThreatStatement,
 } from '@aws/threat-composer';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import { v4 as uuidV4 } from 'uuid';
 import isMemoryRouterUsed from '../../utils/isMemoryRouterUsed';
 
 const ThreatStatementEditor = () => {
@@ -62,10 +62,7 @@ const ThreatStatementEditor = () => {
   const { threatPacks } = useThreatPacksContext();
 
   const [editingStatement] = useState(() => {
-    let statement: TemplateThreatStatement = {
-      id: uuidV4(),
-      numericId: -1,
-    };
+    let statement: TemplateThreatStatement = getNewThreatStatement();
 
     if (threatId === DEFAULT_NEW_ENTITY_ID && idToCopy) {
       // Create new threat from copying an existing threat
@@ -74,8 +71,7 @@ const ThreatStatementEditor = () => {
         const { id: _id, displayOrder, tags, metadata, ...rest } = copiedStatement;
         statement = {
           ...rest,
-          id: uuidV4(),
-          numericId: -1,
+          ...statement,
         };
       }
     } else if (threatId === DEFAULT_NEW_ENTITY_ID && threatPackId && threatPackThreatId) {
