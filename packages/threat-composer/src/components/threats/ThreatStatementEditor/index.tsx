@@ -36,6 +36,7 @@ import threatFieldData from '../../../data/threatFieldData';
 import threatStatementExamples from '../../../data/threatStatementExamples.json';
 import threatStatementFormat from '../../../data/threatStatementFormat';
 import useEditMetadata from '../../../hooks/useEditMetadata';
+import getNewThreatStatement from '../../../utils/getNewThreatStatement';
 import getRecommendedEditor from '../../../utils/getRecommandedEditor';
 import renderThreatStatement from '../../../utils/renderThreatStatement';
 import scrollToTop from '../../../utils/scrollToTop';
@@ -152,7 +153,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
   }, [editingStatement, composerMode]);
 
   const handleStartOver = useCallback(() => {
-    addStatement();
+    setEditingStatement(getNewThreatStatement());
     setEditor(undefined);
     fullExamplesRef.current?.collapse();
   }, [addStatement]);

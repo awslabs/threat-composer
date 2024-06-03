@@ -14,8 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useCallback, useEffect, useState } from 'react';
-import { v4 as uuidV4 } from 'uuid';
 import { ComposerMode, TemplateThreatStatement } from '../../../../customTypes';
+import getNewThreatStatement from '../../../../utils/getNewThreatStatement';
 import { View } from '../../types';
 
 const useThreats = (
@@ -29,24 +29,21 @@ const useThreats = (
 
   const handleAddStatement = useCallback((idToCopy?: string) => {
     if (composerMode !== 'Full') { // If Full mode, the value will be set via the route in the app.
+      const newDefaultStatement = getNewThreatStatement();
+
       if (idToCopy) {
         const copiedStatement = statementList.find(st => st.id === idToCopy);
         if (copiedStatement) {
           const { id: _id, displayOrder, tags, metadata, ...rest } = copiedStatement;
           const newStatement = {
             ...rest,
-            id: uuidV4(),
-            numericId: -1,
+            ...newDefaultStatement,
           };
 
           setEditingStatement(newStatement);
         }
       } else {
-        const newStatement: TemplateThreatStatement = {
-          id: uuidV4(),
-          numericId: -1,
-        };
-        setEditingStatement(newStatement);
+        setEditingStatement(newDefaultStatement);
       }
     }
   }, [statementList, setEditingStatement]);

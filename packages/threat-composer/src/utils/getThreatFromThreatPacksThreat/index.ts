@@ -13,15 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { v4 as uuidv4 } from 'uuid';
 import { METADATA_KEY_SOURCE, METADATA_KEY_SOURCE_THREAT_PACK, METADATA_KEY_SOURCE_THREAT_PACK_THREAT, METADATA_SOURCE_THREAT_PACK } from '../../configs';
 import { TemplateThreatStatement } from '../../customTypes';
+import getNewThreatStatement from '../getNewThreatStatement';
 
 const getThreatFromThreactPackThreat = (threatPackId: string, t: TemplateThreatStatement) => {
   return {
     ...t,
-    numericId: -1,
-    id: uuidv4(),
+    ...getNewThreatStatement(),
     tags: t.tags,
     metadata: [
       ...(t.metadata || []),
