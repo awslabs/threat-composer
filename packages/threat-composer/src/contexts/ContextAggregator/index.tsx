@@ -37,19 +37,11 @@ const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
   appMode,
   composerMode = 'Full',
   features,
-  onPreview,
-  onPreviewClose,
-  onImported,
-  onDefineWorkload,
   ...props
 }) => {
   return (
     <GlobalSetupContextProvider
-      onPreview={onPreview}
-      onPreviewClose={onPreviewClose}
-      onImported={onImported}
       features={features}
-      onDefineWorkload={onDefineWorkload}
       appMode={appMode}
       composerMode={composerMode}>
       <WorkspaceExamplesContext>

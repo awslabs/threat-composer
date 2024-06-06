@@ -41,10 +41,11 @@ import { WorkspaceInsightsProps } from '../../types';
 
 const ThreatPrioritization: FC<WorkspaceInsightsProps> = ({
   onThreatEditorView,
+  onThreatListView,
 }) => {
   const { statementList, addStatement } = useThreatsContext();
 
-  const handleLinkClicked = useLinkClicked();
+  const handleLinkClicked = useLinkClicked(onThreatListView);
 
   const missingPriority = useMemo(
     () => filterThreatsByMetadata(statementList, 'Priority').length,

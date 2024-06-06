@@ -21,17 +21,13 @@ import { GlobalSetupContext, useGlobalSetupContext } from './context';
 import { useThemeContext } from '../../components/generic/ThemeProvider';
 import InfoModal from '../../components/global/InfoModal';
 import { LOCAL_STORAGE_KEY_NEW_VISIT_FLAG } from '../../configs/localStorageKeys';
-import { ComposerMode, DataExchangeFormat, AppMode } from '../../customTypes';
+import { ComposerMode, AppMode } from '../../customTypes';
 import EventController from '../../utils/EventController';
 
 export interface GlobalSetupContextProviderProps {
   composerMode?: ComposerMode;
   appMode?: AppMode;
   features?: string[];
-  onPreview?: (content: DataExchangeFormat) => void;
-  onPreviewClose?: () => void;
-  onImported?: () => void;
-  onDefineWorkload?: () => void;
 }
 
 const stringifyWorkspaceData = (data: any) => {

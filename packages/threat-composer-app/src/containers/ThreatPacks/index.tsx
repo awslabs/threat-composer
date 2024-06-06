@@ -16,7 +16,7 @@
 import { ThreatPacksComponent } from '@aws/threat-composer';
 import { FC, useCallback } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ROUTE_THREAT_PACK_PATH } from '../../config/routes';
+import { ROUTE_THREAT_PACK } from '../../config/routes';
 import generateUrl from '../../utils/generateUrl';
 
 const ThreatPacks: FC = () => {
@@ -26,7 +26,7 @@ const ThreatPacks: FC = () => {
 
   const handleThreatPackLinkClick = useCallback((threatPackId: string) => {
     workspaceId && navigate(generateUrl(
-      ROUTE_THREAT_PACK_PATH,
+      ROUTE_THREAT_PACK,
       searchParms,
       workspaceId,
       undefined,

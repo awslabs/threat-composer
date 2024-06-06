@@ -32,14 +32,13 @@ export interface ItemType {
   content: ReactNode;
 }
 
-
 const WorkspaceInsights: FC<WorkspaceInsightsProps> = (props) => {
   const [items, setItems] = useState<BoardProps.Item<ItemType>[]>([
     {
       id: 'overview',
       rowSpan: 2,
       columnSpan: 6,
-      data: { title: 'Threat summary', content: <Overview /> },
+      data: { title: 'Threat summary', content: <Overview {...props}/> },
     },
     {
       id: 'threat-prioritization',

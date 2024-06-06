@@ -18,4 +18,5 @@ import { ViewNavigationEvent } from '../../../customTypes';
 
 export interface WorkspaceInsightsProps {
   onThreatEditorView?: ViewNavigationEvent['onThreatEditorView'];
+  onThreatListView?: ViewNavigationEvent['onThreatListView'];
 }

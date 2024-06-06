@@ -16,7 +16,7 @@
 import { MitigationPacksComponent } from '@aws/threat-composer';
 import { FC, useCallback } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ROUTE_MITIGATION_PACK_PATH } from '../../config/routes';
+import { ROUTE_MITIGATION_PACK } from '../../config/routes';
 import generateUrl from '../../utils/generateUrl';
 
 const MitigationPacks: FC = () => {
@@ -26,7 +26,7 @@ const MitigationPacks: FC = () => {
 
   const handleMitigationPackLinkClicked = useCallback((mitigationPackId: string) => {
     workspaceId && navigate(generateUrl(
-      ROUTE_MITIGATION_PACK_PATH,
+      ROUTE_MITIGATION_PACK,
       searchParms,
       workspaceId,
       undefined,

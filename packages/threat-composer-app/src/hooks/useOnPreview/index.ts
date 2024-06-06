@@ -19,13 +19,14 @@ import { generatePath } from 'react-router-dom';
 import { ROUTE_PREVIEW } from '../../config/routes';
 
 const TEMP_PREVIEW_DATA_KEY = 'ThreatStatementGenerator.TempPreviewData';
+const ROUTE_BASE_PATH = process.env.REACT_APP_ROUTE_BASE_PATH;
 
 const useOnPreview = () => {
   const handlePreview = useCallback((data: DataExchangeFormat) => {
     window.localStorage.setItem(TEMP_PREVIEW_DATA_KEY, JSON.stringify(data));
-    const url = generatePath(ROUTE_PREVIEW, {
+    const url = `${ROUTE_BASE_PATH || ''}${generatePath(ROUTE_PREVIEW, {
       dataKey: TEMP_PREVIEW_DATA_KEY,
-    });
+    })}`;
 
     window.open(url, '_blank', 'noopener,noreferrer,resizable');
   }, []);

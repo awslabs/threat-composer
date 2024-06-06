@@ -37,6 +37,7 @@ import { WorkspaceInsightsProps } from '../../types';
 
 const STRIDEAllocation: FC<WorkspaceInsightsProps> = ({
   onThreatEditorView,
+  onThreatListView,
 }) => {
   const { statementList, addStatement } = useThreatsContext();
 
@@ -82,7 +83,7 @@ const STRIDEAllocation: FC<WorkspaceInsightsProps> = ({
     [filteredStatementList],
   );
 
-  const handleLinkClicked = useLinkClicked();
+  const handleLinkClicked = useLinkClicked(onThreatListView);
 
   const barSeries: BarChartProps<string>['series'] = [
     {

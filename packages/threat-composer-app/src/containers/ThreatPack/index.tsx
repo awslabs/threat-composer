@@ -16,7 +16,7 @@
 import { ThreatPackComponent, DEFAULT_WORKSPACE_ID, DEFAULT_NEW_ENTITY_ID, TemplateThreatStatement } from '@aws/threat-composer';
 import { FC, useCallback } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ROUTE_THREAT_EDITOR_PATH } from '../../config/routes';
+import { ROUTE_THREAT_EDITOR } from '../../config/routes';
 import generateUrl from '../../utils/generateUrl';
 
 const ThreatPack: FC = () => {
@@ -25,7 +25,7 @@ const ThreatPack: FC = () => {
   const navigate = useNavigate();
 
   const handleEditThreat = useCallback((selectedThreatPackId: string, threat: TemplateThreatStatement) => {
-    const url = generateUrl(ROUTE_THREAT_EDITOR_PATH, searchParms,
+    const url = generateUrl(ROUTE_THREAT_EDITOR, searchParms,
       workspaceId || DEFAULT_WORKSPACE_ID,
       DEFAULT_NEW_ENTITY_ID,
       undefined, {

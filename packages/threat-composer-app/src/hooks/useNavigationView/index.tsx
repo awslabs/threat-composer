@@ -16,7 +16,7 @@
 
 import { DEFAULT_WORKSPACE_ID } from '@aws/threat-composer';
 import { useCallback } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { NavigateOptions, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import generateUrl from '../../utils/generateUrl';
 
 const useNavigateView = () => {
@@ -24,8 +24,13 @@ const useNavigateView = () => {
   const [searchParams] = useSearchParams();
   const { workspaceId = DEFAULT_WORKSPACE_ID } = useParams();
 
-  return useCallback((route: string) =>
-    navigate(generateUrl(route, searchParams, workspaceId)),
+  return useCallback((route: string, threatId?: string,
+    additionalParams?: {
+      [key: string]: string;
+    }, additionalSearchParams?: {
+      [key: string]: string;
+    }, opts?: NavigateOptions) =>
+    navigate(generateUrl(route, searchParams, workspaceId, threatId, additionalParams, additionalSearchParams), opts),
   [
     searchParams, workspaceId,
   ]);
