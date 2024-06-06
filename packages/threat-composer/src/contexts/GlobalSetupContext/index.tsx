@@ -52,10 +52,6 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
   composerMode = 'Full',
   appMode,
   features,
-  onPreview,
-  onPreviewClose,
-  onImported,
-  onDefineWorkload,
 }) => {
   const [fileImportModalVisible, setFileImportModalVisible] = useState(false);
   const { setTheme, setDensity } = useThemeContext();
@@ -88,14 +84,10 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
       hasVisitBefore,
       composerMode,
       appMode,
-      features,
+      features: features || [],
       showInfoModal: () => setInfoModalVisible(true),
-      onPreview,
-      onPreviewClose,
-      onImported,
       fileImportModalVisible,
       setFileImportModalVisible,
-      onDefineWorkload,
     }}>
       {children}
       {infoModalVisible && <InfoModal

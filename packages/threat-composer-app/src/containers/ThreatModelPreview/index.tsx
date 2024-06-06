@@ -13,14 +13,29 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThreatStatementList as ThreatStatementListComponent } from '@aws/threat-composer';
-import { useLocation } from 'react-router-dom';
+import { ThreatModelView } from '@aws/threat-composer';
+import Box from '@cloudscape-design/components/box';
+import { FC, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 
-const ThreatStatementList = () => {
-  const { state } = useLocation();
-  return <ThreatStatementListComponent
-    initialFilter={state?.filter}
-  />;
+const ThreatModelPreview: FC = () => {
+  const { dataKey } = useParams();
+
+  const [data] = useMemo(() => {
+    const dataStr = dataKey && window.localStorage.getItem(dataKey);
+
+    if (dataStr) {
+      return JSON.parse(dataStr);
+    }
+
+    return undefined;
+  }, []);
+
+  if (!data) {
+    return <Box>No content</Box>;
+  }
+
+  return <ThreatModelView composerMode='Full' data={data} isPreview />;
 };
 
-export default ThreatStatementList;
+export default ThreatModelPreview;

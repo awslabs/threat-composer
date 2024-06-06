@@ -27,6 +27,7 @@ import MitigationPacksContextProvider from '../MitigationPacksContext';
 import MitigationsContextProvider from '../MitigationsContext';
 import ThreatPacksContextProvider from '../ThreatPacksContext';
 import ThreatsContextProvider from '../ThreatsContext';
+
 export interface WorkspaceContextAggregatorProps extends ViewNavigationEvent {
   workspaceId: string | null;
   composerMode?: ComposerMode;
@@ -43,7 +44,6 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
   onThreatListView,
 }) => {
   return (
-
     <ThreatsContextProvider
       workspaceId={workspaceId || null}
       onThreatEditorView={onThreatEditorView}

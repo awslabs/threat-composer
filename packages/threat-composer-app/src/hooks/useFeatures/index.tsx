@@ -13,14 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThreatStatementList as ThreatStatementListComponent } from '@aws/threat-composer';
-import { useLocation } from 'react-router-dom';
 
-const ThreatStatementList = () => {
-  const { state } = useLocation();
-  return <ThreatStatementListComponent
-    initialFilter={state?.filter}
-  />;
+import { useSearchParams } from 'react-router-dom';
+import { SEARCH_PARAM_FEATURES } from '../../config/searchParams';
+
+const useFeatures = () => {
+  const [searchParams] = useSearchParams();
+
+  const featureParam = searchParams.get(SEARCH_PARAM_FEATURES);
+  return featureParam && featureParam.split(',') || [];
 };
 
-export default ThreatStatementList;
+export default useFeatures;

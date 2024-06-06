@@ -13,14 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThreatStatementList as ThreatStatementListComponent } from '@aws/threat-composer';
-import { useLocation } from 'react-router-dom';
 
-const ThreatStatementList = () => {
-  const { state } = useLocation();
-  return <ThreatStatementListComponent
-    initialFilter={state?.filter}
-  />;
+import { DEFAULT_WORKSPACE_ID } from '@aws/threat-composer';
+import { useCallback } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import generateUrl from '../../utils/generateUrl';
+
+const useNavigateView = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { workspaceId = DEFAULT_WORKSPACE_ID } = useParams();
+
+  return useCallback((route: string) =>
+    navigate(generateUrl(route, searchParams, workspaceId)),
+  [
+    searchParams, workspaceId,
+  ]);
 };
 
-export default ThreatStatementList;
+export default useNavigateView;

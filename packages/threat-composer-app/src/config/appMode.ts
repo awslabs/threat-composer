@@ -13,14 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThreatStatementList as ThreatStatementListComponent } from '@aws/threat-composer';
-import { useLocation } from 'react-router-dom';
 
-const ThreatStatementList = () => {
-  const { state } = useLocation();
-  return <ThreatStatementListComponent
-    initialFilter={state?.filter}
-  />;
-};
+import {
+  APP_MODE_BROWSER_EXTENSION,
+  APP_MODE_IDE_EXTENSION,
+} from '@aws/threat-composer';
 
-export default ThreatStatementList;
+const appModeEnv = process.env.REACT_APP_APP_MODE;
+
+export const appMode = appModeEnv === APP_MODE_BROWSER_EXTENSION ?
+  APP_MODE_BROWSER_EXTENSION :
+  (appModeEnv === APP_MODE_IDE_EXTENSION ?
+    APP_MODE_IDE_EXTENSION : undefined);
+

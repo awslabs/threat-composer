@@ -26,7 +26,7 @@ const useWorkspaces = (
   setWorkspaceList: React.Dispatch<React.SetStateAction<Workspace[]>>,
   currentWorkspace: Workspace | null,
   setCurrentWorkspace: React.Dispatch<React.SetStateAction<Workspace | null>>,
-  onWorkspaceChanged?: (workspaceId: string) => void,
+  onWorkspaceChanged?: (workspaceName: string) => void,
 ) => {
   const { workspaceExamples } = useWorkspaceExamplesContext();
 
@@ -49,7 +49,7 @@ const useWorkspaces = (
   const handleSwitchWorkspace = useCallback((toBeSwitchedWorkspaceId: string | null) => {
     const workspace = getWorkspace(toBeSwitchedWorkspaceId);
     setCurrentWorkspace(workspace);
-    onWorkspaceChanged?.(workspace?.id || DEFAULT_WORKSPACE_ID);
+    onWorkspaceChanged?.(workspace?.name || DEFAULT_WORKSPACE_ID);
   }, [onWorkspaceChanged, getWorkspace]);
 
   const handleAddWorkspace = useCallback(async (workspaceName: string,
@@ -63,7 +63,7 @@ const useWorkspaces = (
     };
     setWorkspaceList(prev => [...prev, newWorkspace]);
     setCurrentWorkspace(newWorkspace);
-    onWorkspaceChanged?.(newWorkspace.id);
+    onWorkspaceChanged?.(newWorkspace.name);
     return newWorkspace;
   }, [onWorkspaceChanged]);
 

@@ -22,7 +22,7 @@ import {
   BarChart,
   BarChartProps,
 } from '@cloudscape-design/components';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, FC } from 'react';
 import {
   ALL_LEVELS,
   LEVEL_NOT_SET,
@@ -30,14 +30,15 @@ import {
   DEFAULT_NEW_ENTITY_ID,
 } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
-import { useWorkspacesContext } from '../../../../../contexts/WorkspacesContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 import DashboardNumber from '../../../../generic/DashboardNumber';
 import useLinkClicked from '../../hooks/useLinkClicked';
+import { WorkspaceInsightsProps } from '../../types';
 
-const STRIDEAllocation = () => {
+const STRIDEAllocation: FC<WorkspaceInsightsProps> = ({
+  onThreatEditorView,
+}) => {
   const { statementList, addStatement } = useThreatsContext();
-  const { onThreatEditorView } = useWorkspacesContext();
 
   const [selectedPriority, setSelectedPriority] = useState<string | undefined>(
     ALL_LEVELS,

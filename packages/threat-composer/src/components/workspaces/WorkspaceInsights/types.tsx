@@ -13,14 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThreatStatementList as ThreatStatementListComponent } from '@aws/threat-composer';
-import { useLocation } from 'react-router-dom';
 
-const ThreatStatementList = () => {
-  const { state } = useLocation();
-  return <ThreatStatementListComponent
-    initialFilter={state?.filter}
-  />;
-};
+import { ViewNavigationEvent } from '../../../customTypes';
 
-export default ThreatStatementList;
+export interface WorkspaceInsightsProps {
+  onThreatEditorView?: ViewNavigationEvent['onThreatEditorView'];
+}

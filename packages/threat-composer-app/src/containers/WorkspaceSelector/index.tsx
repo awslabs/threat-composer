@@ -13,13 +13,33 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { WorkspaceHome as WorkspaceHomeComponent } from '@aws/threat-composer';
-import { ROUTE_THREAT_EDITOR } from '../../config/routes';
-import useNavigateView from '../../hooks/useNavigationView';
 
-const WorkspaceHome = () => {
-  const handleNavigateView = useNavigateView();
-  return <WorkspaceHomeComponent onThreatEditorView={() => handleNavigateView(ROUTE_THREAT_EDITOR)} />;
+import {
+  WorkspaceSelector as WorkspaceSelectorComponent,
+  APP_MODE_BROWSER_EXTENSION,
+  APP_MODE_IDE_EXTENSION,
+} from '@aws/threat-composer';
+import { appMode } from '../../config/appMode';
+import { ROUTE_VIEW_THREAT_MODEL } from '../../config/routes';
+import useNavigateView from '../../hooks/useNavigationView';
+import useOnPreview from '../../hooks/useOnPreview';
+
+
+const WorkspaceSelector = () => {
+  const [onPreview, onPreivewClose] = useOnPreview();
+  const navigate = useNavigateView();
+
+  return <WorkspaceSelectorComponent
+    onPreview={onPreview}
+    onPreviewClose={onPreivewClose}
+    onImported={() => navigate(ROUTE_VIEW_THREAT_MODEL)}
+    singletonMode={appMode === APP_MODE_BROWSER_EXTENSION || appMode === APP_MODE_IDE_EXTENSION}
+    singletonPrimaryActionButtonConfig={appMode === APP_MODE_IDE_EXTENSION ? {
+      text: 'Save',
+      eventName: 'save',
+    } : undefined}
+    embededMode={false}
+  />;
 };
 
-export default WorkspaceHome;
+export default WorkspaceSelector;
