@@ -14,9 +14,10 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { ApplicationInfoComponent } from '@aws/threat-composer';
+import MarkdownEditorWithPrompt from '../../components/MarkdownEditorWithPrompt';
 
 const Application = () => {
-  return <ApplicationInfoComponent />;
+  return <ApplicationInfoComponent MarkdownEditorComponentType={MarkdownEditorWithPrompt}/>;
 };
 
 export default Application;

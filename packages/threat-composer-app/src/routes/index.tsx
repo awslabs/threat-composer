@@ -30,7 +30,7 @@ import {
   ROUTE_MITIGATION_PACK_PATH,
   ROUTE_MITIGATION_PACKS_PATH,
   ROUTE_WORKSPACE_PATH,
-  ROUTE_PREVIEW,
+  ROUTE_PREVIEW_PATH,
 } from '../config/routes';
 import Application from '../containers/Application';
 import AppRoot from '../containers/AppRoot';
@@ -109,10 +109,6 @@ const workspaceRoutes = [
     path: ROUTE_THREAT_LIST_PATH,
     element: <ThreatStatementList />,
   },
-  {
-    path: ROUTE_PREVIEW,
-    element: <ThreatModelPreview />,
-  },
 ];
 
 const createRouter = isMemoryRouterUsed() ? createMemoryRouter : createBrowserRouter;
@@ -136,6 +132,10 @@ const router = createRouter([
         children: [
           ...workspaceRoutes,
         ],
+      },
+      {
+        path: ROUTE_PREVIEW_PATH,
+        element: <ThreatModelPreview />,
       },
     ],
   },

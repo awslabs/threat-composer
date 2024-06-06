@@ -26,12 +26,11 @@ import useOnPreview from '../../hooks/useOnPreview';
 
 
 const WorkspaceSelector = () => {
-  const [onPreview, onPreivewClose] = useOnPreview();
+  const [onPreview] = useOnPreview();
   const navigate = useNavigateView();
 
   return <WorkspaceSelectorComponent
     onPreview={onPreview}
-    onPreviewClose={onPreivewClose}
     onImported={() => navigate(ROUTE_VIEW_THREAT_MODEL)}
     singletonMode={appMode === APP_MODE_BROWSER_EXTENSION || appMode === APP_MODE_IDE_EXTENSION}
     singletonPrimaryActionButtonConfig={appMode === APP_MODE_IDE_EXTENSION ? {

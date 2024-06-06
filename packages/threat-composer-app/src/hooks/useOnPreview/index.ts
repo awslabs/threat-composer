@@ -14,36 +14,23 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { DataExchangeFormat } from '@aws/threat-composer';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 import { generatePath } from 'react-router-dom';
 import { ROUTE_PREVIEW } from '../../config/routes';
 
 const TEMP_PREVIEW_DATA_KEY = 'ThreatStatementGenerator.TempPreviewData';
 
 const useOnPreview = () => {
-  const winRef = useRef<Window>();
-
   const handlePreview = useCallback((data: DataExchangeFormat) => {
     window.localStorage.setItem(TEMP_PREVIEW_DATA_KEY, JSON.stringify(data));
-    const win = window.open(generatePath(ROUTE_PREVIEW, {
+    const url = generatePath(ROUTE_PREVIEW, {
       dataKey: TEMP_PREVIEW_DATA_KEY,
-    }), '_blank', 'noopener,noreferrer,resizable');
-    if (win) {
-      winRef.current = win;
-      win.onbeforeunload = () => {
-        winRef.current = undefined;
-        window.localStorage.removeItem(TEMP_PREVIEW_DATA_KEY);
-      };
-    }
+    });
+
+    window.open(url, '_blank', 'noopener,noreferrer,resizable');
   }, []);
 
-  const handlePreviewClose = useCallback(() => {
-    if (winRef.current) {
-      winRef.current.close();
-    }
-  }, []);
-
-  return [handlePreview, handlePreviewClose] as [(data: DataExchangeFormat) => void, () => void];
+  return [handlePreview] as [(data: DataExchangeFormat) => void];
 };
 
 export default useOnPreview;

@@ -13,10 +13,23 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ComponentType } from 'react';
-import { MarkdownEditorProps } from '../components/generic/MarkdownEditor';
+import { MarkdownEditor, MarkdownEditorProps } from '@aws/threat-composer';
+import { FC, useState } from 'react';
+import { unstable_usePrompt } from 'react-router-dom';
 
-export interface EditableComponentBaseProps {
-  onEditModeChange?: (editMode: boolean) => void;
-  MarkdownEditorComponentType?: ComponentType<MarkdownEditorProps>;
-}
+const MarkdownEditorWithPrompt: FC<MarkdownEditorProps> = ({
+  value, ...props
+}) => {
+  const [previousValue] = useState(value);
+
+  unstable_usePrompt({
+    message: 'You have unsaved changes, proceed anyway?',
+    when: ({ currentLocation, nextLocation }) =>
+      previousValue !== value &&
+      currentLocation.pathname !== nextLocation.pathname,
+  });
+
+  return <MarkdownEditor value={value} {...props} />;
+};
+
+export default MarkdownEditorWithPrompt;

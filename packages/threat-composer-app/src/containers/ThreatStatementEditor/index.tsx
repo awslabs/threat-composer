@@ -25,7 +25,7 @@ import {
 } from '@aws/threat-composer';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import { ROUTE_THREAT_EDITOR } from '../../config/routes';
+import { ROUTE_THREAT_LIST } from '../../config/routes';
 import useNavigateView from '../../hooks/useNavigationView';
 import isMemoryRouterUsed from '../../utils/isMemoryRouterUsed';
 
@@ -101,7 +101,7 @@ const ThreatStatementEditor = () => {
     setEditingStatement(editingStatement);
   }, [editingStatement]);
 
-  return <ThreatStatementEditorComponent onThreatListView={() => handleNavigateView(ROUTE_THREAT_EDITOR)} />;
+  return <ThreatStatementEditorComponent onThreatListView={() => handleNavigateView(ROUTE_THREAT_LIST)} />;
 };
 
 export default ThreatStatementEditor;

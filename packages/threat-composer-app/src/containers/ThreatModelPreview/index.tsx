@@ -15,13 +15,13 @@
  ******************************************************************************************************************** */
 import { ThreatModelView } from '@aws/threat-composer';
 import Box from '@cloudscape-design/components/box';
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 const ThreatModelPreview: FC = () => {
   const { dataKey } = useParams();
 
-  const [data] = useMemo(() => {
+  const data = useMemo(() => {
     const dataStr = dataKey && window.localStorage.getItem(dataKey);
 
     if (dataStr) {
@@ -30,6 +30,12 @@ const ThreatModelPreview: FC = () => {
 
     return undefined;
   }, []);
+
+  useEffect(() => {
+    return () => {
+      dataKey && window.localStorage.removeItem(dataKey);
+    };
+  }, [dataKey]);
 
   if (!data) {
     return <Box>No content</Box>;

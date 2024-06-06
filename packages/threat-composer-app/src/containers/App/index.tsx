@@ -27,7 +27,9 @@ const isGithubPages = process.env.REACT_APP_GITHUB_PAGES === 'true';
 const App: FC = () => {
   const composerMode = getComposerMode();
 
-  return composerMode === 'ThreatsOnly' || composerMode === 'EditorOnly' ? (
+  console.log('App-ComposerMode', composerMode);
+
+  return (composerMode === 'ThreatsOnly' || composerMode === 'EditorOnly') ? (
     <Standalone composeMode={composerMode} />
   ) : (
     isGithubPages ?

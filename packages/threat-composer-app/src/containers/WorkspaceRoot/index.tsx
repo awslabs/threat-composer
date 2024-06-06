@@ -25,7 +25,7 @@ import { useNavigate, useParams, useSearchParams, Outlet } from 'react-router-do
 import {
   ROUTE_THREAT_EDITOR_PATH,
   ROUTE_THREAT_LIST_PATH,
-  ROUTE_WORKSPACE_HOME_PATH,
+  ROUTE_WORKSPACE_HOME,
 } from '../../config/routes';
 import generateUrl from '../../utils/generateUrl';
 import AppLayout from '../AppLayout';
@@ -54,7 +54,8 @@ const WorkspaceRoot: FC = () => {
   }, [navigate, workspaceId, searchParams]);
 
   const handleWorkspaceChanged = useCallback((newWorkspaceId: string) => {
-    navigate(generateUrl(ROUTE_WORKSPACE_HOME_PATH, searchParams, newWorkspaceId));
+    const url = generateUrl(ROUTE_WORKSPACE_HOME, searchParams, newWorkspaceId);
+    navigate(url);
   }, [navigate, workspaceId, searchParams]);
 
   return (

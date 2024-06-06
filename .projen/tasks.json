@@ -134,6 +134,10 @@
       "steps": [
         {
           "exec": "yarn install --check-files --frozen-lockfile"
+        },
+        {
+          "exec": "yarn nx run-many --target=install:ci --output-style=stream --nx-bail",
+          "receiveArgs": true
         }
       ]
     },
