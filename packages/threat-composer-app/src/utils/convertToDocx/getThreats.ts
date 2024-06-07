@@ -128,47 +128,6 @@ const getThreats = async (
   children.push(table);
 
   return children;
-  // const rows: string[] = [];
-  // rows.push('## Threats');
-
-  // rows.push('\n');
-
-  // rows.push(`| Threat Number | Threat | ${threatsOnly ? '' : 'Mitigations | Assumptions |'} Priority | STRIDE | Comments |`);
-  // rows.push(`| --- | --- | ${threatsOnly ? '' : '--- | --- |'} --- | --- | --- |`);
-
-  // if (data.threats) {
-  //   const promises = data.threats.map(async (x) => {
-  //     const mitigationLinks = data.mitigationLinks?.filter(ml => ml.linkedId === x.id) || [];
-  //     const assumpptionLinks = data.assumptionLinks?.filter(al => al.linkedId === x.id) || [];
-  //     const threatId = `T-${standardizeNumericId(x.numericId)}`;
-  //     const assumptionsContent = assumpptionLinks.map(al => {
-  //       const assumption = data.assumptions?.find(a => a.id === al.assumptionId);
-  //       if (assumption) {
-  //         const assumptionId = `A-${standardizeNumericId(assumption.numericId)}`;
-  //         return `[**${assumptionId}**](#${assumptionId}): ${escapeMarkdown(assumption.content)}`;
-  //       }
-  //       return null;
-  //     }).filter(al => !!al).join('<br/>');
-  //     const mitigationsContent = mitigationLinks.map(ml => {
-  //       const mitigation = data.mitigations?.find(m => m.id === ml.mitigationId);
-  //       if (mitigation) {
-  //         const mitigationId = `M-${standardizeNumericId(mitigation.numericId)}`;
-  //         return `[**${mitigationId}**](#${mitigationId}): ${escapeMarkdown(mitigation.content)}`;
-  //       }
-  //       return null;
-  //     }).filter(ml => !!ml).join('<br/>');
-  //     const priority = x.metadata?.find(m => m.key === 'Priority')?.value || '';
-  //     const STRIDE = ((x.metadata?.find(m => m.key === 'STRIDE')?.value || []) as string[]).join(', ');
-  //     const comments = await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || '');
-  //     return `| <a name="${threatId}"></a>${threatId} | ${escapeMarkdown(x.statement || '')} | ${threatsOnly ? '' : `${mitigationsContent} | ${assumptionsContent} | `} ${priority} | ${STRIDE} | ${comments} |`;
-  //   });
-
-  //   rows.push(...(await Promise.all(promises)));
-  // }
-
-  // rows.push('\n');
-
-  // return rows.join('\n');
 };
 
 export default getThreats;
