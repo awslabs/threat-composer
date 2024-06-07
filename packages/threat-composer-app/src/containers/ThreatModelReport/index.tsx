@@ -15,6 +15,7 @@
  ******************************************************************************************************************** */
 import { ThreatModel, ThreatModelView } from '@aws/threat-composer';
 import { FC, useCallback, useState } from 'react';
+import convertToDocx from '../../utils/convertToDocx';
 
 const ThreatModelReport: FC = () => {
   const [isPreview] = useState(() => {
@@ -45,9 +46,12 @@ const ThreatModelReport: FC = () => {
     window.open(`${window.location.pathname}?${urlParams.toString()}`, '_blank', 'noopener,noreferrer,resizable');
   }, []);
 
+  console.log('Hello');
+
   return (data
     ? (<ThreatModelView composerMode='Full' data={data} onPrintButtonClick={isPreview ? undefined : handlePrintButtonClick} />)
     : (<ThreatModel
+      convertToDocx={convertToDocx}
       isPreview={isPreview}
       onPrintButtonClick={isPreview ? undefined : handlePrintButtonClick}
     />));

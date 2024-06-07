@@ -17,6 +17,12 @@ class ThreatComposerReactAppProject extends ReactTypeScriptProject {
         "@aws-northstar/ui",
         "react-router-dom",
         "uuid",
+        "docx",
+        "unist-util-visit",
+        "remark-frontmatter@^4",
+        "remark-gfm@^3",
+        "remark-parse@^10",
+        "unified@^10",
         uiProject.package.packageName,
       ],
       devDeps: [
@@ -28,31 +34,42 @@ class ThreatComposerReactAppProject extends ReactTypeScriptProject {
       jestOptions: {
         configFilePath: "./jest.config.js",
       },
-    })
+    });
 
-    this.eslint?.addPlugins('header');
+    this.eslint?.addPlugins("header");
     this.eslint?.addRules({
       "header/header": [2, "../../header.js"],
     });
 
-    this.testTask.reset('react-scripts test --watchAll=false --passWithNoTests');
-    const compileWebsiteTask = this.addTask('compile:website', {
-      exec: 'BUILD_PATH=./build/website/ react-scripts build'
+    this.testTask.reset(
+      "react-scripts test --watchAll=false --passWithNoTests"
+    );
+    const compileWebsiteTask = this.addTask("compile:website", {
+      exec: "BUILD_PATH=./build/website/ react-scripts build",
     });
-    const compileBrowserExtensionTask = this.addTask('compile:browser-extension', {
-      exec: 'INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/browser-extension/ REACT_APP_APP_MODE=browser-extension react-scripts build'
-    });
-    const compileIDEExtensionTask = this.addTask('compile:ide-extension', {
-      exec: 'INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/ide-extension/ REACT_APP_APP_MODE=ide-extension react-scripts build'
+    const compileBrowserExtensionTask = this.addTask(
+      "compile:browser-extension",
+      {
+        exec: "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/browser-extension/ REACT_APP_APP_MODE=browser-extension react-scripts build",
+      }
+    );
+    const compileIDEExtensionTask = this.addTask("compile:ide-extension", {
+      exec: "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/ide-extension/ REACT_APP_APP_MODE=ide-extension react-scripts build",
     });
 
-    this.compileTask.reset('echo Building Artifacts for Websites, Browser Extensions and IDE Plugins');
+    this.compileTask.reset(
+      "echo Building Artifacts for Websites, Browser Extensions and IDE Plugins"
+    );
     this.compileTask.spawn(compileWebsiteTask);
     this.compileTask.spawn(compileBrowserExtensionTask);
     this.compileTask.spawn(compileIDEExtensionTask);
 
-    this.postCompileTask.reset(`[ -d ./build/storybook ] || mkdir -p ./build/storybook`);
-    this.postCompileTask.exec(`cp -r ../threat-composer/storybook.out/ ./build/storybook/`);
+    this.postCompileTask.reset(
+      "[ -d ./build/storybook ] || mkdir -p ./build/storybook"
+    );
+    this.postCompileTask.exec(
+      "cp -r ../threat-composer/storybook.out/ ./build/storybook/"
+    );
 
     this.package.addField("browserslist", browsersList);
   }

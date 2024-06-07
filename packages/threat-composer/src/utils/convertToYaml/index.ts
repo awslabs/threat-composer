@@ -13,7 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export { default as getThreatFromThreatPacksThreat } from './getThreatFromThreatPacksThreat';
-export { default as getNewThreatStatement } from './getNewThreatStatement';
-export { default as escapeMarkdown } from './escapeMarkdown';
-export { default as standardizeNumericId } from './standardizeNumericId';
+import { stringify } from 'yaml';
+import { DataExchangeFormat } from '../../customTypes';
+
+/**
+ * Convert the threat model into Yaml format
+ * @param data
+ */
+const convertToYaml = (data: DataExchangeFormat) => {
+  return stringify(data);
+};
+
+export default convertToYaml;

@@ -13,7 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export { default as getThreatFromThreatPacksThreat } from './getThreatFromThreatPacksThreat';
-export { default as getNewThreatStatement } from './getNewThreatStatement';
-export { default as escapeMarkdown } from './escapeMarkdown';
-export { default as standardizeNumericId } from './standardizeNumericId';
+import { Paragraph, TableCell, TableRow } from 'docx';
+
+const getHeaderRow = (headers: string[]) => {
+  return new TableRow({
+    children: headers.map(h => new TableCell({
+      children: [new Paragraph(h)],
+    })),
+  });
+};
+
+export default getHeaderRow;

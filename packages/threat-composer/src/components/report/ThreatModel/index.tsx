@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, useMemo } from 'react';
-import ThreatModelView from './components/ThreatModelView';
+import ThreatModelView, { ThreatModelViewProps } from './components/ThreatModelView';
 import { APP_MODE_IDE_EXTENSION } from '../../../configs/appMode';
 import { useGlobalSetupContext, useWorkspacesContext } from '../../../contexts';
 import useImportExport from '../../../hooks/useExportImport';
@@ -24,6 +24,7 @@ import getExportFileName from '../../../utils/getExportFileName';
 export interface ThreatModelProps {
   onPrintButtonClick?: () => void;
   isPreview?: boolean;
+  convertToDocx?: ThreatModelViewProps['convertToDocx'];
 }
 
 const ThreatModel: FC<ThreatModelProps> = ({

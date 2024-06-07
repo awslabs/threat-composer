@@ -26,7 +26,7 @@ import { useMitigationsContext } from '../../contexts/MitigationsContext/context
 import { useThreatsContext } from '../../contexts/ThreatsContext/context';
 import { DataExchangeFormat, TemplateThreatStatement } from '../../customTypes';
 import cleanupThreatData from '../../utils/cleanupThreatData';
-import downloadObjectAsJson from '../../utils/downloadObjectAsJson';
+import { downloadObjectAsJson } from '../../utils/downloadContent';
 import getExportFileName from '../../utils/getExportFileName';
 import recalculateThreatData from '../../utils/recalculateThreatData';
 import sanitizeHtml from '../../utils/sanitizeHtml';
@@ -92,7 +92,7 @@ const useImportExport = () => {
     const exportFileName = getExportFileName(composerMode, true, currentWorkspace);
     downloadObjectAsJson({
       schema: SCHEMA_VERSION,
-      workspace: currentWorkspace,
+      workspace: currentWorkspace || undefined,
       threats: selectedStatementList,
     }, exportFileName);
   }, [currentWorkspace]);
