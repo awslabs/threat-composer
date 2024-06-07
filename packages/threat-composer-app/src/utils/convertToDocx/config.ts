@@ -86,3 +86,14 @@ export const DEFAULT_NUMBERINGS: ILevelsOptions[] = [
     },
   },
 ];
+
+export const PT_BASE = 20;
+export const LINE_BASE = 276;
+export const SPACING = {
+  line: LINE_BASE,
+  after: PT_BASE * 6,
+};
+export const LIST_PARA_SPACING = {
+  line: Math.floor(LINE_BASE * 0.9),
+  after: PT_BASE * 3,
+};

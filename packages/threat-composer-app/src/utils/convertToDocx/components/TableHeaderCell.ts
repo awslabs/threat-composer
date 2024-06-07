@@ -13,13 +13,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TableRow } from 'docx';
-import TableHeaderCell from './components/TableHeaderCell';
+import { TableCell, Paragraph, IParagraphOptions } from 'docx';
 
-const getHeaderRow = (headers: string[]) => {
-  return new TableRow({
-    children: headers.map(h => new TableHeaderCell(h)),
-  });
-};
+class TableHeaderCell extends TableCell {
+  constructor(paragraph: string | IParagraphOptions) {
+    super({
+      children: [new Paragraph(paragraph)],
+      verticalAlign: 'center',
+      shading: {
+        fill: '000000',
+        color: 'FFFFFF',
+      },
+    });
+  }
+}
 
-export default getHeaderRow;
+export default TableHeaderCell;

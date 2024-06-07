@@ -203,7 +203,6 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
                 { text: 'Download as Markdown File', id: 'markdown' },
                 ...(convertToDocx ? [{ text: 'Download as Word - Docx File', id: 'docx' }] : []),
                 { text: 'Download as JSON File', id: 'json' },
-                { text: 'Download as YAML File', id: 'yaml' },
               ]}
               onItemClick={handleDownloadClick}
             >

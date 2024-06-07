@@ -13,13 +13,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TableRow } from 'docx';
-import TableHeaderCell from './components/TableHeaderCell';
+import { Table as DocxTable, ITableOptions } from 'docx';
 
-const getHeaderRow = (headers: string[]) => {
-  return new TableRow({
-    children: headers.map(h => new TableHeaderCell(h)),
-  });
-};
+class Table extends DocxTable {
+  constructor(opts: ITableOptions) {
+    super({
+      ...opts,
+      margins: {
+        top: 16,
+        bottom: 16,
+        left: 16,
+        right: 16,
+      },
+    });
+  }
+}
 
-export default getHeaderRow;
+export default Table;

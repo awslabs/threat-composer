@@ -19,7 +19,6 @@ import {
   Document,
   Paragraph,
   ParagraphChild,
-  Table,
   TableRow,
   TableCell,
   TableOfContents,
@@ -37,6 +36,8 @@ import {
 import type { IPropertiesOptions } from 'docx/build/file/core-properties';
 import type * as mdast from './mdast';
 import { invariant } from './utils';
+import Table from '../components/Table';
+import TableHeaderCell from '../components/TableHeaderCell';
 
 const ORDERED_LIST_REF = 'ordered';
 const INDENT = 0.5;
@@ -339,6 +340,7 @@ const buildParagraph = ({ children }: mdast.Paragraph, ctx: Context) => {
   }
   return new Paragraph({
     children: nodes,
+    style: 'normalPara',
     indent:
       ctx.indent > 0
         ? {
@@ -352,11 +354,13 @@ const buildParagraph = ({ children }: mdast.Paragraph, ctx: Context) => {
             reference: ORDERED_LIST_REF,
             level: list.level,
           },
+          style: 'listPara',
         }
         : {
           bullet: {
             level: list.level,
           },
+          style: 'listPara',
         })),
   });
 };
@@ -443,9 +447,33 @@ const buildTable = ({ children, align }: mdast.Table, ctx: Context) => {
   });
 
   return new Table({
-    rows: children.map((r) => {
-      return buildTableRow(r, ctx, cellAligns);
+    rows: children.map((r, index) => {
+      return index === 0 ? buildTableHeaderRow(r, ctx, cellAligns) : buildTableRow(r, ctx, cellAligns);
     }),
+  });
+};
+
+const buildTableHeaderRow = (
+  { children }: mdast.TableRow,
+  ctx: Context,
+  cellAligns: any[] | undefined,
+) => {
+  return new TableRow({
+    children: children.map((c, i) => {
+      return buildTableHeaderCell(c, ctx, cellAligns?.[i]);
+    }),
+  });
+};
+
+const buildTableHeaderCell = (
+  { children }: mdast.TableCell,
+  ctx: Context,
+  align: any | undefined,
+) => {
+  const { nodes } = convertNodes(children, ctx);
+  return new TableHeaderCell({
+    alignment: align,
+    children: nodes,
   });
 };
 

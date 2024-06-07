@@ -14,7 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { Assumption, AssumptionLink, DataExchangeFormat, standardizeNumericId } from '@aws/threat-composer';
-import { Paragraph, HeadingLevel, TextRun, Table, TableCell, TableRow } from 'docx';
+import { Paragraph, HeadingLevel, TextRun, TableCell, TableRow } from 'docx';
+import Table from './components/Table';
 import getAnchorLink from './getAnchorLink';
 import getBookmark from './getBookmark';
 import getHeaderRow from './getHeaderRow';

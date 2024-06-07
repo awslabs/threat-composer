@@ -14,9 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { DataExchangeFormat } from '@aws/threat-composer';
-import { Paragraph, HeadingLevel, TextRun, ImageRun } from 'docx';
+import { Paragraph, HeadingLevel, TextRun } from 'docx';
 import convertMarkdown from './convertMarkdown';
-import fetchImage from './fetchImage';
+import getImage from './getImage';
 
 const getDataflow = async (
   data: DataExchangeFormat,
@@ -51,19 +51,8 @@ const getDataflow = async (
         ],
       }));
 
-      const image = await fetchImage(data.dataflow.image);
-
-      children.push(new Paragraph({
-        children: [
-          new ImageRun({
-            data: image.image,
-            transformation: {
-              width: image.width,
-              height: image.height,
-            },
-          }),
-        ],
-      }));
+      const image = await getImage(data.dataflow.image);
+      children.push(image);
     }
   }
 
