@@ -13,7 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Flashbar, { FlashbarProps } from '@cloudscape-design/components/flashbar';
+import Flashbar, {
+  FlashbarProps,
+} from '@cloudscape-design/components/flashbar';
 import Link from '@cloudscape-design/components/link';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { FC, useEffect, useState } from 'react';
@@ -34,16 +36,32 @@ const Notifications: FC<NotificationsProps> = ({ addPadding }) => {
     if (key !== NOTIFICATIONS_VERSION.toString()) {
       setItems([
         {
-          type: 'info',
+          type: 'success',
           dismissible: true,
           dismissLabel: 'Dismiss message',
-          onDismiss: () => setItems(prevItems => prevItems.filter((x) => x.id !== 'message_1')),
+          onDismiss: () =>
+            setItems((prevItems) =>
+              prevItems.filter((x) => x.id !== 'message_1'),
+            ),
           content: (
             <>
-              The 'Full' mode is now the default. To view the 'Threats Only' mode navigate the {' '}
-              <Link color="inverted" href="https://awslabs.github.io/threat-composer?mode=ThreatsOnly" external={false}>
-                ThreatsOnly
-              </Link> URL, and bookmark or future reference.
+              You can now create, view and edit Threat Composer files directly
+              within Visual Studio Code using the{' '}
+              <Link
+                color="inverted"
+                href="https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-toolkit-vscode"
+                external={true}
+              >
+                AWS Toolkit extension
+              </Link>
+              . See{' '}
+              <Link
+                color="inverted"
+                href="https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/threatcomposer-overview.html"
+                external={true}
+              >
+                user guide
+              </Link>
             </>
           ),
           id: 'message_1',
@@ -52,13 +70,22 @@ const Notifications: FC<NotificationsProps> = ({ addPadding }) => {
           type: 'info',
           dismissible: true,
           dismissLabel: 'Dismiss message',
-          onDismiss: () => setItems(prevItems => prevItems.filter((x) => x.id !== 'message_2')),
+          onDismiss: () =>
+            setItems((prevItems) =>
+              prevItems.filter((x) => x.id !== 'message_2'),
+            ),
           content: (
             <>
-              This GitHub Page is provided for demonstration purposes only. Refer to {' '}
-              <Link color="inverted" href="https://github.com/awslabs/threat-composer" external={true}>
+              This GitHub Page is provided for demonstration purposes only.
+              Refer to{' '}
+              <Link
+                color="inverted"
+                href="https://github.com/awslabs/threat-composer"
+                external={true}
+              >
                 threat-composer GitHub Repo
-              </Link> for self-hosting deployment instructions.
+              </Link>{' '}
+              for self-hosting deployment instructions.
             </>
           ),
           id: 'message_2',
@@ -66,13 +93,28 @@ const Notifications: FC<NotificationsProps> = ({ addPadding }) => {
       ]);
     }
 
-    window.sessionStorage.setItem(LOCAL_STORAGE_KEY, NOTIFICATIONS_VERSION.toString());
+    window.sessionStorage.setItem(
+      LOCAL_STORAGE_KEY,
+      NOTIFICATIONS_VERSION.toString(),
+    );
   }, []);
 
-  return items && items.length > 0 ? (<div style={addPadding ? {
-    padding: awsui.spaceScaledL,
-    backgroundColor: awsui.colorBackgroundHomeHeader,
-  } : undefined}><Flashbar items={items} /></div>) : <></>;
+  return items && items.length > 0 ? (
+    <div
+      style={
+        addPadding
+          ? {
+            padding: awsui.spaceScaledL,
+            backgroundColor: awsui.colorBackgroundHomeHeader,
+          }
+          : undefined
+      }
+    >
+      <Flashbar items={items} />
+    </div>
+  ) : (
+    <></>
+  );
 };
 
 export default Notifications;
