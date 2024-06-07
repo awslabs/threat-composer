@@ -34,16 +34,16 @@ const Notifications: FC<NotificationsProps> = ({ addPadding }) => {
     if (key !== NOTIFICATIONS_VERSION.toString()) {
       setItems([
         {
-          type: 'info',
+          type: 'success',
           dismissible: true,
           dismissLabel: 'Dismiss message',
           onDismiss: () => setItems(prevItems => prevItems.filter((x) => x.id !== 'message_1')),
           content: (
             <>
-              The 'Full' mode is now the default. To view the 'Threats Only' mode navigate the {' '}
-              <Link color="inverted" href="https://awslabs.github.io/threat-composer?mode=ThreatsOnly" external={false}>
-                ThreatsOnly
-              </Link> URL, and bookmark or future reference.
+              You can now create, view and edit Threat Composer files directly within VS Code using the {' '}
+              <Link color="inverted" href="https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-toolkit-vscode" external={true}>
+                AWS Toolkit extension
+              </Link>
             </>
           ),
           id: 'message_1',
