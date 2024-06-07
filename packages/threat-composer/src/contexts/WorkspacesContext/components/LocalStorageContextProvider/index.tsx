@@ -58,7 +58,7 @@ const WorkspacesLocalStorageContextProvider: FC<WorkspacesContextProviderProps> 
     }
 
     return lastWorkspace;
-  }, [lastWorkspace, workspaceName, workspaceExamples]);
+  }, [lastWorkspace, workspaceName, workspaceExamples, workspaceList]);
 
   const {
     handleSwitchWorkspace,

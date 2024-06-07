@@ -29,6 +29,8 @@ const WorkspacesLocalStateContextProvider: FC<WorkspacesContextProviderProps> = 
 }) => {
   const { workspaceExamples } = useWorkspaceExamplesContext();
 
+  const [workspaceList, setWorkspaceList] = useState<Workspace[]>([]);
+
   const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(() => {
     if (workspaceName) { // If the workspaceName is specified by outside scope (e.g. Url), return the workspace specified by the id
       if (workspaceName === DEFAULT_WORKSPACE_ID) {
@@ -48,8 +50,6 @@ const WorkspacesLocalStateContextProvider: FC<WorkspacesContextProviderProps> = 
 
     return null;
   });
-
-  const [workspaceList, setWorkspaceList] = useState<Workspace[]>([]);
 
   const {
     handleSwitchWorkspace,

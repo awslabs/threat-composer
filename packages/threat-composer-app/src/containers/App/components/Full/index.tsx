@@ -13,11 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import router from '../../../../routes';
+import { routerOpts, createRouter, routes } from '../../../../routes';
 
 const Full: FC = () => {
+  const [router] = useState(() => {
+    //Initialize here to ensure the default index loader only call when Full is mount without affecting Standalone mode
+    return createRouter(routes, routerOpts);
+  });
+
   return (
     <RouterProvider router={router} />
   );

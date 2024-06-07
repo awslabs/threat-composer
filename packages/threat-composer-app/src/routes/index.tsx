@@ -111,13 +111,13 @@ const workspaceRoutes = [
   },
 ];
 
-const createRouter = isMemoryRouterUsed() ? createMemoryRouter : createBrowserRouter;
+export const createRouter = isMemoryRouterUsed() ? createMemoryRouter : createBrowserRouter;
 
-const opts = ROUTE_BASE_PATH ? {
+export const routerOpts = ROUTE_BASE_PATH ? {
   basename: ROUTE_BASE_PATH,
 } : {};
 
-const router = createRouter([
+export const routes = [
   {
     index: true,
     loader: initialWorkspaceLoader,
@@ -139,6 +139,4 @@ const router = createRouter([
       },
     ],
   },
-], opts);
-
-export default router;
+];
