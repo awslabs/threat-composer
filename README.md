@@ -1,5 +1,8 @@
 # **threat-composer**
 
+> [!TIP]  
+> You can now create, view and edit Threat Composer files directly within Visual Studio Code using the [AWS Toolkit extension](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-toolkit-vscode)
+
 ## Goal
 
 A simple threat modeling tool to help humans to reduce time-to-value when threat modeling
