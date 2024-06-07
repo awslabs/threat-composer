@@ -40,7 +40,6 @@ const getArchitecture = async (
       }));
 
       const sections = await convertMarkdown(data.architecture.description);
-      console.log(sections);
       children.push(...sections);
     }
 

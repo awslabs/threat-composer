@@ -46,8 +46,6 @@ const ThreatModelReport: FC = () => {
     window.open(`${window.location.pathname}?${urlParams.toString()}`, '_blank', 'noopener,noreferrer,resizable');
   }, []);
 
-  console.log('Hello');
-
   return (data
     ? (<ThreatModelView composerMode='Full' data={data} onPrintButtonClick={isPreview ? undefined : handlePrintButtonClick} />)
     : (<ThreatModel
