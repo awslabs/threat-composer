@@ -40,7 +40,7 @@ const Notifications: FC<NotificationsProps> = ({ addPadding }) => {
           onDismiss: () => setItems(prevItems => prevItems.filter((x) => x.id !== 'message_1')),
           content: (
             <>
-              You can now create, view and edit Threat Composer files directly within VS Code using the {' '}
+              You can now create, view and edit Threat Composer files directly within Visual Studio Code using the {' '}
               <Link color="inverted" href="https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-toolkit-vscode" external={true}>
                 AWS Toolkit extension
               </Link>
