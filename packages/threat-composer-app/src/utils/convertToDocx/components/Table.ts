@@ -13,7 +13,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export { default as getThreatFromThreatPacksThreat } from './getThreatFromThreatPacksThreat';
-export { default as getNewThreatStatement } from './getNewThreatStatement';
-export { default as escapeMarkdown } from './escapeMarkdown';
-export { default as standardizeNumericId } from './standardizeNumericId';
+import { Table as DocxTable, ITableOptions } from 'docx';
+
+class Table extends DocxTable {
+  constructor(opts: ITableOptions) {
+    super({
+      ...opts,
+      margins: {
+        top: 16,
+        bottom: 16,
+        left: 16,
+        right: 16,
+      },
+    });
+  }
+}
+
+export default Table;

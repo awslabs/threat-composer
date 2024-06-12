@@ -13,7 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export { default as getThreatFromThreatPacksThreat } from './getThreatFromThreatPacksThreat';
-export { default as getNewThreatStatement } from './getNewThreatStatement';
-export { default as escapeMarkdown } from './escapeMarkdown';
-export { default as standardizeNumericId } from './standardizeNumericId';
+import { EntityBase } from '@aws/threat-composer';
+import convertMarkdown from './convertMarkdown';
+
+const renderComment = async (metadata: EntityBase['metadata']) => {
+  const comments = metadata?.find(m => m.key === 'Comments')?.value as string;
+  const renderedComents = comments ? await convertMarkdown(comments) : [];
+  return renderedComents;
+};
+
+export default renderComment;

@@ -1,12 +1,12 @@
-import { TypeScriptProject } from "projen/lib/typescript";
-import { TypeScriptJsxMode, TypeScriptModuleResolution } from "projen/lib/javascript";
 import { Project } from "projen";
+import {
+  TypeScriptJsxMode,
+  TypeScriptModuleResolution,
+} from "projen/lib/javascript";
+import { TypeScriptProject } from "projen/lib/typescript";
 import browsersList from "./config/browsersList";
 
-const uiESModules = [
-  "unified",
-  "@aws-northstar/ui"
-].join("|");
+const uiESModules = ["unified", "@aws-northstar/ui"].join("|");
 
 class ThreatComposerUIComponentsProject extends TypeScriptProject {
   constructor(parent: Project) {
@@ -29,11 +29,11 @@ class ThreatComposerUIComponentsProject extends TypeScriptProject {
         "react-simply-carousel",
         "browser-image-compression",
         "remark-parse",
-        'remark-gfm',
+        "remark-gfm",
         "remark-rehype",
         "rehype-stringify",
-        'remark-frontmatter',
-        'react-markdown',
+        "remark-frontmatter",
+        "react-markdown",
         "d3",
         "sanitize-html",
         "rehype-raw",
@@ -41,6 +41,7 @@ class ThreatComposerUIComponentsProject extends TypeScriptProject {
         "@emotion/react",
         "zod",
         "unified",
+        "yaml",
       ],
       devDeps: [
         "@cloudscape-design/jest-preset",
@@ -93,31 +94,30 @@ class ThreatComposerUIComponentsProject extends TypeScriptProject {
         },
       },
       tsconfigDev: {
-        compilerOptions: {
-        },
-        include: [
-          "src",
-        ]
-      }
-    })
+        compilerOptions: {},
+        include: ["src"],
+      },
+    });
 
-    this.addTask('storybook', {
-      exec: 'storybook dev -p 6006'
+    this.addTask("storybook", {
+      exec: "storybook dev -p 6006",
     });
-    
-    this.addTask('storybook:build', {
-      exec: 'storybook build -o storybook.out'
+
+    this.addTask("storybook:build", {
+      exec: "storybook build -o storybook.out",
     });
-    
-    this.preCompileTask.reset('rm -rf {lib,dist}')
-    this.postCompileTask.reset('rsync -arv --prune-empty-dirs --include=*/ --include=*.css --include=*.png --include=*.gif --exclude=* ./src/* ./lib');
-    this.postCompileTask.exec('yarn run storybook:build');
-    
-    this.eslint?.addPlugins('header');
+
+    this.preCompileTask.reset("rm -rf {lib,dist}");
+    this.postCompileTask.reset(
+      "rsync -arv --prune-empty-dirs --include=*/ --include=*.css --include=*.png --include=*.gif --exclude=* ./src/* ./lib"
+    );
+    this.postCompileTask.exec("yarn run storybook:build");
+
+    this.eslint?.addPlugins("header");
     this.eslint?.addRules({
       "header/header": [2, "../../header.js"],
     });
-    
+
     this.package.addField("browserslist", browsersList);
   }
 }

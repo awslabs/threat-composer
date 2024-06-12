@@ -16,7 +16,9 @@
 /** @jsxImportSource @emotion/react */
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
+import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
 import Header from '@cloudscape-design/components/header';
+import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import Popover from '@cloudscape-design/components/popover';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import Spinner from '@cloudscape-design/components/spinner';
@@ -26,7 +28,13 @@ import { css } from '@emotion/react';
 import { FC, useEffect, useCallback, useState, ReactNode } from 'react';
 import { DataExchangeFormat, HasContentDetails, ViewNavigationEvent } from '../../../../../customTypes';
 import printStyles from '../../../../../styles/print';
-import downloadContentAsMarkdown from '../../../../../utils/downloadObjectAsMarkdown';
+import convertToYaml from '../../../../../utils/convertToYaml';
+import {
+  downloadContentAsMarkdown,
+  downloadContentAsWordDocx,
+  downloadContentAsYaml,
+  downloadObjectAsJson,
+} from '../../../../../utils/downloadContent';
 import sanitizeHtml from '../../../../../utils/sanitizeHtml';
 import MarkdownViewer from '../../../../generic/MarkdownViewer';
 import { getApplicationInfoContent } from '../../utils/getApplicationInfo';
@@ -62,6 +70,7 @@ export interface ThreatModelViewProps extends ViewNavigationEvent {
   downloadFileName?: string;
   onPrintButtonClick?: () => void;
   hasContentDetails?: HasContentDetails;
+  convertToDocx?: (data: DataExchangeFormat) => Promise<Blob>;
 }
 
 const ThreatModelView: FC<ThreatModelViewProps> = ({
@@ -72,6 +81,7 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
   downloadFileName,
   onPrintButtonClick,
   hasContentDetails,
+  convertToDocx,
   ...props
 }) => {
   const [content, setContent] = useState('');
@@ -106,6 +116,42 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
   const handleDownloadMarkdown = useCallback(() => {
     downloadFileName && downloadContentAsMarkdown(content, downloadFileName);
   }, [content, downloadFileName]);
+
+  const handleDownloadWorddocx = useCallback(async () => {
+    const docxBlob = await convertToDocx?.(data);
+    if (docxBlob) {
+      downloadFileName && downloadContentAsWordDocx(docxBlob, downloadFileName);
+    }
+  }, [data, downloadFileName, convertToDocx]);
+
+  const handleDownloadJson = useCallback(() => {
+    downloadFileName && downloadObjectAsJson(data, downloadFileName);
+  }, [data, downloadFileName]);
+
+  const handleDownloadYaml = useCallback(() => {
+    const yamlContent = convertToYaml(data);
+    downloadFileName && downloadContentAsYaml(yamlContent, downloadFileName);
+  }, [data, downloadFileName]);
+
+
+  const handleDownloadClick: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(async ({ detail }) => {
+    switch (detail.id) {
+      case 'docx':
+        await handleDownloadWorddocx();
+        break;
+      case 'markdown':
+        handleDownloadMarkdown();
+        break;
+      case 'json':
+        handleDownloadJson();
+        break;
+      case 'yaml':
+        handleDownloadYaml();
+        break;
+      default:
+        console.log('Unknown command', detail);
+    }
+  }, [handleDownloadMarkdown, handleDownloadWorddocx, handleDownloadJson, handleDownloadYaml]);
 
   const getNextStepButtons = useCallback(() => {
     const buttons: ReactNode[] = [];
@@ -152,10 +198,16 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
                 Copy as Markdown
               </Button>
             </Popover>
-            {downloadFileName && showPrintDownloadButtons && <Button
-              onClick={handleDownloadMarkdown}>
-              Download as Markdown File
-            </Button>}
+            {downloadFileName && showPrintDownloadButtons && <ButtonDropdown
+              items={[
+                { text: 'Download as Markdown File', id: 'markdown' },
+                ...(convertToDocx ? [{ text: 'Download as Word - Docx File', id: 'docx' }] : []),
+                { text: 'Download as JSON File', id: 'json' },
+              ]}
+              onItemClick={handleDownloadClick}
+            >
+              Download
+            </ButtonDropdown>}
             {showPrintDownloadButtons && <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>}
           </SpaceBetween>
         }

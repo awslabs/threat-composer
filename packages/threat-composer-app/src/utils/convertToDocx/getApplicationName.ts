@@ -13,15 +13,23 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-const downloadObjectAsJson = (exportObj: any, exportName: string) => {
-  var dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportObj, null, 2));
-  var downloadAnchorNode = document.createElement('a');
-  downloadAnchorNode.setAttribute('href', dataStr);
-  downloadAnchorNode.setAttribute('download', exportName + '.tc.json');
-  document.body.appendChild(downloadAnchorNode);
-  downloadAnchorNode.click();
-  downloadAnchorNode.remove();
+import { DataExchangeFormat, escapeMarkdown } from '@aws/threat-composer';
+import { Paragraph, HeadingLevel, TextRun } from 'docx';
+
+export const getApplicationName = async (
+  data: DataExchangeFormat,
+) => {
+  if (data.applicationInfo?.name) {
+    const title = escapeMarkdown(data.applicationInfo?.name);
+    return [
+      new Paragraph({
+        heading: HeadingLevel.TITLE,
+        children: [
+          new TextRun(title),
+        ],
+      }),
+    ];
+  }
+
+  return [];
 };
-
-
-export default downloadObjectAsJson;

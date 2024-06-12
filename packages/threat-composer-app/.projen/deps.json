@@ -114,6 +114,10 @@
       "type": "runtime"
     },
     {
+      "name": "docx",
+      "type": "runtime"
+    },
+    {
       "name": "react",
       "type": "runtime"
     },
@@ -128,6 +132,30 @@
     {
       "name": "react-scripts",
       "version": "^5",
+      "type": "runtime"
+    },
+    {
+      "name": "remark-frontmatter",
+      "version": "^4",
+      "type": "runtime"
+    },
+    {
+      "name": "remark-gfm",
+      "version": "^3",
+      "type": "runtime"
+    },
+    {
+      "name": "remark-parse",
+      "version": "^10",
+      "type": "runtime"
+    },
+    {
+      "name": "unified",
+      "version": "^10",
+      "type": "runtime"
+    },
+    {
+      "name": "unist-util-visit",
       "type": "runtime"
     },
     {

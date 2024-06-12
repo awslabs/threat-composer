@@ -13,7 +13,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export { default as getThreatFromThreatPacksThreat } from './getThreatFromThreatPacksThreat';
-export { default as getNewThreatStatement } from './getNewThreatStatement';
-export { default as escapeMarkdown } from './escapeMarkdown';
-export { default as standardizeNumericId } from './standardizeNumericId';
+import { TableCell, Paragraph, IParagraphOptions } from 'docx';
+
+class TableHeaderCell extends TableCell {
+  constructor(paragraph: string | IParagraphOptions) {
+    super({
+      children: [new Paragraph(paragraph)],
+      verticalAlign: 'center',
+      shading: {
+        fill: '000000',
+        color: 'FFFFFF',
+      },
+    });
+  }
+}
+
+export default TableHeaderCell;

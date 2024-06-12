@@ -13,7 +13,34 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export { default as getThreatFromThreatPacksThreat } from './getThreatFromThreatPacksThreat';
-export { default as getNewThreatStatement } from './getNewThreatStatement';
-export { default as escapeMarkdown } from './escapeMarkdown';
-export { default as standardizeNumericId } from './standardizeNumericId';
+import { Paragraph, Table, TableOfContents } from 'docx';
+import frontmatter from 'remark-frontmatter';
+import gfm from 'remark-gfm';
+import markdown from 'remark-parse';
+import { unified } from 'unified';
+import docx from './plugin';
+import fetchImage from '../fetchImage';
+
+const processor = unified()
+  .use(markdown)
+  .use(gfm)
+  .use(frontmatter)
+  .use(docx,
+    {
+      output: 'sections',
+      imageResolver: fetchImage,
+    },
+  );
+
+/**
+ * Convert the markdown into Docx format
+ * @param content
+ */
+const convertMarkdown = async (content: string) => {
+  const doc = await processor.process(content);
+  const sections = await doc.result;
+
+  return sections as (Paragraph | Table | TableOfContents) [];
+};
+
+export default convertMarkdown;

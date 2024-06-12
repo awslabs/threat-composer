@@ -13,14 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-const downloadContentAsMarkdown = (content: any, exportName: string) => {
-  var dataStr = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(content);
-  var downloadAnchorNode = document.createElement('a');
-  downloadAnchorNode.setAttribute('href', dataStr);
-  downloadAnchorNode.setAttribute('download', exportName + '.md');
-  document.body.appendChild(downloadAnchorNode);
-  downloadAnchorNode.click();
-  downloadAnchorNode.remove();
+export const unreachable = (_: never): never => {
+  throw new Error('unreachable');
 };
 
-export default downloadContentAsMarkdown;
+/**
+ * @internal
+ */
+export function invariant(cond: any, message: string): asserts cond {
+  if (!cond) throw new Error(message);
+}

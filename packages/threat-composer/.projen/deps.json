@@ -272,6 +272,10 @@
       "type": "runtime"
     },
     {
+      "name": "yaml",
+      "type": "runtime"
+    },
+    {
       "name": "zod",
       "type": "runtime"
     }
