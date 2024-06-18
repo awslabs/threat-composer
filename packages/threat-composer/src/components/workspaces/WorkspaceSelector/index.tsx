@@ -57,9 +57,6 @@ export interface WorkspaceSelectorProps {
     eventName?: string;
     onClick?: (data: DataExchangeFormat) => void;
   };
-  onPreview?: (data: DataExchangeFormat) => void;
-  onPreviewClose?: () => void;
-  onImported?: () => void;
 }
 
 const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
@@ -71,9 +68,6 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
   filteredThreats,
   singletonMode = false,
   singletonPrimaryActionButtonConfig,
-  onPreview,
-  onPreviewClose,
-  onImported,
 }) => {
   const [addWorkspaceModalVisible, setAddWorkspaceModalVisible] =
     useState(false);
@@ -92,6 +86,9 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
   const {
     appMode,
     composerMode,
+    onPreview,
+    onPreviewClose,
+    onImported,
     fileImportModalVisible,
     setFileImportModalVisible,
   } = useGlobalSetupContext();
@@ -379,7 +376,6 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
             await addWorkspace(workspaceName);
           }}
           workspaceList={workspaceList}
-          exampleWorkspaceList={workspaceExamples}
         />
       )}
       {editWorkspaceModalVisible && currentWorkspace && (
@@ -393,7 +389,6 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
           }
           currentWorkspace={currentWorkspace}
           workspaceList={workspaceList}
-          exampleWorkspaceList={workspaceExamples}
         />
       )}
       {removeDataModalVisible && (

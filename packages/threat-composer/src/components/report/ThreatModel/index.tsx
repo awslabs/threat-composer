@@ -17,13 +17,12 @@ import { FC, useMemo } from 'react';
 import ThreatModelView, { ThreatModelViewProps } from './components/ThreatModelView';
 import { APP_MODE_IDE_EXTENSION } from '../../../configs/appMode';
 import { useGlobalSetupContext, useWorkspacesContext } from '../../../contexts';
-import { DataExchangeFormat, ViewNavigationEvent } from '../../../customTypes';
 import useImportExport from '../../../hooks/useExportImport';
 import useHasContent from '../../../hooks/useHasContent';
 import getExportFileName from '../../../utils/getExportFileName';
 
-export interface ThreatModelProps extends ViewNavigationEvent {
-  onPrintButtonClick?: (data: DataExchangeFormat) => void;
+export interface ThreatModelProps {
+  onPrintButtonClick?: () => void;
   isPreview?: boolean;
   convertToDocx?: ThreatModelViewProps['convertToDocx'];
 }
@@ -41,20 +40,28 @@ const ThreatModel: FC<ThreatModelProps> = ({
     return getExportFileName(composerMode, false, currentWorkspace);
   }, [composerMode, currentWorkspace]);
 
+  const {
+    onApplicationInfoView,
+    onArchitectureView,
+    onDataflowView,
+    onAssumptionListView,
+    onThreatListView,
+    onMitigationListView,
+  } = useWorkspacesContext();
   return <ThreatModelView
     {...props}
-    onPrintButtonClick={() => onPrintButtonClick?.(getWorkspaceData())}
+    onPrintButtonClick={onPrintButtonClick}
     showPrintDownloadButtons={appMode !== APP_MODE_IDE_EXTENSION}
     composerMode={composerMode}
     data={getWorkspaceData()}
     downloadFileName={downloadFileName}
     hasContentDetails={hasContentDetails}
-    onApplicationInfoView={props.onApplicationInfoView}
-    onArchitectureView={props.onArchitectureView}
-    onDataflowView={props.onDataflowView}
-    onAssumptionListView={props.onAssumptionListView}
-    onThreatListView={props.onThreatListView}
-    onMitigationListView={props.onMitigationListView}
+    onApplicationInfoView={onApplicationInfoView}
+    onArchitectureView={onArchitectureView}
+    onDataflowView={onDataflowView}
+    onAssumptionListView={onAssumptionListView}
+    onThreatListView={onThreatListView}
+    onMitigationListView={onMitigationListView}
   />;
 };
 

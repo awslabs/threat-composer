@@ -13,43 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { DEFAULT_WORKSPACE_ID } from '../../../../configs/constants';
 import { Workspace } from '../../../../customTypes';
-import { useWorkspaceExamplesContext } from '../../../WorkspaceExamplesContext';
 import { WorkspacesContext } from '../../context';
 import { WorkspacesContextProviderProps } from '../../types';
 import useWorkspaces from '../../useWorkspaces';
 
 const WorkspacesLocalStateContextProvider: FC<WorkspacesContextProviderProps> = ({
   children,
-  workspaceName,
+  workspaceId,
   onWorkspaceChanged,
   ...props
 }) => {
-  const { workspaceExamples } = useWorkspaceExamplesContext();
+  const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(null);
 
   const [workspaceList, setWorkspaceList] = useState<Workspace[]>([]);
-
-  const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(() => {
-    if (workspaceName) { // If the workspaceName is specified by outside scope (e.g. Url), return the workspace specified by the id
-      if (workspaceName === DEFAULT_WORKSPACE_ID) {
-        return null;
-      }
-
-      const foundWorkspace = workspaceList.find(x => x.name === workspaceName);
-      if (foundWorkspace) {
-        return foundWorkspace;
-      }
-
-      const foundWorkspaceExample = workspaceExamples.find(x => x.name === workspaceName);
-      if (foundWorkspaceExample) {
-        return foundWorkspaceExample;
-      }
-    }
-
-    return null;
-  });
 
   const {
     handleSwitchWorkspace,
@@ -57,6 +36,21 @@ const WorkspacesLocalStateContextProvider: FC<WorkspacesContextProviderProps> = 
     handleRemoveWorkspace,
     handleRenameWorkspace,
   } = useWorkspaces(workspaceList, setWorkspaceList, currentWorkspace, setCurrentWorkspace, onWorkspaceChanged);
+
+  useEffect(() => {
+    if (workspaceId) {
+      if (workspaceId === DEFAULT_WORKSPACE_ID && currentWorkspace !== null) {
+        setCurrentWorkspace(null);
+      } else if (workspaceId !== currentWorkspace?.id) {
+        const foundWorkspace = workspaceList.find(x => x.id === workspaceId);
+        if (foundWorkspace) {
+          setCurrentWorkspace(foundWorkspace);
+        } else {
+          setCurrentWorkspace(null);
+        }
+      }
+    }
+  }, [workspaceId, workspaceList, currentWorkspace]);
 
   return (<WorkspacesContext.Provider value={{
     workspaceList,

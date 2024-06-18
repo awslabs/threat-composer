@@ -26,21 +26,20 @@ import {
   colorChartsPaletteCategorical2,
   colorChartsPaletteCategorical1,
 } from '@cloudscape-design/design-tokens';
-import { useState, useMemo, useCallback, FC } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   ALL_LEVELS,
   LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL,
   DEFAULT_NEW_ENTITY_ID,
 } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
+import { useWorkspacesContext } from '../../../../../contexts/WorkspacesContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 import DashboardNumber from '../../../../generic/DashboardNumber';
-import { WorkspaceInsightsProps } from '../../types';
 
-const ThreatGrammar: FC<WorkspaceInsightsProps> = ({
-  onThreatEditorView,
-}) => {
+const ThreatGrammar = () => {
   const { statementList, addStatement } = useThreatsContext();
+  const { onThreatEditorView } = useWorkspacesContext();
 
   const [selectedPriority, setSelectedPriority] = useState<string | undefined>(
     ALL_LEVELS,

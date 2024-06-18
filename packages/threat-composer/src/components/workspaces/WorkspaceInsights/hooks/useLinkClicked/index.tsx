@@ -15,9 +15,11 @@
  ******************************************************************************************************************** */
 import { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
 import { useCallback } from 'react';
-import { ThreatStatementListFilter, ViewNavigationEvent } from '../../../../../customTypes';
+import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
+import { ThreatStatementListFilter } from '../../../../../customTypes';
 
-const useLinkClicked = (onThreatListView: ViewNavigationEvent['onThreatListView']) => {
+const useLinkClicked = () => {
+  const { onThreatListView } = useThreatsContext();
   return useCallback((filter?: ThreatStatementListFilter): CancelableEventHandler<BaseNavigationDetail> => (event) => {
     event?.preventDefault?.();
     onThreatListView?.(filter);

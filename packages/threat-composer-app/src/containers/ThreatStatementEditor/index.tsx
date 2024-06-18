@@ -25,14 +25,11 @@ import {
 } from '@aws/threat-composer';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import { ROUTE_THREAT_LIST } from '../../config/routes';
-import useNavigateView from '../../hooks/useNavigationView';
 import isMemoryRouterUsed from '../../utils/isMemoryRouterUsed';
 
 const ThreatStatementEditor = () => {
   const { threatId } = useParams();
   const location = useLocation();
-  const handleNavigateView = useNavigateView();
 
   const [idToCopy] = useState(() => {
     if (isMemoryRouterUsed()) {
@@ -101,7 +98,7 @@ const ThreatStatementEditor = () => {
     setEditingStatement(editingStatement);
   }, [editingStatement]);
 
-  return <ThreatStatementEditorComponent onThreatListView={() => handleNavigateView(ROUTE_THREAT_LIST)} />;
+  return <ThreatStatementEditorComponent />;
 };
 
 export default ThreatStatementEditor;

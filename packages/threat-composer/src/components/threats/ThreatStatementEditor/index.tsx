@@ -30,7 +30,7 @@ import { useMitigationLinksContext } from '../../../contexts/MitigationLinksCont
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
-import { TemplateThreatStatement, ViewNavigationEvent } from '../../../customTypes';
+import { TemplateThreatStatement } from '../../../customTypes';
 import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
 import threatStatementExamples from '../../../data/threatStatementExamples.json';
@@ -72,10 +72,6 @@ const styles = {
 
 const defaultThreatStatementFormat = threatStatementFormat[63];
 
-export interface ThreatStatementEditorProps {
-  onThreatListView?: ViewNavigationEvent['onThreatListView'];
-}
-
 const editorMapping: { [key in ThreatFieldTypes]: React.ComponentType<EditorProps & { ref?: React.ForwardedRef<any> }> } = {
   threat_source: EditorThreatSource,
   prerequisites: EditorPrerequisites,
@@ -85,11 +81,10 @@ const editorMapping: { [key in ThreatFieldTypes]: React.ComponentType<EditorProp
   impacted_assets: EditorImpactedAssets,
 };
 
-const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editingStatement: TemplateThreatStatement }> = ({
+const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement }> = ({
   editingStatement,
-  onThreatListView,
 }) => {
-  const { setEditingStatement, saveStatement, addStatement } = useThreatsContext();
+  const { setEditingStatement, saveStatement, addStatement, onThreatListView } = useThreatsContext();
   const inputRef = useRef<{ focus(): void }>();
   const fullExamplesRef = useRef<{ collapse(): void }>();
   const { currentWorkspace, workspaceList } = useWorkspacesContext();
@@ -383,10 +378,10 @@ const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editingState
     </>);
 };
 
-const ThreatStatementEditor: FC<ThreatStatementEditorProps> = (props) => {
+const ThreatStatementEditor: FC = () => {
   const { editingStatement } = useThreatsContext();
 
-  return editingStatement ? <ThreatStatementEditorInner editingStatement={editingStatement} {...props}/> : null;
+  return editingStatement ? <ThreatStatementEditorInner editingStatement={editingStatement} /> : null;
 };
 
 export default ThreatStatementEditor;

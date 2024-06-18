@@ -14,13 +14,13 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren } from 'react';
-import { AppMode, ComposerMode, DataExchangeFormat } from '../../customTypes';
+import { AppMode, ComposerMode, DataExchangeFormat, ViewNavigationEvent } from '../../customTypes';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import WorkspaceContextAggregator from '../WorkspaceContextAggregator';
 import WorkspaceExamplesContext from '../WorkspaceExamplesContext';
 import WorkspacesContextProvider, { WorkspacesContextProviderProps } from '../WorkspacesContext';
 
-export interface ContextAggregatorProps {
+export interface ContextAggregatorProps extends ViewNavigationEvent {
   composerMode?: ComposerMode;
   appMode?: AppMode;
   features?: string[];
@@ -37,11 +37,19 @@ const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
   appMode,
   composerMode = 'Full',
   features,
+  onPreview,
+  onPreviewClose,
+  onImported,
+  onDefineWorkload,
   ...props
 }) => {
   return (
     <GlobalSetupContextProvider
+      onPreview={onPreview}
+      onPreviewClose={onPreviewClose}
+      onImported={onImported}
       features={features}
+      onDefineWorkload={onDefineWorkload}
       appMode={appMode}
       composerMode={composerMode}>
       <WorkspaceExamplesContext>
@@ -52,6 +60,8 @@ const ContextAggregator: FC<PropsWithChildren<ContextAggregatorProps>> = ({
           {(workspaceId) => (<WorkspaceContextAggregator
             workspaceId={workspaceId}
             requiredGlobalSetupContext={false}
+            onThreatEditorView={props.onThreatEditorView}
+            onThreatListView={props.onThreatListView}
           >
             {children}
           </WorkspaceContextAggregator>)}

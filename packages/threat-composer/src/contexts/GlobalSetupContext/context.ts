@@ -14,14 +14,18 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import React, { useContext, createContext } from 'react';
-import { AppMode, ComposerMode } from '../../customTypes';
+import { AppMode, ComposerMode, DataExchangeFormat } from '../../customTypes';
 
 export interface GlobalSetupContextApi {
   hasVisitBefore: boolean;
   showInfoModal: () => void;
   composerMode: ComposerMode;
   appMode: AppMode;
-  features: string[];
+  features?: string[];
+  onPreview?: (content: DataExchangeFormat) => void;
+  onPreviewClose?: () => void;
+  onImported?: () => void;
+  onDefineWorkload?: () => void;
   fileImportModalVisible: boolean;
   setFileImportModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }

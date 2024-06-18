@@ -25,6 +25,8 @@ import { ThreatsContextProviderProps } from '../../types';
 const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps & LocalStateContextProviderBaseProps<TemplateThreatStatement[]>>> = ({
   children,
   initialValue,
+  onThreatListView,
+  onThreatEditorView,
 }) => {
   const [editingStatement,
     setEditingStatement] = useState<TemplateThreatStatement | null>(null);
@@ -81,6 +83,8 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps &
     saveStatement: handleSaveStatement,
     removeAllStatements: handleRemoveAllStatements,
     onDeleteWorkspace: handleDeleteWorkspace,
+    onThreatListView,
+    onThreatEditorView,
   }}>
     {children}
   </ThreatsContext.Provider>);

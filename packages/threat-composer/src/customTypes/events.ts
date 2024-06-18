@@ -22,5 +22,5 @@ export interface ViewNavigationEvent {
   onAssumptionListView?: () => void;
   onMitigationListView?: () => void;
   onThreatListView?: (filter?: ThreatStatementListFilter) => void;
-  onThreatEditorView?: (threatId: string, idToCopy?: string) => void;
+  onThreatEditorView?: (threatId: string) => void;
 }

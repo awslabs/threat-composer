@@ -114,10 +114,6 @@
       "type": "runtime"
     },
     {
-      "name": "@uidotdev/usehooks",
-      "type": "runtime"
-    },
-    {
       "name": "docx",
       "type": "runtime"
     },

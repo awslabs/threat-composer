@@ -13,52 +13,29 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useMemo } from 'react';
+import { FC, useEffect } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { DEFAULT_WORKSPACE_ID } from '../../../../configs/constants';
 import { LOCAL_STORAGE_KEY_CURRENT_WORKSPACE, LOCAL_STORAGE_KEY_WORKSPACE_LIST } from '../../../../configs/localStorageKeys';
 import { Workspace } from '../../../../customTypes';
 import WorkspacesMigration from '../../../../migrations/WorkspacesMigration';
-import { useWorkspaceExamplesContext } from '../../../WorkspaceExamplesContext';
 import { WorkspacesContext } from '../../context';
 import { WorkspacesContextProviderProps } from '../../types';
 import useWorkspaces from '../../useWorkspaces';
 
 const WorkspacesLocalStorageContextProvider: FC<WorkspacesContextProviderProps> = ({
   children,
-  workspaceName,
+  workspaceId,
   onWorkspaceChanged,
   ...props
 }) => {
-  const [workspaceList, setWorkspaceList] = useLocalStorageState<Workspace[]>(LOCAL_STORAGE_KEY_WORKSPACE_LIST, {
-    defaultValue: [],
-  });
-
-  const [lastWorkspace, setCurrentWorkspace] = useLocalStorageState<Workspace | null>(LOCAL_STORAGE_KEY_CURRENT_WORKSPACE, {
+  const [currentWorkspace, setCurrentWorkspace] = useLocalStorageState<Workspace | null>(LOCAL_STORAGE_KEY_CURRENT_WORKSPACE, {
     defaultValue: null,
   });
 
-  const { workspaceExamples } = useWorkspaceExamplesContext();
-
-  const currentWorkspace = useMemo(() => {
-    if (workspaceName) { // If the workspaceName is specified by outside scope (e.g. Url), return the workspace specified by the id
-      if (workspaceName === DEFAULT_WORKSPACE_ID) {
-        return null;
-      }
-
-      const foundWorkspace = workspaceList.find(x => x.name === workspaceName);
-      if (foundWorkspace) {
-        return foundWorkspace;
-      }
-
-      const foundWorkspaceExample = workspaceExamples.find(x => x.name === workspaceName);
-      if (foundWorkspaceExample) {
-        return foundWorkspaceExample;
-      }
-    }
-
-    return lastWorkspace;
-  }, [lastWorkspace, workspaceName, workspaceExamples, workspaceList]);
+  const [workspaceList, setWorkspaceList] = useLocalStorageState<Workspace[]>(LOCAL_STORAGE_KEY_WORKSPACE_LIST, {
+    defaultValue: [],
+  });
 
   const {
     handleSwitchWorkspace,
@@ -66,6 +43,21 @@ const WorkspacesLocalStorageContextProvider: FC<WorkspacesContextProviderProps> 
     handleRemoveWorkspace,
     handleRenameWorkspace,
   } = useWorkspaces(workspaceList, setWorkspaceList, currentWorkspace, setCurrentWorkspace, onWorkspaceChanged);
+
+  useEffect(() => {
+    if (workspaceId) {
+      if (workspaceId === DEFAULT_WORKSPACE_ID && currentWorkspace !== null) {
+        setCurrentWorkspace(null);
+      } else if (workspaceId !== currentWorkspace?.id) {
+        const foundWorkspace = workspaceList.find(x => x.id === workspaceId);
+        if (foundWorkspace) {
+          setCurrentWorkspace(foundWorkspace);
+        } else {
+          setCurrentWorkspace(null);
+        }
+      }
+    }
+  }, [workspaceId, workspaceList, currentWorkspace]);
 
   return (<WorkspacesContext.Provider value={{
     workspaceList,

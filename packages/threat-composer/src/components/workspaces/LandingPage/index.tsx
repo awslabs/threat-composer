@@ -27,14 +27,8 @@ import HowItWorks from '../../../assets/how-it-works.png';
 import SwitchToExample from '../../../assets/switch-to-example-workspace.gif';
 import { useGlobalSetupContext } from '../../../contexts';
 
-export interface LandingPageProps {
-  onDefineWorkload?: () => void;
-}
-
-const LandingPage: FC<LandingPageProps> = ({
-  onDefineWorkload,
-}) => {
-  const { setFileImportModalVisible } = useGlobalSetupContext();
+const LandingPage: FC = () => {
+  const { setFileImportModalVisible, onDefineWorkload } = useGlobalSetupContext();
   return (
     <ContentLayout
       header={

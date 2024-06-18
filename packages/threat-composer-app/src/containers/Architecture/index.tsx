@@ -14,10 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { ArchitectureInfoComponent } from '@aws/threat-composer';
-import MarkdownEditorWithPrompt from '../../components/MarkdownEditorWithPrompt';
 
 const Architecture = () => {
-  return <ArchitectureInfoComponent MarkdownEditorComponentType={MarkdownEditorWithPrompt}/>;
+  return <ArchitectureInfoComponent />;
 };
 
 export default Architecture;

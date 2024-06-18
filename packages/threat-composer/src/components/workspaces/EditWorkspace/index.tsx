@@ -32,7 +32,6 @@ export interface EditWorkspaceProps {
   editMode?: boolean;
   currentWorkspace?: Workspace;
   workspaceList: Workspace[];
-  exampleWorkspaceList: Workspace[];
 }
 
 const EditWorkspace: FC<EditWorkspaceProps> = ({
@@ -41,7 +40,6 @@ const EditWorkspace: FC<EditWorkspaceProps> = ({
   onConfirm,
   editMode = false,
   workspaceList,
-  exampleWorkspaceList,
   currentWorkspace,
   ...props
 }) => {
@@ -57,13 +55,11 @@ const EditWorkspace: FC<EditWorkspaceProps> = ({
     setErrorText('');
     if (workspaceList.find(x => x.name === value && (!currentWorkspace || currentWorkspace.id !== x.id))) {
       setErrorText('A workspace already exists with that name');
-    } else if (exampleWorkspaceList.find(x => x.name === value)) {
-      setErrorText('A workspace example already exists with that name');
     } else {
       await onConfirm(value);
       setVisible(false);
     }
-  }, [onConfirm, value, workspaceList, exampleWorkspaceList, currentWorkspace]);
+  }, [onConfirm, value, workspaceList, currentWorkspace]);
 
   useEffect(() => {
     inputRef.current?.focus();

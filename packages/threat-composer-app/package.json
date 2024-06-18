@@ -44,7 +44,6 @@
     "@cloudscape-design/components": "^3.0.517",
     "@cloudscape-design/design-tokens": "^3.0.34",
     "@cloudscape-design/global-styles": "^1.0.23",
-    "@uidotdev/usehooks": "^2.4.1",
     "docx": "^8.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { PerFieldExample, TemplateThreatStatement } from '../../customTypes';
+import { PerFieldExample, TemplateThreatStatement, ThreatStatementListFilter } from '../../customTypes';
 import threatStatementExamplesData from '../../data/threatStatementExamples.json';
 export type View = 'list' | 'editor';
 
@@ -52,6 +52,8 @@ export interface ThreatsContextApi {
   saveStatement: (statement: TemplateThreatStatement) => void;
   removeAllStatements: () => Promise<void>;
   onDeleteWorkspace: (workspaceId: string) => Promise<void>;
+  onThreatListView?: (filter?: ThreatStatementListFilter) => void;
+  onThreatEditorView?: (threatId: string, idToCopied?: string) => void;
 }
 
 const initialState: ThreatsContextApi = {

@@ -14,10 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { DataflowInfoComponent } from '@aws/threat-composer';
-import MarkdownEditorWithPrompt from '../../components/MarkdownEditorWithPrompt';
 
 const Dataflow = () => {
-  return <DataflowInfoComponent MarkdownEditorComponentType={MarkdownEditorWithPrompt}/>;
+  return <DataflowInfoComponent />;
 };
 
 export default Dataflow;

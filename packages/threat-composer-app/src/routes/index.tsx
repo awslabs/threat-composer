@@ -13,130 +13,95 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { createBrowserRouter, createMemoryRouter, redirect } from 'react-router-dom';
-import initialWorkspaceLoader from './initialWorkspaceLoader';
+import { RouteProps } from 'react-router-dom';
 import {
-  ROUTE_WORKSPACE_HOME_PATH,
-  ROUTE_APPLICATION_INFO_PATH,
-  ROUTE_ARCHITECTURE_INFO_PATH,
-  ROUTE_ASSUMPTION_LIST_PATH,
-  ROUTE_DATAFLOW_INFO_PATH,
-  ROUTE_MITIGATION_LIST_PATH,
-  ROUTE_THREAT_EDITOR_PATH,
-  ROUTE_THREAT_LIST_PATH,
-  ROUTE_VIEW_THREAT_MODEL_PATH,
-  ROUTE_THREAT_PACK_PATH,
-  ROUTE_THREAT_PACKS_PATH,
-  ROUTE_MITIGATION_PACK_PATH,
-  ROUTE_MITIGATION_PACKS_PATH,
-  ROUTE_WORKSPACE_PATH,
-  ROUTE_PREVIEW_PATH,
+  ROUTE_WORKSPACE_HOME,
+  ROUTE_APPLICATION_INFO,
+  ROUTE_ARCHITECTURE_INFO,
+  ROUTE_ASSUMPTION_LIST,
+  ROUTE_DATAFLOW_INFO,
+  ROUTE_MITIGATION_LIST,
+  ROUTE_THREAT_EDITOR,
+  ROUTE_THREAT_LIST,
+  ROUTE_VIEW_THREAT_MODEL,
+  ROUTE_THREAT_PACK,
+  ROUTE_THREAT_PACKS,
+  ROUTE_MITIGATION_PACK,
+  ROUTE_MITIGATION_PACKS,
 } from '../config/routes';
 import Application from '../containers/Application';
-import AppRoot from '../containers/AppRoot';
 import Architecture from '../containers/Architecture';
 import AssumptionList from '../containers/AssumptionList';
 import Dataflow from '../containers/Dataflow';
 import MitigationList from '../containers/MitigationList';
 import MitigationPack from '../containers/MitigationPack';
 import MitigationPacks from '../containers/MitigationPacks';
-import ThreatModelPreview from '../containers/ThreatModelPreview';
 import ThreatModelReport from '../containers/ThreatModelReport';
 import ThreatPack from '../containers/ThreatPack';
 import ThreatPacks from '../containers/ThreatPacks';
 import ThreatStatementEditor from '../containers/ThreatStatementEditor';
 import ThreatStatementList from '../containers/ThreatStatementList';
 import WorkspaceHome from '../containers/WorkspaceHome';
-import WorkspaceRoot from '../containers/WorkspaceRoot';
-import isMemoryRouterUsed from '../utils/isMemoryRouterUsed';
 
-const ROUTE_BASE_PATH = process.env.REACT_APP_ROUTE_BASE_PATH;
+const ROUTE_BASE_PATH = process.env.REACT_APP_ROUTE_BASE_PATH || '';
 
-const workspaceRoutes = [
+const getRouteWithBasePath = (route: string) => {
+  return `${ROUTE_BASE_PATH}${route}`;
+};
+
+const routes: RouteProps[] = [
   {
-    index: true,
-    loader: async () => redirect(ROUTE_WORKSPACE_HOME_PATH),
-  },
-  {
-    path: ROUTE_WORKSPACE_HOME_PATH,
+    path: getRouteWithBasePath(ROUTE_WORKSPACE_HOME),
     element: <WorkspaceHome />,
   },
   {
-    path: ROUTE_APPLICATION_INFO_PATH,
+    path: getRouteWithBasePath(ROUTE_APPLICATION_INFO),
     element: <Application />,
   },
   {
-    path: ROUTE_ARCHITECTURE_INFO_PATH,
+    path: getRouteWithBasePath(ROUTE_ARCHITECTURE_INFO),
     element: <Architecture />,
   },
   {
-    path: ROUTE_ASSUMPTION_LIST_PATH,
+    path: getRouteWithBasePath(ROUTE_ASSUMPTION_LIST),
     element: <AssumptionList />,
   },
   {
-    path: ROUTE_DATAFLOW_INFO_PATH,
+    path: getRouteWithBasePath(ROUTE_DATAFLOW_INFO),
     element: <Dataflow />,
   },
   {
-    path: ROUTE_MITIGATION_LIST_PATH,
+    path: getRouteWithBasePath(ROUTE_MITIGATION_LIST),
     element: <MitigationList />,
   },
   {
-    path: ROUTE_VIEW_THREAT_MODEL_PATH,
+    path: getRouteWithBasePath(ROUTE_VIEW_THREAT_MODEL),
     element: <ThreatModelReport />,
   },
   {
-    path: ROUTE_THREAT_PACK_PATH,
+    path: getRouteWithBasePath(ROUTE_THREAT_PACK),
     element: <ThreatPack />,
   },
   {
-    path: ROUTE_THREAT_PACKS_PATH,
+    path: getRouteWithBasePath(ROUTE_THREAT_PACKS),
     element: <ThreatPacks />,
   },
   {
-    path: ROUTE_MITIGATION_PACK_PATH,
+    path: getRouteWithBasePath(ROUTE_MITIGATION_PACK),
     element: <MitigationPack />,
   },
   {
-    path: ROUTE_MITIGATION_PACKS_PATH,
+    path: getRouteWithBasePath(ROUTE_MITIGATION_PACKS),
     element: <MitigationPacks />,
   },
   {
-    path: ROUTE_THREAT_EDITOR_PATH,
+    path: getRouteWithBasePath(ROUTE_THREAT_EDITOR),
     element: <ThreatStatementEditor />,
   },
   {
-    path: ROUTE_THREAT_LIST_PATH,
+    path: getRouteWithBasePath(ROUTE_THREAT_LIST),
     element: <ThreatStatementList />,
   },
 ];
 
-export const createRouter = isMemoryRouterUsed() ? createMemoryRouter : createBrowserRouter;
-
-export const routerOpts = ROUTE_BASE_PATH ? {
-  basename: ROUTE_BASE_PATH,
-} : {};
-
-export const routes = [
-  {
-    index: true,
-    loader: initialWorkspaceLoader,
-  },
-  {
-    path: '/',
-    element: <AppRoot />,
-    children: [
-      {
-        path: ROUTE_WORKSPACE_PATH,
-        element: <WorkspaceRoot />,
-        children: [
-          ...workspaceRoutes,
-        ],
-      },
-      {
-        path: ROUTE_PREVIEW_PATH,
-        element: <ThreatModelPreview />,
-      },
-    ],
-  },
-];
+export default routes;

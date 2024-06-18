@@ -27,7 +27,7 @@ import { LEVEL_SELECTOR_OPTIONS, DEFAULT_NEW_ENTITY_ID, LEVEL_NOT_SET } from '..
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { TemplateThreatStatement, ThreatStatementListFilter, ViewNavigationEvent } from '../../../customTypes';
+import { TemplateThreatStatement, ThreatStatementListFilter } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import AssetSelector from '../../generic/AssetSelector';
@@ -64,12 +64,10 @@ const styles = {
 
 export interface ThreatStatementListProps {
   initialFilter?: ThreatStatementListFilter;
-  onThreatEditorView?: ViewNavigationEvent['onThreatEditorView'];
 }
 
 const ThreatStatementList: FC<ThreatStatementListProps> = ({
   initialFilter,
-  onThreatEditorView,
 }) => {
   const {
     statementList,
@@ -77,6 +75,7 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
     addStatement,
     editStatement,
     saveStatement,
+    onThreatEditorView,
   } = useThreatsContext();
 
   const {

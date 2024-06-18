@@ -17,46 +17,43 @@ import Board, { BoardProps } from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
 import ContentLayout from '@cloudscape-design/components/content-layout';
 import Header from '@cloudscape-design/components/header';
-import { useState, ReactNode, useCallback, FC } from 'react';
+import { useState, ReactNode, useCallback } from 'react';
 import Overview from './components/Overview';
 import STRIDEAllocation from './components/STRIDEAllocation';
 import ThreatGrammar from './components/ThreatGrammar';
 import ThreatPrioritization from './components/ThreatPrioritization';
-import { WorkspaceInsightsProps } from './types';
 import { useApplicationInfoContext } from '../../../contexts/ApplicationContext';
-
-export * from './types';
 
 export interface ItemType {
   title: string;
   content: ReactNode;
 }
 
-const WorkspaceInsights: FC<WorkspaceInsightsProps> = (props) => {
+const WorkspaceInsights = () => {
   const [items, setItems] = useState<BoardProps.Item<ItemType>[]>([
     {
       id: 'overview',
       rowSpan: 2,
       columnSpan: 6,
-      data: { title: 'Threat summary', content: <Overview {...props}/> },
+      data: { title: 'Threat summary', content: <Overview /> },
     },
     {
       id: 'threat-prioritization',
       rowSpan: 5,
       columnSpan: 2,
-      data: { title: 'Threat prioritization', content: <ThreatPrioritization {...props}/> },
+      data: { title: 'Threat prioritization', content: <ThreatPrioritization /> },
     },
     {
       id: 'stride-allocation',
       rowSpan: 5,
       columnSpan: 2,
-      data: { title: 'Threat category distribution', content: <STRIDEAllocation {...props}/> },
+      data: { title: 'Threat category distribution', content: <STRIDEAllocation /> },
     },
     {
       id: 'threat-grammer',
       rowSpan: 5,
       columnSpan: 2,
-      data: { title: 'Threat grammar distribution', content: <ThreatGrammar {...props}/> },
+      data: { title: 'Threat grammar distribution', content: <ThreatGrammar /> },
     },
   ]);
 

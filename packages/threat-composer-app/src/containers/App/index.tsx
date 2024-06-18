@@ -14,22 +14,24 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Full from './components/Full';
 import Standalone from './components/Standalone';
 import GithubPagesNavigationHelper from '../../components/GithubPagesNavigationHelper';
-import getComposerMode from '../../utils/getComposerMode';
+import { SEARCH_PARAM_MODE } from '../../config/searchParams';
 
+const DEFAULT_MODE = process.env.REACT_APP_DEFAULT_MODE;
 const isGithubPages = process.env.REACT_APP_GITHUB_PAGES === 'true';
 
 /**
  * Demo app for threat-composer
  */
 const App: FC = () => {
-  const composerMode = getComposerMode();
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get(SEARCH_PARAM_MODE);
+  const composerMode = mode || DEFAULT_MODE || 'Full';
 
-  console.log('App-ComposerMode', composerMode);
-
-  return (composerMode === 'ThreatsOnly' || composerMode === 'EditorOnly') ? (
+  return composerMode === 'ThreatsOnly' || composerMode === 'EditorOnly' ? (
     <Standalone composeMode={composerMode} />
   ) : (
     isGithubPages ?

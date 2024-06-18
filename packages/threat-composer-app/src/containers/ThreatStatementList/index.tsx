@@ -15,22 +15,10 @@
  ******************************************************************************************************************** */
 import { ThreatStatementList as ThreatStatementListComponent } from '@aws/threat-composer';
 import { useLocation } from 'react-router-dom';
-import { ROUTE_THREAT_EDITOR } from '../../config/routes';
-import useNavigateView from '../../hooks/useNavigationView';
 
 const ThreatStatementList = () => {
-  const handleNavigateView = useNavigateView();
   const { state } = useLocation();
-  return <ThreatStatementListComponent
-    initialFilter={state?.filter}
-    onThreatEditorView={(threatId: string, idToCopy?: string) => handleNavigateView(ROUTE_THREAT_EDITOR, threatId, undefined, idToCopy ? {
-      idToCopy,
-    } : undefined, {
-      state: {
-        idToCopy,
-      },
-    })}
-  />;
+  return <ThreatStatementListComponent initialFilter={state?.filter}/>;
 };
 
 export default ThreatStatementList;

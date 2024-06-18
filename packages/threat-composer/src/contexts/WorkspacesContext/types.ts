@@ -16,7 +16,7 @@
 import { ReactElement } from 'react';
 
 export interface WorkspacesContextProviderProps {
-  workspaceName?: string; // The name is used in url
+  workspaceId?: string;
   onWorkspaceChanged?: (workspaceId: string) => void;
   children: (workspace: string | null) => ReactElement<{ workspaceId: string | null }>;
 }
