@@ -25,7 +25,7 @@ import {
   colorChartsStatusHigh,
   colorChartsStatusNeutral,
 } from '@cloudscape-design/design-tokens';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, FC } from 'react';
 import {
   LEVEL_HIGH,
   LEVEL_LOW,
@@ -34,16 +34,18 @@ import {
   DEFAULT_NEW_ENTITY_ID,
 } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
-import { useWorkspacesContext } from '../../../../../contexts/WorkspacesContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 import DashboardNumber from '../../../../generic/DashboardNumber';
 import useLinkClicked from '../../hooks/useLinkClicked';
+import { WorkspaceInsightsProps } from '../../types';
 
-const ThreatPrioritization = () => {
+const ThreatPrioritization: FC<WorkspaceInsightsProps> = ({
+  onThreatEditorView,
+  onThreatListView,
+}) => {
   const { statementList, addStatement } = useThreatsContext();
-  const { onThreatEditorView } = useWorkspacesContext();
 
-  const handleLinkClicked = useLinkClicked();
+  const handleLinkClicked = useLinkClicked(onThreatListView);
 
   const missingPriority = useMemo(
     () => filterThreatsByMetadata(statementList, 'Priority').length,

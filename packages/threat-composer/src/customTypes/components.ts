@@ -13,6 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { ComponentType } from 'react';
+import { MarkdownEditorProps } from '../components/generic/MarkdownEditor';
+
 export interface EditableComponentBaseProps {
   onEditModeChange?: (editMode: boolean) => void;
+  MarkdownEditorComponentType?: ComponentType<MarkdownEditorProps>;
 }

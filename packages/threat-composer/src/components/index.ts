@@ -29,4 +29,5 @@ export { default as ThreatPackComponent } from './workspaces/ThreatPack';
 export { default as MitigationPacksComponent } from './workspaces/MitigationPacks';
 export { default as MitigationPackComponent } from './workspaces/MitigationPack';
 export { default as ThemeProvider } from './generic/ThemeProvider';
+export { default as MarkdownEditor, MarkdownEditorProps } from './generic/MarkdownEditor';
 export * from './generic/ThemeProvider';

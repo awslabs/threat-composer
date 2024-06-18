@@ -17,43 +17,46 @@ import Board, { BoardProps } from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
 import ContentLayout from '@cloudscape-design/components/content-layout';
 import Header from '@cloudscape-design/components/header';
-import { useState, ReactNode, useCallback } from 'react';
+import { useState, ReactNode, useCallback, FC } from 'react';
 import Overview from './components/Overview';
 import STRIDEAllocation from './components/STRIDEAllocation';
 import ThreatGrammar from './components/ThreatGrammar';
 import ThreatPrioritization from './components/ThreatPrioritization';
+import { WorkspaceInsightsProps } from './types';
 import { useApplicationInfoContext } from '../../../contexts/ApplicationContext';
+
+export * from './types';
 
 export interface ItemType {
   title: string;
   content: ReactNode;
 }
 
-const WorkspaceInsights = () => {
+const WorkspaceInsights: FC<WorkspaceInsightsProps> = (props) => {
   const [items, setItems] = useState<BoardProps.Item<ItemType>[]>([
     {
       id: 'overview',
       rowSpan: 2,
       columnSpan: 6,
-      data: { title: 'Threat summary', content: <Overview /> },
+      data: { title: 'Threat summary', content: <Overview {...props}/> },
     },
     {
       id: 'threat-prioritization',
       rowSpan: 5,
       columnSpan: 2,
-      data: { title: 'Threat prioritization', content: <ThreatPrioritization /> },
+      data: { title: 'Threat prioritization', content: <ThreatPrioritization {...props}/> },
     },
     {
       id: 'stride-allocation',
       rowSpan: 5,
       columnSpan: 2,
-      data: { title: 'Threat category distribution', content: <STRIDEAllocation /> },
+      data: { title: 'Threat category distribution', content: <STRIDEAllocation {...props}/> },
     },
     {
       id: 'threat-grammer',
       rowSpan: 5,
       columnSpan: 2,
-      data: { title: 'Threat grammar distribution', content: <ThreatGrammar /> },
+      data: { title: 'Threat grammar distribution', content: <ThreatGrammar {...props}/> },
     },
   ]);
 

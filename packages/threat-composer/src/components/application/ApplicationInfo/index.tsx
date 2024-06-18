@@ -27,6 +27,7 @@ import MarkdownViewer from '../../generic/MarkdownViewer';
 
 const ApplicationInfo: FC<EditableComponentBaseProps> = ({
   onEditModeChange,
+  MarkdownEditorComponentType = MarkdownEditor,
 }) => {
   const { applicationInfo, setApplicationInfo } = useApplicationInfoContext();
   const [editMode, setEditMode] = useState(!applicationInfo.name && !applicationInfo.description );
@@ -74,7 +75,7 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
           placeholder='Enter application name'
         />
       </FormField>
-      <MarkdownEditor
+      <MarkdownEditorComponentType
         value={content}
         onChange={setContent}
         label='Description'

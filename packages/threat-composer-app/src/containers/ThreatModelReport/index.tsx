@@ -13,46 +13,34 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThreatModel, ThreatModelView } from '@aws/threat-composer';
-import { FC, useCallback, useState } from 'react';
+import { ThreatModel } from '@aws/threat-composer';
+import { FC } from 'react';
+import {
+  ROUTE_APPLICATION_INFO,
+  ROUTE_ARCHITECTURE_INFO,
+  ROUTE_ASSUMPTION_LIST,
+  ROUTE_DATAFLOW_INFO,
+  ROUTE_MITIGATION_LIST,
+  ROUTE_THREAT_LIST,
+} from '../../config/routes';
+import useNavigateView from '../../hooks/useNavigationView';
+import useOnPreview from '../../hooks/useOnPreview';
 import convertToDocx from '../../utils/convertToDocx';
 
 const ThreatModelReport: FC = () => {
-  const [isPreview] = useState(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const previewParams = urlParams.get('preview');
-    return previewParams === 'true';
-  });
+  const handleNavigationView = useNavigateView();
+  const [onPreview] = useOnPreview();
 
-  const [data] = useState(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const dataKey = urlParams.get('dataKey');
-    const dataStr = dataKey && window.localStorage.getItem(dataKey);
-
-    if (dataStr) {
-      return JSON.parse(dataStr);
-    }
-
-    if (dataKey) {
-      return {};
-    }
-
-    return undefined;
-  });
-
-  const handlePrintButtonClick = useCallback(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('preview', 'true');
-    window.open(`${window.location.pathname}?${urlParams.toString()}`, '_blank', 'noopener,noreferrer,resizable');
-  }, []);
-
-  return (data
-    ? (<ThreatModelView composerMode='Full' data={data} onPrintButtonClick={isPreview ? undefined : handlePrintButtonClick} />)
-    : (<ThreatModel
-      convertToDocx={convertToDocx}
-      isPreview={isPreview}
-      onPrintButtonClick={isPreview ? undefined : handlePrintButtonClick}
-    />));
+  return (<ThreatModel
+    convertToDocx={convertToDocx}
+    onPrintButtonClick={onPreview}
+    onApplicationInfoView={() => handleNavigationView(ROUTE_APPLICATION_INFO)}
+    onArchitectureView={() => handleNavigationView(ROUTE_ARCHITECTURE_INFO)}
+    onDataflowView={() => handleNavigationView(ROUTE_DATAFLOW_INFO)}
+    onAssumptionListView={() => handleNavigationView(ROUTE_ASSUMPTION_LIST)}
+    onMitigationListView={() => handleNavigationView(ROUTE_MITIGATION_LIST)}
+    onThreatListView={() => handleNavigationView(ROUTE_THREAT_LIST)}
+  />);
 };
 
 export default ThreatModelReport;
