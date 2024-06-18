@@ -27,6 +27,7 @@ import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 import DashboardNumber from '../../../../generic/DashboardNumber';
 import useLinkClicked from '../../hooks/useLinkClicked';
+import { WorkspaceInsightsProps } from '../../types';
 
 const styles = {
   container: css({
@@ -59,7 +60,9 @@ const LabelValuePair: FC<{
   </div>);
 };
 
-const Overview: FC = () => {
+const Overview: FC<WorkspaceInsightsProps> = ({
+  onThreatListView,
+}) => {
   const { statementList } = useThreatsContext();
   const { mitigationLinkList } = useMitigationLinksContext();
   const { assumptionLinkList } = useAssumptionLinksContext();
@@ -72,7 +75,7 @@ const Overview: FC = () => {
     ).length;
   }, [statementList, mitigationLinkList, assumptionLinkList]);
 
-  const handleLinkClicked = useLinkClicked();
+  const handleLinkClicked = useLinkClicked(onThreatListView);
 
   const missingMitigation = useMemo(() => {
     return statementList.filter(

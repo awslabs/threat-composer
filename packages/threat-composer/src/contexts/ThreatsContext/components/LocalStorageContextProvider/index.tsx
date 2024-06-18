@@ -41,8 +41,6 @@ interface ThreatsContextProviderInnerProps {
 const ThreatsContextProviderInner: FC<PropsWithChildren<ThreatsContextProviderProps & ThreatsContextProviderInnerProps>> = ({
   children,
   workspaceId: currentWorkspaceId,
-  onThreatListView,
-  onThreatEditorView,
   editingStatement,
   setEditingStatement,
   removeEditingStatement,
@@ -117,8 +115,6 @@ const ThreatsContextProviderInner: FC<PropsWithChildren<ThreatsContextProviderPr
     saveStatement: handleSaveStatement,
     removeAllStatements: handleRemoveAllStatements,
     onDeleteWorkspace: handleDeleteWorkspace,
-    onThreatListView,
-    onThreatEditorView,
   }}>
     {children}
   </ThreatsContext.Provider>);

@@ -13,10 +13,27 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { WorkspaceHome as WorkspaceHomeComponent } from '@aws/threat-composer';
+import { WorkspaceHome as WorkspaceHomeComponent, ThreatStatementListFilter } from '@aws/threat-composer';
+import { ROUTE_APPLICATION_INFO, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST } from '../../config/routes';
+import useNavigateView from '../../hooks/useNavigationView';
 
 const WorkspaceHome = () => {
-  return <WorkspaceHomeComponent />;
+  const handleNavigateView = useNavigateView();
+  return <WorkspaceHomeComponent
+    onDefineWorkload={() => handleNavigateView(ROUTE_APPLICATION_INFO)}
+    onThreatEditorView={(threatId: string, idToCopy?: string) => handleNavigateView(ROUTE_THREAT_EDITOR, threatId, undefined, idToCopy ? {
+      idToCopy,
+    } : undefined, {
+      state: {
+        idToCopy,
+      },
+    })}
+    onThreatListView={(filter?: ThreatStatementListFilter) => handleNavigateView(ROUTE_THREAT_LIST, undefined, undefined, undefined, {
+      state: filter ? {
+        filter,
+      } : undefined,
+    })}
+  />;
 };
 
 export default WorkspaceHome;
