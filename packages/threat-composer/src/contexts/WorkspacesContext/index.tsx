@@ -18,7 +18,7 @@ import WorkspacesLocalStateContextProvider from './components/LocalStateContextP
 import WorkspacesLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useWorkspacesContext } from './context';
 import { WorkspacesContextProviderProps } from './types';
-import { APP_MODE_IDE_EXTENSION } from '../../configs';
+import { APP_MODE_IDE_EXTENSION, DEFAULT_WORKSPACE_ID } from '../../configs';
 import { useGlobalSetupContext } from '../GlobalSetupContext';
 
 const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = (props) => {
@@ -26,9 +26,9 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = (props) =>
 
   return appMode === APP_MODE_IDE_EXTENSION ?
     (<WorkspacesLocalStateContextProvider
-      key={props.workspaceId}
+      key={props.workspaceName || DEFAULT_WORKSPACE_ID}
       {...props} />) :
-    (<WorkspacesLocalStorageContextProvider key={props.workspaceId} {...props} />);
+    (<WorkspacesLocalStorageContextProvider key={props.workspaceName || DEFAULT_WORKSPACE_ID} {...props} />);
 };
 
 export default WorkspacesContextProvider;

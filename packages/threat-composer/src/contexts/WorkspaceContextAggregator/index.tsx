@@ -27,6 +27,7 @@ import MitigationPacksContextProvider from '../MitigationPacksContext';
 import MitigationsContextProvider from '../MitigationsContext';
 import ThreatPacksContextProvider from '../ThreatPacksContext';
 import ThreatsContextProvider from '../ThreatsContext';
+
 export interface WorkspaceContextAggregatorProps extends ViewNavigationEvent {
   workspaceId: string | null;
   composerMode?: ComposerMode;
@@ -39,15 +40,10 @@ export interface WorkspaceContextAggregatorProps extends ViewNavigationEvent {
 const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggregatorProps>> = ({
   children,
   workspaceId,
-  onThreatEditorView,
-  onThreatListView,
 }) => {
   return (
-
     <ThreatsContextProvider
       workspaceId={workspaceId || null}
-      onThreatEditorView={onThreatEditorView}
-      onThreatListView={onThreatListView}
     >
       <MitigationsContextProvider workspaceId={workspaceId}>
         <AssumptionsContextProvider workspaceId={workspaceId}>
@@ -85,11 +81,7 @@ const WorkspaceContextAggregator: FC<PropsWithChildren<WorkspaceContextAggregato
   ...rest
 }) => {
   return requiredGlobalSetupContext ? (
-    <GlobalSetupContextProvider composerMode={composerMode}
-      onPreview={onPreview}
-      onPreviewClose={onPreviewClose}
-      onImported={onImported}
-    >
+    <GlobalSetupContextProvider composerMode={composerMode}>
       <WorkspaceContextInnerAggregator workspaceId={workspaceId} {...rest}>
         {children}
       </WorkspaceContextInnerAggregator>
