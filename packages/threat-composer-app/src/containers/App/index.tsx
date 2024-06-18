@@ -16,10 +16,8 @@
 import { FC } from 'react';
 import Full from './components/Full';
 import Standalone from './components/Standalone';
-import GithubPagesNavigationHelper from '../../components/GithubPagesNavigationHelper';
 import getComposerMode from '../../utils/getComposerMode';
 
-const isGithubPages = process.env.REACT_APP_GITHUB_PAGES === 'true';
 
 /**
  * Demo app for threat-composer
@@ -31,11 +29,7 @@ const App: FC = () => {
 
   return (composerMode === 'ThreatsOnly' || composerMode === 'EditorOnly') ? (
     <Standalone composeMode={composerMode} />
-  ) : (
-    isGithubPages ?
-      (<GithubPagesNavigationHelper><Full /></GithubPagesNavigationHelper>) :
-      <Full />
-  );
+  ) : (<Full />);
 };
 
 export default App;

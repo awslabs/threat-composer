@@ -17,7 +17,30 @@ import { LOCAL_STORAGE_KEY_CURRENT_WORKSPACE, Workspace } from '@aws/threat-comp
 import { generatePath, redirect } from 'react-router-dom';
 import { ROUTE_WORKSPACE_DEFAULT, ROUTE_WORKSPACE_PATH } from '../config/routes';
 
+const isGithubPages = process.env.REACT_APP_GITHUB_PAGES === 'true';
+
+const requiredRewriteUrl = (search: string) => {
+  return search && (search.startsWith('?/') || search.startsWith('?%2F'));
+};
+
 const initialWorkspaceLoader = async () => {
+  const l = window.location;
+
+  // For github page, the direct navigation to workspace pages (e.g., https://awslabs.github.io/threat-composer/workspaces/default/dashboard) results in 404.
+  // In 404.html, the url is rewrited to https://awslabs.github.io/threat-composer?/workspaces/default/dashboard so that the index.html can be loaded.
+  // And here is to reconstruct the original url and navigate to the right page.
+  if (isGithubPages && requiredRewriteUrl(l.search)) {
+    let search = decodeURIComponent(l.search);
+    if (search.indexOf('=') === search.length - 1) {
+      search = search.slice(0, search.length - 1);
+    }
+    var decoded = search.slice(1).split('&').map(function (s) {
+      return s.replace(/~and~/g, '&');
+    }).join('?');
+
+    return redirect(decoded + l.hash);
+  }
+
   const currentWorkspaceValue = window.localStorage.getItem(LOCAL_STORAGE_KEY_CURRENT_WORKSPACE);
 
   if (currentWorkspaceValue) {
