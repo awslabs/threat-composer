@@ -81,7 +81,7 @@
     "remark-gfm": "^3.0.1",
     "remark-parse": "^10.0.2",
     "remark-rehype": "^10.1.0",
-    "sanitize-html": "^2.10.0",
+    "sanitize-html": "^2.12.1",
     "unified": "^10.1.2",
     "use-local-storage-state": "^18.3.3",
     "uuid": "^9.0.0",
