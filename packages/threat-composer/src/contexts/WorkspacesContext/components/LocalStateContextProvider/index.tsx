@@ -14,11 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, useState } from 'react';
-import { DEFAULT_WORKSPACE_ID } from '../../../../configs/constants';
 import { Workspace } from '../../../../customTypes';
 import { useWorkspaceExamplesContext } from '../../../WorkspaceExamplesContext';
 import { WorkspacesContext } from '../../context';
 import { WorkspacesContextProviderProps } from '../../types';
+import useCurrentWorkspace from '../../useCurrentWorkspace';
 import useWorkspaces from '../../useWorkspaces';
 
 const WorkspacesLocalStateContextProvider: FC<WorkspacesContextProviderProps> = ({
@@ -31,25 +31,9 @@ const WorkspacesLocalStateContextProvider: FC<WorkspacesContextProviderProps> = 
 
   const [workspaceList, setWorkspaceList] = useState<Workspace[]>([]);
 
-  const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(() => {
-    if (workspaceName) { // If the workspaceName is specified by outside scope (e.g. Url), return the workspace specified by the id
-      if (workspaceName === DEFAULT_WORKSPACE_ID) {
-        return null;
-      }
+  const [lastWorkspace, setCurrentWorkspace] = useState<Workspace | null>(null);
 
-      const foundWorkspace = workspaceList.find(x => x.name === workspaceName);
-      if (foundWorkspace) {
-        return foundWorkspace;
-      }
-
-      const foundWorkspaceExample = workspaceExamples.find(x => x.name === workspaceName);
-      if (foundWorkspaceExample) {
-        return foundWorkspaceExample;
-      }
-    }
-
-    return null;
-  });
+  const currentWorkspace = useCurrentWorkspace(lastWorkspace, workspaceName, workspaceList, workspaceExamples, onWorkspaceChanged);
 
   const {
     handleSwitchWorkspace,

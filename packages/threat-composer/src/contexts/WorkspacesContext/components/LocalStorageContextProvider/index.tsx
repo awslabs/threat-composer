@@ -13,15 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
-import { DEFAULT_WORKSPACE_ID } from '../../../../configs/constants';
 import { LOCAL_STORAGE_KEY_CURRENT_WORKSPACE, LOCAL_STORAGE_KEY_WORKSPACE_LIST } from '../../../../configs/localStorageKeys';
 import { Workspace } from '../../../../customTypes';
 import WorkspacesMigration from '../../../../migrations/WorkspacesMigration';
 import { useWorkspaceExamplesContext } from '../../../WorkspaceExamplesContext';
 import { WorkspacesContext } from '../../context';
 import { WorkspacesContextProviderProps } from '../../types';
+import useCurrentWorkspace from '../../useCurrentWorkspace';
 import useWorkspaces from '../../useWorkspaces';
 
 const WorkspacesLocalStorageContextProvider: FC<WorkspacesContextProviderProps> = ({
@@ -40,25 +40,7 @@ const WorkspacesLocalStorageContextProvider: FC<WorkspacesContextProviderProps> 
 
   const { workspaceExamples } = useWorkspaceExamplesContext();
 
-  const currentWorkspace = useMemo(() => {
-    if (workspaceName) { // If the workspaceName is specified by outside scope (e.g. Url), return the workspace specified by the id
-      if (workspaceName === DEFAULT_WORKSPACE_ID) {
-        return null;
-      }
-
-      const foundWorkspace = workspaceList.find(x => x.name === workspaceName);
-      if (foundWorkspace) {
-        return foundWorkspace;
-      }
-
-      const foundWorkspaceExample = workspaceExamples.find(x => x.name === workspaceName);
-      if (foundWorkspaceExample) {
-        return foundWorkspaceExample;
-      }
-    }
-
-    return lastWorkspace;
-  }, [lastWorkspace, workspaceName, workspaceExamples, workspaceList]);
+  const currentWorkspace = useCurrentWorkspace(lastWorkspace, workspaceName, workspaceList, workspaceExamples, onWorkspaceChanged);
 
   const {
     handleSwitchWorkspace,

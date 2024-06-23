@@ -16,6 +16,7 @@
 import { z } from 'zod';
 import { MetadataNodeSchema } from './entities';
 import {
+  REGEX_WORKSPACE_NAME,
   SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH,
   STORAGE_LOCAL_STATE,
   STORAGE_LOCAL_STORAGE,
@@ -23,7 +24,7 @@ import {
 
 export const WorkspaceSchema = z.object({
   id: z.string().length(36),
-  name: z.string().max(SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH),
+  name: z.string().max(SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH).regex(REGEX_WORKSPACE_NAME, `Invalid. Workspace name pattern ${REGEX_WORKSPACE_NAME}`),
   storageType: z.enum([STORAGE_LOCAL_STATE, STORAGE_LOCAL_STORAGE]).optional(),
   metadata: MetadataNodeSchema.optional(),
 });
