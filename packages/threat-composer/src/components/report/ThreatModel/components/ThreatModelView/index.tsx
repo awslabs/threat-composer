@@ -17,7 +17,8 @@
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
-import Header from '@cloudscape-design/components/header';
+import ContentLayoutComponent from '@cloudscape-design/components/content-layout';
+import Header, { HeaderProps } from '@cloudscape-design/components/header';
 import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import Popover from '@cloudscape-design/components/popover';
 import SpaceBetween from '@cloudscape-design/components/space-between';
@@ -25,7 +26,7 @@ import Spinner from '@cloudscape-design/components/spinner';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC, useEffect, useCallback, useState, ReactNode } from 'react';
+import { FC, useEffect, useCallback, useState, ReactNode, PropsWithChildren } from 'react';
 import { DataExchangeFormat, HasContentDetails, ViewNavigationEvent } from '../../../../../customTypes';
 import printStyles from '../../../../../styles/print';
 import convertToYaml from '../../../../../utils/convertToYaml';
@@ -60,6 +61,27 @@ const styles = {
     textAlign: 'center',
     width: '100%',
   }),
+};
+
+const ContentLayout: FC<PropsWithChildren<HeaderProps & {
+  isPreview?: boolean;
+}>> = ({
+  isPreview,
+  children,
+  ...props
+}) => {
+  if (isPreview) {
+    return <>{children}</>;
+  }
+
+  return (<ContentLayoutComponent
+    disableOverlap
+    header={
+      <Header {...props} />
+    }
+  >
+    {children}
+  </ContentLayoutComponent>);
 };
 
 export interface ThreatModelViewProps extends ViewNavigationEvent {
@@ -177,42 +199,76 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
     return buttons.flatMap((b, index) => index === len - 1 ? <Box>{b}</Box> : [b, <Box fontWeight="bold" css={styles.text}>or</Box>]);
   }, [hasContentDetails, props]);
 
-  return (<div>
+  return (<ContentLayout
+    isPreview={isPreview}
+    actions={
+      <SpaceBetween direction="horizontal" size="xs">
+        <Popover
+          dismissButton={false}
+          position="top"
+          size="small"
+          triggerType="custom"
+          content={
+            <StatusIndicator type="success">
+              Content copied
+            </StatusIndicator>
+          }
+        >
+          <Button
+            onClick={handleCopyMarkdown}>
+            Copy as Markdown
+          </Button>
+        </Popover>
+        {downloadFileName && showPrintDownloadButtons && <ButtonDropdown
+          items={[
+            { text: 'Download as Markdown File', id: 'markdown' },
+            ...(convertToDocx ? [{ text: 'Download as Word - Docx File', id: 'docx' }] : []),
+            { text: 'Download as JSON File', id: 'json' },
+          ]}
+          onItemClick={handleDownloadClick}
+        >
+          Download
+        </ButtonDropdown>}
+        {showPrintDownloadButtons && <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>}
+      </SpaceBetween>
+    }>
     <SpaceBetween direction='vertical' size='s'>
-      <div css={printStyles.hiddenPrint}><Header
-        actions={
-          <SpaceBetween direction="horizontal" size="xs">
-            <Popover
-              dismissButton={false}
-              position="top"
-              size="small"
-              triggerType="custom"
-              content={
-                <StatusIndicator type="success">
-                  Content copied
-                </StatusIndicator>
-              }
-            >
-              <Button
-                onClick={handleCopyMarkdown}>
-                Copy as Markdown
-              </Button>
-            </Popover>
-            {downloadFileName && showPrintDownloadButtons && <ButtonDropdown
-              items={[
-                { text: 'Download as Markdown File', id: 'markdown' },
-                ...(convertToDocx ? [{ text: 'Download as Word - Docx File', id: 'docx' }] : []),
-                { text: 'Download as JSON File', id: 'json' },
-              ]}
-              onItemClick={handleDownloadClick}
-            >
-              Download
-            </ButtonDropdown>}
-            {showPrintDownloadButtons && <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>}
-          </SpaceBetween>
-        }
-      >
-      </Header></div>
+      {isPreview && <div css={printStyles.hiddenPrint}>
+        <Header
+          actions={
+            <SpaceBetween direction="horizontal" size="xs">
+              <Popover
+                dismissButton={false}
+                position="top"
+                size="small"
+                triggerType="custom"
+                content={
+                  <StatusIndicator type="success">
+                    Content copied
+                  </StatusIndicator>
+                }
+              >
+                <Button
+                  onClick={handleCopyMarkdown}>
+                  Copy as Markdown
+                </Button>
+              </Popover>
+              {downloadFileName && showPrintDownloadButtons && <ButtonDropdown
+                items={[
+                  { text: 'Download as Markdown File', id: 'markdown' },
+                  ...(convertToDocx ? [{ text: 'Download as Word - Docx File', id: 'docx' }] : []),
+                  { text: 'Download as JSON File', id: 'json' },
+                ]}
+                onItemClick={handleDownloadClick}
+              >
+                Download
+              </ButtonDropdown>}
+              {showPrintDownloadButtons && <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>}
+            </SpaceBetween>
+          }
+        >
+        </Header>
+      </div>}
       {content ?
         (<MarkdownViewer allowHtml>{content}</MarkdownViewer>) :
         (<Box fontSize='body-m' margin='xxl' fontWeight="bold" css={styles.noData}>{loading ? <Spinner /> : 'No data available'}</Box>)
@@ -226,7 +282,7 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
         </Box>
       </div>}
     </SpaceBetween>
-  </div>);
+  </ContentLayout>);
 };
 
 export default ThreatModelView;

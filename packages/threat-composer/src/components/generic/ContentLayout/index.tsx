@@ -13,23 +13,36 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC } from 'react';
-import { ThreatStatementEditorInner } from '../../components/threats/ThreatStatementEditor';
-import WorkspaceContextAggregator from '../../contexts/WorkspaceContextAggregator';
-import getNewThreatStatement from '../../utils/getNewThreatStatement';
 
-export interface ThreatEditorProps {
-  workspaceId?: string;
+import ContentLayoutComponent from '@cloudscape-design/components/content-layout';
+import Header, { HeaderProps } from '@cloudscape-design/components/header';
+import { FC, PropsWithChildren } from 'react';
+import { useApplicationInfoContext } from '../../../contexts/ApplicationContext';
+
+export interface ContentLayoutProps extends HeaderProps {
+  /**
+   * The title of the header.
+   */
+  title?: string;
 }
 
-const ThreatEditor: FC<ThreatEditorProps> = ({ workspaceId }) => {
-  return (<WorkspaceContextAggregator
-    workspaceId={workspaceId || null}
-    composerMode='Full'
-    requiredGlobalSetupContext
+const ContentLayout: FC<PropsWithChildren<ContentLayoutProps>> = ({
+  title,
+  children,
+  ...props
+}) => {
+  const { applicationInfo } = useApplicationInfoContext();
+
+  return (<ContentLayoutComponent
+    header={<Header
+      variant="h1"
+      {...props}
+    >
+      {applicationInfo.name ? `${title} for: ` + applicationInfo.name : 'Insights dashboard'}
+    </Header>}
   >
-    <ThreatStatementEditorInner editingStatement={getNewThreatStatement()} />
-  </WorkspaceContextAggregator>);
+    {children}
+  </ContentLayoutComponent>);
 };
 
-export default ThreatEditor;
+export default ContentLayout;

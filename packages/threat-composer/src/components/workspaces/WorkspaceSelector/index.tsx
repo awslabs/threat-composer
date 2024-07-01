@@ -42,6 +42,7 @@ import {
 import useImportExport from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
 import isWorkspaceExample from '../../../utils/isWorkspaceExample';
+import ThemeToggle from '../../generic/ThemeToggle';
 import EditWorkspace from '../../workspaces/EditWorkspace';
 import FileImport from '../../workspaces/FileImport';
 
@@ -359,6 +360,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
             onItemClick={handleMoreActions}
           />
         )}
+        {appMode !== 'ide-extension' && composerMode === 'Full' && <ThemeToggle />}
       </SpaceBetween>
       {fileImportModalVisible && (
         <FileImport

@@ -15,7 +15,6 @@
  ******************************************************************************************************************** */
 import Board, { BoardProps } from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
-import ContentLayout from '@cloudscape-design/components/content-layout';
 import Header from '@cloudscape-design/components/header';
 import { useState, ReactNode, useCallback, FC } from 'react';
 import Overview from './components/Overview';
@@ -23,7 +22,7 @@ import STRIDEAllocation from './components/STRIDEAllocation';
 import ThreatGrammar from './components/ThreatGrammar';
 import ThreatPrioritization from './components/ThreatPrioritization';
 import { WorkspaceInsightsProps } from './types';
-import { useApplicationInfoContext } from '../../../contexts/ApplicationContext';
+import ContentLayout from '../../generic/ContentLayout';
 
 export * from './types';
 
@@ -76,17 +75,7 @@ const WorkspaceInsights: FC<WorkspaceInsightsProps> = (props) => {
     </BoardItem>);
   }, []);
 
-  const { applicationInfo } = useApplicationInfoContext();
-
-  return (<ContentLayout
-    header={
-      <Header
-        variant="h1"
-      >
-        {applicationInfo.name ? 'Insights dashboard for: ' + applicationInfo.name : 'Insights dashboard'}
-      </Header>
-    }
-  >
+  return (<ContentLayout title='Insights dashboard'>
     <Board
       renderItem={handleRenderItem as (item: BoardProps.Item<unknown>) => JSX.Element}
       onItemsChange={event => {

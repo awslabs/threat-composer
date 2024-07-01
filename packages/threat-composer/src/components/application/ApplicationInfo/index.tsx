@@ -21,6 +21,7 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useState, useCallback, useMemo, useEffect } from 'react';
 import { useApplicationInfoContext } from '../../../contexts/ApplicationContext/context';
 import { ApplicationInfoSchema, EditableComponentBaseProps } from '../../../customTypes';
+import ContentLayout from '../../generic/ContentLayout';
 import Input from '../../generic/Input';
 import MarkdownEditor from '../../generic/MarkdownEditor';
 import MarkdownViewer from '../../generic/MarkdownViewer';
@@ -30,7 +31,7 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
   MarkdownEditorComponentType = MarkdownEditor,
 }) => {
   const { applicationInfo, setApplicationInfo } = useApplicationInfoContext();
-  const [editMode, setEditMode] = useState(!applicationInfo.name && !applicationInfo.description );
+  const [editMode, setEditMode] = useState(!applicationInfo.name && !applicationInfo.description);
   const [content, setContent] = useState('');
   const [name, setName] = useState('');
 
@@ -60,33 +61,35 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
     </SpaceBetween>) : (<Button onClick={handleEdit}>Edit</Button>);
   }, [editMode, handleSaveApplicationInfo, handleEdit, setEditMode]);
 
-  return (<Container
-    header={<Header actions={actions}>{applicationInfo.name || 'Application Introduction'}</Header>}
-  >{editMode ? (<SpaceBetween direction='vertical' size='s'>
-      <FormField
-        label="Application name"
-      >
-        <Input
-          value={name}
-          onChange={event =>
-            setName(event.detail.value)
-          }
-          validateData={ApplicationInfoSchema.shape.name.safeParse}
-          placeholder='Enter application name'
+  return (<ContentLayout title='Application information'>
+    <Container
+      header={<Header actions={actions}>{applicationInfo.name || 'Application Introduction'}</Header>}
+    >{editMode ? (<SpaceBetween direction='vertical' size='s'>
+        <FormField
+          label="Application name"
+        >
+          <Input
+            value={name}
+            onChange={event =>
+              setName(event.detail.value)
+            }
+            validateData={ApplicationInfoSchema.shape.name.safeParse}
+            placeholder='Enter application name'
+          />
+        </FormField>
+        <MarkdownEditorComponentType
+          value={content}
+          onChange={setContent}
+          label='Description'
+          parentHeaderLevel='h2'
+          validateData={ApplicationInfoSchema.shape.description.safeParse}
         />
-      </FormField>
-      <MarkdownEditorComponentType
-        value={content}
-        onChange={setContent}
-        label='Description'
-        parentHeaderLevel='h2'
-        validateData={ApplicationInfoSchema.shape.description.safeParse}
-      />
-    </SpaceBetween>) :
-      (<MarkdownViewer>
-        {applicationInfo.description || ''}
-      </MarkdownViewer>)}
-  </Container>);
+      </SpaceBetween>) :
+        (<MarkdownViewer>
+          {applicationInfo.description || ''}
+        </MarkdownViewer>)}
+    </Container>
+  </ContentLayout>);
 };
 
 export default ApplicationInfo;

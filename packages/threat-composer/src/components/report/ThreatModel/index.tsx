@@ -41,21 +41,22 @@ const ThreatModel: FC<ThreatModelProps> = ({
     return getExportFileName(composerMode, false, currentWorkspace);
   }, [composerMode, currentWorkspace]);
 
-  return <ThreatModelView
-    {...props}
-    onPrintButtonClick={() => onPrintButtonClick?.(getWorkspaceData())}
-    showPrintDownloadButtons={appMode !== APP_MODE_IDE_EXTENSION}
-    composerMode={composerMode}
-    data={getWorkspaceData()}
-    downloadFileName={downloadFileName}
-    hasContentDetails={hasContentDetails}
-    onApplicationInfoView={props.onApplicationInfoView}
-    onArchitectureView={props.onArchitectureView}
-    onDataflowView={props.onDataflowView}
-    onAssumptionListView={props.onAssumptionListView}
-    onThreatListView={props.onThreatListView}
-    onMitigationListView={props.onMitigationListView}
-  />;
+  return (
+    <ThreatModelView
+      {...props}
+      onPrintButtonClick={() => onPrintButtonClick?.(getWorkspaceData())}
+      showPrintDownloadButtons={appMode !== APP_MODE_IDE_EXTENSION}
+      composerMode={composerMode}
+      data={getWorkspaceData()}
+      downloadFileName={downloadFileName}
+      hasContentDetails={hasContentDetails}
+      onApplicationInfoView={props.onApplicationInfoView}
+      onArchitectureView={props.onArchitectureView}
+      onDataflowView={props.onDataflowView}
+      onAssumptionListView={props.onAssumptionListView}
+      onThreatListView={props.onThreatListView}
+      onMitigationListView={props.onMitigationListView}
+    />);
 };
 
 export default ThreatModel;
