@@ -38,7 +38,7 @@ const ContentLayout: FC<PropsWithChildren<ContentLayoutProps>> = ({
       variant="h1"
       {...props}
     >
-      {applicationInfo.name ? `${title} for: ` + applicationInfo.name : 'Insights dashboard'}
+      {applicationInfo.name ? `${title} for: ${applicationInfo.name}` : title}
     </Header>}
   >
     {children}

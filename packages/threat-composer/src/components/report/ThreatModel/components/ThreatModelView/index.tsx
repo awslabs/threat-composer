@@ -26,7 +26,7 @@ import Spinner from '@cloudscape-design/components/spinner';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC, useEffect, useCallback, useState, ReactNode, PropsWithChildren } from 'react';
+import { FC, useEffect, useCallback, useState, ReactNode, PropsWithChildren, useMemo } from 'react';
 import { DataExchangeFormat, HasContentDetails, ViewNavigationEvent } from '../../../../../customTypes';
 import printStyles from '../../../../../styles/print';
 import convertToYaml from '../../../../../utils/convertToYaml';
@@ -199,73 +199,43 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
     return buttons.flatMap((b, index) => index === len - 1 ? <Box>{b}</Box> : [b, <Box fontWeight="bold" css={styles.text}>or</Box>]);
   }, [hasContentDetails, props]);
 
+  const actions = useMemo(() => <SpaceBetween direction="horizontal" size="xs">
+    <Popover
+      dismissButton={false}
+      position="top"
+      size="small"
+      triggerType="custom"
+      content={
+        <StatusIndicator type="success">
+          Content copied
+        </StatusIndicator>
+      }
+    >
+      <Button
+        onClick={handleCopyMarkdown}>
+        Copy as Markdown
+      </Button>
+    </Popover>
+    {downloadFileName && showPrintDownloadButtons && <ButtonDropdown
+      items={[
+        { text: 'Download as Markdown File', id: 'markdown' },
+        ...(convertToDocx ? [{ text: 'Download as Word - Docx File', id: 'docx' }] : []),
+        { text: 'Download as JSON File', id: 'json' },
+      ]}
+      onItemClick={handleDownloadClick}
+    >
+      Download
+    </ButtonDropdown>}
+    {showPrintDownloadButtons && <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>}
+  </SpaceBetween>, [handleCopyMarkdown, downloadFileName, showPrintDownloadButtons, convertToDocx, handleDownloadClick, onPrintButtonClick]);
+
   return (<ContentLayout
     isPreview={isPreview}
-    actions={
-      <SpaceBetween direction="horizontal" size="xs">
-        <Popover
-          dismissButton={false}
-          position="top"
-          size="small"
-          triggerType="custom"
-          content={
-            <StatusIndicator type="success">
-              Content copied
-            </StatusIndicator>
-          }
-        >
-          <Button
-            onClick={handleCopyMarkdown}>
-            Copy as Markdown
-          </Button>
-        </Popover>
-        {downloadFileName && showPrintDownloadButtons && <ButtonDropdown
-          items={[
-            { text: 'Download as Markdown File', id: 'markdown' },
-            ...(convertToDocx ? [{ text: 'Download as Word - Docx File', id: 'docx' }] : []),
-            { text: 'Download as JSON File', id: 'json' },
-          ]}
-          onItemClick={handleDownloadClick}
-        >
-          Download
-        </ButtonDropdown>}
-        {showPrintDownloadButtons && <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>}
-      </SpaceBetween>
-    }>
+    actions={actions}>
     <SpaceBetween direction='vertical' size='s'>
       {isPreview && <div css={printStyles.hiddenPrint}>
         <Header
-          actions={
-            <SpaceBetween direction="horizontal" size="xs">
-              <Popover
-                dismissButton={false}
-                position="top"
-                size="small"
-                triggerType="custom"
-                content={
-                  <StatusIndicator type="success">
-                    Content copied
-                  </StatusIndicator>
-                }
-              >
-                <Button
-                  onClick={handleCopyMarkdown}>
-                  Copy as Markdown
-                </Button>
-              </Popover>
-              {downloadFileName && showPrintDownloadButtons && <ButtonDropdown
-                items={[
-                  { text: 'Download as Markdown File', id: 'markdown' },
-                  ...(convertToDocx ? [{ text: 'Download as Word - Docx File', id: 'docx' }] : []),
-                  { text: 'Download as JSON File', id: 'json' },
-                ]}
-                onItemClick={handleDownloadClick}
-              >
-                Download
-              </ButtonDropdown>}
-              {showPrintDownloadButtons && <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>}
-            </SpaceBetween>
-          }
+          actions={actions}
         >
         </Header>
       </div>}
