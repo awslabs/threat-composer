@@ -20,14 +20,15 @@ import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
 
 const ArchitectureInfo: FC<EditableComponentBaseProps> = (props) => {
   const { architectureInfo, setArchitectureInfo } = useArchitectureInfoContext();
-  return <BaseDiagramInfo
-    {...props}
-    headerTitle='Architecture'
-    diagramTitle='Architecture Diagram'
-    entity={architectureInfo}
-    onConfirm={(diagram) => setArchitectureInfo(diagram)}
-    validateData={ArchitectureInfoSchema.shape.description.safeParse}
-  />;
+  return (
+    <BaseDiagramInfo
+      {...props}
+      headerTitle='Architecture'
+      diagramTitle='Architecture Diagram'
+      entity={architectureInfo}
+      onConfirm={(diagram) => setArchitectureInfo(diagram)}
+      validateData={ArchitectureInfoSchema.shape.description.safeParse}
+    />);
 };
 
 export default ArchitectureInfo;

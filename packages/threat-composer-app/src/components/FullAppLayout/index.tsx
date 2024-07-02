@@ -16,7 +16,6 @@
 import AppLayoutComponent, {
   AppLayoutProps as AppLayoutComponentProps,
 } from '@cloudscape-design/components/app-layout';
-import Box from '@cloudscape-design/components/box';
 import BreadcrumbGroup, { BreadcrumbGroupProps } from '@cloudscape-design/components/breadcrumb-group';
 import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import SideNavigation, { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
@@ -163,19 +162,15 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
           'navigation' in props ? (
             props.navigation
           ) : (
-            <div>
-              <SideNavigation
-                header={{ text: title, href: headerHref }}
-                activeHref={activeHref}
-                onFollow={onNavigate}
-                items={props.navigationItems}
-              />
-            </div>
+            <SideNavigation
+              header={{ text: title, href: headerHref }}
+              activeHref={activeHref}
+              onFollow={onNavigate}
+              items={props.navigationItems}
+            />
           )
         }
-        content={
-          !contentType || contentType === 'default' ? <Box padding={{ top: 'l' }}>{children}</Box> : children
-        }
+        content={children}
         {...props}
         contentType={contentType}
         notifications={notifications}

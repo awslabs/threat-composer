@@ -16,7 +16,6 @@
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Grid from '@cloudscape-design/components/grid';
-import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
@@ -24,6 +23,7 @@ import { useAssumptionLinksContext } from '../../../contexts';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
 import { Assumption, AssumptionLink } from '../../../customTypes';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
+import ContentLayout from '../../generic/ContentLayout';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
 import TagSelector from '../../generic/TagSelector';
 import AssumptionCard from '../AssumptionCard';
@@ -158,11 +158,9 @@ const AssumptionList: FC = () => {
 
   }, [saveAssumption, addAssumptionLinks]);
 
-  return (<div>
+  return (<ContentLayout title='Assumption list' counter={`(${filteredList.length})`}>
     <SpaceBetween direction='vertical' size='s'>
-      <Container header={
-        <Header counter={`(${filteredList.length})`}>Assumption List</Header>
-      }>
+      <Container>
         <SpaceBetween direction='vertical' size='s'>
           <TextFilter
             filteringText={filteringText}
@@ -225,7 +223,7 @@ const AssumptionList: FC = () => {
         onSave={handleSaveNew}
       />
     </SpaceBetween>
-  </div>);
+  </ContentLayout>);
 };
 
 export default AssumptionList;
