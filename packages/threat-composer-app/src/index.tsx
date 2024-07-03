@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThemeProvider, Mode } from '@aws/threat-composer';
+import { ThemeProvider, Mode, LOCAL_STORAGE_KEY_THEME } from '@aws/threat-composer';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './containers/App';
@@ -21,11 +21,21 @@ import reportWebVitals from './reportWebVitals';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import isMemoryRouterUsed from './utils/isMemoryRouterUsed';
 
+//For the ide-extension, the theme can be set via meta tag.
 const initialThemeString = (document.querySelector('meta[name="dark-mode"]') as HTMLMetaElement)?.content;
 
-const initialTheme = initialThemeString ?
+let initialTheme = initialThemeString ?
   (initialThemeString === 'true' ? Mode.Dark : Mode.Light) :
   undefined;
+
+if (!initialTheme) {
+  //For other use cases, the value of theme selected by users will be kept in localstorage.
+  const localStorageThemeString = localStorage.getItem(LOCAL_STORAGE_KEY_THEME);
+
+  if (localStorageThemeString) {
+    initialTheme = localStorageThemeString === 'dark' ? Mode.Dark : Mode.Light;
+  }
+}
 
 ReactDOM.render(
   <React.StrictMode>

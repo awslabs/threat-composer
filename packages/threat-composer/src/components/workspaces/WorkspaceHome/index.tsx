@@ -14,13 +14,15 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC } from 'react';
-import useHasContent from '../../../hooks/useHasContent';
+import useImportExport from '../../../hooks/useExportImport';
+import hasContent from '../../../utils/hasContent';
 import LandingPage, { LandingPageProps } from '../LandingPage';
 import WorkspaceInsight, { WorkspaceInsightsProps } from '../WorkspaceInsights';
 
 const WorkspaceHome: FC<WorkspaceInsightsProps & LandingPageProps> = (props) => {
-  const [hasContent] = useHasContent();
-  return hasContent ? <WorkspaceInsight {...props} /> : <LandingPage {...props} />;
+  const { getWorkspaceData } = useImportExport();
+  const [hasContentSum] = hasContent(getWorkspaceData());
+  return hasContentSum ? <WorkspaceInsight {...props} /> : <LandingPage {...props} />;
 };
 
 export default WorkspaceHome;

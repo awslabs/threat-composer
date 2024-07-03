@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat } from '../../../../../customTypes';
-import escapeMarkdown from '../../../../../utils/escapeMarkdown';
-import parseTableCellContent from '../../../../../utils/parseTableCellContent';
-import standardizeNumericId from '../../../../../utils/standardizeNumericId';
+import { DataExchangeFormat } from '../../../../customTypes';
+import escapeMarkdown from '../../../../utils/escapeMarkdown';
+import parseTableCellContent from '../../../../utils/parseTableCellContent';
+import standardizeNumericId from '../../../../utils/standardizeNumericId';
 
 export const getMitigationsContent = async (
   data: DataExchangeFormat,

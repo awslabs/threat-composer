@@ -17,6 +17,7 @@ import { applyDensity, applyMode, Density, Mode } from '@cloudscape-design/globa
 import { FC, createContext, useState, useEffect, useContext, PropsWithChildren } from 'react';
 
 import '@cloudscape-design/global-styles/index.css';
+import useLocalStorageState from 'use-local-storage-state';
 
 export interface ThemeProviderProps {
   theme?: Mode;
@@ -39,12 +40,13 @@ const initialState: ThemeContextApi = {
 
 const ThemeContext = createContext<ThemeContextApi>(initialState);
 
+
 const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   children,
   ...props
 }) => {
-  const [theme, setTheme] = useState<Mode>(() => {
-    return props.theme || Mode.Light;
+  const [theme, setTheme] = useLocalStorageState<Mode>('theme', {
+    defaultValue: props.theme || Mode.Light,
   });
 
   const [density, setDensity] = useState<Density>(() => {

@@ -65,6 +65,7 @@ export interface ThreatComposerNamespace {
   getWorkspaceList?: () => Workspace[];
   getCurrentWorkspaceMetadata?: () => Workspace | null;
   getCurrentWorkspaceData?: () => DataExchangeFormat;
+  getCurrentWorkspaceDataMarkdown?: () => Promise<string>;
   stringifyWorkspaceData: (arg0: any) => string;
   setCurrentWorkspaceData?: (arg0: DataExchangeFormat) => Promise<void>;
   switchWorkspace?: (id: string | null) => void;

@@ -75,7 +75,6 @@ const ContentLayout: FC<PropsWithChildren<ContentLayoutProps & {
   }
 
   return (<ContentLayoutComponent
-    title='Threat statement list'
     {...props}
   >
     {children}
@@ -370,10 +369,9 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
 
   return (<ContentLayout
     composerMode={composerMode}
-    title='Threat statement list'
+    title='Threats'
     actions={actions}
     counter={`(${filteredStatementList.length})`}
-    info={composerMode === 'Full' ? undefined : <Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
   >
     <SpaceBetween direction='vertical' size='s'>
       <Container header={
@@ -381,7 +379,7 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
           actions={actions}
           counter={`(${filteredStatementList.length})`}
           info={<Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
-        >Threat statement list</Header> : undefined}
+        >Threats</Header> : undefined}
       >
         <SpaceBetween direction='vertical' size='s'>
           <TextFilter

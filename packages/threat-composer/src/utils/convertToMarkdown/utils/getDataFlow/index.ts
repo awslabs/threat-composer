@@ -13,22 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat } from '../../../../../customTypes';
+import { DataExchangeFormat } from '../../../../customTypes';
 
-export const getArchitectureContent = async (
+export const getDataflowContent = async (
   data: DataExchangeFormat,
 ) => {
   const rows: string[] = [];
-  rows.push('## Architecture');
-  if (data.architecture) {
-    if (data.architecture.description) {
+  rows.push('## Dataflow');
+  if (data.dataflow) {
+    if (data.dataflow.description) {
       rows.push('### Introduction');
-      rows.push(data.architecture.description);
+      rows.push(data.dataflow.description);
     }
 
-    if (data.architecture.image) {
-      rows.push('### Architecture Diagram');
-      rows.push(`![Architecture Diagram](${data.architecture.image})`);
+    if (data.dataflow.image) {
+      rows.push('### Dataflow Diagram');
+      rows.push(`![Dataflow Diagram](${data.dataflow.image})`);
     }
   }
 

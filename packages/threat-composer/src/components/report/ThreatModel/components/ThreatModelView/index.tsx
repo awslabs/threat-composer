@@ -29,6 +29,7 @@ import { css } from '@emotion/react';
 import { FC, useEffect, useCallback, useState, ReactNode, PropsWithChildren, useMemo } from 'react';
 import { DataExchangeFormat, HasContentDetails, ViewNavigationEvent } from '../../../../../customTypes';
 import printStyles from '../../../../../styles/print';
+import convertToMarkdown from '../../../../../utils/convertToMarkdown';
 import convertToYaml from '../../../../../utils/convertToYaml';
 import {
   downloadContentAsMarkdown,
@@ -36,16 +37,8 @@ import {
   downloadContentAsYaml,
   downloadObjectAsJson,
 } from '../../../../../utils/downloadContent';
-import sanitizeHtml from '../../../../../utils/sanitizeHtml';
 import MarkdownViewer from '../../../../generic/MarkdownViewer';
-import { getApplicationInfoContent } from '../../utils/getApplicationInfo';
-import { getApplicationName } from '../../utils/getApplicationName';
-import { getArchitectureContent } from '../../utils/getArchitecture';
-import { getAssetsContent } from '../../utils/getAssets';
-import { getAssumptionsContent } from '../../utils/getAssumptions';
-import { getDataflowContent } from '../../utils/getDataFlow';
-import { getMitigationsContent } from '../../utils/getMitigations';
-import { getThreatsContent } from '../../utils/getThreats';
+
 
 const styles = {
   text: css({
@@ -112,18 +105,7 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
   useEffect(() => {
     const updateContent = async () => {
       setLoading(true);
-      const sanitizedData = sanitizeHtml(data);
-      const processedContent = (composerMode === 'Full' ? [
-        (!hasContentDetails || hasContentDetails.applicationName) && await getApplicationName(sanitizedData),
-        (!hasContentDetails || hasContentDetails.applicationInfo) && await getApplicationInfoContent(sanitizedData),
-        (!hasContentDetails || hasContentDetails.architecture) && await getArchitectureContent(sanitizedData),
-        (!hasContentDetails || hasContentDetails.dataflow) && await getDataflowContent(sanitizedData),
-        (!hasContentDetails || hasContentDetails.assumptions) && await getAssumptionsContent(sanitizedData),
-        (!hasContentDetails || hasContentDetails.threats) && await getThreatsContent(sanitizedData),
-        (!hasContentDetails || hasContentDetails.mitigations) && await getMitigationsContent(sanitizedData),
-        (!hasContentDetails || hasContentDetails.threats) && await getAssetsContent(sanitizedData),
-      ] : [await getThreatsContent(sanitizedData, true)]).filter(x => !!x).join('\n');
-
+      const processedContent = await convertToMarkdown(data, composerMode);
       setContent(processedContent);
       setLoading(false);
     };
@@ -154,7 +136,6 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
     const yamlContent = convertToYaml(data);
     downloadFileName && downloadContentAsYaml(yamlContent, downloadFileName);
   }, [data, downloadFileName]);
-
 
   const handleDownloadClick: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(async ({ detail }) => {
     switch (detail.id) {

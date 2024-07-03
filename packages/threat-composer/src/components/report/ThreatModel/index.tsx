@@ -19,8 +19,8 @@ import { APP_MODE_IDE_EXTENSION } from '../../../configs/appMode';
 import { useGlobalSetupContext, useWorkspacesContext } from '../../../contexts';
 import { DataExchangeFormat, ViewNavigationEvent } from '../../../customTypes';
 import useImportExport from '../../../hooks/useExportImport';
-import useHasContent from '../../../hooks/useHasContent';
 import getExportFileName from '../../../utils/getExportFileName';
+import hasContent from '../../../utils/hasContent';
 
 export interface ThreatModelProps extends ViewNavigationEvent {
   onPrintButtonClick?: (data: DataExchangeFormat) => void;
@@ -34,12 +34,16 @@ const ThreatModel: FC<ThreatModelProps> = ({
 }) => {
   const { getWorkspaceData } = useImportExport();
   const { composerMode, appMode } = useGlobalSetupContext();
-  const [_, hasContentDetails] = useHasContent();
   const { currentWorkspace } = useWorkspacesContext();
 
   const downloadFileName = useMemo(() => {
     return getExportFileName(composerMode, false, currentWorkspace);
   }, [composerMode, currentWorkspace]);
+
+  const hasContentDetails = useMemo(() => {
+    const [, details] = hasContent(getWorkspaceData());
+    return details;
+  }, [getWorkspaceData]);
 
   return (
     <ThreatModelView

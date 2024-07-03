@@ -20,7 +20,7 @@ import useLocalStorageState from 'use-local-storage-state';
 import { GlobalSetupContext, useGlobalSetupContext } from './context';
 import { useThemeContext } from '../../components/generic/ThemeProvider';
 import InfoModal from '../../components/global/InfoModal';
-import { LOCAL_STORAGE_KEY_NEW_VISIT_FLAG } from '../../configs/localStorageKeys';
+import { LOCAL_STORAGE_KEY_NEW_VISIT_FLAG, LOCAL_STORAGE_KEY_THEME } from '../../configs/localStorageKeys';
 import { ComposerMode, AppMode } from '../../customTypes';
 import EventController from '../../utils/EventController';
 
@@ -50,17 +50,23 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
   features,
 }) => {
   const [fileImportModalVisible, setFileImportModalVisible] = useState(false);
-  const { setTheme, setDensity } = useThemeContext();
+  const { setTheme, setDensity, theme } = useThemeContext();
 
   useEffect(() => {
     window.threatcomposer.applyDensity = (density?: string) => {
       setDensity(density === 'compact' ? Density.Compact : Density.Comfortable);
     };
 
-    window.threatcomposer.applyTheme = (theme?: string) => {
-      setTheme(theme === 'dark' ? Mode.Dark : Mode.Light);
+    window.threatcomposer.applyTheme = (newTheme?: string) => {
+      setTheme(newTheme === 'dark' ? Mode.Dark : Mode.Light);
     };
   }, [setDensity, setTheme]);
+
+  useEffect(() => {
+    if (appMode !== 'ide-extension') {
+      window.localStorage.setItem(LOCAL_STORAGE_KEY_THEME, theme);
+    }
+  }, [appMode, theme]);
 
   const [hasVisitBefore, setHasVisitBefore] = useLocalStorageState<boolean>(LOCAL_STORAGE_KEY_NEW_VISIT_FLAG, {
     defaultValue: false,

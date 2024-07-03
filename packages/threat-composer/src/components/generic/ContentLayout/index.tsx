@@ -19,7 +19,7 @@ import Header, { HeaderProps } from '@cloudscape-design/components/header';
 import { FC, PropsWithChildren } from 'react';
 import { useApplicationInfoContext } from '../../../contexts/ApplicationContext';
 
-export interface ContentLayoutProps extends HeaderProps {
+export interface ContentLayoutProps extends Omit<HeaderProps, 'info'> {
   /**
    * The title of the header.
    */
@@ -37,8 +37,9 @@ const ContentLayout: FC<PropsWithChildren<ContentLayoutProps>> = ({
     header={<Header
       variant="h1"
       {...props}
+      info={applicationInfo.name ? `| ${applicationInfo.name}` : undefined}
     >
-      {applicationInfo.name ? `${title} for: ${applicationInfo.name}` : title}
+      {title}
     </Header>}
   >
     {children}
