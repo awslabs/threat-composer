@@ -175,7 +175,7 @@ const MitigationList: FC = () => {
 
   }, [saveMitigation, addMitigationLinks, addAssumptionLinks]);
 
-  return (<ContentLayout title='Mitigation list' counter={`(${filteredList.length})`}>
+  return (<ContentLayout title='Mitigations' counter={`(${filteredList.length})`}>
     <SpaceBetween direction='vertical' size='s'>
       <Container>
         <SpaceBetween direction='vertical' size='s'>

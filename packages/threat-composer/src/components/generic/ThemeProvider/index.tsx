@@ -15,11 +15,13 @@
  ******************************************************************************************************************** */
 import { applyDensity, applyMode, Density, Mode } from '@cloudscape-design/global-styles';
 import { FC, createContext, useState, useEffect, useContext, PropsWithChildren } from 'react';
+import useLocalStorageState from 'use-local-storage-state';
+import { LOCAL_STORAGE_KEY_THEME_MODE, LOCAL_STORAGE_KEY_THEME_DENSITY } from '../../../configs';
 
 import '@cloudscape-design/global-styles/index.css';
-import useLocalStorageState from 'use-local-storage-state';
 
 export interface ThemeProviderProps {
+  appMode?: string;
   theme?: Mode;
   densitiy?: Density;
 }
@@ -31,32 +33,7 @@ export interface ThemeContextApi {
   setDensity: React.Dispatch<React.SetStateAction<Density>>;
 }
 
-const initialState: ThemeContextApi = {
-  theme: Mode.Light,
-  density: Density.Comfortable,
-  setTheme: () => { },
-  setDensity: () => { },
-};
-
-const ThemeContext = createContext<ThemeContextApi>(initialState);
-
-
-const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
-  children,
-  ...props
-}) => {
-  const [theme, setTheme] = useLocalStorageState<Mode>('theme', {
-    defaultValue: props.theme || Mode.Light,
-  });
-
-  const [density, setDensity] = useState<Density>(() => {
-    if (props.densitiy === Density.Compact) {
-      return Density.Compact;
-    }
-
-    return Density.Comfortable;
-  });
-
+const useTheme = (props: ThemeProviderProps, { theme, setTheme, density, setDensity }: ThemeContextApi) => {
   useEffect(() => {
     typeof props.theme !== 'undefined' && setTheme(props.theme);
   }, [props.theme]);
@@ -72,6 +49,28 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   useEffect(() => {
     applyDensity(density);
   }, [density]);
+};
+
+const ThemeLocalStateProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
+  children,
+  ...props
+}) => {
+  const [theme, setTheme] = useState<Mode>(props.theme || Mode.Light);
+
+  const [density, setDensity] = useState<Density>(() => {
+    if (props.densitiy === Density.Compact) {
+      return Density.Compact;
+    }
+
+    return Density.Comfortable;
+  });
+
+  useTheme(props, {
+    theme,
+    setTheme,
+    density,
+    setDensity,
+  });
 
   return (
     <ThemeContext.Provider
@@ -85,6 +84,56 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
       {children}
     </ThemeContext.Provider>
   );
+};
+
+const ThemeLocalStorageProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
+  children,
+  ...props
+}) => {
+  const [theme, setTheme] = useLocalStorageState<Mode>(LOCAL_STORAGE_KEY_THEME_MODE, {
+    defaultValue: props.theme || Mode.Light,
+  });
+
+  const [density, setDensity] = useLocalStorageState<Density>(LOCAL_STORAGE_KEY_THEME_DENSITY, {
+    defaultValue: props.densitiy === Density.Compact ? Density.Compact : Density.Comfortable,
+  });
+
+  useTheme(props, {
+    theme,
+    setTheme,
+    density,
+    setDensity,
+  });
+
+  return (
+    <ThemeContext.Provider
+      value={{
+        theme,
+        density,
+        setTheme,
+        setDensity,
+      }}
+    >
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+const initialState: ThemeContextApi = {
+  theme: Mode.Light,
+  density: Density.Comfortable,
+  setTheme: () => { },
+  setDensity: () => { },
+};
+
+const ThemeContext = createContext<ThemeContextApi>(initialState);
+
+
+const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
+  appMode,
+  ...props
+}) => {
+  return appMode === 'ide-extension' ? <ThemeLocalStateProvider {...props} /> : <ThemeLocalStorageProvider {...props} />;
 };
 
 export {

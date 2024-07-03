@@ -158,7 +158,7 @@ const AssumptionList: FC = () => {
 
   }, [saveAssumption, addAssumptionLinks]);
 
-  return (<ContentLayout title='Assumption list' counter={`(${filteredList.length})`}>
+  return (<ContentLayout title='Assumptions' counter={`(${filteredList.length})`}>
     <SpaceBetween direction='vertical' size='s'>
       <Container>
         <SpaceBetween direction='vertical' size='s'>
