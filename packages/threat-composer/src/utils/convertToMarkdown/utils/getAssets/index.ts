@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat, TemplateThreatStatement } from '../../../../../customTypes';
-import escapeMarkdown from '../../../../../utils/escapeMarkdown';
-import standardizeNumericId from '../../../../../utils/standardizeNumericId';
+import { DataExchangeFormat, TemplateThreatStatement } from '../../../../customTypes';
+import escapeMarkdown from '../../../../utils/escapeMarkdown';
+import standardizeNumericId from '../../../../utils/standardizeNumericId';
 
 export const getAssetsContent = async (
   data: DataExchangeFormat,

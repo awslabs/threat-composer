@@ -13,22 +13,37 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC } from 'react';
-import { useArchitectureInfoContext } from '../../../contexts/ArchitectureContext/context';
-import { ArchitectureInfoSchema, EditableComponentBaseProps } from '../../../customTypes';
-import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
 
-const ArchitectureInfo: FC<EditableComponentBaseProps> = (props) => {
-  const { architectureInfo, setArchitectureInfo } = useArchitectureInfoContext();
-  return (
-    <BaseDiagramInfo
+import ContentLayoutComponent from '@cloudscape-design/components/content-layout';
+import Header, { HeaderProps } from '@cloudscape-design/components/header';
+import { FC, PropsWithChildren } from 'react';
+import { useApplicationInfoContext } from '../../../contexts/ApplicationContext';
+
+export interface ContentLayoutProps extends Omit<HeaderProps, 'info'> {
+  /**
+   * The title of the header.
+   */
+  title?: string;
+}
+
+const ContentLayout: FC<PropsWithChildren<ContentLayoutProps>> = ({
+  title,
+  children,
+  ...props
+}) => {
+  const { applicationInfo } = useApplicationInfoContext();
+
+  return (<ContentLayoutComponent
+    header={<Header
+      variant="h1"
       {...props}
-      headerTitle='Architecture'
-      diagramTitle='Architecture Diagram'
-      entity={architectureInfo}
-      onConfirm={(diagram) => setArchitectureInfo(diagram)}
-      validateData={ArchitectureInfoSchema.shape.description.safeParse}
-    />);
+      info={applicationInfo.name ? `| ${applicationInfo.name}` : undefined}
+    >
+      {title}
+    </Header>}
+  >
+    {children}
+  </ContentLayoutComponent>);
 };
 
-export default ArchitectureInfo;
+export default ContentLayout;

@@ -21,15 +21,16 @@ import reportWebVitals from './reportWebVitals';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import isMemoryRouterUsed from './utils/isMemoryRouterUsed';
 
+//For the ide-extension, the theme can be set via meta tag.
 const initialThemeString = (document.querySelector('meta[name="dark-mode"]') as HTMLMetaElement)?.content;
 
-const initialTheme = initialThemeString ?
+let initialTheme = initialThemeString ?
   (initialThemeString === 'true' ? Mode.Dark : Mode.Light) :
   undefined;
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={initialTheme}>
+    <ThemeProvider theme={initialTheme} appMode={process.env.REACT_APP_APP_MODE || undefined}>
       <App />
     </ThemeProvider>
   </React.StrictMode>,

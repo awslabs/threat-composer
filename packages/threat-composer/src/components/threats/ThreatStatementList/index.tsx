@@ -22,15 +22,16 @@ import Multiselect from '@cloudscape-design/components/multiselect';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { css } from '@emotion/react';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, PropsWithChildren, useCallback, useMemo, useState } from 'react';
 import { LEVEL_SELECTOR_OPTIONS, DEFAULT_NEW_ENTITY_ID, LEVEL_NOT_SET } from '../../../configs';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
-import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
+import { GlobalSetupContextApi, useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { TemplateThreatStatement, ThreatStatementListFilter, ViewNavigationEvent } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import AssetSelector from '../../generic/AssetSelector';
+import ContentLayoutComponent, { ContentLayoutProps } from '../../generic/ContentLayout';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
 import { OPTIONS as STRIDEOptions } from '../../generic/STRIDESelector';
 import TagSelector from '../../generic/TagSelector';
@@ -60,6 +61,24 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
   }),
+};
+
+const ContentLayout: FC<PropsWithChildren<ContentLayoutProps & {
+  composerMode: GlobalSetupContextApi['composerMode'];
+}>> = ({
+  composerMode,
+  children,
+  ...props
+}) => {
+  if (composerMode !== 'Full') {
+    return <>{children}</>;
+  }
+
+  return (<ContentLayoutComponent
+    {...props}
+  >
+    {children}
+  </ContentLayoutComponent>);
 };
 
 export interface ThreatStatementListProps {
@@ -348,15 +367,20 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
       { colspan: { default: 1 } }];
   }, [composerMode]);
 
-  return (<div>
+  return (<ContentLayout
+    composerMode={composerMode}
+    title='Threats'
+    actions={actions}
+    counter={`(${filteredStatementList.length})`}
+  >
     <SpaceBetween direction='vertical' size='s'>
       <Container header={
-        <Header
+        composerMode === 'ThreatsOnly' ? <Header
           actions={actions}
           counter={`(${filteredStatementList.length})`}
-          info={composerMode === 'Full' ? undefined : <Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
-        >Threat Statement List</Header>
-      }>
+          info={<Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
+        >Threats</Header> : undefined}
+      >
         <SpaceBetween direction='vertical' size='s'>
           <TextFilter
             filteringText={filteringText}
@@ -461,19 +485,21 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
           </Grid>
         </SpaceBetween>
       </Container>
-      {filteredStatementList?.map(st => (<ThreatStatementCard
-        key={st.id}
-        statement={st}
-        onCopy={handleAddStatement}
-        onRemove={handleRemove}
-        onEditInWizard={handleEditStatement}
-        onEditMetadata={handleEditMetadata}
-        onAddTagToStatement={handleAddTagToStatement}
-        onRemoveTagFromStatement={handleRemoveTagFromStatement}
-        showLinkedEntities={composerMode === 'Full'}
-      />))}
-    </SpaceBetween>
-  </div>);
+      {
+        filteredStatementList?.map(st => (<ThreatStatementCard
+          key={st.id}
+          statement={st}
+          onCopy={handleAddStatement}
+          onRemove={handleRemove}
+          onEditInWizard={handleEditStatement}
+          onEditMetadata={handleEditMetadata}
+          onAddTagToStatement={handleAddTagToStatement}
+          onRemoveTagFromStatement={handleRemoveTagFromStatement}
+          showLinkedEntities={composerMode === 'Full'}
+        />))
+      }
+    </SpaceBetween >
+  </ContentLayout >);
 };
 
 export default ThreatStatementList;

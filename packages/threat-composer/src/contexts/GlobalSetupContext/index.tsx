@@ -57,8 +57,8 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
       setDensity(density === 'compact' ? Density.Compact : Density.Comfortable);
     };
 
-    window.threatcomposer.applyTheme = (theme?: string) => {
-      setTheme(theme === 'dark' ? Mode.Dark : Mode.Light);
+    window.threatcomposer.applyTheme = (newTheme?: string) => {
+      setTheme(newTheme === 'dark' ? Mode.Dark : Mode.Light);
     };
   }, [setDensity, setTheme]);
 

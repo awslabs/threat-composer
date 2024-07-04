@@ -13,18 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat } from '../../../../../customTypes';
+import { DataExchangeFormat } from '../../../../customTypes';
+import escapeMarkdown from '../../../../utils/escapeMarkdown';
 
-export const getApplicationInfoContent = async (
+export const getApplicationName = async (
   data: DataExchangeFormat,
 ) => {
-  const rows: string[] = [];
-  rows.push('## Application Info');
-  if (data.applicationInfo?.description) {
-    rows.push(data.applicationInfo.description);
-  }
-
-  rows.push('\n');
-
-  return rows.join('\n');
+  return data.applicationInfo?.name ? `# ${escapeMarkdown(data.applicationInfo?.name)}` : '';
 };

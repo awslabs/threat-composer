@@ -14,8 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import React, { FC } from 'react';
-import ThreatStatementEditor from '../../components/threats/ThreatStatementEditor';
+import { ThreatStatementEditorInner } from '../../components/threats/ThreatStatementEditor';
 import WorkspaceContextAggregator from '../../contexts/WorkspaceContextAggregator';
+import getNewThreatStatement from '../../utils/getNewThreatStatement';
 
 export interface ThreatEditorProps {
   workspaceId?: string;
@@ -27,7 +28,7 @@ const ThreatEditor: FC<ThreatEditorProps> = ({ workspaceId }) => {
     composerMode='Full'
     requiredGlobalSetupContext
   >
-    <ThreatStatementEditor />
+    <ThreatStatementEditorInner editingStatement={getNewThreatStatement()} />
   </WorkspaceContextAggregator>);
 };
 

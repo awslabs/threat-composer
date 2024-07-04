@@ -17,6 +17,7 @@ import { useCallback, FC, PropsWithChildren, useEffect } from 'react';
 import { useWorkspacesContext } from '../../../contexts';
 import useExportImport, { PLACEHOLDER_EXCHANGE_DATA } from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
+import convertToMarkdown from '../../../utils/convertToMarkdown';
 
 /**
  * Export threat-composer functionalities via window object.
@@ -40,6 +41,11 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({ children }) => {
     [importData],
   );
 
+  const getCurrentWorkspaceDataMarkdown = useCallback(async () => {
+    return convertToMarkdown(getWorkspaceData());
+  }, [getWorkspaceData]);
+
+
   useEffect(() => {
     window.threatcomposer.getWorkspaceList = () => workspaceList;
   }, [workspaceList]);
@@ -51,6 +57,10 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({ children }) => {
   useEffect(() => {
     window.threatcomposer.getCurrentWorkspaceData = getWorkspaceData;
   }, [getWorkspaceData]);
+
+  useEffect(() => {
+    window.threatcomposer.getCurrentWorkspaceDataMarkdown = getCurrentWorkspaceDataMarkdown;
+  }, [getCurrentWorkspaceDataMarkdown]);
 
   useEffect(() => {
     window.threatcomposer.setCurrentWorkspaceData = setWorkspaceData;

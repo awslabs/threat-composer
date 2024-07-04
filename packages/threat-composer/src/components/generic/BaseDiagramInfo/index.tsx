@@ -21,6 +21,7 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useCallback, useState, useMemo, useEffect } from 'react';
 import { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
 import imageStyles from '../../../styles/image';
+import ContentLayout from '../../generic/ContentLayout';
 import ImageEdit from '../ImageEdit';
 import MarkdownEditor, { MarkdownEditorProps } from '../MarkdownEditor';
 import MarkdownViewer from '../MarkdownViewer';
@@ -71,27 +72,32 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
     </SpaceBetween>) : (<Button onClick={handleEdit}>Edit</Button>);
   }, [editMode, handleSaveDiagramInfo, handleEdit, setEditMode]);
 
-  return (<Container header={<Header actions={actions}>{headerTitle}</Header>}>
-    {editMode ? (<SpaceBetween direction='vertical' size='s'>
-      <MarkdownEditorComponentType
-        label='Introduction'
-        value={content}
-        onChange={setContent}
-        parentHeaderLevel='h3'
-        validateData={validateData}
-      />
-      <Header variant='h3'>{headerTitle} Diagram</Header>
-      <ImageEdit value={image} onChange={setImage} />
-    </SpaceBetween>) :
-      (<SpaceBetween direction='vertical' size='s'>
-        <Header variant='h3' key='diagramInfo'>Introduction</Header>
-        <MarkdownViewer>
-          {entity.description || ''}
-        </MarkdownViewer>
-        <Header variant='h3' key='diagram'>{diagramTitle}</Header>
-        {entity.image && <img css={imageStyles} src={entity.image} alt={diagramTitle} />}
-      </SpaceBetween>)}
-  </Container>
+  return (<ContentLayout
+    title={headerTitle}
+    actions={actions}
+  >
+    <Container>
+      {editMode ? (<SpaceBetween direction='vertical' size='s'>
+        <MarkdownEditorComponentType
+          label='Introduction'
+          value={content}
+          onChange={setContent}
+          parentHeaderLevel='h3'
+          validateData={validateData}
+        />
+        <Header variant='h3'>{headerTitle} Diagram</Header>
+        <ImageEdit value={image} onChange={setImage} />
+      </SpaceBetween>) :
+        (<SpaceBetween direction='vertical' size='s'>
+          <Header variant='h3' key='diagramInfo'>Introduction</Header>
+          <MarkdownViewer>
+            {entity.description || ''}
+          </MarkdownViewer>
+          <Header variant='h3' key='diagram'>{diagramTitle}</Header>
+          {entity.image && <img css={imageStyles} src={entity.image} alt={diagramTitle} />}
+        </SpaceBetween>)}
+    </Container>
+  </ContentLayout>
   );
 };
 

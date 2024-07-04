@@ -33,3 +33,7 @@ export const LOCAL_STORAGE_KEY_DATAFLOW_INFO = 'ThreatStatementGenerator.Dataflo
 
 export const LOCAL_STORAGE_KEY_WORKSPACE_LIST_MIGRATION = 'ThreatStatementGenerator.workspaceListMigration';
 export const LOCAL_STORAGE_KEY_THREATS_LIST_MIGRATION = 'ThreatStatementGenerator.threatListMigration';
+
+
+export const LOCAL_STORAGE_KEY_THEME_MODE = 'ThreatComposer.theme.mode';
+export const LOCAL_STORAGE_KEY_THEME_DENSITY = 'ThreatComposer.theme.density';
