@@ -145,13 +145,13 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@cloudscape-design/jest-preset,@testing-library/jest-dom,@testing-library/react,@testing-library/user-event,@types/jest,@types/react,@types/react-dom,@types/react-router-dom,@types/uuid,eslint-import-resolver-typescript,eslint-plugin-import,merge,@aws-northstar/ui,@aws/threat-composer,@cloudscape-design/components,@cloudscape-design/design-tokens,@cloudscape-design/global-styles,@uidotdev/usehooks,docx,react,react-dom,react-router-dom,unist-util-visit,uuid,web-vitals"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@cloudscape-design/jest-preset,@testing-library/jest-dom,@testing-library/react,@testing-library/user-event,@types/jest,@types/react,@types/react-dom,@types/react-router-dom,@types/uuid,eslint-import-resolver-typescript,eslint-plugin-import,merge,@aws-northstar/ui,@aws/threat-composer,@cloudscape-design/components,@cloudscape-design/design-tokens,@cloudscape-design/global-styles,@emotion/react,@uidotdev/usehooks,docx,react,react-dom,react-router-dom,unist-util-visit,uuid,web-vitals"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @cloudscape-design/jest-preset @testing-library/jest-dom @testing-library/react @testing-library/user-event @types/jest @types/node @types/react @types/react-dom @types/react-router-dom @types/uuid @typescript-eslint/eslint-plugin @typescript-eslint/parser constructs eslint-import-resolver-typescript eslint-plugin-import eslint merge projen typescript @aws-northstar/ui @aws/threat-composer @cloudscape-design/components @cloudscape-design/design-tokens @cloudscape-design/global-styles @uidotdev/usehooks docx react react-dom react-router-dom react-scripts remark-frontmatter remark-gfm remark-parse unified unist-util-visit uuid web-vitals"
+          "exec": "yarn upgrade @cloudscape-design/jest-preset @testing-library/jest-dom @testing-library/react @testing-library/user-event @types/jest @types/node @types/react @types/react-dom @types/react-router-dom @types/uuid @typescript-eslint/eslint-plugin @typescript-eslint/parser constructs eslint-import-resolver-typescript eslint-plugin-import eslint merge projen typescript @aws-northstar/ui @aws/threat-composer @cloudscape-design/components @cloudscape-design/design-tokens @cloudscape-design/global-styles @emotion/react @uidotdev/usehooks docx react react-dom react-router-dom react-scripts remark-frontmatter remark-gfm remark-parse unified unist-util-visit uuid web-vitals"
         },
         {
           "exec": "npx projen"

@@ -114,6 +114,10 @@
       "type": "runtime"
     },
     {
+      "name": "@emotion/react",
+      "type": "runtime"
+    },
+    {
       "name": "@uidotdev/usehooks",
       "type": "runtime"
     },
