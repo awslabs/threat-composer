@@ -13,10 +13,26 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+/** @jsxImportSource @emotion/react */
 import { ThreatModelView } from '@aws/threat-composer';
-import Box from '@cloudscape-design/components/box';
+import { Container } from '@cloudscape-design/components';
+import * as awsui from '@cloudscape-design/design-tokens';
+import { css } from '@emotion/react';
 import { FC, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+
+const styles = {
+  container: css({
+    'background': awsui.colorBackgroundContainerContent,
+    'width': '100vw',
+    'height': '100vh',
+    '&>div': {
+      border: 'none !important',
+      borderRadius: '0px !important',
+      boxShadow: 'none !important',
+    },
+  }),
+};
 
 const ThreatModelPreview: FC = () => {
   const { dataKey } = useParams();
@@ -37,11 +53,11 @@ const ThreatModelPreview: FC = () => {
     };
   }, [dataKey]);
 
-  if (!data) {
-    return <Box>No content</Box>;
-  }
-
-  return <ThreatModelView composerMode='Full' data={data} isPreview />;
+  return (<div css={styles.container}>
+    <Container>
+      {data ? <ThreatModelView composerMode='Full' data={data} isPreview /> : <div>No content</div>}
+    </Container>
+  </div>);
 };
 
 export default ThreatModelPreview;

@@ -22,11 +22,6 @@ import { css } from '@emotion/react';
 import { useThemeContext } from '../ThemeProvider';
 
 const styles = {
-  container: css({
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-  }),
   svg: css({
     color: 'grey !important',
     fill: 'grey !important',
@@ -35,7 +30,7 @@ const styles = {
 
 const ThemeToggle = () => {
   const { theme, setTheme } = useThemeContext();
-  return (<div css={styles.container}>
+  return (<div>
     <SpaceBetween direction="horizontal" size="xs">
       <Toggle
         onChange={({ detail }) =>

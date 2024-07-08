@@ -15,6 +15,7 @@ class ThreatComposerReactAppProject extends ReactTypeScriptProject {
         "@cloudscape-design/global-styles",
         "@cloudscape-design/design-tokens",
         "@aws-northstar/ui",
+        "@emotion/react",
         "@uidotdev/usehooks",
         "react-router-dom",
         "uuid",
