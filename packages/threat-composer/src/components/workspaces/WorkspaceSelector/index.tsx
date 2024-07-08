@@ -52,6 +52,9 @@ import FileImport from '../../workspaces/FileImport';
 
 const styles = {
   themeToggle: css({
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
     [getMobileMediaQuery()]: {
       display: 'none',
     },
