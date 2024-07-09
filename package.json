@@ -2,6 +2,7 @@
   "name": "@aws/threat-composer-monorepo",
   "scripts": {
     "build": "npx projen build",
+    "build:packs": "npx projen build:packs",
     "clobber": "npx projen clobber",
     "compile": "npx projen compile",
     "default": "npx projen default",

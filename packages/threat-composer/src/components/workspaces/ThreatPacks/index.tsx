@@ -15,9 +15,10 @@
  ******************************************************************************************************************** */
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
+import ContentLayout from '@cloudscape-design/components/content-layout';
+import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo } from 'react';
-import GeneralInfo from './components/GeneralInfo';
 import { useThreatPacksContext } from '../../../contexts/ThreatPacksContext';
 import { ThreatPack } from '../../../customTypes/referencePacks';
 import Table, { ColumnDefinition } from '../../generic/Table';
@@ -34,7 +35,7 @@ const ThreatPacks: FC<ThreatPacksProps> = ({
   const colDef: ColumnDefinition<ThreatPack>[] = useMemo(() => [
     {
       id: 'id',
-      minWidth: 100,
+      minWidth: 150,
       header: 'Id',
       cell: (data) => <Button variant="inline-link" onClick={() => onThreatPackLinkClicked?.(data.id)}>{data.id}</Button>,
       sortingField: 'id',
@@ -66,16 +67,24 @@ const ThreatPacks: FC<ThreatPacksProps> = ({
     },
   ], [threatPackUsage, onThreatPackLinkClicked]);
 
-  return (<SpaceBetween direction='vertical' size='s'>
-    <GeneralInfo />
-    <Table
-      columnDefinitions={colDef}
-      header="Threat packs"
-      items={threatPacks}
-      disableRowSelect={true}
-      wrapLines={true}
+  return (<ContentLayout
+    header={<Header
+      variant="h2"
+      description="Allow you to quickly find and add bulk or selected threat statements to your current workspace"
+      counter={`(${threatPacks.length})`}
+    >
+      Threat Packs
+    </Header>
+    }>
+    <SpaceBetween direction='vertical' size='s'>
+      <Table
+        columnDefinitions={colDef}
+        items={threatPacks}
+        disableRowSelect={true}
+        wrapLines={true}
 
-    /></SpaceBetween>);
+      /></SpaceBetween>
+  </ContentLayout>);
 };
 
 export default ThreatPacks;

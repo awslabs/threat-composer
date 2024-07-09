@@ -14,6 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
+import ContentLayout from '@cloudscape-design/components/content-layout';
+import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { useMemo, FC, useCallback, useState } from 'react';
 import GeneralInfo from './components/GeneralInfo';
@@ -92,18 +94,24 @@ const MitigationPack: FC<MitigationPackProp> = ({
     return null;
   }
 
-  return (<SpaceBetween direction='vertical' size='s'>
-    <GeneralInfo mitigationPack={mitigationPack} />
-    <Table
-      columnDefinitions={colDef}
-      actions={actions}
-      header="Mitigations"
-      items={mitigationPack.mitigations || []}
-      wrapLines={true}
-      isItemDisabled={isItemDisabled}
-      selectedItems={totalSelectedItems}
-      onSelectionChange={({ detail }) => setSelectedItems([...detail.selectedItems])}
-    /></SpaceBetween>);
+  return (<ContentLayout header={
+    <Header
+      variant="h2"
+    >
+      Mitigation Pack - {mitigationPack.name}
+    </Header>
+  }><SpaceBetween direction='vertical' size='s'>
+      <GeneralInfo mitigationPack={mitigationPack} />
+      <Table
+        columnDefinitions={colDef}
+        actions={actions}
+        header="Mitigations"
+        items={mitigationPack.mitigations || []}
+        wrapLines={true}
+        isItemDisabled={isItemDisabled}
+        selectedItems={totalSelectedItems}
+        onSelectionChange={({ detail }) => setSelectedItems([...detail.selectedItems])}
+      /></SpaceBetween></ContentLayout>);
 };
 
 export default MitigationPack;

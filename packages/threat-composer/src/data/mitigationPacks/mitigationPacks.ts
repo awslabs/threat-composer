@@ -13,11 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import sample from './Sample.json';
+import GenAIChatbot from './generated/GenAIChatbot.json';
 import { MitigationPack } from '../../customTypes';
 
 const mitigationPacks = [
-  sample,
+  GenAIChatbot,
 ] as MitigationPack[];
 
 export default mitigationPacks;

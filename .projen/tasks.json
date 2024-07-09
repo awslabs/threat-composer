@@ -5,8 +5,18 @@
       "description": "Full release build for all affected projects",
       "steps": [
         {
-          "exec": "yarn nx run-many --target=build --output-style=stream --nx-bail",
-          "receiveArgs": true
+          "spawn": "build:packs"
+        },
+        {
+          "exec": "yarn nx run-many --target=build --output-style=stream --nx-bail"
+        }
+      ]
+    },
+    "build:packs": {
+      "name": "build:packs",
+      "steps": [
+        {
+          "exec": "npx ts-node ./scripts/packs/buildPacks.ts"
         }
       ]
     },

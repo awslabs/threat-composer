@@ -13,11 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import sample from './Sample.json';
+import GenAI from './generated/GenAI.json';
 import { ThreatPack } from '../../customTypes';
 
 const threatPacks = [
-  sample,
+  GenAI,
 ] as ThreatPack[];
 
 export default threatPacks;
