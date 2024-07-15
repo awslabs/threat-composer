@@ -66,7 +66,7 @@ const ThreatPack: FC<ThreatPackProp> = ({
     },
     {
       id: 'threatSource',
-      header: 'Threat srouce',
+      header: 'Threat source',
       cell: (data) => data.threatSource,
       sortingField: 'threatSource',
     },
