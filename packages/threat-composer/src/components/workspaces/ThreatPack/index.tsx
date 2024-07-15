@@ -63,6 +63,7 @@ const ThreatPack: FC<ThreatPackProp> = ({
       header: 'Threat',
       cell: (data) => data.statement,
       sortingField: 'statement',
+      minWidth: 500,
     },
     {
       id: 'threatSource',
@@ -159,6 +160,10 @@ const ThreatPack: FC<ThreatPackProp> = ({
         isItemDisabled={isItemDisabled}
         selectedItems={totalSelectedItems}
         onSelectionChange={({ detail }) => setSelectedItems([...detail.selectedItems])}
+        resizableColumns
+        stickyColumns={{
+          first: 1,
+        }}
       /></SpaceBetween>
   </ContentLayout>);
 };

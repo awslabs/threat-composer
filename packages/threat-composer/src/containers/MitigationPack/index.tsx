@@ -28,7 +28,7 @@ const MitigationPack: FC<MitigationPackProps> = ({ workspaceId, mitigationPackId
     workspaceId={workspaceId || null}
     composerMode='Full'
   >
-    <MitigationPackComponent mitigationPackId={mitigationPackId || 'Sample'}/>
+    <MitigationPackComponent mitigationPackId={mitigationPackId || 'GenAIChatBot'}/>
   </WorkspaceContextAggregator>);
 };
 
