@@ -15,7 +15,6 @@
  ******************************************************************************************************************** */
 import {
   DEFAULT_WORKSPACE_ID,
-  useGlobalSetupContext,
 } from '@aws/threat-composer';
 import { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
 import { FC, PropsWithChildren, useMemo } from 'react';
@@ -45,12 +44,6 @@ const AppLayout: FC<PropsWithChildren<{}>> = ({
   const { workspaceId = DEFAULT_WORKSPACE_ID } = useParams();
   const notifications = useNotifications();
   const [searchParams] = useSearchParams();
-
-  const { features } = useGlobalSetupContext();
-
-  const isThreatPackFeatureOn = useMemo(() => {
-    return features.includes('threatPacks');
-  }, [features]);
 
   const navigationItems: SideNavigationProps.Item[] = useMemo(() => {
     const navItems: SideNavigationProps.Item[] = [
@@ -95,8 +88,6 @@ const AppLayout: FC<PropsWithChildren<{}>> = ({
         href: generateUrl(ROUTE_VIEW_THREAT_MODEL_PATH, searchParams, workspaceId),
         type: 'link',
       },
-    ];
-    return isThreatPackFeatureOn ? navItems.concat([
       { type: 'divider' },
       {
         type: 'section',
@@ -114,9 +105,10 @@ const AppLayout: FC<PropsWithChildren<{}>> = ({
           },
         ],
       },
-    ]) : navItems;
+    ];
 
-  }, [searchParams, workspaceId, isThreatPackFeatureOn]);
+    return navItems;
+  }, [searchParams, workspaceId]);
 
   return (<AppLayoutComponent
     title='threat-composer'

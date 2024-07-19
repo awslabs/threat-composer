@@ -36,10 +36,14 @@ The Threat composer tool has been built for the following reasons:
 - Capture and store mitigation candidates and mapping to threats.
 - Create a threat model document based on user-supplied input.
 - Help users answer "Did we do a good enough job" by providing insights and suggestions for bar-raising actions via an 'Insights dashboard'
+- Threat packs to find and add bulk or selected threat statements to your current workspace (Self-hosted deployments only). You can author and deploy custom packs - [Learn more...](#customising-reference-data-in-your-build)
+- Mitigation packs to find and add bulk or selected mitigations to your current workspace. You can author and deploy custom packs (Self-hosted deployments only) - [Learn more...](#customising-reference-data-in-your-build)
 - Data persisted only client-side within the browser (100% local storage).
 - JSON import/export capabilities to enable persistent storage, sharing, and version control outside of the web browser (e.g. by using git).
-- Markdown and PDF static downloads of the threat model document.
+- Markdown, DOCX, and PDF static downloads of the threat model document.
 - Workspace separation to allow working on multiple threat models.
+
+
 
 ## Threat model example
 
@@ -355,6 +359,125 @@ The repository is defined and maintained using [projen](https://github.com/proje
   `pdk run dev`
 
 - For the browser extension (Chrome and Firefox) please see [this README](./packages/threat-composer-app-browser-extension/README.md)
+
+## **Customising reference data in your build**
+
+> [!NOTE]
+> The following section is only applicable in self-hosting deployment scenarios.
+
+You can customize the reference data used within Threat Composer to better suit your specific needs. The following sections details the types of customisations possible and how to use them.
+
+### Reference or example threat models
+
+Reference or example threat models are available directly in the Workspace selector for quick review and reference. The following steps describe how you can create and include a reference or example threat model in your own deployment.
+
+1. Author your content using Threat Composer, and export as `.tc.json` file
+1. Rename the file to a descriptive name, e.g. `ServerlessAPI.tc.json`
+1. Place the `.tc.json` file into the `packages/threat-composer/src/data/workspaceExamples` directory.
+1. Update `packages/threat-composer/src/data/workspaceExamples/workspaceExamples.ts` file to import the `.tc.json` file. e.g. `import serverlessAPI from './ServerlessAPI.tc.json'` and add it to the `workspaceExamples` array - for example:
+
+    ```
+    const workspaceExamples = [
+    {
+        name: 'Threat Composer',
+        value: threatComposer,
+    },
+    {
+        name: 'Serverless API',
+        value: serverlessAPI,
+    },
+    ] as WorkspaceExample[];
+    ```
+1. Build the project.
+
+
+### Threat packs
+
+Threat packs allow you to quickly find and add bulk or selected threat statements to your current workspace. The following steps describe how you can create and include a custom Threat Pack in your own deployment.
+
+1. Author your content using Threat Composer, and export as `.tc.json` file
+1. Rename the file to a descriptive name, e.g. `AuthenticationThreats.tc.json`
+1. Place the `.tc.json` into the `packages/threat-composer/src/data/threatPacks` directory. Or if it's it's already a reference threat model (see section prior to this) there is no need to also add file at this location.
+1. Create a `.metadata.json` file for your pack (e.g. `AuthenticationThreats.metadata.json`) in the `packages/threat-composer/src/data/threatPacks` directory
+1. Paste the following schema in the file:
+
+    ```
+    {
+    "schema": 1,
+    "namespace": "threat-composer",
+    "type": "threatpack-pack-metadata",
+    "id": "<REPLACE WITH SHORT HUMAN READABLE IDENTIFIER>",
+    "name": "<REPLACE WITH NAME OF THE THREAT PACK>",
+    "description": "<REPLACE WITH DESCRIPTION OF THE THREAT PACK>",
+    "path": "<REPLACE WITH RELATIVE PATH TO .TC.JSON FILE>"
+    }
+    ```
+
+1. Update the value of `id` to be a short human readable indentier for the pack (e.g. `AuthThreats`)
+1. Update the value of `description` to describe the contents of the pack (e.g. `This pack contains common authentication threats`)
+1. Update the value of `path` to point to the _relative_ path of the source `.tc.json` file (e.g. `./AuthenticationThreats.tc.json`)
+1. Generate the threat pack file by running `yarn run build:pack` from the root of the local repository
+1. Update `packages/threat-composer/src/data/threatPacks/threatPacks.ts` file to import the generated file. e.g. `import authenticationThreatPack './generated/AuthThreats.json';` and add it to the `threatPacks` array - for example:
+    ```
+    const threatPacks = [
+    authenticationThreatPack,
+    GenAIChatbot,
+    ] as ThreatPack[];
+    ```
+1. Build the project.
+
+### Mitigation packs
+
+Mitigation packs allow you to quickly find and add bulk or selected mitigation candidates to your current workspace. The following steps describe how you can create and include a custom Mitigation Pack in your own deployment.
+
+1. Author your content using Threat Composer, and export as `.tc.json` file
+1. Rename the file to a descriptive name, e.g. `BaselineControls.tc.json`
+1. Place the `.tc.json` into the `packages/threat-composer/src/data/mitigationPacks` directory. Or if it's it's already a reference threat model (see section prior to this) there is no need to also add file at this location.
+1. Create a `.metadata.json` file for your pack (e.g. `BaselineControls.metadata.json`) in the `packages/threat-composer/src/data/mitigationPacks` directory
+1. Paste the following schema in the file:
+
+    ```
+    {
+    "schema": 1,
+    "namespace": "threat-composer",
+    "type": "mitigationpack-pack-metadata",
+    "id": "<REPLACE WITH SHORT HUMAN READABLE IDENTIFIER>",
+    "name": "<REPLACE WITH NAME OF THE MITIGATION PACK>",
+    "description": "<REPLACE WITH DESCRIPTION OF THE MITIGATION PACK>",
+    "path": "<REPLACE WITH RELATIVE PATH TO .TC.JSON FILE>"
+    }
+    ```
+
+1. Update the value of `id` to be a short human readable indentier for the pack (e.g. `BaselineControls`)
+1. Update the value of `description` to describe the contents of the pack (e.g. `This pack contains our organizations baseline controls`)
+1. Update the value of `path` to point to the _relative_ path of the source `.tc.json` file (e.g. `./BaselineControls.tc.json`)
+1. Generate the threat pack file by running `yarn run build:pack` from the root of the local repository
+1. Update `packages/threat-composer/src/data/mitigationPacks/mitigationPacks.ts` file to import the generated file. e.g. `import ourBaselineControlsMitigationPack './generated/BaselineControls.json';` and add it to the `mitigationPacks` array - for example:
+    ```
+    const mitigationPacks = [
+    ourBaselineControlsMitigationPack,
+    GenAIChatbot,
+    ] as ThreatPack[];
+    ```
+1. Build the project.
+
+### Threat examples
+
+Threats that are included in the example threats data are made make available to users of your deployment of Threat Composer within the 'Full Examples' list within the threat statement editor, and are used at random when a user presses the 'Give me a random example' button in the editor. The following steps describe how you can customise the threats that are included:
+
+1. Open the `packages/threat-composer/src/data/threatStatementExamples.json` file in your editor of choice
+1. Add or edit existing entries ensuring to using the expected schema.
+    - `id` (string) - A unique ID for your example (e.g. `"EXAMPLE_000001"`)
+    - `numberId` (string) - This should aways have a value of `"-1"`
+    - `threatSource` (string) - The entity taking action (e.g. `"internal threat actor"`)
+    - `prerequistes` (string) - Conditions or requirements that must be met for a threat source's action to be viable. (e.g. `"who can register a vehicle"`)
+    - `threatAction` (string) - The action being performed by the threat source (e.g. `"claim they did not do so"`)
+    - `threatImpact` (string) - The direct impact of a successful threat action (e.g. `"the actor disputing financial charges related to the registration of a vehicle"`)
+    - `impactedGoal` - (Array of strings) - The information security or business objective that is negatively affected. (e.g. `["integrity"]`)
+    - `impactedAssets` - (Array of strings) - The assets affected by a successful threat action (e.g. `["billing"]`)
+    - `metadata` - (Array of objects) (e.g. `[ "key": "STRIDE", "value" : [ "T"] ]`)
+
+1. Build the project.
 
 ## **Contribution guide**
 

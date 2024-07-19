@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Container from '@cloudscape-design/components/container';
-import Header from '@cloudscape-design/components/header';
 import { FC } from 'react';
 import { ThreatPack } from '../../../../../customTypes';
 
@@ -25,15 +24,7 @@ export interface GeneralInfoProps {
 const GeneralInfo: FC<GeneralInfoProps> = ({
   threatPack,
 }) => {
-  return (<Container
-    header={
-      <Header
-        variant="h2"
-      >
-        Threat Pack - {threatPack.name}
-      </Header>
-    }
-  >
+  return (<Container>
     {threatPack.description}
   </Container>);
 };

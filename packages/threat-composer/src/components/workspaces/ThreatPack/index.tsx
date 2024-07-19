@@ -14,6 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
+import ContentLayout from '@cloudscape-design/components/content-layout';
+import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import { useMemo, FC, useCallback, useState } from 'react';
@@ -61,10 +63,11 @@ const ThreatPack: FC<ThreatPackProp> = ({
       header: 'Threat',
       cell: (data) => data.statement,
       sortingField: 'statement',
+      minWidth: 500,
     },
     {
       id: 'threatSource',
-      header: 'Threat srouce',
+      header: 'Threat source',
       cell: (data) => data.threatSource,
       sortingField: 'threatSource',
     },
@@ -137,18 +140,32 @@ const ThreatPack: FC<ThreatPackProp> = ({
     return null;
   }
 
-  return (<SpaceBetween direction='vertical' size='s'>
-    <GeneralInfo threatPack={threatPack} />
-    <Table
-      columnDefinitions={colDef}
-      actions={actions}
-      header="Threats"
-      items={threatPack.threats || []}
-      wrapLines={true}
-      isItemDisabled={isItemDisabled}
-      selectedItems={totalSelectedItems}
-      onSelectionChange={({ detail }) => setSelectedItems([...detail.selectedItems])}
-    /></SpaceBetween>);
+  return (<ContentLayout
+    header={
+      <Header
+        variant="h2"
+      >
+        Threat Pack - {threatPack.name}
+      </Header>
+    }
+  >
+    <SpaceBetween direction='vertical' size='s'>
+      <GeneralInfo threatPack={threatPack} />
+      <Table
+        columnDefinitions={colDef}
+        actions={actions}
+        header="Threats"
+        items={threatPack.threats || []}
+        wrapLines={true}
+        isItemDisabled={isItemDisabled}
+        selectedItems={totalSelectedItems}
+        onSelectionChange={({ detail }) => setSelectedItems([...detail.selectedItems])}
+        resizableColumns
+        stickyColumns={{
+          first: 1,
+        }}
+      /></SpaceBetween>
+  </ContentLayout>);
 };
 
 export default ThreatPack;

@@ -15,12 +15,14 @@
  ******************************************************************************************************************** */
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
+import ContentLayout from '@cloudscape-design/components/content-layout';
+import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo } from 'react';
-import GeneralInfo from './components/GeneralInfo';
 import { useMitigationPacksContext } from '../../../contexts/MitigationPacksContext';
 import { MitigationPack } from '../../../customTypes/referencePacks';
 import Table, { ColumnDefinition } from '../../generic/Table';
+
 
 export interface MitigationPacksProps {
   onMitigationPackLinkClicked?: (id: string) => void;
@@ -34,7 +36,7 @@ const MitigationPacks: FC<MitigationPacksProps> = ({
   const colDef: ColumnDefinition<MitigationPack>[] = useMemo(() => [
     {
       id: 'id',
-      minWidth: 100,
+      minWidth: 150,
       header: 'Id',
       cell: (data) => (<Button variant="inline-link" onClick={() => onMitigationPackLinkClicked?.(data.id)}>
         {data.id}
@@ -68,16 +70,21 @@ const MitigationPacks: FC<MitigationPacksProps> = ({
     },
   ], [mitigationPackUsage, onMitigationPackLinkClicked]);
 
-  return (<SpaceBetween direction='vertical' size='s'>
-    <GeneralInfo />
-    <Table
-      columnDefinitions={colDef}
-      header="Mitigation packs"
-      items={mitigationPacks}
-      disableRowSelect={true}
-      wrapLines={true}
-
-    /></SpaceBetween>);
+  return (<ContentLayout header={<Header
+    variant="h2"
+    description="Allow you to quickly find and add bulk or selected mitigation candidates to your current workspace"
+    counter={`(${mitigationPacks.length})`}
+  >
+    Mitigation Packs
+  </Header>}>
+    <SpaceBetween direction='vertical' size='s'>
+      <Table
+        columnDefinitions={colDef}
+        items={mitigationPacks}
+        disableRowSelect={true}
+        wrapLines={true}
+      /></SpaceBetween>
+  </ContentLayout>);
 };
 
 export default MitigationPacks;

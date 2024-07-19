@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "namespace": "threat-composer",
+  "type": "threatpack-pack-metadata",
+  "id": "GenAIChatBot",
+  "name": "GenAI ChatBot Threat Pack",
+  "description": "This Threat Pack contains all of the threat statements (and associated metadata) from the reference GenAI ChatBot threat model",
+  "path": "../workspaceExamples/GenAIChatbot.tc.json"
+}

@@ -28,7 +28,7 @@ const ThreatPack: FC<ThreatPackProps> = ({ workspaceId, threatPackId }) => {
     workspaceId={workspaceId || null}
     composerMode='Full'
   >
-    <ThreatPackComponent threatPackId={threatPackId || 'Sample'}/>
+    <ThreatPackComponent threatPackId={threatPackId || 'GenAIChatBot'}/>
   </WorkspaceContextAggregator>);
 };
 
