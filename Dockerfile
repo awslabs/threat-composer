@@ -25,8 +25,6 @@ FROM nginx:alpine
 RUN rm -rf /usr/share/nginx/html/*
 # Copy the build output to the nginx html directory
 COPY --from=build /app/packages/threat-composer-app/build/website/ /usr/share/nginx/html
-# Copy custom nginx configuration if any
-#iCOPY nginx.conf /etc/nginx/nginx.conf
 # Expose port 80
 EXPOSE 80
 # Start nginx
