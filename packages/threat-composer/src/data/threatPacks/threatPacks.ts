@@ -15,9 +15,12 @@
  ******************************************************************************************************************** */
 import GenAIChatbot from './generated/GenAIChatbot.json';
 import { ThreatPack } from '../../customTypes';
+// {IMPORT_PLACEHOLDER}
 
 const threatPacks = [
   GenAIChatbot,
+  // {ENTRY_PLACEHOLDER}
 ] as ThreatPack[];
+
 
 export default threatPacks;

@@ -15,9 +15,11 @@
  ******************************************************************************************************************** */
 import GenAIChatbot from './generated/GenAIChatbot.json';
 import { MitigationPack } from '../../customTypes';
+// {IMPORT_PLACEHOLDER}
 
 const mitigationPacks = [
   GenAIChatbot,
+  // {ENTRY_PLACEHOLDER}
 ] as MitigationPack[];
 
 export default mitigationPacks;
