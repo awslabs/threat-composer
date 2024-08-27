@@ -15,15 +15,19 @@
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
+import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useState, useCallback } from 'react';
+import { MITIGATION_STATUS_COLOR_MAPPING } from '../../../configs/status';
 import { Mitigation, MitigationSchema } from '../../../customTypes';
+import mitigationStatus from '../../../data/status/mitigationStatus.json';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import AssumptionLink from '../../assumptions/AssumptionLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import MetadataEditor from '../../generic/EntityMetadataEditor';
 import GenericCard from '../../generic/GenericCard';
+import StatusBadge from '../../generic/StatusBadge';
 import Textarea from '../../generic/Textarea';
 import MitigationThreatLink from '../MitigationThreatLink';
 
@@ -70,6 +74,15 @@ const MitigationCard: FC<MitigationCardProps> = ({
     onCopy={() => onCopy?.(entity.id)}
     onRemove={() => onRemove?.(entity.id)}
     onEdit={() => setEditingMode(true)}
+    info={<StatusBadge
+      options={mitigationStatus as OptionDefinition[]}
+      selectedOption={entity.status}
+      setSelectedOption={(option) => onEdit?.({
+        ...entity,
+        status: option,
+      })}
+      statusColorMapping={MITIGATION_STATUS_COLOR_MAPPING}
+    />}
     onAddTagToEntity={(_entityId, tag) => onAddTagToEntity?.(entity, tag)}
     onRemoveTagFromEntity={(_entityId, tag) => onRemoveTagFromEntity?.(entity, tag)}
   >

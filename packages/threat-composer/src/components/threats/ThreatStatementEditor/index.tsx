@@ -409,6 +409,10 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
             <MetadataEditor
               variant='container'
               editingStatement={editingStatement}
+              onEditStatementStatus={(_statement, status) => setEditingStatement((prev => ({
+                ...prev,
+                status,
+              } as TemplateThreatStatement)))}
               onEditMetadata={handleEditMetadata}
             />
           </div>}

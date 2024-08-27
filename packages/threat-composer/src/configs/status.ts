@@ -13,15 +13,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { v4 as uuidV4 } from 'uuid';
-import { TemplateThreatStatement } from '../../customTypes';
-
-const getNewThreatStatement = (): TemplateThreatStatement => {
-  return {
-    id: uuidV4(),
-    numericId: -1,
-    status: 'threatIdentified',
-  };
+export const MITIGATION_STATUS_COLOR_MAPPING: any = {
+  mitigationIdentified: 'grey',
+  mitigationInProgress: 'blue',
+  mitigationResolved: 'green',
+  mitigationResolvedAbandoned: 'red',
+  NotSet: 'grey',
 };
 
-export default getNewThreatStatement;
+export const THREAT_STATUS_COLOR_MAPPING: any = {
+  threatIdentified: 'grey',
+  threatResolvedNotUseful: 'blue',
+  threatResolved: 'green',
+  NotSet: 'grey',
+};
+

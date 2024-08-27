@@ -14,8 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { z } from 'zod';
-import { EntityBaseSchema } from './entities';
+import { EntityBaseSchema, StatusSchema } from './entities';
 import { SINGLE_FIELD_INPUT_MAX_LENGTH, LEVEL_HIGH, LEVEL_MEDIUM, LEVEL_LOW, LEVEL_NOT_SET } from '../configs';
+import threatStatus from '../data/status/threatStatus.json';
 
 export const ThreatStatementDisplayTokenSchema = z.object({
   /**
@@ -75,6 +76,12 @@ export const TemplateThreatStatementSchema = EntityBaseSchema.extend({
     * A list of displayed statement token
     */
   displayedStatement: z.union([ThreatStatementDisplayTokenSchema, z.string()]).array().optional(),
+  /**
+   * The status of the threats.
+   */
+  status: StatusSchema.refine((schema ) => {
+    return !schema || threatStatus.map(x => x.value).includes(schema);
+  }, 'Invalid threat status'),
 }).strict();
 
 export type TemplateThreatStatement = z.infer<typeof TemplateThreatStatementSchema>;
