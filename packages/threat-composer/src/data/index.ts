@@ -13,22 +13,5 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export const DEFAULT_MITIGATION_STATUS = 'mitigationIdentified';
-export const DEFAULT_THREAT_STATUS = 'threatIdentified';
-export const STATUS_NOT_SET = 'NoSet';
-
-export const MITIGATION_STATUS_COLOR_MAPPING: any = {
-  mitigationIdentified: 'grey',
-  mitigationInProgress: 'blue',
-  mitigationResolved: 'green',
-  mitigationResolvedAbandoned: 'red',
-  NotSet: 'grey',
-};
-
-export const THREAT_STATUS_COLOR_MAPPING: any = {
-  threatIdentified: 'grey',
-  threatResolvedNotUseful: 'blue',
-  threatResolved: 'green',
-  NotSet: 'grey',
-};
-
+export { default as threatStatus } from './status/threatStatus.json';
+export { default as mitigationStatus } from './status/mitigationStatus.json';

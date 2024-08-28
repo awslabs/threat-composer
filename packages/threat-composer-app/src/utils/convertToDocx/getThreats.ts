@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { AssumptionLink, DataExchangeFormat, MitigationLink, TemplateThreatStatement, standardizeNumericId } from '@aws/threat-composer';
+import { AssumptionLink, DataExchangeFormat, MitigationLink, TemplateThreatStatement, standardizeNumericId, threatStatus, STATUS_NOT_SET } from '@aws/threat-composer';
 import { Paragraph, HeadingLevel, TextRun, TableRow, TableCell } from 'docx';
 import Table from './components/Table';
 import getAnchorLink from './getAnchorLink';
@@ -64,6 +64,7 @@ const getDataRow = async (threat: TemplateThreatStatement, data: DataExchangeFor
   const assumptionLinks = data.assumptionLinks?.filter(al => al.linkedId === threat.id) || [];
   const threatId = `T-${standardizeNumericId(threat.numericId)}`;
   const comments = await renderComment(threat.metadata);
+  const status = (threat.status && threatStatus.find(x => x.value === threat.status)?.label) || STATUS_NOT_SET;
   const priority = threat.metadata?.find(m => m.key === 'Priority')?.value as string || '';
   const STRIDE = ((threat.metadata?.find(m => m.key === 'STRIDE')?.value || []) as string[]).join(', ');
 
@@ -81,6 +82,9 @@ const getDataRow = async (threat: TemplateThreatStatement, data: DataExchangeFor
       }),
       getMitigationLinksCell(mitigationLinks, data),
       getAssumptionLinksCell(assumptionLinks, data),
+      new TableCell({
+        children: [new Paragraph(status)],
+      }),
       new TableCell({
         children: [new Paragraph(priority)],
       }),
@@ -119,8 +123,8 @@ const getThreats = async (
   const table = new Table({
     rows: [
       getHeaderRow(
-        threatsOnly ? ['Threat Number', 'Threat', 'Comments', 'Priority', 'STRIDE', 'Comments']
-          : ['Threat Number', 'Threat', 'Mitigations', 'Assumptions', 'Priority', 'STRIDE', 'Comments']),
+        threatsOnly ? ['Threat Number', 'Threat', 'Status', 'Priority', 'STRIDE', 'Comments']
+          : ['Threat Number', 'Threat', 'Mitigations', 'Assumptions', 'Status', 'Priority', 'STRIDE', 'Comments']),
       ...dataRows,
     ],
   });

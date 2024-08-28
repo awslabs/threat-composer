@@ -14,13 +14,13 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren, useCallback, useMemo } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { MitigationPacksContext, useMitigationPacksContext } from './context';
 import { MitigationPacksContextProviderProps } from './types';
 import { METADATA_KEY_SOURCE, METADATA_KEY_SOURCE_MITIGATION_PACK, METADATA_KEY_SOURCE_MITIGATION_PACK_MITIGATION, METADATA_SOURCE_MITIGATION_PACK } from '../../configs';
 import { MitigationPack, MitigationPackUsage, Mitigation } from '../../customTypes';
 import mitigationPacks from '../../data/mitigationPacks/mitigationPacks';
 import getMetadata from '../../utils/getMetadata';
+import getNewMitigation from '../../utils/getNewMitigation';
 import { useMitigationsContext } from '../MitigationsContext';
 
 const MitigationPacksContextProvider: FC<PropsWithChildren<MitigationPacksContextProviderProps>> = ({
@@ -66,9 +66,8 @@ const MitigationPacksContextProvider: FC<PropsWithChildren<MitigationPacksContex
     mitigations.forEach(m => {
       if (!usage[m.id]) {
         saveMitigation({
+          ...getNewMitigation(m.content),
           ...m,
-          numericId: -1,
-          id: uuidv4(),
           metadata: [
             ...(m.metadata || []),
             {

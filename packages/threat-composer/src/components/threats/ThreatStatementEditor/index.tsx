@@ -37,6 +37,7 @@ import threatFieldData from '../../../data/threatFieldData';
 import threatStatementExamples from '../../../data/threatStatementExamples.json';
 import threatStatementFormat from '../../../data/threatStatementFormat';
 import useEditMetadata from '../../../hooks/useEditMetadata';
+import getNewMitigation from '../../../utils/getNewMitigation';
 import getNewThreatStatement from '../../../utils/getNewThreatStatement';
 import getRecommendedEditor from '../../../utils/getRecommandedEditor';
 import renderThreatStatement from '../../../utils/renderThreatStatement';
@@ -329,11 +330,7 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
     if (mitigationList.find(a => a.id === mitigationIdOrNewMitigation)) {
       setLinkedMitigationIds(prev => [...prev, mitigationIdOrNewMitigation]);
     } else {
-      const newMitigation = saveMitigation({
-        id: DEFAULT_NEW_ENTITY_ID,
-        numericId: -1,
-        content: mitigationIdOrNewMitigation,
-      });
+      const newMitigation = saveMitigation(getNewMitigation(mitigationIdOrNewMitigation));
       setLinkedMitigationIds(prev => [...prev, newMitigation.id]);
     }
 

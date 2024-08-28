@@ -14,13 +14,14 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { v4 as uuidV4 } from 'uuid';
+import { DEFAULT_THREAT_STATUS } from '../../configs/status';
 import { TemplateThreatStatement } from '../../customTypes';
 
 const getNewThreatStatement = (): TemplateThreatStatement => {
   return {
     id: uuidV4(),
     numericId: -1,
-    status: 'threatIdentified',
+    status: DEFAULT_THREAT_STATUS,
   };
 };
 

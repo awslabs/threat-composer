@@ -13,22 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export const DEFAULT_MITIGATION_STATUS = 'mitigationIdentified';
-export const DEFAULT_THREAT_STATUS = 'threatIdentified';
-export const STATUS_NOT_SET = 'NoSet';
+import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
+import { DEFAULT_MITIGATION_STATUS } from '../../configs/status';
+import { Mitigation } from '../../customTypes';
 
-export const MITIGATION_STATUS_COLOR_MAPPING: any = {
-  mitigationIdentified: 'grey',
-  mitigationInProgress: 'blue',
-  mitigationResolved: 'green',
-  mitigationResolvedAbandoned: 'red',
-  NotSet: 'grey',
+const getNewMitigation = (content: string = ''): Mitigation => {
+  return {
+    id: DEFAULT_NEW_ENTITY_ID,
+    numericId: -1,
+    status: DEFAULT_MITIGATION_STATUS,
+    content: content,
+  };
 };
 
-export const THREAT_STATUS_COLOR_MAPPING: any = {
-  threatIdentified: 'grey',
-  threatResolvedNotUseful: 'blue',
-  threatResolved: 'green',
-  NotSet: 'grey',
-};
-
+export default getNewMitigation;

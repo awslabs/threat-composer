@@ -15,10 +15,10 @@
  ******************************************************************************************************************** */
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useState, useCallback } from 'react';
-import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { Assumption, AssumptionSchema } from '../../../customTypes';
+import getNewMitigation from '../../../utils/getNewMitigation';
 import GenericEntityCreationCard, { DEFAULT_ENTITY } from '../../generic/GenericEntityCreationCard';
 import MitigationLinkView from '../../mitigations/MitigationLinkView';
 import ThreatLinkView from '../../threats/ThreatLinkView';
@@ -52,11 +52,7 @@ const AssumptionCreationCard: FC<AssumptionCreationCardProps> = ({ onSave }) => 
     if (mitigationList.find(m => m.id === mitigationIdOrNewMitigation)) {
       setLinkedMitigationIds(prev => [...prev, mitigationIdOrNewMitigation]);
     } else {
-      const newMitigation = saveMitigation({
-        numericId: -1,
-        content: mitigationIdOrNewMitigation,
-        id: DEFAULT_NEW_ENTITY_ID,
-      });
+      const newMitigation = saveMitigation(getNewMitigation(mitigationIdOrNewMitigation));
       setLinkedMitigationIds(prev => [...prev, newMitigation.id]);
     }
   }, [mitigationList, saveMitigation]);

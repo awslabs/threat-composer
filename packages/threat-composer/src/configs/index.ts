@@ -21,3 +21,4 @@ export * from './styles';
 export * from './options';
 export * from './metadata';
 export * from './appMode';
+export * from './status';
