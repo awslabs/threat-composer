@@ -174,7 +174,7 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
       buttons.push(<Button key='addThreats' onClick={() => props.onThreatListView?.()}>Add Threats</Button>);
     }
     if (!hasContentDetails?.mitigations) {
-      buttons.push(<Button key='addMitigations' onClick={props.onMitigationListView}>Add Mitigations</Button>);
+      buttons.push(<Button key='addMitigations' onClick={() => props.onMitigationListView?.()}>Add Mitigations</Button>);
     }
     const len = buttons.length;
     return buttons.flatMap((b, index) => index === len - 1 ? <Box>{b}</Box> : [b, <Box fontWeight="bold" css={styles.text}>or</Box>]);

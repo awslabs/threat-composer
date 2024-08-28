@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { z } from 'zod';
 import { EntityBaseSchema, StatusSchema } from './entities';
-import { SINGLE_FIELD_INPUT_MAX_LENGTH, LEVEL_HIGH, LEVEL_MEDIUM, LEVEL_LOW, LEVEL_NOT_SET } from '../configs';
+import { SINGLE_FIELD_INPUT_MAX_LENGTH, LEVEL_HIGH, LEVEL_MEDIUM, LEVEL_LOW, LEVEL_NOT_SET, STATUS_NOT_SET, THREAT_STATUS_IDENTIFIED, THREAT_STATUS_NOT_USEFUL, THREAT_STATUS_RESOLVED } from '../configs';
 import threatStatus from '../data/status/threatStatus.json';
 
 export const ThreatStatementDisplayTokenSchema = z.object({
@@ -79,7 +79,7 @@ export const TemplateThreatStatementSchema = EntityBaseSchema.extend({
   /**
    * The status of the threats.
    */
-  status: StatusSchema.refine((schema ) => {
+  status: StatusSchema.refine((schema) => {
     return !schema || threatStatus.map(x => x.value).includes(schema);
   }, 'Invalid threat status'),
 }).strict();
@@ -102,6 +102,7 @@ export interface ThreatStatementListFilter {
   linkedAssumptions?: boolean;
   priority?: typeof LEVEL_HIGH | typeof LEVEL_MEDIUM | typeof LEVEL_LOW | typeof LEVEL_NOT_SET;
   stride?: 'S' | 'T' | 'R' | 'I' | 'D' | 'E' | typeof LEVEL_NOT_SET;
+  status?: (typeof THREAT_STATUS_IDENTIFIED | typeof THREAT_STATUS_NOT_USEFUL | typeof THREAT_STATUS_RESOLVED | typeof STATUS_NOT_SET)[];
 }
 
 export interface ThreatStatementFormat {

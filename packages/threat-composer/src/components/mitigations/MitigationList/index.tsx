@@ -20,10 +20,10 @@ import Multiselect from '@cloudscape-design/components/multiselect';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { LEVEL_NOT_SET } from '../../../configs';
+import { STATUS_NOT_SET } from '../../../configs';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
-import { AssumptionLink, Mitigation, MitigationLink } from '../../../customTypes';
+import { AssumptionLink, Mitigation, MitigationLink, MitigationListFilter } from '../../../customTypes';
 import mitigationStatus from '../../../data/status/mitigationStatus.json';
 import ContentLayout from '../../generic/ContentLayout';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
@@ -36,10 +36,16 @@ const ALL_STATUS = [...mitigationStatus.map(ia => ({
   value: ia.value,
 })), {
   label: 'Not Set',
-  value: LEVEL_NOT_SET,
+  value: STATUS_NOT_SET,
 }];
 
-const MitigationList: FC = () => {
+export interface MitigationListProps {
+  initialFilter?: MitigationListFilter;
+}
+
+const MitigationList: FC<MitigationListProps> = ({
+  initialFilter,
+}) => {
   const {
     mitigationList,
     removeMitigation,
@@ -68,7 +74,7 @@ const MitigationList: FC = () => {
   const [
     selectedStatus,
     setSelectedStatus,
-  ] = useState<string[]>([]);
+  ] = useState<string[]>(initialFilter?.status || []);
 
   const [
     selectedLinkedThreatsFilter,
@@ -146,7 +152,7 @@ const MitigationList: FC = () => {
 
     if (selectedStatus && selectedStatus.length > 0) {
       output = output.filter(st => {
-        return st.status ? selectedStatus.includes(st.status) : selectedStatus.includes(LEVEL_NOT_SET);
+        return st.status ? selectedStatus.includes(st.status) : selectedStatus.includes(STATUS_NOT_SET);
       });
     }
 

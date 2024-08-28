@@ -13,8 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export const DEFAULT_MITIGATION_STATUS = 'mitigationIdentified';
-export const DEFAULT_THREAT_STATUS = 'threatIdentified';
+export const THREAT_STATUS_IDENTIFIED = 'threatIdentified';
+export const THREAT_STATUS_RESOLVED = 'threatResolved';
+export const THREAT_STATUS_NOT_USEFUL = 'threatResolvedNotUseful';
+export const DEFAULT_THREAT_STATUS = THREAT_STATUS_IDENTIFIED;
+
+export const MITIGATION_STATUS_IDENTIFIED = 'mitigationIdentified';
+export const MITIGATION_STATUS_IN_PROGRESS = 'mitigationInProgress';
+export const MITIGATION_STATUS_RESOLVED = 'mitigationResolved';
+export const MITIGATION_STATUS_RESOLVED_ABANDONED = 'mitigationResolvedAbandoned';
+export const DEFAULT_MITIGATION_STATUS = MITIGATION_STATUS_IDENTIFIED;
+
 export const STATUS_NOT_SET = 'NoSet';
 
 export const MITIGATION_STATUS_COLOR_MAPPING: any = {

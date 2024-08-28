@@ -17,10 +17,12 @@ import Board, { BoardProps } from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
 import Header from '@cloudscape-design/components/header';
 import { useState, ReactNode, useCallback, FC } from 'react';
+import MitigationStatus from './components/MitigationStatus';
 import Overview from './components/Overview';
 import STRIDEAllocation from './components/STRIDEAllocation';
 import ThreatGrammar from './components/ThreatGrammar';
 import ThreatPrioritization from './components/ThreatPrioritization';
+import ThreatStatus from './components/ThreatStatus';
 import { WorkspaceInsightsProps } from './types';
 import ContentLayout from '../../generic/ContentLayout';
 
@@ -35,7 +37,7 @@ const WorkspaceInsights: FC<WorkspaceInsightsProps> = (props) => {
   const [items, setItems] = useState<BoardProps.Item<ItemType>[]>([
     {
       id: 'overview',
-      rowSpan: 2,
+      rowSpan: 3,
       columnSpan: 6,
       data: { title: 'Threat summary', content: <Overview {...props}/> },
     },
@@ -44,6 +46,12 @@ const WorkspaceInsights: FC<WorkspaceInsightsProps> = (props) => {
       rowSpan: 5,
       columnSpan: 2,
       data: { title: 'Threat prioritization', content: <ThreatPrioritization {...props}/> },
+    },
+    {
+      id: 'threat-status',
+      rowSpan: 5,
+      columnSpan: 2,
+      data: { title: 'Threat status', content: <ThreatStatus {...props}/> },
     },
     {
       id: 'stride-allocation',
@@ -56,6 +64,12 @@ const WorkspaceInsights: FC<WorkspaceInsightsProps> = (props) => {
       rowSpan: 5,
       columnSpan: 2,
       data: { title: 'Threat grammar distribution', content: <ThreatGrammar {...props}/> },
+    },
+    {
+      id: 'mitigation-status',
+      rowSpan: 5,
+      columnSpan: 2,
+      data: { title: 'Mitigation status', content: <MitigationStatus {...props}/> },
     },
   ]);
 

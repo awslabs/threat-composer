@@ -23,7 +23,7 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { css } from '@emotion/react';
 import { FC, PropsWithChildren, useCallback, useMemo, useState } from 'react';
-import { LEVEL_SELECTOR_OPTIONS, DEFAULT_NEW_ENTITY_ID, LEVEL_NOT_SET } from '../../../configs';
+import { LEVEL_SELECTOR_OPTIONS, DEFAULT_NEW_ENTITY_ID, LEVEL_NOT_SET, STATUS_NOT_SET } from '../../../configs';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { GlobalSetupContextApi, useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
@@ -69,7 +69,7 @@ const ALL_STATUS = [...threatStatus.map(ia => ({
   value: ia.value,
 })), {
   label: 'Not Set',
-  value: LEVEL_NOT_SET,
+  value: STATUS_NOT_SET,
 }];
 
 const ContentLayout: FC<PropsWithChildren<ContentLayoutProps & {
@@ -149,7 +149,7 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
   const [
     selectedStatus,
     setSelectedStatus,
-  ] = useState<string[]>([]);
+  ] = useState<string[]>(initialFilter?.status || []);
 
   const [
     selectedPriorities,
@@ -225,7 +225,7 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
 
     if (selectedStatus && selectedStatus.length > 0) {
       output = output.filter(st => {
-        return st.status ? selectedStatus.includes(st.status) : selectedStatus.includes(LEVEL_NOT_SET);
+        return st.status ? selectedStatus.includes(st.status) : selectedStatus.includes(STATUS_NOT_SET);
       });
     }
 

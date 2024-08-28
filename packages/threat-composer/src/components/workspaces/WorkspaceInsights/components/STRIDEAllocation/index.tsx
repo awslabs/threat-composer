@@ -32,7 +32,7 @@ import {
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 import DashboardNumber from '../../../../generic/DashboardNumber';
-import useLinkClicked from '../../hooks/useLinkClicked';
+import useThreatListLinkClicked from '../../hooks/useThreatListLinkClicked';
 import { WorkspaceInsightsProps } from '../../types';
 
 const STRIDEAllocation: FC<WorkspaceInsightsProps> = ({
@@ -83,7 +83,7 @@ const STRIDEAllocation: FC<WorkspaceInsightsProps> = ({
     [filteredStatementList],
   );
 
-  const handleLinkClicked = useLinkClicked(onThreatListView);
+  const handleLinkClicked = useThreatListLinkClicked(onThreatListView);
 
   const barSeries: BarChartProps<string>['series'] = [
     {
@@ -187,7 +187,7 @@ const STRIDEAllocation: FC<WorkspaceInsightsProps> = ({
           <Box variant="awsui-key-label">Missing STRIDE</Box>
           <DashboardNumber
             showWarning
-            displayedNumber={missingStride}
+            featuredNumber={missingStride}
             onLinkClicked={handleLinkClicked({
               stride: LEVEL_NOT_SET,
             })}

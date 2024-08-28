@@ -13,15 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { MitigationListFilter } from './mitigations';
-import { ThreatStatementListFilter } from './threats';
+import { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
+import { useCallback } from 'react';
+import { MitigationListFilter, ViewNavigationEvent } from '../../../../../customTypes';
 
-export interface ViewNavigationEvent {
-  onApplicationInfoView?: () => void;
-  onArchitectureView?: () => void;
-  onDataflowView?: () => void;
-  onAssumptionListView?: () => void;
-  onMitigationListView?: (filter?: MitigationListFilter) => void;
-  onThreatListView?: (filter?: ThreatStatementListFilter) => void;
-  onThreatEditorView?: (threatId: string, idToCopy?: string) => void;
-}
+const useMitigationListLinkClicked = (onMitigationListView: ViewNavigationEvent['onMitigationListView']) => {
+  return useCallback((filter?: MitigationListFilter): CancelableEventHandler<BaseNavigationDetail> => (event) => {
+    event?.preventDefault?.();
+    onMitigationListView?.(filter);
+  }, [onMitigationListView]);
+};
+
+export default useMitigationListLinkClicked;
+

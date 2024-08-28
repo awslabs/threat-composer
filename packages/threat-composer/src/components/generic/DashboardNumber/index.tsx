@@ -30,22 +30,23 @@ const styles = {
 };
 
 export interface DashboardNumberProps {
-  displayedNumber: number;
+  featuredNumber: number;
+  totalNumber?: number;
   showWarning?: boolean;
   onLinkClicked?: LinkProps['onFollow'];
 }
 
 const DashboardNumber: FC<DashboardNumberProps> = ({
-  showWarning, displayedNumber, onLinkClicked,
+  showWarning, featuredNumber, totalNumber, onLinkClicked,
 }) => {
   return <div css={styles.link}>
-    {showWarning && displayedNumber > 0 ? (
+    {showWarning && (totalNumber ? featuredNumber < totalNumber : featuredNumber > 0) ? (
       <SpaceBetween direction="horizontal" size="xxs">
         <Link
           variant="awsui-value-large"
           href="#"
           onFollow={onLinkClicked}>
-          {displayedNumber}
+          {totalNumber ? `${featuredNumber}/${totalNumber}` : featuredNumber}
         </Link>
         <Icon name="status-warning" variant="warning" />
       </SpaceBetween>
@@ -54,7 +55,7 @@ const DashboardNumber: FC<DashboardNumberProps> = ({
         variant="awsui-value-large"
         href="#"
         onFollow={onLinkClicked}>
-        {displayedNumber}
+        {totalNumber ? `${featuredNumber}/${totalNumber}` : featuredNumber}
       </Link>
     )}
   </div>;

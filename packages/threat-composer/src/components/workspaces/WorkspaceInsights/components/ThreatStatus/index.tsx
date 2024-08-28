@@ -27,19 +27,19 @@ import {
 } from '@cloudscape-design/design-tokens';
 import { useMemo, useCallback, FC } from 'react';
 import {
-  LEVEL_HIGH,
-  LEVEL_LOW,
-  LEVEL_MEDIUM,
-  LEVEL_NOT_SET,
   DEFAULT_NEW_ENTITY_ID,
+  STATUS_NOT_SET,
+  THREAT_STATUS_IDENTIFIED,
+  THREAT_STATUS_NOT_USEFUL,
+  THREAT_STATUS_RESOLVED,
 } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
-import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
+import { threatStatus } from '../../../../../data';
 import DashboardNumber from '../../../../generic/DashboardNumber';
 import useThreatListLinkClicked from '../../hooks/useThreatListLinkClicked';
 import { WorkspaceInsightsProps } from '../../types';
 
-const ThreatPrioritization: FC<WorkspaceInsightsProps> = ({
+const ThreatStatus: FC<WorkspaceInsightsProps> = ({
   onThreatEditorView,
   onThreatListView,
 }) => {
@@ -47,22 +47,22 @@ const ThreatPrioritization: FC<WorkspaceInsightsProps> = ({
 
   const handleLinkClicked = useThreatListLinkClicked(onThreatListView);
 
-  const missingPriority = useMemo(
-    () => filterThreatsByMetadata(statementList, 'Priority').length,
+  const countNotSet = useMemo(() => statementList.filter(x => !x.status).length,
     [statementList],
   );
 
-  const countHigh = useMemo(
-    () => filterThreatsByMetadata(statementList, 'Priority', LEVEL_HIGH).length,
+  const countIdentified = useMemo(
+    () => statementList.filter(x => x.status === THREAT_STATUS_IDENTIFIED).length,
     [statementList],
   );
-  const countMed = useMemo(
-    () =>
-      filterThreatsByMetadata(statementList, 'Priority', LEVEL_MEDIUM).length,
+
+  const countResolved = useMemo(
+    () => statementList.filter(x => x.status === THREAT_STATUS_RESOLVED).length,
     [statementList],
   );
-  const countLow = useMemo(
-    () => filterThreatsByMetadata(statementList, 'Priority', LEVEL_LOW).length,
+
+  const countNotUseful = useMemo(
+    () => statementList.filter(x => x.status === THREAT_STATUS_NOT_USEFUL).length,
     [statementList],
   );
 
@@ -91,24 +91,24 @@ const ThreatPrioritization: FC<WorkspaceInsightsProps> = ({
           <PieChart
             data={[
               {
-                title: 'High',
-                value: countHigh,
-                color: colorChartsStatusHigh,
-              },
-              {
-                title: 'Medium',
-                value: countMed,
-                color: colorChartsStatusInfo,
-              },
-              {
-                title: 'Low',
-                value: countLow,
+                title: threatStatus.find(x => x.value === THREAT_STATUS_RESOLVED)?.label || 'Resolved',
+                value: countResolved,
                 color: colorChartsStatusPositive,
               },
               {
-                title: 'Undefined',
-                value: missingPriority,
+                title: threatStatus.find(x => x.value === THREAT_STATUS_NOT_USEFUL)?.label || 'Not useful',
+                value: countNotUseful,
+                color: colorChartsStatusInfo,
+              },
+              {
+                title: threatStatus.find(x => x.value === THREAT_STATUS_IDENTIFIED)?.label || 'Identified',
+                value: countIdentified,
                 color: colorChartsStatusNeutral,
+              },
+              {
+                title: 'Not Set',
+                value: countNotSet,
+                color: colorChartsStatusHigh,
               },
             ]}
             detailPopoverContent={(datum, sum) => [
@@ -121,7 +121,7 @@ const ThreatPrioritization: FC<WorkspaceInsightsProps> = ({
             segmentDescription={(datum, sum) =>
               `${datum.value} threats, ${((datum.value / sum) * 100).toFixed(0)}%`
             }
-            ariaDescription="Pie chart showing the prioritization of threats."
+            ariaDescription="Pie chart showing the status of threats."
             ariaLabel="Pie chart"
             hideFilter
             innerMetricDescription="Threats"
@@ -140,14 +140,14 @@ const ThreatPrioritization: FC<WorkspaceInsightsProps> = ({
           />
         </Box>
       )}
-      {missingPriority > 0 ? (
+      {countNotSet > 0 ? (
         <div>
-          <Box variant="awsui-key-label">Missing priority</Box>
+          <Box variant="awsui-key-label">Missing status</Box>
           <DashboardNumber
             showWarning
-            featuredNumber={missingPriority}
+            featuredNumber={countNotSet}
             onLinkClicked={handleLinkClicked({
-              priority: LEVEL_NOT_SET,
+              status: [STATUS_NOT_SET],
             })}
           />
         </div>
@@ -155,4 +155,4 @@ const ThreatPrioritization: FC<WorkspaceInsightsProps> = ({
     </ColumnLayout>
   );
 };
-export default ThreatPrioritization;
+export default ThreatStatus;
