@@ -118,21 +118,21 @@ const MitigationList: FC<MitigationListProps> = ({
       }, []);
   }, [mitigationList]);
 
-  const handleAddTagToEntity = useCallback((assumption: Mitigation, tag: string) => {
+  const handleAddTagToEntity = useCallback((mitigation: Mitigation, tag: string) => {
     const updated: Mitigation = {
-      ...assumption,
-      tags: assumption.tags ?
-        (!assumption.tags.includes(tag) ?
-          [...assumption.tags, tag] : assumption.tags) :
+      ...mitigation,
+      tags: mitigation.tags ?
+        (!mitigation.tags.includes(tag) ?
+          [...mitigation.tags, tag] : mitigation.tags) :
         [tag],
     };
     saveMitigation(updated);
   }, [saveMitigation]);
 
-  const handleRemoveTagFromEntity = useCallback((assumption: Mitigation, tag: string) => {
+  const handleRemoveTagFromEntity = useCallback((mitigation: Mitigation, tag: string) => {
     const updated: Mitigation = {
-      ...assumption,
-      tags: assumption.tags?.filter(t => t !== tag),
+      ...mitigation,
+      tags: mitigation.tags?.filter(t => t !== tag),
     };
     saveMitigation(updated);
   }, [saveMitigation]);

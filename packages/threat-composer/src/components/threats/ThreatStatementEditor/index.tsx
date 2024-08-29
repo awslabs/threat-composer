@@ -21,7 +21,6 @@ import TextContent from '@cloudscape-design/components/text-content';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import React, { FC, useCallback, useMemo, useState, useRef, useEffect, ReactNode, PropsWithChildren } from 'react';
-import { v4 as uuidV4 } from 'uuid';
 import { EditorProps } from './types';
 import { DEFAULT_NEW_ENTITY_ID, DEFAULT_WORKSPACE_LABEL } from '../../../configs/constants';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
@@ -256,11 +255,9 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
   const handleExampleClicked = useCallback((statement: TemplateThreatStatement) => {
     setEditingStatement({
       ...statement,
+      ...getNewThreatStatement(),
       tags: [],
       metadata: [],
-      displayOrder: -1,
-      numericId: -1,
-      id: uuidV4(),
     });
     const recommendedEditor = getRecommendedEditor(statement);
     recommendedEditor && setEditor(recommendedEditor);
@@ -273,11 +270,9 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
     const example = threatStatementExamples[randomNumber] as TemplateThreatStatement;
     const statement = {
       ...example,
+      ...getNewThreatStatement(),
       tags: [],
       metadata: [],
-      displayOrder: -1,
-      numericId: -1,
-      id: uuidV4(),
     };
 
     setEditingStatement(statement);

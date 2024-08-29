@@ -35,12 +35,6 @@ export interface GenericEntityCreationCardProps {
   validateData?: TextAreaProps['validateData'];
 }
 
-export const DEFAULT_ENTITY = {
-  id: DEFAULT_NEW_ENTITY_ID,
-  numericId: -1,
-  content: '',
-};
-
 const GenericEntityCreationCard: FC<GenericEntityCreationCardProps> = ({
   editingEntity,
   setEditingEntity,

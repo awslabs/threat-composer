@@ -13,17 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { v4 as uuidV4 } from 'uuid';
-import { DEFAULT_THREAT_STATUS } from '../../configs/status';
-import { TemplateThreatStatement } from '../../customTypes';
+import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
+import { Assumption } from '../../customTypes';
 
-const getNewThreatStatement = (): TemplateThreatStatement => {
+const getNewAssumption = (content: string = ''): Assumption => {
   return {
-    id: uuidV4(),
+    id: DEFAULT_NEW_ENTITY_ID,
     numericId: -1,
-    displayOrder: -1,
-    status: DEFAULT_THREAT_STATUS,
+    content: content,
   };
 };
 
-export default getNewThreatStatement;
+export default getNewAssumption;
