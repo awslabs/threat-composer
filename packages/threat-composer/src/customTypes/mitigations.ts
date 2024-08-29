@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { z } from 'zod';
 import { ContentEntityBaseSchema, EntityLinkBaseSchema, StatusSchema } from './entities';
-import { MITIGATION_STATUS_IDENTIFIED, MITIGATION_STATUS_IN_PROGRESS, MITIGATION_STATUS_RESOLVED, MITIGATION_STATUS_RESOLVED_ABANDONED, STATUS_NOT_SET } from '../configs';
+import { MITIGATION_STATUS_IDENTIFIED, MITIGATION_STATUS_IN_PROGRESS, MITIGATION_STATUS_RESOLVED, MITIGATION_STATUS_RESOLVED_WILLNOTACTION, STATUS_NOT_SET } from '../configs';
 import mitigationStatus from '../data/status/mitigationStatus.json';
 
 export const MitigationSchema = ContentEntityBaseSchema.extend({
@@ -43,6 +43,6 @@ export interface MitigationListFilter {
   status?: (typeof MITIGATION_STATUS_IDENTIFIED
     | typeof MITIGATION_STATUS_IN_PROGRESS
     | typeof MITIGATION_STATUS_RESOLVED
-    | typeof MITIGATION_STATUS_RESOLVED_ABANDONED
+    | typeof MITIGATION_STATUS_RESOLVED_WILLNOTACTION
     | typeof STATUS_NOT_SET)[];
 }

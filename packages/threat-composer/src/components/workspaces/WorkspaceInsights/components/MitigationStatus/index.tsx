@@ -31,7 +31,7 @@ import {
   MITIGATION_STATUS_IDENTIFIED,
   MITIGATION_STATUS_IN_PROGRESS,
   MITIGATION_STATUS_RESOLVED,
-  MITIGATION_STATUS_RESOLVED_ABANDONED,
+  MITIGATION_STATUS_RESOLVED_WILLNOTACTION,
   STATUS_NOT_SET,
 } from '../../../../../configs';
 import { useMitigationsContext } from '../../../../../contexts/MitigationsContext';
@@ -66,8 +66,8 @@ const MitigationStatus: FC<WorkspaceInsightsProps> = ({
     [mitigationList],
   );
 
-  const countAbandoned = useMemo(
-    () => mitigationList.filter(x => x.status === MITIGATION_STATUS_RESOLVED_ABANDONED).length,
+  const countWillNotAction = useMemo(
+    () => mitigationList.filter(x => x.status === MITIGATION_STATUS_RESOLVED_WILLNOTACTION).length,
     [mitigationList],
   );
 
@@ -100,8 +100,8 @@ const MitigationStatus: FC<WorkspaceInsightsProps> = ({
                 color: colorChartsStatusPositive,
               },
               {
-                title: mitigationStatus.find(x => x.value === MITIGATION_STATUS_RESOLVED_ABANDONED)?.label || 'Abandoned',
-                value: countAbandoned,
+                title: mitigationStatus.find(x => x.value === MITIGATION_STATUS_RESOLVED_WILLNOTACTION)?.label || 'Will not action',
+                value: countWillNotAction,
                 color: colorChartsStatusLow,
               },
               {

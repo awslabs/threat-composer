@@ -18,8 +18,8 @@
         "iconName": "status-positive"
     },
     {
-        "label": "Abandoned",
-        "value": "mitigationResolvedAbandoned",
+        "label": "Will not action",
+        "value": "mitigationResolvedWillNotAction",
         "description": "Will not be implementing this mitigation",
         "iconName": "flag"
     }

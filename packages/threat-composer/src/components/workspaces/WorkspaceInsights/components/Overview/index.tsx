@@ -20,7 +20,7 @@ import ColumnLayout from '@cloudscape-design/components/column-layout';
 import { LinkProps } from '@cloudscape-design/components/link';
 import { css } from '@emotion/react';
 import { useMemo, FC, ReactNode } from 'react';
-import { LEVEL_HIGH, LEVEL_LOW, LEVEL_MEDIUM, LEVEL_NOT_SET, MITIGATION_STATUS_IDENTIFIED, MITIGATION_STATUS_IN_PROGRESS, MITIGATION_STATUS_RESOLVED, MITIGATION_STATUS_RESOLVED_ABANDONED, STATUS_NOT_SET, THREAT_STATUS_IDENTIFIED, THREAT_STATUS_NOT_USEFUL, THREAT_STATUS_RESOLVED } from '../../../../../configs';
+import { LEVEL_HIGH, LEVEL_LOW, LEVEL_MEDIUM, LEVEL_NOT_SET, MITIGATION_STATUS_IDENTIFIED, MITIGATION_STATUS_IN_PROGRESS, MITIGATION_STATUS_RESOLVED, MITIGATION_STATUS_RESOLVED_WILLNOTACTION, STATUS_NOT_SET, THREAT_STATUS_IDENTIFIED, THREAT_STATUS_NOT_USEFUL, THREAT_STATUS_RESOLVED } from '../../../../../configs';
 import { useAssumptionLinksContext, useMitigationsContext } from '../../../../../contexts';
 import { useMitigationLinksContext } from '../../../../../contexts/MitigationLinksContext';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
@@ -97,7 +97,7 @@ const Overview: FC<WorkspaceInsightsProps> = ({
   const [completedMitigations, totalMitigations] = useMemo(() => {
     return [
       mitigationList.filter((m) => m.status === MITIGATION_STATUS_RESOLVED
-        || m.status === MITIGATION_STATUS_RESOLVED_ABANDONED).length,
+        || m.status === MITIGATION_STATUS_RESOLVED_WILLNOTACTION).length,
       mitigationList.length,
     ];
   }, [mitigationList]);
