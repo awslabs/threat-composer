@@ -202,7 +202,7 @@ const ThreatGrammar: FC<WorkspaceInsightsProps> = ({
           <Box variant="awsui-key-label">Not using grammar</Box>
           <DashboardNumber
             showWarning
-            displayedNumber={notUsingGrammar}
+            featuredNumber={notUsingGrammar}
           />
         </div>
       ) : null}

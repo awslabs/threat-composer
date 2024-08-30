@@ -14,10 +14,10 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, useCallback, useEffect, useState } from 'react';
-import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { useMitigationLinksContext } from '../../../contexts/MitigationLinksContext/context';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { MitigationLink } from '../../../customTypes';
+import getNewMitigation from '../../../utils/getNewMitigation';
 import MitigationLinkView from '../MitigationLinkView';
 
 export interface MitigationLinkProps {
@@ -49,11 +49,7 @@ const MitigationLinkComponent: FC<MitigationLinkProps> = ({
         mitigationId: mitigationIdOrNewMitigation,
       });
     } else {
-      const newMitigation = saveMitigation({
-        numericId: -1,
-        content: mitigationIdOrNewMitigation,
-        id: DEFAULT_NEW_ENTITY_ID,
-      });
+      const newMitigation = saveMitigation(getNewMitigation(mitigationIdOrNewMitigation));
       addMitigationLink({
         linkedId: linkedEntityId,
         mitigationId: newMitigation.id,

@@ -17,12 +17,12 @@ import { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design
 import { useCallback } from 'react';
 import { ThreatStatementListFilter, ViewNavigationEvent } from '../../../../../customTypes';
 
-const useLinkClicked = (onThreatListView: ViewNavigationEvent['onThreatListView']) => {
+const useThreatListLinkClicked = (onThreatListView: ViewNavigationEvent['onThreatListView']) => {
   return useCallback((filter?: ThreatStatementListFilter): CancelableEventHandler<BaseNavigationDetail> => (event) => {
     event?.preventDefault?.();
     onThreatListView?.(filter);
   }, [onThreatListView]);
 };
 
-export default useLinkClicked;
+export default useThreatListLinkClicked;
 

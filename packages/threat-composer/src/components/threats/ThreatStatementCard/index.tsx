@@ -17,13 +17,17 @@
 import { SpaceBetween } from '@cloudscape-design/components';
 import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
+import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
 import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useCallback, useMemo } from 'react';
+import { THREAT_STATUS_COLOR_MAPPING } from '../../../configs/status';
 import { TemplateThreatStatement } from '../../../customTypes';
+import threatStatus from '../../../data/status/threatStatus.json';
 import AssumptionLink from '../../assumptions/AssumptionLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import GenericCard from '../../generic/GenericCard';
+import StatusBadge from '../../generic/StatusBadge';
 import MitigationLink from '../../mitigations/MitigationLink';
 import MetadataEditor from '../MetadataEditor';
 import PriorityBadge from '../PriorityBadge';
@@ -34,6 +38,7 @@ export interface ThreatStatementCardProps {
   onCopy?: (id: string) => void;
   onRemove?: (id: string) => void;
   onEditInWizard?: (id: string) => void;
+  onEditStatementStatus: (statement: TemplateThreatStatement, status: string) => void;
   onEditMetadata: (statement: TemplateThreatStatement, key: string, value: string | string[] | undefined) => void;
   onAddTagToStatement?: (statement: TemplateThreatStatement, tag: string) => void;
   onRemoveTagFromStatement?: (statement: TemplateThreatStatement, tag: string) => void;
@@ -47,6 +52,7 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
   onEditInWizard,
   onAddTagToStatement,
   onRemoveTagFromStatement,
+  onEditStatementStatus,
   onEditMetadata,
 }) => {
   const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(({ detail }) => {
@@ -85,7 +91,15 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
   return (<GenericCard
     header={`Threat ${statement.numericId}`}
     entityId={statement.id}
-    info={<PriorityBadge editingStatement={statement} onEditMetadata={onEditMetadata} />}
+    info={<SpaceBetween direction='horizontal' size='s'>
+      <StatusBadge
+        options={threatStatus as OptionDefinition[]}
+        setSelectedOption={(option) => onEditStatementStatus(statement, option)}
+        selectedOption={statement.status}
+        statusColorMapping={THREAT_STATUS_COLOR_MAPPING}
+      />
+      <PriorityBadge editingStatement={statement} onEditMetadata={onEditMetadata} />
+    </SpaceBetween>}
     tags={statement.tags}
     moreActions={moreActions}
     onRemove={onRemove}
@@ -113,6 +127,7 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
       <MetadataEditor
         variant='default'
         editingStatement={statement}
+        onEditStatementStatus={onEditStatementStatus}
         onEditMetadata={onEditMetadata}
       />
     </SpaceBetween>

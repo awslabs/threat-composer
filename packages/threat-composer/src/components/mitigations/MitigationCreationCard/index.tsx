@@ -19,8 +19,9 @@ import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { Mitigation, MitigationSchema } from '../../../customTypes';
+import getNewMitigation from '../../../utils/getNewMitigation';
 import AssumptionLinkView from '../../assumptions/AssumptionLinkView';
-import GenericEntityCreationCard, { DEFAULT_ENTITY } from '../../generic/GenericEntityCreationCard';
+import GenericEntityCreationCard from '../../generic/GenericEntityCreationCard';
 import ThreatLinkView from '../../threats/ThreatLinkView';
 
 export interface MitigationCreationCardProps {
@@ -28,7 +29,7 @@ export interface MitigationCreationCardProps {
 }
 
 const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => {
-  const [editingEntity, setEditingEntity] = useState<Mitigation>(DEFAULT_ENTITY);
+  const [editingEntity, setEditingEntity] = useState<Mitigation>(getNewMitigation());
   const [linkedAssumptionIds, setLinkedAssumptionIds] = useState<string[]>([]);
   const [linkedThreatIds, setLinkedThreatIds] = useState<string[]>([]);
 
@@ -37,13 +38,13 @@ const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => 
 
   const handleSave = useCallback(() => {
     onSave?.(editingEntity, linkedAssumptionIds, linkedThreatIds);
-    setEditingEntity(DEFAULT_ENTITY);
+    setEditingEntity(getNewMitigation());
     setLinkedAssumptionIds([]);
     setLinkedThreatIds([]);
   }, [editingEntity, linkedAssumptionIds, linkedThreatIds]);
 
   const handleReset = useCallback(() => {
-    setEditingEntity(DEFAULT_ENTITY);
+    setEditingEntity(getNewMitigation());
     setLinkedAssumptionIds([]);
     setLinkedThreatIds([]);
   }, []);

@@ -85,6 +85,8 @@ export const EntityBaseSchema = z.object({
 
 export type EntityBase = z.infer<typeof EntityBaseSchema>;
 
+export const StatusSchema = z.string().optional();
+
 export const ContentEntityBaseSchema = EntityBaseSchema.extend({
   /**
    * The text content of the Assumption.

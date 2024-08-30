@@ -14,9 +14,15 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { z } from 'zod';
-import { ContentEntityBaseSchema, EntityLinkBaseSchema } from './entities';
+import { ContentEntityBaseSchema, EntityLinkBaseSchema, StatusSchema } from './entities';
+import { MITIGATION_STATUS_IDENTIFIED, MITIGATION_STATUS_IN_PROGRESS, MITIGATION_STATUS_RESOLVED, MITIGATION_STATUS_RESOLVED_WILLNOTACTION, STATUS_NOT_SET } from '../configs';
+import mitigationStatus from '../data/status/mitigationStatus.json';
 
-export const MitigationSchema = ContentEntityBaseSchema.extend({}).strict();;
+export const MitigationSchema = ContentEntityBaseSchema.extend({
+  status: StatusSchema.refine((schema) => {
+    return !schema || mitigationStatus.map(x => x.value).includes(schema);
+  }, 'Invalid mitigation status'),
+}).strict();;
 
 export type Mitigation = z.infer<typeof MitigationSchema>;
 
@@ -32,3 +38,11 @@ export const MitigationLinkSchema = EntityLinkBaseSchema.extend({
 }).strict();;
 
 export type MitigationLink = z.infer<typeof MitigationLinkSchema>;
+
+export interface MitigationListFilter {
+  status?: (typeof MITIGATION_STATUS_IDENTIFIED
+    | typeof MITIGATION_STATUS_IN_PROGRESS
+    | typeof MITIGATION_STATUS_RESOLVED
+    | typeof MITIGATION_STATUS_RESOLVED_WILLNOTACTION
+    | typeof STATUS_NOT_SET)[];
+}

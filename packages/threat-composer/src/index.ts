@@ -20,3 +20,4 @@ export * from './customTypes';
 export * from './hooks';
 export * from './configs';
 export * from './utils';
+export * from './data';

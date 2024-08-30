@@ -1,0 +1,26 @@
+[
+    {
+        "label": "Identified",
+        "value": "mitigationIdentified",
+        "description": "Mitigation has been identified",
+        "iconName": "suggestions"
+    },
+    {
+        "label": "In-progress",
+        "value": "mitigationInProgress",
+        "description": "Mitigation is in-progress",
+        "iconName": "status-in-progress"
+    },
+    {
+        "label": "Resolved",
+        "value": "mitigationResolved",
+        "description": "Mitigation has been completed to an agreed scoped",
+        "iconName": "status-positive"
+    },
+    {
+        "label": "Will not action",
+        "value": "mitigationResolvedWillNotAction",
+        "description": "Will not be implementing this mitigation",
+        "iconName": "flag"
+    }
+]

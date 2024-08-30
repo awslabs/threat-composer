@@ -13,12 +13,5 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export * from './constants';
-export * from './export';
-export * from './localStorageKeys';
-export * from './content';
-export * from './styles';
-export * from './options';
-export * from './metadata';
-export * from './appMode';
-export * from './status';
+export { default as threatStatus } from './status/threatStatus.json';
+export { default as mitigationStatus } from './status/mitigationStatus.json';

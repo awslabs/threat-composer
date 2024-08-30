@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { WorkspaceHome as WorkspaceHomeComponent, ThreatStatementListFilter } from '@aws/threat-composer';
-import { ROUTE_APPLICATION_INFO, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST } from '../../config/routes';
+import { WorkspaceHome as WorkspaceHomeComponent, ThreatStatementListFilter, MitigationListFilter } from '@aws/threat-composer';
+import { ROUTE_APPLICATION_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST } from '../../config/routes';
 import useNavigateView from '../../hooks/useNavigationView';
 
 const WorkspaceHome = () => {
@@ -29,6 +29,11 @@ const WorkspaceHome = () => {
       },
     })}
     onThreatListView={(filter?: ThreatStatementListFilter) => handleNavigateView(ROUTE_THREAT_LIST, undefined, undefined, undefined, {
+      state: filter ? {
+        filter,
+      } : undefined,
+    })}
+    onMitigationListView={(filter?: MitigationListFilter) => handleNavigateView(ROUTE_MITIGATION_LIST, undefined, undefined, undefined, {
       state: filter ? {
         filter,
       } : undefined,

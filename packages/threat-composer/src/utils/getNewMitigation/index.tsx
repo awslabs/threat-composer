@@ -13,12 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export * from './constants';
-export * from './export';
-export * from './localStorageKeys';
-export * from './content';
-export * from './styles';
-export * from './options';
-export * from './metadata';
-export * from './appMode';
-export * from './status';
+import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
+import { DEFAULT_MITIGATION_STATUS } from '../../configs/status';
+import { Mitigation } from '../../customTypes';
+
+const getNewMitigation = (content: string = ''): Mitigation => {
+  return {
+    id: DEFAULT_NEW_ENTITY_ID,
+    numericId: -1,
+    status: DEFAULT_MITIGATION_STATUS,
+    content: content,
+  };
+};
+
+export default getNewMitigation;

@@ -21,7 +21,6 @@ import TextContent from '@cloudscape-design/components/text-content';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import React, { FC, useCallback, useMemo, useState, useRef, useEffect, ReactNode, PropsWithChildren } from 'react';
-import { v4 as uuidV4 } from 'uuid';
 import { EditorProps } from './types';
 import { DEFAULT_NEW_ENTITY_ID, DEFAULT_WORKSPACE_LABEL } from '../../../configs/constants';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
@@ -37,6 +36,7 @@ import threatFieldData from '../../../data/threatFieldData';
 import threatStatementExamples from '../../../data/threatStatementExamples.json';
 import threatStatementFormat from '../../../data/threatStatementFormat';
 import useEditMetadata from '../../../hooks/useEditMetadata';
+import getNewMitigation from '../../../utils/getNewMitigation';
 import getNewThreatStatement from '../../../utils/getNewThreatStatement';
 import getRecommendedEditor from '../../../utils/getRecommandedEditor';
 import renderThreatStatement from '../../../utils/renderThreatStatement';
@@ -255,11 +255,9 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
   const handleExampleClicked = useCallback((statement: TemplateThreatStatement) => {
     setEditingStatement({
       ...statement,
+      ...getNewThreatStatement(),
       tags: [],
       metadata: [],
-      displayOrder: -1,
-      numericId: -1,
-      id: uuidV4(),
     });
     const recommendedEditor = getRecommendedEditor(statement);
     recommendedEditor && setEditor(recommendedEditor);
@@ -272,11 +270,9 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
     const example = threatStatementExamples[randomNumber] as TemplateThreatStatement;
     const statement = {
       ...example,
+      ...getNewThreatStatement(),
       tags: [],
       metadata: [],
-      displayOrder: -1,
-      numericId: -1,
-      id: uuidV4(),
     };
 
     setEditingStatement(statement);
@@ -329,11 +325,7 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
     if (mitigationList.find(a => a.id === mitigationIdOrNewMitigation)) {
       setLinkedMitigationIds(prev => [...prev, mitigationIdOrNewMitigation]);
     } else {
-      const newMitigation = saveMitigation({
-        id: DEFAULT_NEW_ENTITY_ID,
-        numericId: -1,
-        content: mitigationIdOrNewMitigation,
-      });
+      const newMitigation = saveMitigation(getNewMitigation(mitigationIdOrNewMitigation));
       setLinkedMitigationIds(prev => [...prev, newMitigation.id]);
     }
 
@@ -409,6 +401,10 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
             <MetadataEditor
               variant='container'
               editingStatement={editingStatement}
+              onEditStatementStatus={(_statement, status) => setEditingStatement((prev => ({
+                ...prev,
+                status,
+              } as TemplateThreatStatement)))}
               onEditMetadata={handleEditMetadata}
             />
           </div>}

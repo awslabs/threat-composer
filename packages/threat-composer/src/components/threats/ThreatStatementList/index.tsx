@@ -23,11 +23,12 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { css } from '@emotion/react';
 import { FC, PropsWithChildren, useCallback, useMemo, useState } from 'react';
-import { LEVEL_SELECTOR_OPTIONS, DEFAULT_NEW_ENTITY_ID, LEVEL_NOT_SET } from '../../../configs';
+import { LEVEL_SELECTOR_OPTIONS, DEFAULT_NEW_ENTITY_ID, LEVEL_NOT_SET, STATUS_NOT_SET } from '../../../configs';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { GlobalSetupContextApi, useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { TemplateThreatStatement, ThreatStatementListFilter, ViewNavigationEvent } from '../../../customTypes';
+import threatStatus from '../../../data/status/threatStatus.json';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import AssetSelector from '../../generic/AssetSelector';
@@ -59,9 +60,17 @@ const styles = {
   btnClearFilter: css({
     height: '100%',
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   }),
 };
+
+const ALL_STATUS = [...threatStatus.map(ia => ({
+  label: ia.label,
+  value: ia.value,
+})), {
+  label: 'Not Set',
+  value: STATUS_NOT_SET,
+}];
 
 const ContentLayout: FC<PropsWithChildren<ContentLayoutProps & {
   composerMode: GlobalSetupContextApi['composerMode'];
@@ -138,6 +147,11 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
   ] = useState<string[]>([]);
 
   const [
+    selectedStatus,
+    setSelectedStatus,
+  ] = useState<string[]>(initialFilter?.status || []);
+
+  const [
     selectedPriorities,
     setSelectedPriorities,
   ] = useState<string[]>(initialFilter && initialFilter.priority ? [initialFilter.priority] : []);
@@ -175,6 +189,13 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
     saveStatement(updated);
   }, []);
 
+  const handleUpdateStatementStatus = useCallback((statement: TemplateThreatStatement, status: string) => {
+    saveStatement({
+      ...statement,
+      status,
+    });
+  }, [saveStatement]);
+
   const filteredStatementList = useMemo(() => {
     let output = statementList;
 
@@ -199,6 +220,12 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
     if (selectedTags && selectedTags.length > 0) {
       output = output.filter(st => {
         return st.tags?.some(t => selectedTags.includes(t));
+      });
+    }
+
+    if (selectedStatus && selectedStatus.length > 0) {
+      output = output.filter(st => {
+        return st.status ? selectedStatus.includes(st.status) : selectedStatus.includes(STATUS_NOT_SET);
       });
     }
 
@@ -262,7 +289,7 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
   }, [filteringText, statementList,
     assumptionLinkList, mitigationLinkList,
     selectedImpactedAssets, selectedImpactedGoal,
-    selectedTags, selectedPriorities, selectedSTRIDEs,
+    selectedTags, selectedStatus, selectedPriorities, selectedSTRIDEs,
     selectedLinkedAssumptionFilter, selectedLinkedMitigationFilter,
     sortBy]);
 
@@ -271,12 +298,13 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
       && selectedImpactedAssets.length === 0
       && selectedImpactedGoal.length === 0
       && selectedTags.length === 0
+      && selectedStatus.length === 0
       && selectedPriorities.length === 0
       && selectedSTRIDEs.length === 0
       && selectedLinkedAssumptionFilter === ALL
       && selectedLinkedMitigationFilter === ALL);
   }, [filteringText, selectedImpactedAssets, selectedImpactedGoal,
-    selectedTags, selectedPriorities, selectedSTRIDEs,
+    selectedTags, selectedStatus, selectedPriorities, selectedSTRIDEs,
     selectedLinkedAssumptionFilter, selectedLinkedMitigationFilter]);
 
   const handleAddStatement = useCallback((idToCopy?: string) => {
@@ -345,6 +373,7 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
     setSelectedImpactedAssets([]);
     setSelectedImpactedGoal([]);
     setSelectedTags([]);
+    setSelectedStatus([]);
     setSelectedPriorities([]);
     setSelectedSTRIDEs([]);
     setSelectedLinkedAssumptionFilter(ALL);
@@ -352,19 +381,24 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
   }, []);
 
   const gridDefinition = useMemo(() => {
-    return composerMode === 'Full' ? [{ colspan: { default: 12, xs: 6, s: 2 } },
-      { colspan: { default: 12, xs: 6, s: 2 } },
+    return composerMode === 'Full' ? [{ colspan: { default: 12, xs: 6, s: 3 } },
       { colspan: { default: 12, xs: 6, s: 3 } },
       { colspan: { default: 12, xs: 6, s: 3 } },
-      { colspan: { default: 12, xs: 6, s: 2 } },
+      { colspan: { default: 12, xs: 6, s: 3 } },
       { colspan: { default: 12, xs: 6, s: 5 } },
       { colspan: { default: 12, xs: 6, s: 5 } },
-      { colspan: { default: 12, xs: 6, s: 2 } }] : [{ colspan: { default: 12, xs: 6, s: 2 } },
-      { colspan: { default: 12, xs: 6, s: 2 } },
-      { colspan: { default: 12, xs: 6, s: 2.5 } },
-      { colspan: { default: 12, xs: 6, s: 2.5 } },
-      { colspan: { default: 12, xs: 5, s: 2 } },
-      { colspan: { default: 1 } }];
+      { colspan: { default: 12, xs: 6, s: 4 } },
+      { colspan: { default: 12, xs: 6, s: 4 } },
+      { colspan: { default: 12, xs: 6, s: 4 } }] :
+      [
+        { colspan: { default: 12, xs: 6, s: 3 } },
+        { colspan: { default: 12, xs: 6, s: 3 } },
+        { colspan: { default: 12, xs: 6, s: 3 } },
+        { colspan: { default: 12, xs: 6, s: 3 } },
+        { colspan: { default: 12, xs: 6, s: 5 } },
+        { colspan: { default: 12, xs: 6, s: 5 } },
+        { colspan: { default: 2 } },
+      ];
   }, [composerMode]);
 
   return (<ContentLayout
@@ -419,6 +453,22 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
               placeholder="Filtered by STRIDE"
               selectedAriaLabel="Selected"
             />
+            <TagSelector
+              allTags={allTags}
+              selectedTags={selectedTags}
+              setSelectedTags={setSelectedTags}
+            />
+            <Multiselect
+              tokenLimit={0}
+              selectedOptions={ALL_STATUS.filter(x => selectedStatus.includes(x.value))}
+              onChange={({ detail }) =>
+                setSelectedStatus(detail.selectedOptions?.map(o => o.value || '') || [])
+              }
+              deselectAriaLabel={e => `Remove ${e.label}`}
+              options={ALL_STATUS}
+              placeholder="Filtered by status"
+              selectedAriaLabel="Selected"
+            />
             <AssetSelector
               allAssets={allImpactedAssets}
               selectedAssets={selectedImpactedAssets}
@@ -441,11 +491,6 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
               placeholder="Filtered by impacted goal"
               selectedAriaLabel="Selected"
             />
-            <TagSelector
-              allTags={allTags}
-              selectedTags={selectedTags}
-              setSelectedTags={setSelectedTags}
-            />
             {composerMode === 'Full' && <LinkedEntityFilter
               label='Linked mitigations'
               entityDisplayName='mitigations'
@@ -458,25 +503,13 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
               selected={selectedLinkedAssumptionFilter}
               setSelected={setSelectedLinkedAssumptionFilter}
             />}
-            {composerMode === 'Full' ? (<div css={styles.btnClearFilter}>
+            {<div css={styles.btnClearFilter}>
               <div><Button onClick={handleClearFilter}
                 disabled={hasNoFilter}
               >
                 Clear filters
               </Button></div>
-            </div>) : <Button onClick={handleClearFilter}
-              variant='icon'
-              iconSvg={<svg
-                focusable="false"
-                aria-hidden="true"
-                viewBox="0 0 24 24"
-                tabIndex={-1}
-              >
-                <path d="M19.79 5.61C20.3 4.95 19.83 4 19 4H6.83l7.97 7.97 4.99-6.36zM2.81 2.81 1.39 4.22 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.17l5.78 5.78 1.41-1.41L2.81 2.81z"></path>
-              </svg>}
-              ariaLabel='Clear filters'
-              disabled={hasNoFilter}
-            />}
+            </div>}
           </Grid>
           <Grid
             gridDefinition={[{ colspan: { default: 12, xs: 6 } }]}
@@ -493,6 +526,7 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
           onRemove={handleRemove}
           onEditInWizard={handleEditStatement}
           onEditMetadata={handleEditMetadata}
+          onEditStatementStatus={handleUpdateStatementStatus}
           onAddTagToStatement={handleAddTagToStatement}
           onRemoveTagFromStatement={handleRemoveTagFromStatement}
           showLinkedEntities={composerMode === 'Full'}

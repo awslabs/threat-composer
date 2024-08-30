@@ -20,13 +20,14 @@ import ColumnLayout from '@cloudscape-design/components/column-layout';
 import { LinkProps } from '@cloudscape-design/components/link';
 import { css } from '@emotion/react';
 import { useMemo, FC, ReactNode } from 'react';
-import { LEVEL_HIGH, LEVEL_LOW, LEVEL_MEDIUM, LEVEL_NOT_SET } from '../../../../../configs';
-import { useAssumptionLinksContext } from '../../../../../contexts';
+import { LEVEL_HIGH, LEVEL_LOW, LEVEL_MEDIUM, LEVEL_NOT_SET, MITIGATION_STATUS_IDENTIFIED, MITIGATION_STATUS_IN_PROGRESS, MITIGATION_STATUS_RESOLVED, MITIGATION_STATUS_RESOLVED_WILLNOTACTION, STATUS_NOT_SET, THREAT_STATUS_IDENTIFIED, THREAT_STATUS_NOT_USEFUL, THREAT_STATUS_RESOLVED } from '../../../../../configs';
+import { useAssumptionLinksContext, useMitigationsContext } from '../../../../../contexts';
 import { useMitigationLinksContext } from '../../../../../contexts/MitigationLinksContext';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 import DashboardNumber from '../../../../generic/DashboardNumber';
-import useLinkClicked from '../../hooks/useLinkClicked';
+import useMitigationListLinkClicked from '../../hooks/useMitigationListLinkClicked';
+import useThreatListLinkClicked from '../../hooks/useThreatListLinkClicked';
 import { WorkspaceInsightsProps } from '../../types';
 
 const styles = {
@@ -45,15 +46,17 @@ const styles = {
 const LabelValuePair: FC<{
   label: string | ReactNode;
   value: number;
+  totalValue?: number;
   onLinkFollow: LinkProps['onFollow'];
   showWarning?: boolean;
-}> = ({ label, value, onLinkFollow, showWarning }) => {
+}> = ({ label, value, totalValue, onLinkFollow, showWarning }) => {
   return (<div css={styles.container} >
     <Box variant="awsui-key-label">{label}</Box>
     <div css={styles.contentContainer}>
       <DashboardNumber
         showWarning={showWarning}
-        displayedNumber={value}
+        featuredNumber={value}
+        totalNumber={totalValue}
         onLinkClicked={onLinkFollow}
       />
     </div>
@@ -62,8 +65,10 @@ const LabelValuePair: FC<{
 
 const Overview: FC<WorkspaceInsightsProps> = ({
   onThreatListView,
+  onMitigationListView,
 }) => {
   const { statementList } = useThreatsContext();
+  const { mitigationList } = useMitigationsContext();
   const { mitigationLinkList } = useMitigationLinksContext();
   const { assumptionLinkList } = useAssumptionLinksContext();
 
@@ -75,7 +80,9 @@ const Overview: FC<WorkspaceInsightsProps> = ({
     ).length;
   }, [statementList, mitigationLinkList, assumptionLinkList]);
 
-  const handleLinkClicked = useLinkClicked(onThreatListView);
+  const handleThreatListLinkClicked = useThreatListLinkClicked(onThreatListView);
+
+  const handleMitigationListLinkClicked = useMitigationListLinkClicked(onMitigationListView);
 
   const missingMitigation = useMemo(() => {
     return statementList.filter(
@@ -86,6 +93,22 @@ const Overview: FC<WorkspaceInsightsProps> = ({
   const missingPriority = useMemo(() => {
     return filterThreatsByMetadata(statementList, 'Priority').length;
   }, [statementList]);
+
+  const [completedMitigations, totalMitigations] = useMemo(() => {
+    return [
+      mitigationList.filter((m) => m.status === MITIGATION_STATUS_RESOLVED
+        || m.status === MITIGATION_STATUS_RESOLVED_WILLNOTACTION).length,
+      mitigationList.length,
+    ];
+  }, [mitigationList]);
+
+  const [completedThreats, totalThreats] = useMemo(() => {
+    return [
+      statementList.filter((st) => st.status === THREAT_STATUS_NOT_USEFUL
+        || st.status === THREAT_STATUS_RESOLVED).length,
+      statementList.length,
+    ];
+  }, [mitigationList]);
 
   const countHigh = useMemo(() => {
     return filterThreatsByMetadata(statementList, 'Priority', LEVEL_HIGH)
@@ -101,41 +124,55 @@ const Overview: FC<WorkspaceInsightsProps> = ({
   }, [statementList]);
 
   return (
-    <ColumnLayout columns={7} variant="text-grid" minColumnWidth={100}>
-      <LabelValuePair label='Total' value={statementList.length} onLinkFollow={handleLinkClicked()} />
+    <ColumnLayout columns={7} variant="text-grid" minColumnWidth={120}>
+      <LabelValuePair label='Total' value={statementList.length} onLinkFollow={handleThreatListLinkClicked()} />
       <LabelValuePair label='No mitigation and assumption'
         showWarning
         value={missingMitigationOrAssumption}
-        onLinkFollow={handleLinkClicked({
+        onLinkFollow={handleThreatListLinkClicked({
           linkedMitigations: false,
           linkedAssumptions: false,
         })} />
       <LabelValuePair label='No mitigation'
         showWarning
         value={missingMitigation}
-        onLinkFollow={handleLinkClicked({
+        onLinkFollow={handleThreatListLinkClicked({
           linkedMitigations: false,
         })} />
       <LabelValuePair label={<Badge color="red">High</Badge>}
         value={countHigh}
-        onLinkFollow={handleLinkClicked({
+        onLinkFollow={handleThreatListLinkClicked({
           priority: LEVEL_HIGH,
         })} />
       <LabelValuePair label={<Badge color="blue">Med</Badge>}
         value={countMed}
-        onLinkFollow={handleLinkClicked({
+        onLinkFollow={handleThreatListLinkClicked({
           priority: LEVEL_MEDIUM,
         })} />
       <LabelValuePair label={<Badge color="green">Low</Badge>}
         value={countLow}
-        onLinkFollow={handleLinkClicked({
+        onLinkFollow={handleThreatListLinkClicked({
           priority: LEVEL_LOW,
         })} />
       <LabelValuePair label='Missing priority'
         showWarning
         value={missingPriority}
-        onLinkFollow={handleLinkClicked({
+        onLinkFollow={handleThreatListLinkClicked({
           priority: LEVEL_NOT_SET,
+        })} />
+      <LabelValuePair label='Threat progress'
+        showWarning
+        value={completedThreats}
+        totalValue={totalThreats}
+        onLinkFollow={handleThreatListLinkClicked({
+          status: [STATUS_NOT_SET, THREAT_STATUS_IDENTIFIED],
+        })} />
+      <LabelValuePair label='Mitigation progress'
+        showWarning
+        value={completedMitigations}
+        totalValue={totalMitigations}
+        onLinkFollow={handleMitigationListLinkClicked({
+          status: [STATUS_NOT_SET, MITIGATION_STATUS_IN_PROGRESS, MITIGATION_STATUS_IDENTIFIED],
         })} />
     </ColumnLayout>
   );

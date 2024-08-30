@@ -13,7 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { STATUS_NOT_SET } from '../../../../configs/status';
 import { DataExchangeFormat } from '../../../../customTypes';
+import threatStatus from '../../../../data/status/threatStatus.json';
 import escapeMarkdown from '../../../../utils/escapeMarkdown';
 import parseTableCellContent from '../../../../utils/parseTableCellContent';
 import standardizeNumericId from '../../../../utils/standardizeNumericId';
@@ -27,8 +29,8 @@ export const getThreatsContent = async (
 
   rows.push('\n');
 
-  rows.push(`| Threat Number | Threat | ${threatsOnly ? '' : 'Mitigations | Assumptions |'} Priority | STRIDE | Comments |`);
-  rows.push(`| --- | --- | ${threatsOnly ? '' : '--- | --- |'} --- | --- | --- |`);
+  rows.push(`| Threat Number | Threat | ${threatsOnly ? '' : 'Mitigations | Assumptions |'} Status | Priority | STRIDE | Comments |`);
+  rows.push(`| --- | --- | ${threatsOnly ? '' : '--- | --- |'} --- | --- | --- | --- |`);
 
   if (data.threats) {
     const promises = data.threats.map(async (x) => {
@@ -51,10 +53,11 @@ export const getThreatsContent = async (
         }
         return null;
       }).filter(ml => !!ml).join('<br/>');
+      const status = ( x.status && threatStatus.find(ts => ts.value === x.status)?.label ) || STATUS_NOT_SET;
       const priority = x.metadata?.find(m => m.key === 'Priority')?.value || '';
       const STRIDE = ((x.metadata?.find(m => m.key === 'STRIDE')?.value || []) as string[]).join(', ');
       const comments = await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || '');
-      return `| <a name="${threatId}"></a>${threatId} | ${escapeMarkdown(x.statement || '')} | ${threatsOnly ? '' : `${mitigationsContent} | ${assumptionsContent} | `} ${priority} | ${STRIDE} | ${comments} |`;
+      return `| <a name="${threatId}"></a>${threatId} | ${escapeMarkdown(x.statement || '')} | ${threatsOnly ? '' : `${mitigationsContent} | ${assumptionsContent} | `} ${status} | ${priority} | ${STRIDE} | ${comments} |`;
     });
 
     rows.push(...(await Promise.all(promises)));

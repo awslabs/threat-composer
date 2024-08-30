@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { Mitigation, MitigationLink, AssumptionLink, DataExchangeFormat, standardizeNumericId } from '@aws/threat-composer';
+import { Mitigation, MitigationLink, AssumptionLink, DataExchangeFormat, standardizeNumericId, mitigationStatus, STATUS_NOT_SET } from '@aws/threat-composer';
 import { Paragraph, HeadingLevel, TextRun, TableCell, TableRow } from 'docx';
 import Table from './components/Table';
 import getAnchorLink from './getAnchorLink';
@@ -64,7 +64,7 @@ const getDataRow = async (mitigation: Mitigation, data: DataExchangeFormat) => {
   const mitigationId = `M-${standardizeNumericId(mitigation.numericId)}`;
   const threatLinks = data.mitigationLinks?.filter(ml => ml.mitigationId === mitigation.id) || [];
   const assumptionLinks = data.assumptionLinks?.filter(al => al.linkedId === mitigation.id) || [];
-
+  const status = (mitigation.status && mitigationStatus.find(ms => ms.value === mitigation.status)?.label) || STATUS_NOT_SET;
   const renderedComents = await renderComment(mitigation.metadata);
 
   const tableRow = new TableRow({
@@ -81,6 +81,9 @@ const getDataRow = async (mitigation: Mitigation, data: DataExchangeFormat) => {
       }),
       getThreatLinksCell(threatLinks, data),
       getAssumptionLinksCell(assumptionLinks, data),
+      new TableCell({
+        children: [new Paragraph(status)],
+      }),
       new TableCell({
         children: renderedComents,
       }),
@@ -111,7 +114,7 @@ const getMitigations = async (
 
   const table = new Table({
     rows: [
-      getHeaderRow(['Mitigation Number', 'Mitigation', 'Threats Mitigating', 'Assumptions', 'Comments']),
+      getHeaderRow(['Mitigation Number', 'Mitigation', 'Threats Mitigating', 'Assumptions', 'Status', 'Comments']),
       ...dataRows,
     ],
   });

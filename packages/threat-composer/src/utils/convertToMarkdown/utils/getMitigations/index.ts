@@ -13,7 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { STATUS_NOT_SET } from '../../../../configs';
 import { DataExchangeFormat } from '../../../../customTypes';
+import mitigationStatus from '../../../../data/status/mitigationStatus.json';
 import escapeMarkdown from '../../../../utils/escapeMarkdown';
 import parseTableCellContent from '../../../../utils/parseTableCellContent';
 import standardizeNumericId from '../../../../utils/standardizeNumericId';
@@ -26,8 +28,8 @@ export const getMitigationsContent = async (
 
   rows.push('\n');
 
-  rows.push('| Mitigation Number | Mitigation | Threats Mitigating | Assumptions | Comments |');
-  rows.push('| --- | --- | --- | --- | --- |');
+  rows.push('| Mitigation Number | Mitigation | Threats Mitigating | Assumptions | Status | Comments |');
+  rows.push('| --- | --- | --- | --- | --- | --- |');
 
   if (data.mitigations) {
     const promises = data.mitigations.map(async (x) => {
@@ -52,10 +54,12 @@ export const getMitigationsContent = async (
         return null;
       }).filter(a => !!a).join('<br/>');
 
+      const status = (x.status && mitigationStatus.find(ms => ms.value === x.status)?.label) || STATUS_NOT_SET;
+
       const comments = await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || '');
 
       const mitigationId = `M-${standardizeNumericId(x.numericId)}`;
-      return `| <a name="${mitigationId}"></a>${mitigationId} | ${escapeMarkdown(x.content)} | ${threatsContent} | ${assumptionsContent} | ${comments} |`;
+      return `| <a name="${mitigationId}"></a>${mitigationId} | ${escapeMarkdown(x.content)} | ${threatsContent} | ${assumptionsContent} | ${status} | ${comments} |`;
     });
 
     rows.push(...(await Promise.all(promises)));

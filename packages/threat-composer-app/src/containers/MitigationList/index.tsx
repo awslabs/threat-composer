@@ -14,9 +14,13 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { MitigationList as MitigationListComponent } from '@aws/threat-composer';
+import { useLocation } from 'react-router-dom';
 
 const MitigationList = () => {
-  return <MitigationListComponent />;
+  const { state } = useLocation();
+  return <MitigationListComponent
+    initialFilter={state?.filter}
+  />;
 };
 
 export default MitigationList;

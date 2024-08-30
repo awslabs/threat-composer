@@ -16,22 +16,28 @@
 /** @jsxImportSource @emotion/react */
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
 import Grid from '@cloudscape-design/components/grid';
+import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
 import { FC, useMemo } from 'react';
 import { TemplateThreatStatement } from '../../../customTypes';
+import threatStatus from '../../../data/status/threatStatus.json';
 import expandablePanelHeaderStyles from '../../../styles/expandablePanelHeader';
 import CommentsEdit from '../../generic/CommentsEdit';
+import StatusSelector from '../../generic/StatusSelector';
 import STRIDESELECTOR from '../../generic/STRIDESelector';
 import PriorityEdit from '../PriorityEdit';
+
 
 export interface MetadataEditorProps {
   variant: ExpandableSectionProps['variant'];
   editingStatement: TemplateThreatStatement;
+  onEditStatementStatus: (statement: TemplateThreatStatement, status: string) => void;
   onEditMetadata: (statement: TemplateThreatStatement, key: string, value: string | string[] | undefined) => void;
 }
 
 const MetadataEditor: FC<MetadataEditorProps> = ({
   variant,
   editingStatement,
+  onEditStatementStatus,
   onEditMetadata,
 }) => {
   const stride = useMemo(() => {
@@ -43,10 +49,16 @@ const MetadataEditor: FC<MetadataEditorProps> = ({
       <Grid
         gridDefinition={[
           { colspan: { default: 12, xs: 3 } },
-          { colspan: { default: 12, xs: 9 } },
+          { colspan: { default: 12, xs: 3 } },
+          { colspan: { default: 12, xs: 6 } },
           { colspan: { default: 12, xs: 12 } },
         ]}
       >
+        <StatusSelector
+          selectedOption={editingStatement.status}
+          setSelectedOption={(option) => onEditStatementStatus(editingStatement, option)}
+          options={threatStatus as OptionDefinition[]}
+        />
         <PriorityEdit
           editingStatement={editingStatement}
           onEditMetadata={onEditMetadata}

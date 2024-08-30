@@ -1,0 +1,20 @@
+[
+    {
+        "label": "Identified",
+        "value": "threatIdentified",
+        "description": "Potential threat has been identified",
+        "iconName": "suggestions"
+    },
+    {
+        "label": "Resolved",
+        "value": "threatResolved",
+        "description": "All agreed risk response actions (mitigation, transfer, avoidance, risk acceptance) have been completed aligned to our risk tolerance",
+        "iconName": "status-positive"
+    },
+    {
+        "label": "Not Useful",
+        "value": "threatResolvedNotUseful",
+        "description": "This threat is invalid / not applicable to our use system",
+        "iconName": "delete-marker"
+    }
+]

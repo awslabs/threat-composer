@@ -13,12 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export * from './constants';
-export * from './export';
-export * from './localStorageKeys';
-export * from './content';
-export * from './styles';
-export * from './options';
-export * from './metadata';
-export * from './appMode';
-export * from './status';
+import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
+import { Assumption } from '../../customTypes';
+
+const getNewAssumption = (content: string = ''): Assumption => {
+  return {
+    id: DEFAULT_NEW_ENTITY_ID,
+    numericId: -1,
+    content: content,
+  };
+};
+
+export default getNewAssumption;

@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { MitigationListFilter } from './mitigations';
 import { ThreatStatementListFilter } from './threats';
 
 export interface ViewNavigationEvent {
@@ -20,7 +21,7 @@ export interface ViewNavigationEvent {
   onArchitectureView?: () => void;
   onDataflowView?: () => void;
   onAssumptionListView?: () => void;
-  onMitigationListView?: () => void;
+  onMitigationListView?: (filter?: MitigationListFilter) => void;
   onThreatListView?: (filter?: ThreatStatementListFilter) => void;
   onThreatEditorView?: (threatId: string, idToCopy?: string) => void;
 }
