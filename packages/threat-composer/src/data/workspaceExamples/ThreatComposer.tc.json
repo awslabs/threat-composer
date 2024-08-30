@@ -70,7 +70,8 @@
           "value": "Implementation in code - [Import and data validation](https://github.com/awslabs/threat-composer/commit/68f6323ac8ada085b48dbe7bc344021fe4c97e13)"
         }
       ],
-      "content": "Schema validation on data import"
+      "content": "Schema validation on data import",
+      "status": "mitigationResolved"
     },
     {
       "id": "c00b1a9a-6d7a-41e2-9697-7d41244b5990",
@@ -82,7 +83,8 @@
           "value": "Implementation in code - [PDK Static Website construct - S3 access logging](https://github.com/aws/aws-prototyping-sdk/blob/mainline/packages/static-website/src/static-website.ts#L161)"
         }
       ],
-      "content": "Amazon S3 - Access logging"
+      "content": "Amazon S3 - Access logging",
+      "status": "mitigationResolved"
     },
     {
       "id": "3f93baae-0997-4fe0-9d9d-1b10a1ba7973",
@@ -97,7 +99,8 @@
       "tags": [
         "XSS"
       ],
-      "content": "Custom security headers (including HTTP Strict Transport Security)"
+      "content": "Custom security headers (including HTTP Strict Transport Security)",
+      "status": "mitigationResolved"
     },
     {
       "id": "0ce4e65d-c96c-46b1-988d-57016036bc12",
@@ -112,7 +115,8 @@
       "tags": [
         "XSS"
       ],
-      "content": "CSP (Content Security Policy)"
+      "content": "CSP (Content Security Policy)",
+      "status": "mitigationResolved"
     },
     {
       "id": "f4a2c3a8-f5d1-4302-aba3-4b1d715794be",
@@ -127,7 +131,8 @@
       "tags": [
         "MiTM"
       ],
-      "content": "TLS provided by GitHub Pages"
+      "content": "TLS provided by GitHub Pages",
+      "status": "mitigationResolved"
     },
     {
       "id": "0cdff113-4816-496d-aa0d-36466c7331c0",
@@ -140,7 +145,8 @@
         }
       ],
       "tags": [],
-      "content": "Restrictive default for WebACL associated with CloudFront distribution"
+      "content": "Restrictive default for WebACL associated with CloudFront distribution",
+      "status": "mitigationResolved"
     },
     {
       "id": "cda934f6-4148-46cb-8658-5c3f86735a1b",
@@ -152,7 +158,8 @@
           "value": "See [README.md](https://github.com/awslabs/threat-composer#security-considerations)"
         }
       ],
-      "content": "README: Security considerations"
+      "content": "README: Security considerations",
+      "status": "mitigationResolved"
     },
     {
       "id": "5c356be5-1c34-443c-abe2-8d7f7d3c210a",
@@ -164,7 +171,8 @@
           "value": "By using popular, well-known and industry recognised NPM packages it is believed that this increases the likelihood that any integrity concerns with the package would be discovered more quickly, and that there would be industry and community urgency in disclosing and remediating.\n\nSee [package.json](https://github.com/awslabs/threat-composer/blob/main/package.json) for NPN packages used by this project."
         }
       ],
-      "content": "Using well-known and industry recognised NPM packages"
+      "content": "Using well-known and industry recognised NPM packages",
+      "status": "mitigationResolved"
     },
     {
       "id": "e06394d3-7cc6-45a7-b9cc-d3ec621f8957",
@@ -176,7 +184,8 @@
           "value": "[GitHub DependaBot security updates](https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/configuring-dependabot-security-updates]) documentation"
         }
       ],
-      "content": "GitHub Dependabot security updates are configured on the maintainers GitHub repository"
+      "content": "GitHub Dependabot security updates are configured on the maintainers GitHub repository",
+      "status": "mitigationResolved"
     },
     {
       "id": "c745ffca-00d6-459b-8438-640ec7293e6d",
@@ -188,7 +197,8 @@
           "value": "GitHub branch protection rules of `main` to ensure that a manual code review by maintainers is required before merge"
         }
       ],
-      "content": "GitHub branch protection rules"
+      "content": "GitHub branch protection rules",
+      "status": "mitigationResolved"
     },
     {
       "id": "10cf6702-9cf9-4dd6-b43d-17a2302b590c",
@@ -200,7 +210,8 @@
           "value": "[Access permissions on GitHub](https://docs.github.com/en/get-started/learning-about-github/access-permissions-on-github) documentation"
         }
       ],
-      "content": "Access control to GitHub organization and repository"
+      "content": "Access control to GitHub organization and repository",
+      "status": "mitigationResolved"
     },
     {
       "id": "b255d500-bddf-47dd-acdb-fb9f3edc384c",
@@ -212,7 +223,8 @@
           "value": "- Implementation in code - [PDK Static Website construct - CloudFront distribution configuration](https://github.com/aws/aws-prototyping-sdk/blob/mainline/packages/static-website/src/static-website.ts#L215)\n\n- Implementation in code - [PDK Static Website construct - S3 Bucket configuration](https://github.com/aws/aws-prototyping-sdk/blob/mainline/packages/static-website/src/static-website.ts#L152)"
         }
       ],
-      "content": "TLS provided by CloudFront"
+      "content": "TLS provided by CloudFront",
+      "status": "mitigationResolved"
     },
     {
       "id": "f47a2b78-79b1-4371-acc7-e977116b0a90",
@@ -224,7 +236,8 @@
           "value": "Implementation in code - [threat composer UI warning](https://github.com/awslabs/threat-composer/blob/3e8f5547aed7f7d969dcdf84a9d89cd4fde4a150/packages/threat-composer/src/components/workspaces/FileImport/index.tsx#L136)"
         }
       ],
-      "content": "UI import warning 'Only import from trusted sources'"
+      "content": "UI import warning 'Only import from trusted sources'",
+      "status": "mitigationResolved"
     },
     {
       "id": "135863f3-64e9-4fd7-8d71-4f141c42747f",
@@ -236,7 +249,8 @@
           "value": "Implementation in code - [Markdown configuration](https://github.com/awslabs/threat-composer/commit/3e5be78ad1d1fa7d82fabd8069bad9bfa97b3a5e)"
         }
       ],
-      "content": "Disable HTML support on Markdown viewer"
+      "content": "Disable HTML support on Markdown viewer",
+      "status": "mitigationResolved"
     },
     {
       "id": "d3f3befb-b64a-4311-8abf-a19f853a8eed",
@@ -248,7 +262,8 @@
           "value": "Implementation in code - [sanitizeHtml](https://github.com/awslabs/threat-composer/blob/3e8f5547aed7f7d969dcdf84a9d89cd4fde4a150/packages/threat-composer/src/utils/sanitizeHtml/index.ts#L16)"
         }
       ],
-      "content": "HTML sanitisation on import"
+      "content": "HTML sanitisation on import",
+      "status": "mitigationResolved"
     },
     {
       "id": "ba6b8839-3629-423f-8205-76d0d5a69016",
@@ -260,7 +275,8 @@
           "value": "AWS Shield Standard provides protection for all AWS customers against common and most frequently occurring Infrastructure (layer 3 and 4) attacks like SYN/UDP Floods, Reflection attacks, and others to support high availability of your applications on AWS. [more](https://docs.aws.amazon.com/waf/latest/developerguide/ddos-standard-summary.html)"
         }
       ],
-      "content": "AWS Shield Standard (on CloudFront)"
+      "content": "AWS Shield Standard (on CloudFront)",
+      "status": "mitigationResolved"
     },
     {
       "id": "84c1299c-27ba-4829-a1a1-c5368a2486a6",
@@ -272,7 +288,8 @@
           "value": "Implementation in code - [PDK Static Website construct - OAI configuration](https://github.com/aws/aws-prototyping-sdk/blob/mainline/packages/static-website/src/static-website.ts#LL213C13-L213C33)"
         }
       ],
-      "content": "CloudFront OAI/OAC"
+      "content": "CloudFront OAI/OAC",
+      "status": "mitigationResolved"
     },
     {
       "id": "00b07ef0-097c-4082-9a69-55abc5c111e6",
@@ -284,7 +301,8 @@
           "value": "Implementation in code - [PDK Static Website construct - S3 Block public access](https://github.com/aws/aws-prototyping-sdk/blob/mainline/packages/static-website/src/static-website.ts#L159)"
         }
       ],
-      "content": "S3 Block Public Access"
+      "content": "S3 Block Public Access",
+      "status": "mitigationResolved"
     }
   ],
   "assumptionLinks": [
@@ -573,7 +591,8 @@
         "mitigations",
         "assumptions"
       ],
-      "statement": "A threat actor that is able to trick a user into installing a malicous userscript extension (e.g. tampermonkey, browser extension) can read the contents of local browser storage, which leads to the exfiltration of the contents of browser storage to an endpoint controlled by the actor, resulting in reduced confidentiality of application metadata, threats, mitigations and assumptions"
+      "statement": "A threat actor that is able to trick a user into installing a malicous userscript extension (e.g. tampermonkey, browser extension) can read the contents of local browser storage, which leads to the exfiltration of the contents of browser storage to an endpoint controlled by the actor, resulting in reduced confidentiality of application metadata, threats, mitigations and assumptions",
+      "status": "threatResolved"
     },
     {
       "id": "2a1052e8-fa0a-499a-9f41-7ae7f860b75e",
@@ -607,7 +626,8 @@
         "mitigations",
         "assumptions"
       ],
-      "statement": "A threat actor that is able to target a user already using a benign userscript extension (e.g. tampermonkey) that integrates directly with local browser storage for quickly viewing a Threat Composer export can trick them into opening a malicious threat model that contains script tags (or similar), which leads to the exfiltration of the contents of browser storage via XSS due to the extension bypassing Threat Composers import validation and sanitisation protection, resulting in reduced confidentiality of application metadata, threats, mitigations and assumptions"
+      "statement": "A threat actor that is able to target a user already using a benign userscript extension (e.g. tampermonkey) that integrates directly with local browser storage for quickly viewing a Threat Composer export can trick them into opening a malicious threat model that contains script tags (or similar), which leads to the exfiltration of the contents of browser storage via XSS due to the extension bypassing Threat Composers import validation and sanitisation protection, resulting in reduced confidentiality of application metadata, threats, mitigations and assumptions",
+      "status": "threatResolved"
     },
     {
       "id": "7b49bdbd-25e9-446f-b44a-46fa2807e182",
@@ -638,7 +658,8 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor with knowledge of a browser image render vulnerability can trick a user into importing a malicious JSON file containing malicious BASE64 images, which leads to exfiltration the contents of local storage to and end-point controlled by the actor, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata"
+      "statement": "A threat actor with knowledge of a browser image render vulnerability can trick a user into importing a malicious JSON file containing malicious BASE64 images, which leads to exfiltration the contents of local storage to and end-point controlled by the actor, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata",
+      "status": "threatResolved"
     },
     {
       "id": "782adefc-b480-4e8f-83ee-64f6d680df0a",
@@ -665,7 +686,8 @@
       "threatImpact": "the user being unable to use the tool, until they clear the local data (or use a different browser)",
       "impactedGoal": [],
       "impactedAssets": [],
-      "statement": "A threat actor that can trick a user into importing a JSON file can input an unexpected data schema, which leads to the user being unable to use the tool, until they clear the local data (or use a different browser)"
+      "statement": "A threat actor that can trick a user into importing a JSON file can input an unexpected data schema, which leads to the user being unable to use the tool, until they clear the local data (or use a different browser)",
+      "status": "threatResolved"
     },
     {
       "id": "a0f523b0-bbc0-4e6a-9064-500af1f3836e",
@@ -696,7 +718,8 @@
       "impactedAssets": [
         "threat composer"
       ],
-      "statement": "A threat actor with access the browser DOM (e.g. via Dev Tools) can disable client-side input validation regex, which leads to allowing them to demonstrate a Cross-site Script (XSS) vulnerability, resulting in reduced integrity of threat composer"
+      "statement": "A threat actor with access the browser DOM (e.g. via Dev Tools) can disable client-side input validation regex, which leads to allowing them to demonstrate a Cross-site Script (XSS) vulnerability, resulting in reduced integrity of threat composer",
+      "status": "threatResolved"
     },
     {
       "id": "99648023-86fe-4b7d-829a-7011be545fa4",
@@ -726,7 +749,8 @@
       "impactedAssets": [
         "threat composer"
       ],
-      "statement": "A threat actor with access the browser DOM (e.g. via Dev Tools) can can input a datatype not expected by the code, resulting in reduced availability of threat composer"
+      "statement": "A threat actor with access the browser DOM (e.g. via Dev Tools) can can input a datatype not expected by the code, resulting in reduced availability of threat composer",
+      "status": "threatResolved"
     },
     {
       "id": "6529dd8d-0b40-4eec-b4c4-5ee4f06619c0",
@@ -751,7 +775,8 @@
       "impactedGoal": [
         "confidentiality"
       ],
-      "statement": "A valid user who has forked and modified the source code to include their own data (e.g. additional example threat statements) can deploy Threat composer without network restrictions or authentication, which leads to discovery of the additional data by an adversary, resulting in reduced confidentiality"
+      "statement": "A valid user who has forked and modified the source code to include their own data (e.g. additional example threat statements) can deploy Threat composer without network restrictions or authentication, which leads to discovery of the additional data by an adversary, resulting in reduced confidentiality",
+      "status": "threatResolved"
     },
     {
       "id": "1649e8e4-f100-45f2-8c13-51dafc8a8251",
@@ -781,7 +806,8 @@
       "impactedAssets": [
         "threat composer"
       ],
-      "statement": "A threat actor can take advantage of security vulnerability within a 3rd party package used by Threat Composer, resulting in reduced integrity of threat composer"
+      "statement": "A threat actor can take advantage of security vulnerability within a 3rd party package used by Threat Composer, resulting in reduced integrity of threat composer",
+      "status": "threatResolved"
     },
     {
       "id": "fec8777c-68b3-4569-84ce-9b9b1b9f5e9c",
@@ -813,7 +839,8 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor can raise a PR (Pull Request) on the source within the Threat Composer GitHub repo, which leads to merging malicious code that exfiltrates user-supplied input to an end-point that they control, negatively impacting threats, mitigations, assumptions and application metadata"
+      "statement": "A threat actor can raise a PR (Pull Request) on the source within the Threat Composer GitHub repo, which leads to merging malicious code that exfiltrates user-supplied input to an end-point that they control, negatively impacting threats, mitigations, assumptions and application metadata",
+      "status": "threatResolved"
     },
     {
       "id": "0a264de2-c2e5-45c0-9075-0d437b9defa0",
@@ -840,7 +867,8 @@
       "impactedAssets": [
         "threat composer"
       ],
-      "statement": "A security researcher can provide malicious input (e.g. script tags) into the Threat Composer UI, which leads to to them finding and demonstrating an XSS vulnerability which they make public via social media, negatively impacting threat composer"
+      "statement": "A security researcher can provide malicious input (e.g. script tags) into the Threat Composer UI, which leads to to them finding and demonstrating an XSS vulnerability which they make public via social media, negatively impacting threat composer",
+      "status": "threatResolved"
     },
     {
       "id": "7820db4a-1043-4dfa-bbc2-59774bb1f2fc",
@@ -873,7 +901,8 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor that can trick a user into importing a malicious JSON file containing script tags (or similar) can exfiltrate the contents of local storage using XSS, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata"
+      "statement": "A threat actor that can trick a user into importing a malicious JSON file containing script tags (or similar) can exfiltrate the contents of local storage using XSS, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata",
+      "status": "threatResolved"
     },
     {
       "id": "19b98451-70ee-4814-af80-c1293b90cb9f",
@@ -904,7 +933,8 @@
       "impactedAssets": [
         "threat composer"
       ],
-      "statement": "A threat actor who has access to a dependent software package on a npm remote registry (e.g. yarnpkg.com, npmjs.com) can inject malicious code into the CI/CD process, which leads to untrusted code running in a users browser, resulting in reduced integrity of threat composer"
+      "statement": "A threat actor who has access to a dependent software package on a npm remote registry (e.g. yarnpkg.com, npmjs.com) can inject malicious code into the CI/CD process, which leads to untrusted code running in a users browser, resulting in reduced integrity of threat composer",
+      "status": "threatResolved"
     },
     {
       "id": "cbba3276-5ce2-47e0-bc77-aebc162c519f",
@@ -935,7 +965,8 @@
       "impactedAssets": [
         "threat composer"
       ],
-      "statement": "A threat actor with a network path to the CloudFront distribution can submit a large number of resource intensive requests, which leads to unnecessary and/or excessive costs, resulting in reduced economy of threat composer"
+      "statement": "A threat actor with a network path to the CloudFront distribution can submit a large number of resource intensive requests, which leads to unnecessary and/or excessive costs, resulting in reduced economy of threat composer",
+      "status": "threatResolved"
     },
     {
       "id": "2ffb1f47-743e-4cbc-94e6-62d10817acc0",
@@ -965,7 +996,8 @@
       "impactedAssets": [
         "threat composer"
       ],
-      "statement": "A threat actor can create or orchestrate a distributed denial of service attack against the CloudFront Distribution serving the static content, which leads to to the web tool being unresponsive to callers, resulting in reduced availability of threat composer"
+      "statement": "A threat actor can create or orchestrate a distributed denial of service attack against the CloudFront Distribution serving the static content, which leads to to the web tool being unresponsive to callers, resulting in reduced availability of threat composer",
+      "status": "threatResolved"
     },
     {
       "id": "a394f5d6-9479-40cc-ae88-b1911a269f0a",
@@ -998,7 +1030,8 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor with possession of a similar domain name can trick our users into interacting with an illegitimate endpoint, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata"
+      "statement": "A threat actor with possession of a similar domain name can trick our users into interacting with an illegitimate endpoint, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata",
+      "status": "threatResolved"
     },
     {
       "id": "6fb7ef9a-175d-49f1-b85b-652b668581d4",
@@ -1030,7 +1063,8 @@
         "code running in the user's browser",
         "application configuration"
       ],
-      "statement": "An external threat actor who has a sufficiently privileged IAM Principal in the AWS account can modify the configuration of the CloudFront distribution, which leads to the distribution serving content from an origin that is unexpected or contains malicious content, resulting in reduced integrity of code running in the user's browser and application configuration"
+      "statement": "An external threat actor who has a sufficiently privileged IAM Principal in the AWS account can modify the configuration of the CloudFront distribution, which leads to the distribution serving content from an origin that is unexpected or contains malicious content, resulting in reduced integrity of code running in the user's browser and application configuration",
+      "status": "threatResolved"
     },
     {
       "id": "16c0b3de-a08f-418b-9969-9eb905ddd4e8",
@@ -1064,7 +1098,8 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor with write access to the objects hosted on the static asset S3 Bucket can modify the code, which leads to exfiltration of user-supplied input to an attacker controlled endpoint, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata"
+      "statement": "A threat actor with write access to the objects hosted on the static asset S3 Bucket can modify the code, which leads to exfiltration of user-supplied input to an attacker controlled endpoint, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata",
+      "status": "threatResolved"
     },
     {
       "id": "79bc7dc9-1038-4516-8f61-0a724bf4776d",
@@ -1097,7 +1132,8 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor who is in a person-in-the-browser position can read or modify locally stored user input, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata"
+      "statement": "A threat actor who is in a person-in-the-browser position can read or modify locally stored user input, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata",
+      "status": "threatResolved"
     },
     {
       "id": "a84e701e-b370-44e4-aa1a-2c5e6edcf926",
@@ -1130,7 +1166,8 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor with local access to a web browser used by a valid user can read local storage, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata"
+      "statement": "A threat actor with local access to a web browser used by a valid user can read local storage, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata",
+      "status": "threatResolved"
     },
     {
       "id": "fb2ff978-1311-4061-a299-0a7f3421e037",
@@ -1165,7 +1202,8 @@
         "assumptions",
         "application metadata"
       ],
-      "statement": "A threat actor who is in a person-in-the-middle position between the User and the hosting endpoint can tamper with, or replace the downloaded client-side code, which leads to to exfiltrating user-specified input to an attacker controlled endpoint, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata"
+      "statement": "A threat actor who is in a person-in-the-middle position between the User and the hosting endpoint can tamper with, or replace the downloaded client-side code, which leads to to exfiltrating user-specified input to an attacker controlled endpoint, resulting in reduced confidentiality of threats, mitigations, assumptions and application metadata",
+      "status": "threatResolved"
     }
   ]
 }
