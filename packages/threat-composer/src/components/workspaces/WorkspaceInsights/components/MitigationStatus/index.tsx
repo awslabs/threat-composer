@@ -105,7 +105,7 @@ const MitigationStatus: FC<WorkspaceInsightsProps> = ({
                 color: colorChartsStatusLow,
               },
               {
-                title: mitigationStatus.find(x => x.value === MITIGATION_STATUS_IN_PROGRESS)?.label || 'In progress',
+                title: mitigationStatus.find(x => x.value === MITIGATION_STATUS_IN_PROGRESS)?.label || 'In-progress',
                 value: countInProgress,
                 color: colorChartsStatusInfo,
               },

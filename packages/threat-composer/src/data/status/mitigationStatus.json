@@ -6,7 +6,7 @@
         "iconName": "suggestions"
     },
     {
-        "label": "In-Progress",
+        "label": "In-progress",
         "value": "mitigationInProgress",
         "description": "Mitigation is in-progress",
         "iconName": "status-in-progress"
