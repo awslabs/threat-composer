@@ -13,15 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export const METADATA_KEY_SOURCE = 'source';
+import { METADATA_KEY_SOURCE, METADATA_KEY_SOURCE_THREAT_PACK, METADATA_KEY_SOURCE_THREAT_PACK_MITIGATION_CANDIDATE } from '../../configs';
+import { Mitigation } from '../../customTypes';
+import getMetadata from '../getMetadata';
 
-export const METADATA_SOURCE_THREAT_PACK = 'threatPack';
-export const METADATA_KEY_SOURCE_THREAT_PACK = 'threatPackId';
-export const METADATA_KEY_SOURCE_THREAT_PACK_THREAT = 'threatPackThreatId';
-export const METADATA_KEY_SOURCE_THREAT_PACK_MITIGATION_CANDIDATE = 'threatPackMitigationCandidateId';
+const matchThreatPackMitigationCandidate = (mitigation: Mitigation, threatPackId: string, mitigationCandiateId: string) => {
+  const metadata = getMetadata(mitigation.metadata);
+  return (metadata[METADATA_KEY_SOURCE] === METADATA_KEY_SOURCE_THREAT_PACK &&
+        metadata[METADATA_KEY_SOURCE_THREAT_PACK] === threatPackId &&
+        metadata[METADATA_KEY_SOURCE_THREAT_PACK_MITIGATION_CANDIDATE] === mitigationCandiateId
+  );
+};
 
-export const METADATA_SOURCE_MITIGATION_PACK = 'mitigationPack';
-export const METADATA_KEY_SOURCE_MITIGATION_PACK = 'mitigationPackId';
-export const METADATA_KEY_SOURCE_MITIGATION_PACK_MITIGATION = 'mitigationPackMitigationId';
-
-export const METADATA_KEY_DESCRIPTION = 'Description';
+export default matchThreatPackMitigationCandidate;

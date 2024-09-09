@@ -101,7 +101,11 @@ const ThreatStatementEditor = () => {
     setEditingStatement(editingStatement);
   }, [editingStatement]);
 
-  return <ThreatStatementEditorComponent onThreatListView={() => handleNavigateView(ROUTE_THREAT_LIST)} />;
+  return <ThreatStatementEditorComponent
+    onThreatListView={() => handleNavigateView(ROUTE_THREAT_LIST)}
+    threatPackId={threatPackId}
+    threatPackThreatId={threatPackThreatId}
+  />;
 };
 
 export default ThreatStatementEditor;

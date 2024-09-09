@@ -13,10 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { SpaceBetween } from '@cloudscape-design/components';
 import Autosuggest from '@cloudscape-design/components/autosuggest';
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
 import TokenGroup from '@cloudscape-design/components/token-group';
-import React, { FC, useMemo } from 'react';
+import React, { FC, PropsWithChildren, useMemo } from 'react';
 import { Mitigation } from '../../../customTypes';
 
 export interface MitigationLinkProps {
@@ -27,12 +28,13 @@ export interface MitigationLinkProps {
   onRemoveMitigationLink: (mitigationId: string) => void;
 }
 
-const MitigationLinkComponent: FC<MitigationLinkProps> = ({
+const MitigationLinkComponent: FC<PropsWithChildren<MitigationLinkProps>> = ({
   variant,
   linkedMitigationIds,
   mitigationList,
   onAddMitigationLink,
   onRemoveMitigationLink,
+  children,
 }) => {
   const [searchValue, setSearchValue] = React.useState('');
 
@@ -54,39 +56,44 @@ const MitigationLinkComponent: FC<MitigationLinkProps> = ({
     variant={variant}
     headingTagOverride={variant === 'container' ? 'h3' : undefined}
     headerText={`Linked mitigations (${linkedMitigations.length})`}>
-    <Autosuggest
-      onChange={({ detail }) => setSearchValue(detail.value)}
-      value={searchValue}
-      options={filteredMitigations.map(x => ({
-        value: x.id,
-        label: x.content,
-      }))}
-      onSelect={({ detail }) => {
-        onAddMitigationLink(detail.value);
-        setSearchValue('');
-      }}
-      filteringType='manual'
-      enteredTextLabel={value => `Add new mitigation: "${value}"`}
-      placeholder="Search mitigation"
-      empty="No matches found"
-    />
-    <div
-      style={{
-        display: 'flex',
-      }}
-    >
-      <TokenGroup
-        items={
-          linkedMitigations.map(x => ({
+    <SpaceBetween direction='vertical' size="l">
+      <div>
+        <Autosuggest
+          onChange={({ detail }) => setSearchValue(detail.value)}
+          value={searchValue}
+          options={filteredMitigations.map(x => ({
+            value: x.id,
             label: x.content,
-            dismissLabel: `Unlink mitigation ${x.numericId}`,
-          }))
-        }
-        onDismiss={({ detail: { itemIndex } }) => {
-          onRemoveMitigationLink(linkedMitigations[itemIndex].id);
-        }}
-      />
-    </div>
+          }))}
+          onSelect={({ detail }) => {
+            onAddMitigationLink(detail.value);
+            setSearchValue('');
+          }}
+          filteringType='manual'
+          enteredTextLabel={value => `Add new mitigation: "${value}"`}
+          placeholder="Search mitigation"
+          empty="No matches found"
+        />
+        <div
+          style={{
+            display: 'flex',
+          }}
+        >
+          <TokenGroup
+            items={
+              linkedMitigations.map(x => ({
+                label: x.content,
+                dismissLabel: `Unlink mitigation ${x.numericId}`,
+              }))
+            }
+            onDismiss={({ detail: { itemIndex } }) => {
+              onRemoveMitigationLink(linkedMitigations[itemIndex].id);
+            }}
+          />
+        </div>
+      </div>
+      {children}
+    </SpaceBetween>
   </ExpandableSection>);
 };
 
