@@ -59,11 +59,13 @@ const MitigationCandidates: FC<MitigationCandidatesProp> = ({
       if (threatPackId && threatPackThreatId) {
         const mitigationCandidates = await getMitigationCandidates(threatPackId, threatPackThreatId);
         setMitigations(mitigationCandidates);
+      } else {
+        setMitigations([]);
       }
     };
 
     setupMitigations().catch(err => console.log('Error', err));
-  }, [threatPackId, threatPackThreatId]);
+  }, [threatPackId, threatPackThreatId, getMitigationCandidates]);
 
   const colDef: ColumnDefinition<Mitigation>[] = useMemo(() => [
     {

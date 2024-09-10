@@ -97,7 +97,7 @@ const ContentLayout: FC<PropsWithChildren<{
   editingStatement: TemplateThreatStatement;
   saveButtonText: string;
   onCancel: () => void;
-  onStartOver: () => void;
+  onStartOver?: () => void;
   onComplete: () => void;
 }>> = ({
   children,
@@ -389,7 +389,7 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
       saveButtonText={saveButtonText}
       editingStatement={editingStatement}
       onCancel={handleCancel}
-      onStartOver={handleStartOver}
+      onStartOver={isExampleVisible ? handleStartOver : undefined}
       onComplete={handleComplete}
     >
       <SpaceBetween direction='vertical' size='l'>
