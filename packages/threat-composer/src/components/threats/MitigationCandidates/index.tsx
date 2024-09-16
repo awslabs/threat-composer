@@ -67,7 +67,20 @@ const MitigationCandidates: FC<MitigationCandidatesProp> = ({
     setupMitigations().catch(err => console.log('Error', err));
   }, [threatPackId, threatPackThreatId, getMitigationCandidates]);
 
-  const colDef: ColumnDefinition<Mitigation>[] = useMemo(() => [
+  const items = useMemo(() => {
+    return mitigations.map(x => {
+      const metadata = getMetadata(x.metadata);
+      return {
+        ...x,
+        comments: metadata.Comments || '',
+      };
+    });
+  }, [mitigations]);
+
+  const colDef: ColumnDefinition<{
+    content: string;
+    comments: string;
+  }>[] = useMemo(() => [
     {
       id: 'content',
       header: 'Mitigation',
@@ -75,17 +88,14 @@ const MitigationCandidates: FC<MitigationCandidatesProp> = ({
       sortingField: 'content',
     },
     {
-      id: 'description',
-      header: 'Description',
-      cell: (data) => {
-        const metadata = getMetadata(data.metadata);
-        return metadata.Description || '';
-      },
-      sortingField: 'content',
+      id: 'comments',
+      header: 'Comments',
+      cell: (data) => data.comments,
+      sortingField: 'comments',
     },
   ], []);
 
-  if (mitigations.length === 0) {
+  if (items.length === 0) {
     return (<></>);
   }
 
@@ -103,8 +113,7 @@ const MitigationCandidates: FC<MitigationCandidatesProp> = ({
     header="Mitigation Candidates"
     headerVariant='h3'
     variant='embedded'
-    items={mitigations || []}
-    wrapLines={true}
+    items={items || []}
     selectedItems={selectedItems}
     onSelectionChange={({ detail }) => setSelectedItems([...detail.selectedItems])}
     isItemDisabled={(item) => linkedMitigationsFromThreakpack.includes(item.id)}
