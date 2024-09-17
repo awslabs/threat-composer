@@ -62,6 +62,7 @@ const MitigationPack: FC<MitigationPackProp> = ({
       id: 'content',
       header: 'Mitigation',
       cell: (data) => data.content,
+      minWidth: 400,
       sortingField: 'content',
     },
     {
