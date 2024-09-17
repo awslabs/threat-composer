@@ -44,21 +44,32 @@ const MitigationPack: FC<MitigationPackProp> = ({
     setSelectedItems([]);
   }, [mitigationPackId, selectedItems]);
 
-  const colDef: ColumnDefinition<Mitigation>[] = useMemo(() => [
+  const items = useMemo(() => {
+    return mitigationPack?.mitigations?.map(x => {
+      const metadata = getMetadata(x.metadata);
+      return {
+        ...x,
+        comments: metadata.Comments || '',
+      };
+    }) || [];
+  }, [mitigationPack?.mitigations]);
+
+  const colDef: ColumnDefinition<{
+    content: string;
+    comments: string;
+  }>[] = useMemo(() => [
     {
       id: 'content',
       header: 'Mitigation',
       cell: (data) => data.content,
+      minWidth: 400,
       sortingField: 'content',
     },
     {
-      id: 'description',
-      header: 'Description',
-      cell: (data) => {
-        const metadata = getMetadata(data.metadata);
-        return metadata.Description || '';
-      },
-      sortingField: 'content',
+      id: 'comments',
+      header: 'Comments',
+      cell: (data) => data.comments,
+      sortingField: 'comments',
     },
   ], []);
 
@@ -106,8 +117,7 @@ const MitigationPack: FC<MitigationPackProp> = ({
         columnDefinitions={colDef}
         actions={actions}
         header="Mitigations"
-        items={mitigationPack.mitigations || []}
-        wrapLines={true}
+        items={items}
         isItemDisabled={isItemDisabled}
         selectedItems={totalSelectedItems}
         onSelectionChange={({ detail }) => setSelectedItems([...detail.selectedItems])}

@@ -156,7 +156,6 @@ const ThreatPack: FC<ThreatPackProp> = ({
         actions={actions}
         header="Threats"
         items={threatPack.threats || []}
-        wrapLines={true}
         isItemDisabled={isItemDisabled}
         selectedItems={totalSelectedItems}
         onSelectionChange={({ detail }) => setSelectedItems([...detail.selectedItems])}

@@ -37,12 +37,22 @@ const getPackContent = (
   sourceContent: any
 ) => {
   if (packType === "ThreatPacks") {
+    const threats = sourceContent.threats;
+    const mitigationLinks = sourceContent.mitigationLinks.filter((x: any) =>
+      threats.map((t: any) => t.id).includes(x.linkedId)
+    );
+    const mitigations = sourceContent.mitigations.filter((x: any) =>
+      mitigationLinks.map((ml: any) => ml.mitigationId).includes(x.id)
+    );
+
     return {
       ...THREAT_PACK_BASE,
       id: metadataContent.id,
       name: metadataContent.name,
       description: metadataContent.description,
-      threats: sourceContent.threats,
+      threats: threats,
+      mitigationLinks,
+      mitigations,
     };
   }
 

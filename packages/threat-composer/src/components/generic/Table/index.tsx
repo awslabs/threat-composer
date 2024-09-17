@@ -35,6 +35,8 @@ const Table: FC<TableProps> = ({ disableSettings, preferences: collectionPrefere
   const [preferences, setPreferences] = useState<CollectionPreferencesProps.Preferences>({
     pageSize: props.defaultPageSize,
     visibleContent: props.columnDefinitions.map((cd) => cd.id || ''),
+    wrapLines: true,
+    stripedRows: true,
   });
 
   const visibleContentOptions = useMemo(() => {

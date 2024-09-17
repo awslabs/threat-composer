@@ -81,8 +81,6 @@ const ThreatPacks: FC<ThreatPacksProps> = ({
         columnDefinitions={colDef}
         items={threatPacks}
         disableRowSelect={true}
-        wrapLines={true}
-
       /></SpaceBetween>
   </ContentLayout>);
 };

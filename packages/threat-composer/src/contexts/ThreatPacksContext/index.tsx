@@ -71,12 +71,23 @@ const ThreatPacksContextProvider: FC<PropsWithChildren<ThreatPacksContextProvide
     });
   }, [threatPackUsage, saveStatement]);
 
+  const getMitigationCandidates = useCallback(async(threatPackId: string, threatPackThreatId: string) => {
+    const threatPack = await getThreatPack(threatPackId);
+    if (threatPack) {
+      const linkedMitigations = threatPack.mitigationLinks?.filter(x => x.linkedId === threatPackThreatId) || [];
+      return threatPack.mitigations?.filter(x => linkedMitigations.some(y => y.mitigationId === x.id)) || [];
+    }
+
+    return [];
+  }, []);
+
   return (<ThreatPacksContext.Provider
     value={{
       threatPacks,
       threatPackUsage,
       getThreatPack,
       addThreats,
+      getMitigationCandidates,
     }}
   >
     {children}

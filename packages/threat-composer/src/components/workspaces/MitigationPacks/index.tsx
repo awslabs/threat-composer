@@ -82,7 +82,6 @@ const MitigationPacks: FC<MitigationPacksProps> = ({
         columnDefinitions={colDef}
         items={mitigationPacks}
         disableRowSelect={true}
-        wrapLines={true}
       /></SpaceBetween>
   </ContentLayout>);
 };

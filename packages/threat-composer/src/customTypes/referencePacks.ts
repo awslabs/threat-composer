@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { z } from 'zod';
-import { MitigationSchema } from './mitigations';
+import { MitigationSchema, MitigationLinkSchema } from './mitigations';
 import { TemplateThreatStatementSchema } from './threats';
 
 export const ReferencePackBaseSchema = z.object({
@@ -25,6 +25,8 @@ export const ReferencePackBaseSchema = z.object({
 
 export const ThreatPackSchema = ReferencePackBaseSchema.extend({
   threats: TemplateThreatStatementSchema.array().optional(),
+  mitigationLinks: MitigationLinkSchema.array().optional(),
+  mitigations: MitigationSchema.array().optional(),
 });
 
 export type ThreatPack = z.infer<typeof ThreatPackSchema>;

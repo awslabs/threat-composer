@@ -14,13 +14,14 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { TemplateThreatStatement, ThreatPack, ThreatPackUsage } from '../../customTypes';
+import { Mitigation, TemplateThreatStatement, ThreatPack, ThreatPackUsage } from '../../customTypes';
 
 export interface ThreatPacksContextApi {
   threatPacks: ThreatPack[];
   threatPackUsage: ThreatPackUsage;
   getThreatPack: (id: string) => Promise<ThreatPack | undefined>;
   addThreats: (threatPackId: string, threats: TemplateThreatStatement[]) => Promise<void>;
+  getMitigationCandidates: (ThreatPackId: string, threatPackThreatID: string) => Promise<Mitigation[]>;
 }
 
 const initialState: ThreatPacksContextApi = {
@@ -33,6 +34,7 @@ const initialState: ThreatPacksContextApi = {
     threats: [],
   }),
   addThreats: () => Promise.resolve(),
+  getMitigationCandidates: () => Promise.resolve([]),
 };
 
 export const ThreatPacksContext = createContext<ThreatPacksContextApi>(initialState);
