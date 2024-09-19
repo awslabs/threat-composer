@@ -21,7 +21,7 @@ import { z } from 'zod';
 import useContentValidation from '../../../hooks/useContentValidation';
 
 export interface AutosuggestProps extends FormFieldProps, Omit<CloudscapeAutosuggestProps, 'errorText'> {
-  ref?: React.ForwardedRef<any>;
+  ref?: React.LegacyRef<any>;
   validateData?: (newValue: string) => z.SafeParseReturnType<string | undefined, string | undefined>;
 }
 

@@ -24,7 +24,7 @@ export interface StatusSelectorProps {
   showLabel?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
-  ref?: React.ForwardedRef<any>;
+  ref?: React.LegacyRef<any>;
 }
 
 const StatusSelector: FC<StatusSelectorProps> = React.forwardRef<SelectProps.Ref, StatusSelectorProps>(({

@@ -28,6 +28,7 @@ export interface LevelSelectorProps {
   allowNoValue?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
+  ref?: React.LegacyRef<SelectProps.Ref>;
 }
 
 const LevelSelector: FC<LevelSelectorProps> = React.forwardRef<SelectProps.Ref, LevelSelectorProps>(({

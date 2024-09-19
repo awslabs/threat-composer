@@ -59,7 +59,7 @@ const parseToken = (statements: TemplateThreatStatement[], token: PropertyFilter
   return result;
 };
 
-const FullExamples: FC<FullExamplesProps & { ref?: React.ForwardedRef<any> }> = forwardRef(({
+const FullExamples: FC<FullExamplesProps & { ref?: React.LegacyRef<any> }> = forwardRef(({
   onClick,
 }, ref) => {
   const { threatStatementExamples } = useThreatsContext();
