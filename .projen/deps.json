@@ -63,7 +63,7 @@
     },
     {
       "name": "nx",
-      "version": "^16",
+      "version": "^19",
       "type": "build"
     },
     {
@@ -72,7 +72,7 @@
     },
     {
       "name": "projen",
-      "version": "^0.79.24",
+      "version": "^0.82.8",
       "type": "build"
     },
     {
@@ -105,7 +105,7 @@
     },
     {
       "name": "nx",
-      "version": "^16",
+      "version": "^19",
       "type": "peer"
     },
     {
