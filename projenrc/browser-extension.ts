@@ -1,6 +1,6 @@
-import { TypeScriptProject } from "projen/lib/typescript";
-import { TypeScriptJsxMode } from "projen/lib/javascript";
 import { Project } from "projen";
+import { TypeScriptJsxMode } from "projen/lib/javascript";
+import { TypeScriptProject } from "projen/lib/typescript";
 import browsersList from "./config/browsersList";
 
 class ThreatComposerBrowserExtensionProject extends TypeScriptProject {

@@ -40,6 +40,11 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
       "resolutions.postcss",
       "^8.4.31"
     );
+    this.tryFindObjectFile("package.json")?.addOverride(
+      "resolutions.web-ext-run",
+      "^0.2.1"
+    );
+
     this.tryFindObjectFile("package.json")?.addOverride("workspaces.nohoist", [
       "**/wxt",
     ]);
