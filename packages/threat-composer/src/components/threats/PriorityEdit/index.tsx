@@ -24,10 +24,10 @@ export interface PriorityEditProps {
   onEditMetadata: (statement: TemplateThreatStatement, key: string, value: string | string[] | undefined) => void;
   onFocus?: () => void;
   onBlur?: () => void;
-  ref?: React.ForwardedRef<any>;
+  ref?: React.LegacyRef<any>;
 }
 
-const PriorityEdit: FC<PriorityEditProps> = React.forwardRef<React.ForwardedRef<SelectProps.Ref>, PriorityEditProps>(({
+const PriorityEdit: FC<PriorityEditProps> = React.forwardRef<SelectProps.Ref, PriorityEditProps>(({
   editingStatement,
   onEditMetadata,
   showLabel = true,
