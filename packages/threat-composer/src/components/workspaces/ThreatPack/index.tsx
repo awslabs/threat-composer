@@ -93,7 +93,7 @@ const ThreatPack: FC<ThreatPackProp> = ({
       id: 'impactedGoal',
       header: 'Impacted goal',
       cell: (data) => (<TextContent>
-        <ul>{data.impactedGoal?.map(x => <li>{x}</li>)}</ul>
+        <ul>{data.impactedGoal?.map((x, index) => <li key={index}>{x}</li>)}</ul>
       </TextContent>),
       sortingField: 'impactedGoal',
     },
@@ -101,7 +101,7 @@ const ThreatPack: FC<ThreatPackProp> = ({
       id: 'impactedAssets',
       header: 'Impacted assets',
       cell: (data) => (<TextContent>
-        <ul>{data.impactedAssets?.map(x => <li>{x}</li>)}</ul>
+        <ul>{data.impactedAssets?.map((x, index) => <li key={index}>{x}</li>)}</ul>
       </TextContent>),
       sortingField: 'impactedAssets',
     },

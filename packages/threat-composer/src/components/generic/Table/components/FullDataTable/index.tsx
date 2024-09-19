@@ -44,7 +44,7 @@ const FullDataTable: FC<TableProps & InternalTableProps> = ({
   disableRowSelect = false,
   selectionType = 'multi',
   filter: filterComponent,
-  selectedItems = [],
+  selectedItems,
   header,
   trackBy = DEFAULT_TRACK_BY,
   collectionPreferences,
@@ -77,7 +77,7 @@ const FullDataTable: FC<TableProps & InternalTableProps> = ({
   });
 
   useEffect(() => {
-    actions.setSelectedItems(selectedItems);
+    actions.setSelectedItems(selectedItems || []);
   }, [selectedItems, paginationProps.currentPageIndex, filterProps.filteringText]);
 
   const collectionPropsOnSelectionChange = collectionProps.onSelectionChange;
@@ -95,7 +95,7 @@ const FullDataTable: FC<TableProps & InternalTableProps> = ({
     <TableComponent
       trackBy={trackBy}
       loadingText={DEFAULT_LOADING_TEXT}
-      visibleColumns={collectionPreferences.visibleContent}
+      columnDisplay={collectionPreferences.contentDisplay}
       wrapLines={collectionPreferences.wrapLines}
       stripedRows={collectionPreferences.stripedRows}
       {...props}
