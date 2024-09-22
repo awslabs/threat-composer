@@ -416,7 +416,7 @@ Threat packs allow you to quickly find and add bulk or selected threat statement
 1. Update the value of `id` to be a short human readable indentier for the pack (e.g. `AuthThreats`)
 1. Update the value of `description` to describe the contents of the pack (e.g. `This pack contains common authentication threats`)
 1. Update the value of `path` to point to the _relative_ path of the source `.tc.json` file (e.g. `./AuthenticationThreats.tc.json`)
-1. Generate the threat pack file by running `yarn run build:pack` from the root of the local repository
+1. Generate the threat pack file by running `yarn run build:packs` from the root of the local repository
 1. Update `packages/threat-composer/src/data/threatPacks/threatPacks.ts` file to import the generated file. e.g. `import authenticationThreatPack './generated/AuthThreats.json';` and add it to the `threatPacks` array - for example:
     ```
     const threatPacks = [
@@ -451,13 +451,13 @@ Mitigation packs allow you to quickly find and add bulk or selected mitigation c
 1. Update the value of `id` to be a short human readable indentier for the pack (e.g. `BaselineControls`)
 1. Update the value of `description` to describe the contents of the pack (e.g. `This pack contains our organizations baseline controls`)
 1. Update the value of `path` to point to the _relative_ path of the source `.tc.json` file (e.g. `./BaselineControls.tc.json`)
-1. Generate the threat pack file by running `yarn run build:pack` from the root of the local repository
+1. Generate the threat pack file by running `yarn run build:packs` from the root of the local repository
 1. Update `packages/threat-composer/src/data/mitigationPacks/mitigationPacks.ts` file to import the generated file. e.g. `import ourBaselineControlsMitigationPack './generated/BaselineControls.json';` and add it to the `mitigationPacks` array - for example:
     ```
     const mitigationPacks = [
     ourBaselineControlsMitigationPack,
     GenAIChatbot,
-    ] as ThreatPack[];
+    ] as MitigationPack[];
     ```
 1. Build the project.
 
