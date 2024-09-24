@@ -24,6 +24,11 @@ import {
   REGEX_CONTENT_IMAGE_BASE64,
   IMAGE_BASE64_MAX_LENGTH,
   IMAGE_URL_MAX_LENGTH,
+  METADATA_KEY_COMMENTS,
+  METADATA_KEY_STRIDE,
+  METADATA_KEY_PRIORITY,
+  ALLOW_METADATA_TAGS,
+  METADATA_KEY_PREFIX_CUSTOM,
 } from '../configs';
 import STRIDE from '../data/stride';
 
@@ -35,19 +40,23 @@ export const MetadataSchema = z.object({
   key: z.string().max(SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH),
   value: z.union([z.string(), z.array(z.string())]),
 }).strict().refine((data) => {
-  if (data.key === 'Comments') {
+  if (!ALLOW_METADATA_TAGS.includes(data.key) && !data.key.startsWith(METADATA_KEY_PREFIX_CUSTOM)) {
+    return false;
+  }
+
+  if (data.key === METADATA_KEY_COMMENTS) {
     return MetadataCommentSchema.safeParse(data.value).success;
   }
 
-  if (data.key === 'STRIDE') {
+  if (data.key === METADATA_KEY_STRIDE) {
     return Array.isArray(data.value) && data.value.every(v => STRIDE.map(s => s.value).includes(v));
   }
 
-  if (data.key === 'Priority') {
+  if (data.key === METADATA_KEY_PRIORITY) {
     return typeof data.value === 'string' && LEVEL_SELECTOR_OPTIONS.map(o => o.value).includes(data.value);
   }
 
-  return false;
+  return true;
 }, (data) => ({
   message: `Invalid key ${data.key} with value ${JSON.stringify(data.value)}`,
   path: [data.key],
