@@ -116,7 +116,10 @@ const MitigationCandidates: FC<MitigationCandidatesProp> = ({
     variant='embedded'
     items={items || []}
     selectedItems={selectedItems}
-    onSelectionChange={({ detail }) => setSelectedItems([...detail.selectedItems])}
+    onSelectionChange={({ detail }) => setSelectedItems([...detail.selectedItems.map(x => {
+      const { comments, ...data } = x;
+      return data;
+    })])}
     isItemDisabled={(item) => linkedMitigationsFromThreakpack.includes(item.id)}
   />);
 };

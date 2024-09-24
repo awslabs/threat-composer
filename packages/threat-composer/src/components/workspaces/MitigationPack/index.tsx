@@ -37,10 +37,15 @@ const MitigationPack: FC<MitigationPackProp> = ({
     return mitigationPacks.find(x => x.id === mitigationPackId);
   }, []);
 
-  const [selectedItems, setSelectedItems] = useState<Mitigation[]>([]);
+  const [selectedItems, setSelectedItems] = useState<(Mitigation & {
+    comments?: string;
+  })[]>([]);
 
   const handleAddToWorkspace = useCallback(async () => {
-    await addMitigations(mitigationPackId, selectedItems);
+    await addMitigations(mitigationPackId, selectedItems.map(x => {
+      const { comments, ...data } = x;
+      return data;
+    }));
     setSelectedItems([]);
   }, [mitigationPackId, selectedItems]);
 
