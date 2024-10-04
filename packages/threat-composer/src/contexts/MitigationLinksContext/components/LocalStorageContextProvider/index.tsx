@@ -22,7 +22,7 @@ import { MitigationLinksContext } from '../../context';
 import { MitigationLinksContextProviderProps } from '../../types';
 import useMitigationLinks from '../../useMitigationLinks';
 
-const getLocalStorageKey = (workspaceId: string | null) => {
+export const getLocalStorageKey = (workspaceId: string | null) => {
   if (workspaceId) {
     return `${LOCAL_STORAGE_KEY_MITIGATION_LINK_LIST}_${workspaceId}`;
   }

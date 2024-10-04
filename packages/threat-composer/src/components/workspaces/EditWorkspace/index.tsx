@@ -29,17 +29,29 @@ export interface EditWorkspaceProps {
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
   onConfirm: (workspace: string) => Promise<void>;
   value?: string;
-  editMode?: boolean;
+  editMode: 'add' | 'update' | 'clone';
   currentWorkspace?: Workspace;
   workspaceList: Workspace[];
   exampleWorkspaceList: Workspace[];
 }
 
+const BUTTON_LABEL = {
+  add: 'Add',
+  update: 'Update',
+  clone: 'Clone',
+};
+
+const HEADER_TEXT = {
+  add: 'Add new workspace',
+  update: 'Update workspace',
+  clone: 'Clone workspace',
+};
+
 const EditWorkspace: FC<EditWorkspaceProps> = ({
   visible,
   setVisible,
   onConfirm,
-  editMode = false,
+  editMode = 'add',
   workspaceList,
   exampleWorkspaceList,
   currentWorkspace,
@@ -74,21 +86,21 @@ const EditWorkspace: FC<EditWorkspaceProps> = ({
       <SpaceBetween direction="horizontal" size="xs">
         <Button variant="link" onClick={() => setVisible(false)}>Cancel</Button>
         <Button variant="primary" disabled={value.length < 3} onClick={handleConfirm}>{
-          editMode ? 'Update' : 'Add'
+          BUTTON_LABEL[editMode as 'add' | 'update' | 'clone'] || 'Add'
         }</Button>
       </SpaceBetween>
     </Box>);
   }, [setVisible, handleConfirm, value, editMode]);
 
   return <Modal
-    header={<Header>{editMode ? 'Update workspace' : 'Add new workspace'}</Header>}
+    header={<Header>{HEADER_TEXT[editMode as 'add' | 'update' | 'clone'] || 'Add'}</Header>}
     visible={visible}
     footer={footer}
     onDismiss={() => setVisible(false)}
   >
     <SpaceBetween direction="vertical" size="m">
       <FormField
-        label="Workspace name"
+        label="New workspace name"
         errorText={errorText}
       >
         <Input ref={inputRef as RefObject<InputProps.Ref>}

@@ -22,7 +22,7 @@ import { AssumptionLinksContext } from '../../context';
 import { AssumptionLinksContextProviderProps } from '../../types';
 import useAssumptionLinks from '../../useAssumptionLinks';
 
-const getLocalStorageKey = (workspaceId: string | null) => {
+export const getLocalStorageKey = (workspaceId: string | null) => {
   if (workspaceId) {
     return `${LOCAL_STORAGE_KEY_ASSUMPTION_LINK_LIST}_${workspaceId}`;
   }

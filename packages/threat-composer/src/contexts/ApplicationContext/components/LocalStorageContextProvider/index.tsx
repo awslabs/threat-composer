@@ -22,7 +22,7 @@ import { INFO_DEFAULT_VALUE } from '../../../constants';
 import { ApplicationInfoContext } from '../../context';
 import { ApplicationContextProviderProps } from '../../types';
 
-const getLocalStorageKey = (workspaceId: string | null) => {
+export const getLocalStorageKey = (workspaceId: string | null) => {
   if (workspaceId) {
     return `${LOCAL_STORAGE_KEY_APPLICATION_INFO}_${workspaceId}`;
   }

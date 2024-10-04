@@ -22,7 +22,7 @@ import { INFO_DEFAULT_VALUE } from '../../../constants';
 import { ArchitectureInfoContext } from '../../context';
 import { ArchitectureContextProviderProps } from '../../types';
 
-const getLocalStorageKey = (workspaceId: string | null) => {
+export const getLocalStorageKey = (workspaceId: string | null) => {
   if (workspaceId) {
     return `${LOCAL_STORAGE_KEY_ARCHIECTURE_INFO}_${workspaceId}`;
   }

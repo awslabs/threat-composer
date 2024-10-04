@@ -46,8 +46,8 @@ const useWorkspaces = (
     workspaceList,
   ]);
 
-  const handleSwitchWorkspace = useCallback((toBeSwitchedWorkspaceId: string | null) => {
-    const workspace = getWorkspace(toBeSwitchedWorkspaceId);
+  const handleSwitchWorkspace = useCallback((toBeSwitchedWorkspace: string | null | Workspace) => {
+    const workspace = typeof toBeSwitchedWorkspace === 'string' ? getWorkspace(toBeSwitchedWorkspace) : toBeSwitchedWorkspace;
     setCurrentWorkspace(workspace);
     onWorkspaceChanged?.(workspace?.name || DEFAULT_WORKSPACE_ID);
   }, [onWorkspaceChanged, getWorkspace]);
