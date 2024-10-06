@@ -90,7 +90,7 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
     });
 
     this.addTask("build:packs", {
-      exec: "npx ts-node ./scripts/packs/buildPacks.ts",
+      exec: "npx ts-node ./scripts/data/buildPacks.ts ThreatPack && npx ts-node ./scripts/data/buildPacks.ts MitigationPack",
     });
 
     this.buildTask.reset();

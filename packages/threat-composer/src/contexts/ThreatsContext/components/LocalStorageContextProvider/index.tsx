@@ -24,7 +24,7 @@ import useThreatExamples from '../../hooks/useThreatExamples';
 import useThreats from '../../hooks/useThreats';
 import { ThreatsContextProviderProps } from '../../types';
 
-const getLocalStorageKey = (workspaceId: string | null) => {
+export const getLocalStorageKey = (workspaceId: string | null) => {
   if (workspaceId) {
     return `${LOCAL_STORAGE_KEY_STATEMENT_LIST}_${workspaceId}`;
   }

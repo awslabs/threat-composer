@@ -20,6 +20,7 @@ import ApplicationInfoContextProvider from '../ApplicationContext';
 import ArchitectureInfoContextProvider from '../ArchitectureContext';
 import AssumptionLinksContextProvider from '../AssumptionLinksContext';
 import AssumptionsContextProvider from '../AssumptionsContext';
+import CrossWorkspaceContextProvider from '../CrossWorkspaceContext';
 import DataflowInfoContextProvider from '../DataflowContext';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import MitigationLinksContextProvider from '../MitigationLinksContext';
@@ -54,9 +55,11 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
                   <DataflowInfoContextProvider workspaceId={workspaceId}>
                     <ThreatPacksContextProvider workspaceId={workspaceId}>
                       <MitigationPacksContextProvider workspaceId={workspaceId}>
-                        <WindowExporter>
-                          {children}
-                        </WindowExporter>
+                        <CrossWorkspaceContextProvider>
+                          <WindowExporter>
+                            {children}
+                          </WindowExporter>
+                        </CrossWorkspaceContextProvider>
                       </MitigationPacksContextProvider>
                     </ThreatPacksContextProvider>
                   </DataflowInfoContextProvider>

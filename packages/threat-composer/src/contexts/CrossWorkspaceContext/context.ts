@@ -13,21 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import genAIChatbot from './GenAIChatbot.tc.json';
-import threatComposer from './ThreatComposer.tc.json';
-import { WorkspaceExample } from '../../customTypes';
-// {IMPORT_PLACEHOLDER}
+import { useContext, createContext } from 'react';
+import { DataExchangeFormat } from '../../customTypes';
 
-const workspaceExamples = [
-  {
-    name: 'Threat Composer',
-    value: threatComposer,
-  },
-  {
-    name: 'GenAI Chatbot',
-    value: genAIChatbot,
-  },
-  // {ENTRY_PLACEHOLDER}
-] as WorkspaceExample[];
+export interface CrossWorkspaceContextApi {
+  cloneWorkspaceData: (targetWorkspaceId: string, data: DataExchangeFormat) => Promise<void>;
+}
 
-export default workspaceExamples;
+const initialState: CrossWorkspaceContextApi = {
+  cloneWorkspaceData: () => Promise.resolve(),
+};
+
+export const CrossWorkspaceContext = createContext<CrossWorkspaceContextApi>(initialState);
+
+export const useCrossWorkspaceContext = () => useContext(CrossWorkspaceContext);

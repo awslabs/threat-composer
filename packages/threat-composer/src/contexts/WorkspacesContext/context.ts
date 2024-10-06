@@ -21,7 +21,7 @@ export interface WorkspacesContextApi {
   workspaceList: Workspace[];
   setWorkspaceList: (workspace: Workspace[]) => void;
   currentWorkspace: Workspace | null;
-  switchWorkspace: (workspaceId: string | null) => void;
+  switchWorkspace: (toBeSwitchedWorkspace: string | null | Workspace) => void;
   removeWorkspace: (id: string) => Promise<void>;
   addWorkspace: (workspaceName: string, storageType?: Workspace['storageType'], metadata?: Workspace['metadata']) => Promise<Workspace>;
   renameWorkspace: (id: string, newWorkspaceName: string) => Promise<void>;

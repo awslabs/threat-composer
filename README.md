@@ -388,8 +388,19 @@ Reference or example threat models are available directly in the Workspace selec
     },
     ] as WorkspaceExample[];
     ```
-1. Build the project.
+1. Build the project
 
+#### Dynamically inject example threat models in build time
+
+1. Follow steps 1-2 above to author your example threat models
+1. Store your example threat models within a folder in a seperate location or repository
+1. Copy the file folder containing example threat models under the path `packages/threat-composer/src/data/workspaceExamples` in your build
+1. Run the script below in your build from the project root to inject the example threat models entry to configuration file `packages/threat-composer/src/data/workspaceExamples/workspaceExamples.ts`:
+
+    ```
+    npx ts-node ./scripts/data/injectData.ts WorkspaceExample <SourceDir-relative path to the workspaceExamples folder>
+    ```
+1. Build the project
 
 ### Threat packs
 
@@ -424,7 +435,27 @@ Threat packs allow you to quickly find and add bulk or selected threat statement
     GenAIChatbot,
     ] as ThreatPack[];
     ```
-1. Build the project.
+1. Build the project
+
+#### Dynamically inject example threat packs in build time
+
+1. Follow steps 1-2 above to author your threat packs 
+1. Store your threat packs within a folder in a seperate location or repository
+1. Follow steps 4-8 above to author your threat pack metadata files
+1. Store your threat pack metadata files within a folder in a seperate location or repository (can be the same folder of threat pack files)
+1. Copy the file folder(s) containing threat pack files and metadata files under the path `packages/threat-composer/src/data/threatPacks` in your build
+1. Run the script below in your build from the project root to build the threat packs
+
+    ```
+    npx ts-node ./scripts/data/buildPacks.ts ThreatPack <SourceDir-the relative path to the threatPacks folder for the folder containing metadata files> <DestDir-the relative path to the threatPacks folder for output threat packs files>
+    ```
+
+1. Run the script below in your build from the project root to inject the generated threat packs entry to configuration file `packages/threat-composer/src/data/threatPacks/threatPacks.ts`:
+
+    ```
+    npx ts-node ./scripts/data/injectData.ts ThreatPack <SourceDir-the value DestDir from the previous step>
+    ```
+1. Build the project
 
 ### Mitigation packs
 
@@ -459,7 +490,27 @@ Mitigation packs allow you to quickly find and add bulk or selected mitigation c
     GenAIChatbot,
     ] as MitigationPack[];
     ```
-1. Build the project.
+1. Build the project
+
+#### Dynamically inject example mitigation packs in build time
+
+1. Follow steps 1-2 above to author your mitigation packs 
+1. Store your mitigation packs within a folder in a seperate location or repository
+1. Follow steps 4-8 above to author your mitigation pack metadata files
+1. Store your mitigation pack metadata files within a folder in a seperate location or repository (can be the same folder of mitigation pack files)
+1. Copy the file folder(s) containing mitigation pack files and metadata files under the path `packages/threat-composer/src/data/mitigationPacks` in your build
+1. Run the script below in your build from the project root to build the mitigation packs
+
+    ```
+    npx ts-node ./scripts/data/buildPacks.ts MitigationPack <SourceDir-the relative path to the mitigationPacks folder for the folder containing metadata files> <DestDir-the relative path to the the mitigationtPacks folder for output mitigation packs files>
+    ```
+
+1. Run the script below in your build from the project root to inject the generated mitigation packs entry to configuration file `packages/threat-composer/src/data/mitigationPacks/mitigationPacks.ts`:
+
+    ```
+    npx ts-node ./scripts/data/injectData.ts MitigationPack <SourceDir-the value DestDir from the previous step>
+    ```
+1. Build the project
 
 ### Threat examples
 

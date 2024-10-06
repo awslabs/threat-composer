@@ -13,21 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import genAIChatbot from './GenAIChatbot.tc.json';
-import threatComposer from './ThreatComposer.tc.json';
-import { WorkspaceExample } from '../../customTypes';
-// {IMPORT_PLACEHOLDER}
+import { FC, PropsWithChildren } from 'react';
+import CrossWorkspaceLocalStorageContextProvider from './components/LocalStorageContextProvider';
+import { useCrossWorkspaceContext } from './context';
 
-const workspaceExamples = [
-  {
-    name: 'Threat Composer',
-    value: threatComposer,
-  },
-  {
-    name: 'GenAI Chatbot',
-    value: genAIChatbot,
-  },
-  // {ENTRY_PLACEHOLDER}
-] as WorkspaceExample[];
+const CrossWorkspaceContextProvider: FC<PropsWithChildren<{}>> = (props) => {
+  return (<CrossWorkspaceLocalStorageContextProvider {...props} />);
+};
 
-export default workspaceExamples;
+export default CrossWorkspaceContextProvider;
+
+export {
+  useCrossWorkspaceContext,
+};

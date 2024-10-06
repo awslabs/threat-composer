@@ -42,6 +42,7 @@ import {
   DataExchangeFormat,
   TemplateThreatStatement,
 } from '../../../customTypes';
+import useCloneWorkspace from '../../../hooks/useCloneWorkspace';
 import useImportExport from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
 import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
@@ -76,6 +77,7 @@ export interface WorkspaceSelectorProps {
   onPreview?: (data: DataExchangeFormat) => void;
   onPreviewClose?: () => void;
   onImported?: () => void;
+  onClone?: () => Promise<void>;
 }
 
 const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
@@ -94,6 +96,8 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
   const [addWorkspaceModalVisible, setAddWorkspaceModalVisible] =
     useState(false);
   const [editWorkspaceModalVisible, setEditWorkspaceModalVisible] =
+    useState(false);
+  const [cloneWorkspaceModalVisible, setCloneWorkspaceModalVisible] =
     useState(false);
   const [removeDataModalVisible, setRemoveDataModalVisible] = useState(false);
   const [removeWorkspaceModalVisible, setRemoveWorkspaceModalVisible] =
@@ -119,6 +123,8 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     renameWorkspace,
     switchWorkspace,
   } = useWorkspacesContext();
+
+  const cloneWorkspace = useCloneWorkspace();
 
   const workspacesOptions = useMemo(() => {
     const options: (SelectProps.Option | SelectProps.OptionGroup)[] = [
@@ -188,6 +194,9 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
           case 'import':
             setFileImportModalVisible(true);
             break;
+          case 'clone':
+            setCloneWorkspaceModalVisible(true);
+            break;
           case 'exportAll':
             exportAll();
             break;
@@ -217,6 +226,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         setRemoveDataModalVisible,
         setRemoveWorkspaceModalVisible,
         setAddWorkspaceModalVisible,
+        setCloneWorkspaceModalVisible,
         setEditWorkspaceModalVisible,
         handleSingletonPrimaryButtonClick,
       ],
@@ -272,8 +282,12 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         { id: 'add', text: 'Add new workspace' },
         {
           id: 'import',
-          text: 'Import',
+          text: 'Import into current workspace',
           disabled: isWorkspaceExample(currentWorkspace?.id),
+        },
+        {
+          id: 'clone',
+          text: 'Clone current workspace',
         },
         {
           id: 'exportAll',
@@ -390,6 +404,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
       )}
       {addWorkspaceModalVisible && (
         <EditWorkspace
+          editMode='add'
           visible={addWorkspaceModalVisible}
           setVisible={setAddWorkspaceModalVisible}
           onConfirm={async (workspaceName: string) => {
@@ -399,11 +414,23 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
           exampleWorkspaceList={workspaceExamples}
         />
       )}
+      {cloneWorkspaceModalVisible && (
+        <EditWorkspace
+          editMode='clone'
+          visible={cloneWorkspaceModalVisible}
+          setVisible={setCloneWorkspaceModalVisible}
+          onConfirm={async (workspaceName: string) => {
+            await cloneWorkspace(workspaceName);
+          }}
+          workspaceList={workspaceList}
+          exampleWorkspaceList={workspaceExamples}
+        />
+      )}
       {editWorkspaceModalVisible && currentWorkspace && (
         <EditWorkspace
+          editMode='update'
           visible={editWorkspaceModalVisible}
           setVisible={setEditWorkspaceModalVisible}
-          editMode
           value={currentWorkspace.name}
           onConfirm={(newWorkspaceName) =>
             renameWorkspace(currentWorkspace.id, newWorkspaceName)
