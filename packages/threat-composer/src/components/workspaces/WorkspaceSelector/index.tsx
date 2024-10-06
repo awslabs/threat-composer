@@ -282,12 +282,12 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         { id: 'add', text: 'Add new workspace' },
         {
           id: 'import',
-          text: 'Import',
+          text: 'Import into current workspace',
           disabled: isWorkspaceExample(currentWorkspace?.id),
         },
         {
           id: 'clone',
-          text: 'Clone',
+          text: 'Clone current worksapce',
         },
         {
           id: 'exportAll',
