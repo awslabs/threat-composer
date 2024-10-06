@@ -287,7 +287,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         },
         {
           id: 'clone',
-          text: 'Clone current worksapce',
+          text: 'Clone current workspace',
         },
         {
           id: 'exportAll',
