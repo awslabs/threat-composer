@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { FC, useMemo } from 'react';
 import ThreatModelView, { ThreatModelViewProps } from './components/ThreatModelView';
-import { APP_MODE_IDE_EXTENSION } from '../../../configs/appMode';
+import { APP_MODE_IDE_EXTENSION, APP_MODE_BROWSER_EXTENSION } from '../../../configs/appMode';
 import { useGlobalSetupContext, useWorkspacesContext } from '../../../contexts';
 import { DataExchangeFormat, ViewNavigationEvent } from '../../../customTypes';
 import useImportExport from '../../../hooks/useExportImport';
@@ -49,7 +49,7 @@ const ThreatModel: FC<ThreatModelProps> = ({
     <ThreatModelView
       {...props}
       onPrintButtonClick={() => onPrintButtonClick?.(getWorkspaceData())}
-      showPrintDownloadButtons={appMode !== APP_MODE_IDE_EXTENSION}
+      showPrintDownloadButtons={appMode !== APP_MODE_IDE_EXTENSION && appMode !== APP_MODE_BROWSER_EXTENSION }
       composerMode={composerMode}
       data={getWorkspaceData()}
       downloadFileName={downloadFileName}
