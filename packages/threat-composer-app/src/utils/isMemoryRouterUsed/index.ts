@@ -13,12 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { APP_MODE_IDE_EXTENSION } from '@aws/threat-composer';
+import { APP_MODE_IDE_EXTENSION, APP_MODE_BROWSER_EXTENSION } from '@aws/threat-composer';
 
 const appMode = process.env.REACT_APP_APP_MODE;
 
 const isMemoryRouterUsed = () => {
-  return appMode === APP_MODE_IDE_EXTENSION;
+  return appMode === APP_MODE_IDE_EXTENSION || appMode === APP_MODE_BROWSER_EXTENSION;
 };
 
 export default isMemoryRouterUsed;
