@@ -130,6 +130,28 @@ const Config: FC<ConfigProps> = ({ initialConfig }) => {
               >
                 Amazon CodeCatalyst <small>(codecatalyst.aws/*</small>)
               </Toggle>
+              <Toggle
+                onChange={({ detail }) =>
+                  setConfig((prev) => ({
+                    ...prev,
+                    integrationBitBucketCodeBrowser: detail.checked,
+                  }))
+                }
+                checked={config.integrationBitBucketCodeBrowser}
+              >
+                Bitbucket <small>(bitbucket.org/*</small>)
+              </Toggle>
+              <Toggle
+                onChange={({ detail }) =>
+                  setConfig((prev) => ({
+                    ...prev,
+                    integrationGitLabCodeBrowser: detail.checked,
+                  }))
+                }
+                checked={config.integrationGitLabCodeBrowser}
+              >
+                GitLab
+              </Toggle>
             </div>
           </SpaceBetween>
         </Container>
