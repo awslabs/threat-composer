@@ -57,7 +57,7 @@ export const DefaultConfig: TCConfig = {
   integrationGitLabCodeBrowser: true,
   integrationGitLabCodeBrowserUrlRegexes: [/gitlab.com/],
   integrationRaw: true,
-  integrationRawUrlRegexes: [/raw.githubusercontent.com/,/raw=1/,/raw/],
+  integrationRawUrlRegexes: [/raw.githubusercontent.com/, /raw=1/, /raw/],
   target: ThreatComposerTarget.BUILT_IN,
 };
 
