@@ -22,26 +22,45 @@ export enum ThreatComposerTarget {
   CUSTOM_HOST = 'CUSTOM_HOST',
 }
 
+
 export interface TCConfig {
+  baseUrlRegex: RegExp;
   debug: boolean;
   fileExtension: string;
-  integrationRaw: boolean;
-  integrationGitHubCodeBrowser: boolean;
-  integrationCodeCatalystCodeBrowser: boolean;
   integrationAmazonCodeBrowser: boolean;
-  customUrl?: string;
+  integrationAmazonCodeBrowserUrlRegexes: RegExp[];
+  integrationBitBucketCodeBrowser: boolean;
+  integrationBitBucketCodeBrowserUrlRegexes: RegExp[];
+  integrationCodeCatalystCodeBrowser: boolean;
+  integrationCodeCatalystCodeBrowserUrlRegexes: RegExp[];
+  integrationGitHubCodeBrowser: boolean;
+  integrationGitHubCodeBrowserUrlRegexes: RegExp[];
+  integrationGitLabCodeBrowser: boolean;
+  integrationGitLabCodeBrowserUrlRegexes: RegExp[];
+  integrationRaw: boolean;
+  integrationRawUrlRegexes: RegExp[];
   target: ThreatComposerTarget;
 }
 
 export const DefaultConfig: TCConfig = {
-  debug: false,
+  baseUrlRegex: /^.*:\/\/.*\/.*\.tc\.json([?#].*)?$/,
+  debug: true,
   fileExtension: '.tc.json',
-  integrationRaw: true,
-  integrationGitHubCodeBrowser: true,
-  integrationCodeCatalystCodeBrowser: true,
   integrationAmazonCodeBrowser: true,
+  integrationAmazonCodeBrowserUrlRegexes: [/code.amazon.com/],
+  integrationBitBucketCodeBrowser: true,
+  integrationBitBucketCodeBrowserUrlRegexes: [/bitbucket.org/],
+  integrationCodeCatalystCodeBrowser: true,
+  integrationCodeCatalystCodeBrowserUrlRegexes: [/codecatalyst.aws/],
+  integrationGitHubCodeBrowser: true,
+  integrationGitHubCodeBrowserUrlRegexes: [/github.com/],
+  integrationGitLabCodeBrowser: true,
+  integrationGitLabCodeBrowserUrlRegexes: [/gitlab.com/],
+  integrationRaw: true,
+  integrationRawUrlRegexes: [/raw.githubusercontent.com/,/raw=1/,/raw/],
   target: ThreatComposerTarget.BUILT_IN,
 };
+
 
 export async function getExtensionConfig(): Promise<TCConfig> {
   const config = await browser.storage.local.get(['tcConfig']); //TODO: Consider if this could return an exeption or is it just undefined?

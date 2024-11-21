@@ -16,6 +16,11 @@
 
 import { logDebugMessage } from '../debugLogger';
 import { getExtensionConfig, TCConfig } from './popup/config';
+import { logDebugMessage } from '../debugLogger';
+
+const tcButtonText = 'View in Threat Composer'
+const tcButtonId = 'threatComposerButton'
+
 interface TCJSONSimplifiedSchema {
   schema?: string;
 }
@@ -30,6 +35,15 @@ interface TCCodeCatalystState {
 }
 
 interface TCCodeBrowserState {
+  stopProcessing: boolean;
+}
+
+interface TCBitBucketState {
+  stopProcessing: boolean;
+}
+
+interface TCGitLabState {
+  previousUrl: string;
   stopProcessing: boolean;
 }
 
@@ -64,6 +78,7 @@ async function getTCJSONCandidate(url: string, element: HTMLElement, config: TCC
         switch (element.tagName) { //"Enable" button / anchor
           case 'BUTTON':
             (element as HTMLInputElement).disabled = false;
+            (element as HTMLInputElement).style.pointerEvents = 'auto';
             break;
           case 'A': //Anchor
             element.style.pointerEvents = 'auto';
@@ -85,7 +100,10 @@ async function getTCJSONCandidate(url: string, element: HTMLElement, config: TCC
 
 async function handleRawFile(config: TCConfig) {
   const element = document.getElementsByTagName('pre');
-  const tcButton = createTCButton();
+  const tcButton = document.createElement('button')
+  tcButton.textContent = tcButtonText
+  tcButton.id = tcButtonId
+  tcButton.disabled = true
   if (element) {
     document.body.prepend(tcButton);
     window.scrollTo(0, 0); //Scroll to top
@@ -95,30 +113,131 @@ async function handleRawFile(config: TCConfig) {
   await getTCJSONCandidate(url, tcButton, config);
 };
 
-function createTCButton() {
-  const tcButton = document.createElement('button');
-  tcButton.textContent = 'View in Threat Composer';
-  tcButton.disabled = true;
-  return tcButton;
+function isRawSite(tcConfig: TCConfig) {
+  if (matchesAnyRegex(window.location.href, tcConfig.integrationRawUrlRegexes))
+    return true
+  return false;
 }
 
-async function handleGitHubCodeViewer(gitHubState: TCGitHubState, config: TCConfig) {
-  var regExCheck = new RegExp(config.fileExtension);
+function isGitLabSite(tcConfig: TCConfig) {
+  if (matchesAnyRegex(window.location.href, tcConfig.integrationGitLabCodeBrowserUrlRegexes))
+    return true;
+
+  // Check for the presence of the GitLab logo or branding
+  const gitlabLogo = document.querySelector('img[src*="gitlab.com/assets/logo"]');
+  if (gitlabLogo) {
+    return true;
+  }
+
+  // Check for the presence of specific GitLab UI elements
+  const gitlabLayout = document.querySelector('.layout-page');
+  const gitlabHeader = document.querySelector('.navbar-gitlab');
+  if (gitlabLayout && gitlabHeader) {
+    return true;
+  }
+
+  // Check for the presence of GitLab-specific classes or IDs
+  const gitlabElements = document.querySelectorAll('[class*="gl-"], [id*="gl-"]');
+  if (gitlabElements.length > 0) {
+    return true;
+  }
+
+  // If none of the above checks pass, assume it's not a GitLab site
+  return false;
+}
+
+function isGitHubSite(tcConfig: TCConfig) {
+  if (matchesAnyRegex(window.location.href, tcConfig.integrationGitHubCodeBrowserUrlRegexes))
+    return true;
+  return false;
+}
+
+function isCodeCatalystSite(tcConfig: TCConfig) {
+  if (matchesAnyRegex(window.location.href, tcConfig.integrationCodeCatalystCodeBrowserUrlRegexes))
+    return true;
+  return false;
+}
+
+function isAmazonCodeBrowser(tcConfig: TCConfig) {
+  if (matchesAnyRegex(window.location.href, tcConfig.integrationAmazonCodeBrowserUrlRegexes))
+    return true;
+  return false;
+}
+
+function isBitbucketSite(tcConfig: TCConfig) {
+  if (matchesAnyRegex(window.location.href, tcConfig.integrationBitBucketCodeBrowserUrlRegexes))
+    return true;
+
+  // Check for the presence of Bitbucket-specific elements
+  const bitbucketMeta = document.querySelectorAll('meta[name="application-name"][content="Bitbucket"]');
+  if (bitbucketMeta) {
+    return true;
+  }
+
+  // If none of the above checks pass, assume it's not a Bitbucket site
+  return false;
+}
+
+function ViewInThreatComposerButtonExists() {
+  return document.getElementById(tcButtonId)
+}
+
+async function handleGitHubCodeBrowser(gitHubState: TCGitHubState, tcConfig: TCConfig) {
+
+  if (window.location.href != gitHubState.previousUrl) {
+    //Handle GitHub being a SPA
+    gitHubState.previousUrl = window.location.href;
+    gitHubState.stopProcessing = false;
+  }
+
+  if (ViewInThreatComposerButtonExists())
+    return;
+
+  var regExCheck = new RegExp(tcConfig.fileExtension);
+
   if (window.location.href.match(regExCheck)) {
     let element = document.querySelector('[aria-label="Copy raw content"]');
-    if (window.location.href != gitHubState.previousUrl) {
-      //Handle GitHub being a SPA
-      gitHubState.previousUrl = window.location.href;
-      gitHubState.stopProcessing = false;
-    }
+
     if (element && !gitHubState.stopProcessing) {
+      logDebugMessage(tcConfig, `Element (copy raw content) found and stopProcessing = false... lets do it`)
       gitHubState.stopProcessing = true;
       const rawButton = document.querySelector('[aria-label="Copy raw content"]');
-      const tcButton = createTCButton();
+      const tcButton = document.createElement('button')
+      tcButton.textContent = tcButtonText
+      tcButton.id = tcButtonId
+      tcButton.disabled = true
       tcButton.setAttribute('type', 'button');
       tcButton.setAttribute('class', rawButton?.classList.toString());
       tcButton.setAttribute('data-size', 'small');
+      tcButton.style.width = '100%';
       rawButton?.before(tcButton);
+      logDebugMessage(tcConfig, 'Proactively attempting to retrieve candidate');
+      const url = window.location + '?raw=1';
+      await getTCJSONCandidate(url, tcButton, tcConfig);
+    }
+  }
+};
+
+async function handleAmazonCodeBrowser(codeBrowserState: TCCodeBrowserState, config: TCConfig) {
+
+  if (ViewInThreatComposerButtonExists())
+    return;
+
+  const element = document.getElementsByClassName('file_header');
+  if (element && !codeBrowserState.stopProcessing) {
+    codeBrowserState.stopProcessing = true;
+    const fileActionsDiv = document.getElementById('file_actions');
+    if (fileActionsDiv) {
+      const fileActionsButtonGroup = fileActionsDiv.getElementsByClassName('button_group')[0];
+      const tcListItem = document.createElement('li');
+      const tcButton = document.createElement('a')
+      tcButton.textContent = tcButtonText
+      tcButton.id = tcButtonId
+      tcButton.setAttribute('class', 'minibutton');
+      tcButton.textContent = tcButtonText;
+      tcButton.style.pointerEvents = 'none';
+      tcListItem.appendChild(tcButton);
+      fileActionsButtonGroup.appendChild(tcListItem);
       logDebugMessage(config, 'Proactively attempting to retrieve candidate');
       const url = window.location + '?raw=1';
       await getTCJSONCandidate(url, tcButton, config);
@@ -126,36 +245,94 @@ async function handleGitHubCodeViewer(gitHubState: TCGitHubState, config: TCConf
   }
 };
 
-async function handleAmazonCodeBrowser(codeBrowserState: TCCodeBrowserState, config: TCConfig) {
-  const element = document.getElementsByClassName('cs-Tabs__tab-header-actions');
-  if (element && !codeBrowserState.stopProcessing) {
-    codeBrowserState.stopProcessing = true;
-    const fileActionsDiv = document.getElementById('file_actions');
-    if (fileActionsDiv) {
-      const fileActionsButtonGroup = fileActionsDiv.getElementsByClassName('button_group')[0];
-      const tcListItem = document.createElement('li');
-      const tcAnchor = document.createElement('a');
-      tcAnchor.setAttribute('class', 'minibutton');
-      tcAnchor.textContent = 'View in Threat Composer';
-      tcAnchor.style.pointerEvents = 'none';
-      tcListItem.appendChild(tcAnchor);
-      fileActionsButtonGroup.appendChild(tcListItem);
-      logDebugMessage(config, 'Proactively attempting to retrieve candidate');
-      const url = window.location + '?raw=1';
-      await getTCJSONCandidate(url, tcAnchor, config);
+function checkNoPresentation(element: HTMLElement) {
+  // Base case: if the element is a div with role="presentation"
+  if (element.tagName === 'DIV' && element.getAttribute('role') === 'presentation') {
+    return false;
+  }
+
+  // Recursive case: check all child elements
+  for (let child of element.children) {
+    if (!checkNoPresentation(child as HTMLElement)) {
+      return false;
     }
   }
-};
+
+  // If we've made it this far, no matching elements were found
+  return true;
+}
+
+async function handleBitbucketCodeBrowser(bitBucketState: TCBitBucketState, config: TCConfig) {
+
+  if (ViewInThreatComposerButtonExists())
+    return;
+
+  const element = document.querySelectorAll("[data-testid='file-actions']")[0];
+
+  if (element && element.hasChildNodes() && checkNoPresentation(element as HTMLElement) && !bitBucketState.stopProcessing) {
+    bitBucketState.stopProcessing = true;
+    const fileMenu = (document.querySelectorAll("[data-qa='bk-file__menu']")[0] as HTMLElement);
+    const editButtonClone = document.querySelectorAll("[data-qa='bk-file__action-button']")[0].cloneNode(true);
+    (editButtonClone.childNodes[0].childNodes[0].childNodes[0].childNodes[0] as HTMLElement).innerText = 'View in Threat Composer';
+    (editButtonClone.childNodes[0].childNodes[0] as HTMLElement).style.pointerEvents = 'none';
+    (editButtonClone.childNodes[0].childNodes[0] as HTMLInputElement).disabled = true;
+    element.insertBefore(editButtonClone, fileMenu);
+    const cleanPath = location.pathname.replace(/^[/]|[/]$/g, '');
+    const match = /^[^/]+[/][^/]+[/]?(.*)$/.exec(cleanPath);
+    if (match && match[1]) {
+      const rawPathSegment = match[1].replace(/^src\//, 'raw/');
+      const currentUrl = window.location.href;
+      const url = currentUrl.replace(match[1], rawPathSegment);
+      logDebugMessage(config, 'Proactively attempting to retrieve candidate');
+      await getTCJSONCandidate(url, editButtonClone.childNodes[0] as HTMLElement, config);
+    }
+  }
+}
+
+async function handleGitLabBrowser(gitLabState: TCGitLabState, tcConfig: TCConfig) {
+
+  if (window.location.href != gitLabState.previousUrl) {
+    //Handle GitLab being a SPA
+    gitLabState.previousUrl = window.location.href;
+    gitLabState.stopProcessing = false;
+  }
+
+  if (ViewInThreatComposerButtonExists())
+    return;
+
+  var regExCheck = new RegExp(tcConfig.fileExtension);
+  if (window.location.href.match(regExCheck)) {
+    const element = (document.querySelectorAll("a[title='Open raw']")[0] as HTMLElement);
+    if (element && !gitLabState.stopProcessing) {
+      logDebugMessage(tcConfig, 'Triggering UI update for GitLab');
+      gitLabState.stopProcessing = true;
+      const tcButton = document.createElement('a')
+      tcButton.id = tcButtonId
+      tcButton.setAttribute('class', element.classList.toString());
+      tcButton.innerText = tcButtonText
+      tcButton.style.pointerEvents = 'none';
+      element.parentNode?.insertBefore(tcButton, element);
+      const rawPath = location.href.replace(/\/\-\/blob/, '/-/raw');
+      logDebugMessage(tcConfig, 'Proactively attempting to retrieve candidate');
+      await getTCJSONCandidate(rawPath, tcButton as HTMLElement, tcConfig);
+    }
+  }
+}
 
 async function handleCodeCatalystCodeViewer(codeCatalystState: TCCodeCatalystState, config: TCConfig) {
+
+  if (ViewInThreatComposerButtonExists())
+    return;
+
   const element = document.getElementsByClassName(
     'cs-Tabs__tab-header-actions',
   )[0];
   if (element && element.hasChildNodes() && !codeCatalystState.stopProcessing) {
     codeCatalystState.stopProcessing = true;
-    const tcAnchor = document.createElement('a');
+    const tcButton = document.createElement('a')
+    tcButton.id = tcButtonId
     const currentAnchor = element.firstChild;
-    tcAnchor.setAttribute(
+    tcButton.setAttribute(
       'class',
       currentAnchor?.classList.toString(),
     );
@@ -164,11 +341,11 @@ async function handleCodeCatalystCodeViewer(codeCatalystState: TCCodeCatalystSta
 
     const tcSpan = document.createElement('span');
     tcSpan.setAttribute('class', currentSpan.classList.toString());
-    tcSpan.textContent = 'View in Threat Composer';
+    tcSpan.textContent = tcButtonText
 
-    tcAnchor.appendChild(tcSpan);
+    tcButton.appendChild(tcSpan);
 
-    tcAnchor.onclick = function () {
+    tcButton.onclick = function () {
       if (document.getElementById('raw-div')) {
         const rawText = document.getElementById('raw-div')!.textContent;
         if (rawText) {
@@ -188,6 +365,60 @@ async function handleCodeCatalystCodeViewer(codeCatalystState: TCCodeCatalystSta
   }
 };
 
+async function ContentScriptInScope(tcConfig: TCConfig) {
+  let inScopeRegexes = [tcConfig.baseUrlRegex];
+
+  if (tcConfig.integrationRaw) {
+    tcConfig.integrationRawUrlRegexes.forEach(entry => {
+      inScopeRegexes.push(entry);
+    });
+  }
+
+  if (tcConfig.integrationAmazonCodeBrowser) {
+    tcConfig.integrationAmazonCodeBrowserUrlRegexes.forEach(entry => {
+      inScopeRegexes.push(entry);
+    });
+  }
+
+  if (tcConfig.integrationBitBucketCodeBrowser) {
+    tcConfig.integrationBitBucketCodeBrowserUrlRegexes.forEach(entry => {
+      inScopeRegexes.push(entry);
+    });
+  }
+
+  if (tcConfig.integrationCodeCatalystCodeBrowser) {
+    tcConfig.integrationCodeCatalystCodeBrowserUrlRegexes.forEach(entry => {
+      inScopeRegexes.push(entry);
+    });
+  }
+
+  if (tcConfig.integrationGitHubCodeBrowser) {
+    tcConfig.integrationGitHubCodeBrowserUrlRegexes.forEach(entry => {
+      inScopeRegexes.push(entry);
+    });
+  }
+
+  if (tcConfig.integrationGitLabCodeBrowser) {
+    tcConfig.integrationGitLabCodeBrowserUrlRegexes.forEach(entry => {
+      inScopeRegexes.push(entry);
+    });
+  }
+
+  let match = false
+
+  inScopeRegexes.forEach(entry => {
+    if (window.location.href.match(entry)) {
+      logDebugMessage(tcConfig, 'Got a URL match for regex entry: ' + entry);
+      match = true
+    }
+  });
+  return match;
+}
+
+function matchesAnyRegex(url: string, regexArray: RegExp[]) {
+  return regexArray.some(regex => regex.test(url));
+}
+
 export default defineContentScript({
   main() {
     const gitHubState: TCGitHubState = {
@@ -203,6 +434,15 @@ export default defineContentScript({
       stopProcessing: false,
     };
 
+    const bitBucketState: TCBitBucketState = {
+      stopProcessing: false,
+    };
+
+    const gitLabState: TCGitLabState = {
+      previousUrl: '',
+      stopProcessing: false,
+    };
+
     void (async function () {
 
       const tcConfig = await getExtensionConfig();
@@ -212,32 +452,39 @@ export default defineContentScript({
         subtree: true,
       };
 
+      if (!await ContentScriptInScope(tcConfig)) {
+        logDebugMessage(tcConfig, 'Not triggering content script main logic - URL not in scope');
+        return;
+      } else {
+        logDebugMessage(tcConfig, 'Triggering content script main logic - URL IS in scope');
+      }
+
       if (
-        tcConfig.integrationRaw &&
-        (window.location.href.match(/raw.githubusercontent.com/) ||
-          window.location.href.match(/raw=1/))
-      ) {
-        logDebugMessage(tcConfig, 'Based on URL or parameters, assuming raw file view');
+        tcConfig.integrationRaw && isRawSite(tcConfig)) {
+        logDebugMessage(tcConfig, 'Assuming raw file view');
         await handleRawFile(tcConfig);
+      } else if (tcConfig.integrationGitLabCodeBrowser && isGitLabSite(tcConfig)) {
+        logDebugMessage(tcConfig, 'Assuming GitLab code browser');
+        await handleGitLabBrowser(gitLabState, tcConfig);
+        let observerForGitLabCodeBrowser = new MutationObserver(
+          () => handleGitLabBrowser(gitLabState, tcConfig),
+        );
+        observerForGitLabCodeBrowser.observe(document, config); //Scope is `document` as GitLab is a SPA
       } else if (
-        tcConfig.integrationGitHubCodeBrowser &&
-        window.location.href.match(/github.com/)
+        tcConfig.integrationGitHubCodeBrowser && isGitHubSite(tcConfig)
       ) {
         logDebugMessage(tcConfig,
-          'URL is GitHub.com - Setting up mutation observer scoped to *://*.github.com/*' +
-          tcConfig.fileExtension +
-          '*',
+          'Assuming GitHub code browser'
         );
-        await handleGitHubCodeViewer(gitHubState, tcConfig);
+        await handleGitHubCodeBrowser(gitHubState, tcConfig);
         let observerForGitHubCodeViewer = new MutationObserver(
-          () => handleGitHubCodeViewer(gitHubState, tcConfig),
+          () => handleGitHubCodeBrowser(gitHubState, tcConfig),
         );
-        observerForGitHubCodeViewer.observe(document, config);
+        observerForGitHubCodeViewer.observe(document, config); //Scope is `document` as GitHub is a SPA
       } else if (
-        tcConfig.integrationCodeCatalystCodeBrowser &&
-        window.location.href.match(/codecatalyst.aws/)
+        tcConfig.integrationCodeCatalystCodeBrowser && isCodeCatalystSite(tcConfig)
       ) {
-        logDebugMessage(tcConfig, 'URL is codecatalyst.aws - Assuming code viewer');
+        logDebugMessage(tcConfig, 'Assuming Code Catalyst code browser');
         //Inject script
         const s = document.createElement('script');
         s.src = browser.runtime.getURL('scriptInjectForCodeCatalyst.js');
@@ -250,15 +497,24 @@ export default defineContentScript({
         );
         observerForCodeCatalystCodeViewer.observe(document.body, config);
       } else if (
-        tcConfig.integrationAmazonCodeBrowser &&
-        window.location.href.match(/code.amazon.com/)
+        tcConfig.integrationAmazonCodeBrowser && isAmazonCodeBrowser(tcConfig)
       ) {
-        logDebugMessage(tcConfig, 'URL is code.amazon.com - Assuming code browser');
+        logDebugMessage(tcConfig, 'Assuming Amazon code browser');
         await handleAmazonCodeBrowser(codeBrowserState, tcConfig);
         let observerForAmazonCodeBrowser = new MutationObserver(
           () => handleAmazonCodeBrowser(codeBrowserState, tcConfig),
         );
         observerForAmazonCodeBrowser.observe(document.body, config);
+      } else if (
+        tcConfig.integrationBitBucketCodeBrowser &&
+        isBitbucketSite(tcConfig)
+      ) {
+        logDebugMessage(tcConfig, 'URL is bitbucket.org - Assuming Bitbucket code browser');
+        await handleBitbucketCodeBrowser(codeBrowserState, tcConfig);
+        let observerForBitbucketCodeBrowser = new MutationObserver(
+          () => handleBitbucketCodeBrowser(bitBucketState, tcConfig),
+        );
+        observerForBitbucketCodeBrowser.observe(document.body, config);
       }
     })();
   },

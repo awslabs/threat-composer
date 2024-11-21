@@ -12,7 +12,7 @@ function generateManifest(env: ConfigEnv): UserManifest {
     version_name: "0.0.4-alpha",
     content_scripts: [
       {
-        matches: ["*://*/*.tc.json*", "*://*.github.com/*"],
+        matches: ["<all_urls>"],
         js: ['content-script.js'],
         run_at: "document_end"
       }
@@ -24,8 +24,7 @@ function generateManifest(env: ConfigEnv): UserManifest {
   }
 
   if (env.manifestVersion === 2) {
-    manifest.permissions?.push("*://*.github.com/*")
-    manifest.permissions?.push("*://code.amazon.com/*")
+    manifest.permissions?.push("*://*/*")
   }
 
   const webAccessibleResources = [
