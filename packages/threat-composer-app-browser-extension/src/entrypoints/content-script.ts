@@ -17,8 +17,8 @@
 import { getExtensionConfig, TCConfig } from './popup/config';
 import { logDebugMessage } from '../debugLogger';
 
-const tcButtonText = 'View in Threat Composer'
-const tcButtonId = 'threatComposerButton'
+const tcButtonText = 'View in Threat Composer';
+const tcButtonId = 'threatComposerButton';
 
 interface TCJSONSimplifiedSchema {
   schema?: string;
@@ -99,10 +99,10 @@ async function getTCJSONCandidate(url: string, element: HTMLElement, config: TCC
 
 async function handleRawFile(config: TCConfig) {
   const element = document.getElementsByTagName('pre');
-  const tcButton = document.createElement('button')
-  tcButton.textContent = tcButtonText
-  tcButton.id = tcButtonId
-  tcButton.disabled = true
+  const tcButton = document.createElement('button');
+  tcButton.textContent = tcButtonText;
+  tcButton.id = tcButtonId;
+  tcButton.disabled = true;
   if (element) {
     document.body.prepend(tcButton);
     window.scrollTo(0, 0); //Scroll to top
@@ -113,14 +113,12 @@ async function handleRawFile(config: TCConfig) {
 };
 
 function isRawSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrationRawUrlRegexes))
-    return true
+  if (matchesAnyRegex(window.location.href, tcConfig.integrationRawUrlRegexes)) {return true;}
   return false;
 }
 
 function isGitLabSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrationGitLabCodeBrowserUrlRegexes))
-    return true;
+  if (matchesAnyRegex(window.location.href, tcConfig.integrationGitLabCodeBrowserUrlRegexes)) {return true;}
 
   // Check for the presence of the GitLab logo or branding
   const gitlabLogo = document.querySelector('img[src*="gitlab.com/assets/logo"]');
@@ -146,26 +144,22 @@ function isGitLabSite(tcConfig: TCConfig) {
 }
 
 function isGitHubSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrationGitHubCodeBrowserUrlRegexes))
-    return true;
+  if (matchesAnyRegex(window.location.href, tcConfig.integrationGitHubCodeBrowserUrlRegexes)) {return true;}
   return false;
 }
 
 function isCodeCatalystSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrationCodeCatalystCodeBrowserUrlRegexes))
-    return true;
+  if (matchesAnyRegex(window.location.href, tcConfig.integrationCodeCatalystCodeBrowserUrlRegexes)) {return true;}
   return false;
 }
 
 function isAmazonCodeBrowser(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrationAmazonCodeBrowserUrlRegexes))
-    return true;
+  if (matchesAnyRegex(window.location.href, tcConfig.integrationAmazonCodeBrowserUrlRegexes)) {return true;}
   return false;
 }
 
 function isBitbucketSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrationBitBucketCodeBrowserUrlRegexes))
-    return true;
+  if (matchesAnyRegex(window.location.href, tcConfig.integrationBitBucketCodeBrowserUrlRegexes)) {return true;}
 
   // Check for the presence of Bitbucket-specific elements
   const bitbucketMeta = document.querySelectorAll('meta[name="application-name"][content="Bitbucket"]');
@@ -178,7 +172,7 @@ function isBitbucketSite(tcConfig: TCConfig) {
 }
 
 function ViewInThreatComposerButtonExists() {
-  return document.getElementById(tcButtonId)
+  return document.getElementById(tcButtonId);
 }
 
 async function handleGitHubCodeBrowser(gitHubState: TCGitHubState, tcConfig: TCConfig) {
@@ -189,8 +183,7 @@ async function handleGitHubCodeBrowser(gitHubState: TCGitHubState, tcConfig: TCC
     gitHubState.stopProcessing = false;
   }
 
-  if (ViewInThreatComposerButtonExists())
-    return;
+  if (ViewInThreatComposerButtonExists()) {return;}
 
   var regExCheck = new RegExp(tcConfig.fileExtension);
 
@@ -198,13 +191,13 @@ async function handleGitHubCodeBrowser(gitHubState: TCGitHubState, tcConfig: TCC
     let element = document.querySelector('[aria-label="Copy raw content"]');
 
     if (element && !gitHubState.stopProcessing) {
-      logDebugMessage(tcConfig, `Element (copy raw content) found and stopProcessing = false... lets do it`)
+      logDebugMessage(tcConfig, 'Element (copy raw content) found and stopProcessing = false... lets do it');
       gitHubState.stopProcessing = true;
       const rawButton = document.querySelector('[aria-label="Copy raw content"]');
-      const tcButton = document.createElement('button')
-      tcButton.textContent = tcButtonText
-      tcButton.id = tcButtonId
-      tcButton.disabled = true
+      const tcButton = document.createElement('button');
+      tcButton.textContent = tcButtonText;
+      tcButton.id = tcButtonId;
+      tcButton.disabled = true;
       tcButton.setAttribute('type', 'button');
       tcButton.setAttribute('class', rawButton?.classList.toString());
       tcButton.setAttribute('data-size', 'small');
@@ -219,8 +212,7 @@ async function handleGitHubCodeBrowser(gitHubState: TCGitHubState, tcConfig: TCC
 
 async function handleAmazonCodeBrowser(codeBrowserState: TCCodeBrowserState, config: TCConfig) {
 
-  if (ViewInThreatComposerButtonExists())
-    return;
+  if (ViewInThreatComposerButtonExists()) {return;}
 
   const element = document.getElementsByClassName('file_header');
   if (element && !codeBrowserState.stopProcessing) {
@@ -229,9 +221,9 @@ async function handleAmazonCodeBrowser(codeBrowserState: TCCodeBrowserState, con
     if (fileActionsDiv) {
       const fileActionsButtonGroup = fileActionsDiv.getElementsByClassName('button_group')[0];
       const tcListItem = document.createElement('li');
-      const tcButton = document.createElement('a')
-      tcButton.textContent = tcButtonText
-      tcButton.id = tcButtonId
+      const tcButton = document.createElement('a');
+      tcButton.textContent = tcButtonText;
+      tcButton.id = tcButtonId;
       tcButton.setAttribute('class', 'minibutton');
       tcButton.textContent = tcButtonText;
       tcButton.style.pointerEvents = 'none';
@@ -263,8 +255,7 @@ function checkNoPresentation(element: HTMLElement) {
 
 async function handleBitbucketCodeBrowser(bitBucketState: TCBitBucketState, config: TCConfig) {
 
-  if (ViewInThreatComposerButtonExists())
-    return;
+  if (ViewInThreatComposerButtonExists()) {return;}
 
   const element = document.querySelectorAll("[data-testid='file-actions']")[0];
 
@@ -296,8 +287,7 @@ async function handleGitLabBrowser(gitLabState: TCGitLabState, tcConfig: TCConfi
     gitLabState.stopProcessing = false;
   }
 
-  if (ViewInThreatComposerButtonExists())
-    return;
+  if (ViewInThreatComposerButtonExists()) {return;}
 
   var regExCheck = new RegExp(tcConfig.fileExtension);
   if (window.location.href.match(regExCheck)) {
@@ -305,10 +295,10 @@ async function handleGitLabBrowser(gitLabState: TCGitLabState, tcConfig: TCConfi
     if (element && !gitLabState.stopProcessing) {
       logDebugMessage(tcConfig, 'Triggering UI update for GitLab');
       gitLabState.stopProcessing = true;
-      const tcButton = document.createElement('a')
-      tcButton.id = tcButtonId
+      const tcButton = document.createElement('a');
+      tcButton.id = tcButtonId;
       tcButton.setAttribute('class', element.classList.toString());
-      tcButton.innerText = tcButtonText
+      tcButton.innerText = tcButtonText;
       tcButton.style.pointerEvents = 'none';
       element.parentNode?.insertBefore(tcButton, element);
       const rawPath = location.href.replace(/\/\-\/blob/, '/-/raw');
@@ -320,16 +310,15 @@ async function handleGitLabBrowser(gitLabState: TCGitLabState, tcConfig: TCConfi
 
 async function handleCodeCatalystCodeViewer(codeCatalystState: TCCodeCatalystState, config: TCConfig) {
 
-  if (ViewInThreatComposerButtonExists())
-    return;
+  if (ViewInThreatComposerButtonExists()) {return;}
 
   const element = document.getElementsByClassName(
     'cs-Tabs__tab-header-actions',
   )[0];
   if (element && element.hasChildNodes() && !codeCatalystState.stopProcessing) {
     codeCatalystState.stopProcessing = true;
-    const tcButton = document.createElement('a')
-    tcButton.id = tcButtonId
+    const tcButton = document.createElement('a');
+    tcButton.id = tcButtonId;
     const currentAnchor = element.firstChild;
     tcButton.setAttribute(
       'class',
@@ -340,7 +329,7 @@ async function handleCodeCatalystCodeViewer(codeCatalystState: TCCodeCatalystSta
 
     const tcSpan = document.createElement('span');
     tcSpan.setAttribute('class', currentSpan.classList.toString());
-    tcSpan.textContent = tcButtonText
+    tcSpan.textContent = tcButtonText;
 
     tcButton.appendChild(tcSpan);
 
@@ -403,12 +392,12 @@ async function ContentScriptInScope(tcConfig: TCConfig) {
     });
   }
 
-  let match = false
+  let match = false;
 
   inScopeRegexes.forEach(entry => {
     if (window.location.href.match(entry)) {
       logDebugMessage(tcConfig, 'Got a URL match for regex entry: ' + entry);
-      match = true
+      match = true;
     }
   });
   return match;
@@ -473,7 +462,7 @@ export default defineContentScript({
         tcConfig.integrationGitHubCodeBrowser && isGitHubSite(tcConfig)
       ) {
         logDebugMessage(tcConfig,
-          'Assuming GitHub code browser'
+          'Assuming GitHub code browser',
         );
         await handleGitHubCodeBrowser(gitHubState, tcConfig);
         let observerForGitHubCodeViewer = new MutationObserver(
