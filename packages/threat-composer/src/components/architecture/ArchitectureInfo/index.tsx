@@ -16,15 +16,18 @@
 import { FC } from 'react';
 import { useArchitectureInfoContext } from '../../../contexts/ArchitectureContext/context';
 import { ArchitectureInfoSchema, EditableComponentBaseProps } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
 
 const ArchitectureInfo: FC<EditableComponentBaseProps> = (props) => {
   const { architectureInfo, setArchitectureInfo } = useArchitectureInfoContext();
+  const { t } = useReloadedTranslation();
+
   return (
     <BaseDiagramInfo
       {...props}
-      headerTitle='Architecture'
-      diagramTitle='Architecture Diagram'
+      headerTitle={t('Architecture')}
+      diagramTitle={t('Architecture Diagram')}
       entity={architectureInfo}
       onConfirm={(diagram) => setArchitectureInfo(diagram)}
       validateData={ArchitectureInfoSchema.shape.description.safeParse}

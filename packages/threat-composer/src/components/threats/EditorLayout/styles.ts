@@ -30,15 +30,15 @@ const styles = {
   }),
   inputClear: css({
     position: 'absolute',
-    float: 'right',
+    float: 'inline-end',
     top: '10px',
-    right: '5px',
+    insetInlineEnd: '5px',
   }),
   inputClearSmall: css({
     position: 'absolute',
-    float: 'right',
+    float: 'inline-end',
     top: '1px',
-    right: '5px',
+    insetInlineEnd: '5px',
   }),
 };
 

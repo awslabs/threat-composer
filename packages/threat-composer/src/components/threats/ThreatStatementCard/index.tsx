@@ -15,15 +15,20 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 import { SpaceBetween } from '@cloudscape-design/components';
-import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
+import ButtonDropdown, {
+  ButtonDropdownProps,
+} from '@cloudscape-design/components/button-dropdown';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
 import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
 import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useCallback, useMemo } from 'react';
+import AutoDirectionContainer from '../../../components/generic/AutoDirectionContainer';
+import LocalizationContainer from '../../../components/generic/LocalizationContainer';
 import { THREAT_STATUS_COLOR_MAPPING } from '../../../configs/status';
 import { TemplateThreatStatement } from '../../../customTypes';
 import threatStatus from '../../../data/status/threatStatus.json';
+import { useReloadedTranslation } from '../../../i18next';
 import AssumptionLink from '../../assumptions/AssumptionLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import GenericCard from '../../generic/GenericCard';
@@ -38,10 +43,23 @@ export interface ThreatStatementCardProps {
   onCopy?: (id: string) => void;
   onRemove?: (id: string) => void;
   onEditInWizard?: (id: string) => void;
-  onEditStatementStatus: (statement: TemplateThreatStatement, status: string) => void;
-  onEditMetadata: (statement: TemplateThreatStatement, key: string, value: string | string[] | undefined) => void;
-  onAddTagToStatement?: (statement: TemplateThreatStatement, tag: string) => void;
-  onRemoveTagFromStatement?: (statement: TemplateThreatStatement, tag: string) => void;
+  onEditStatementStatus: (
+    statement: TemplateThreatStatement,
+    status: string
+  ) => void;
+  onEditMetadata: (
+    statement: TemplateThreatStatement,
+    key: string,
+    value: string | string[] | undefined
+  ) => void;
+  onAddTagToStatement?: (
+    statement: TemplateThreatStatement,
+    tag: string
+  ) => void;
+  onRemoveTagFromStatement?: (
+    statement: TemplateThreatStatement,
+    tag: string
+  ) => void;
 }
 
 const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
@@ -55,83 +73,127 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
   onEditStatementStatus,
   onEditMetadata,
 }) => {
-  const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(({ detail }) => {
-    switch (detail.id) {
-      case 'copyToCurrentWorkspace':
-        onCopy?.(statement.id);
-        break;
-      default:
-        console.log('Unknown action', detail.id);
-    }
-  }, [onCopy, statement.id]);
+  const { t, i18n } = useReloadedTranslation();
+
+  const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> =
+    useCallback(
+      ({ detail }) => {
+        switch (detail.id) {
+          case 'copyToCurrentWorkspace':
+            onCopy?.(statement.id);
+            break;
+          default:
+            console.log('Unknown action', detail.id);
+        }
+      },
+      [onCopy, statement.id],
+    );
 
   const moreActions = useMemo(() => {
     return (
       <ButtonDropdown
-        items={[
-          { id: 'copyToCurrentWorkspace', text: 'Duplicate' },
-        ]}
+        items={[{ id: 'copyToCurrentWorkspace', text: t('Duplicate') }]}
         ariaLabel="More actions"
         variant="icon"
         onItemClick={handleMoreActions}
-      />);
+      />
+    );
   }, []);
 
   const displayStatement = useMemo(() => {
     if (statement.displayedStatement) {
-      return statement.displayedStatement.map((s, index) => typeof s === 'string' ?
-        s : s.type === 'b' ?
-          <b key={index}>{s.content}</b> :
-          s.content);
+      return statement.displayedStatement.map((s, index) =>
+        typeof s === 'string' ? (
+          s
+        ) : s.type === 'b' ? (
+          <b key={index}>{s.content}</b>
+        ) : (
+          s.content
+        ),
+      );
     }
 
     return statement.statement || '';
   }, [statement]);
 
-  return (<GenericCard
-    header={`Threat ${statement.numericId}`}
-    entityId={statement.id}
-    info={<SpaceBetween direction='horizontal' size='s'>
-      <StatusBadge
-        options={threatStatus as OptionDefinition[]}
-        setSelectedOption={(option) => onEditStatementStatus(statement, option)}
-        selectedOption={statement.status}
-        statusColorMapping={THREAT_STATUS_COLOR_MAPPING}
-      />
-      <PriorityBadge editingStatement={statement} onEditMetadata={onEditMetadata} />
-    </SpaceBetween>}
-    tags={statement.tags}
-    moreActions={moreActions}
-    onRemove={onRemove}
-    onEdit={onEditInWizard}
-    onAddTagToEntity={(_entityId, tag) => onAddTagToStatement?.(statement, tag)}
-    onRemoveTagFromEntity={(_entityId, tag) => onRemoveTagFromStatement?.(statement, tag)}
-  >
-    <SpaceBetween direction='vertical' size='s'>
-      <ColumnLayout columns={showLinkedEntities ? 2 : 1}>
-        <TextContent>
-          <CopyToClipbord content={statement.statement}>
-            {displayStatement}
-          </CopyToClipbord>
-        </TextContent>
-        {showLinkedEntities && <SpaceBetween direction='vertical' size='s'>
-          <MitigationLink
-            linkedEntityId={statement.id}
+  const displayStatementAsString: string = useMemo(() => {
+    if (statement.displayedStatement) {
+      return statement.displayedStatement
+        .map((s, _index) =>
+          typeof s === 'string' ? s : s.type === 'b' ? s.content : s.content,
+        )
+        .join(' ');
+    }
+
+    return statement.statement || '';
+  }, [statement]);
+
+  const threatStatusTranslated = useMemo(
+    () =>
+      threatStatus.map((item) => {
+        return { ...item, description: t(item.description) };
+      }),
+    [threatStatus, t],
+  ) as OptionDefinition[];
+
+  return (
+    <LocalizationContainer i18next={i18n}>
+      <GenericCard
+        header={`${t('Threat')} ${statement.numericId} `}
+        entityId={statement.id}
+        info={
+          <SpaceBetween direction="horizontal" size="s">
+            <StatusBadge
+              options={threatStatusTranslated}
+              setSelectedOption={(option) =>
+                onEditStatementStatus(statement, option)
+              }
+              selectedOption={statement.status}
+              statusColorMapping={THREAT_STATUS_COLOR_MAPPING}
+            />
+            <PriorityBadge
+              editingStatement={statement}
+              onEditMetadata={onEditMetadata}
+            />
+          </SpaceBetween>
+        }
+        tags={statement.tags}
+        moreActions={moreActions}
+        onRemove={onRemove}
+        onEdit={onEditInWizard}
+        onAddTagToEntity={(_entityId, tag) =>
+          onAddTagToStatement?.(statement, tag)
+        }
+        onRemoveTagFromEntity={(_entityId, tag) =>
+          onRemoveTagFromStatement?.(statement, tag)
+        }
+      >
+        <SpaceBetween direction="vertical" size="s">
+          <ColumnLayout columns={showLinkedEntities ? 2 : 1}>
+            <TextContent>
+              <CopyToClipbord content={statement.statement}>
+                <AutoDirectionContainer value={displayStatementAsString}>
+                  {displayStatement}
+                </AutoDirectionContainer>
+              </CopyToClipbord>
+            </TextContent>
+            {showLinkedEntities && (
+              <SpaceBetween direction="vertical" size="s">
+                <MitigationLink linkedEntityId={statement.id} />
+                <AssumptionLink linkedEntityId={statement.id} type="Threat" />
+              </SpaceBetween>
+            )}
+          </ColumnLayout>
+          <MetadataEditor
+            variant="default"
+            editingStatement={statement}
+            onEditStatementStatus={onEditStatementStatus}
+            onEditMetadata={onEditMetadata}
           />
-          <AssumptionLink
-            linkedEntityId={statement.id}
-            type='Threat'
-          />
-        </SpaceBetween>}
-      </ColumnLayout>
-      <MetadataEditor
-        variant='default'
-        editingStatement={statement}
-        onEditStatementStatus={onEditStatementStatus}
-        onEditMetadata={onEditMetadata}
-      />
-    </SpaceBetween>
-  </GenericCard>);
+        </SpaceBetween>
+      </GenericCard>
+    </LocalizationContainer>
+  );
 };
 
 export default ThreatStatementCard;

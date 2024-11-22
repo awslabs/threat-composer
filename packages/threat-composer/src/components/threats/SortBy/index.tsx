@@ -19,7 +19,8 @@ import RadioGroup from '@cloudscape-design/components/radio-group';
 import Select from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { css } from '@emotion/react';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
+import { useReloadedTranslation } from '../../../i18next';
 
 const styles = {
   selector: css({
@@ -59,10 +60,20 @@ const SortByComponent: FC<SortByProps> = ({
   value = DEFAULT_SORT_BY,
   setValue,
 }) => {
+  const { t, i18n } = useReloadedTranslation();
+
+  const translatedSelectOptions = useMemo(() => {
+    return SELECT_OPTIONS.map(x => {return { value: x.value, label: t(x.label) };});
+  }, [i18n.language]);
+
+  const translatedSortingOptions = useMemo(() => {
+    return SORTING_OPTIONS.map(x => {return { value: x.value, label: t(x.label) };});
+  }, [i18n.language]);
+
   return (<SpaceBetween direction='horizontal' size='s'>
     <div css={styles.selector}>
       <FormField
-        label="Sort by"
+        label={t('Sort by')}
       >
         <Select
           selectedOption={{ label: value.field, value: value.field }}
@@ -72,8 +83,8 @@ const SortByComponent: FC<SortByProps> = ({
               field: detail.selectedOption.value || DEFAULT_SORT_BY.field,
             })
           }
-          options={SELECT_OPTIONS}
-          selectedAriaLabel="Selected"
+          options={translatedSelectOptions}
+          selectedAriaLabel={t('Selected')}
         />
       </FormField>
     </div>
@@ -84,7 +95,7 @@ const SortByComponent: FC<SortByProps> = ({
           ascending: detail.value === 'ascending',
         })}
         value={value.ascending ? 'ascending' : 'descending'}
-        items={SORTING_OPTIONS}
+        items={translatedSortingOptions}
       />
     </div>
   </SpaceBetween>);

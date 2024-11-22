@@ -13,14 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { i18n } from 'i18next';
 import { TemplateThreatStatement } from '../../customTypes';
 import renderThreatStatement from '../renderThreatStatement';
 
-const recalculateThreatData = (threats: TemplateThreatStatement[]) => {
-  return threats.map(t => {
-    const { displayedStatement } = renderThreatStatement(t);
+const recalculateThreatData = (threats: TemplateThreatStatement[], t?: i18n['t']) => {
+  return threats.map(threat => {
+    const { displayedStatement } = renderThreatStatement(threat, t);
     const nt: TemplateThreatStatement = {
-      ...t,
+      ...threat,
       displayedStatement,
     };
 

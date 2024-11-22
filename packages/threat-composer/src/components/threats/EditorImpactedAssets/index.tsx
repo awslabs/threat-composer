@@ -20,6 +20,7 @@ import TokenGroup, { TokenGroupProps } from '@cloudscape-design/components/token
 import { FC, useCallback, useState, forwardRef } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { ThreatStatementImpactedAssetItem } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import Autosuggest from '../../generic/Autosuggest';
 import EditorLayout from '../EditorLayout';
 import ExampleList from '../ExampleList';
@@ -62,9 +63,11 @@ const EditorImpactedAssets: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, E
     }
   }, [handleAddAsset, value]);
 
+  const { t } = useReloadedTranslation();
+
   return (<EditorLayout
-    title={fieldData.displayTitle}
-    description={fieldData.description}
+    title={t(fieldData.displayTitle)}
+    description={t(fieldData.description)}
   >
     <Autosuggest
       onChange={({ detail }) => setValue(detail.value)}
@@ -73,10 +76,10 @@ const EditorImpactedAssets: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, E
       options={previousInputs.impacted_assets.map(asset => ({
         value: asset,
       }))}
-      enteredTextLabel={enteredValue => `Use: "${enteredValue}"`}
-      ariaLabel="Autosuggest for impacted assets"
-      placeholder="Select an existing asset or enter new asset"
-      empty="No matches found"
+      enteredTextLabel={enteredValue => `${t('Use')}: "${enteredValue}"`}
+      ariaLabel={t('Autosuggest for impacted assets')}
+      placeholder={t('Select an existing asset or enter new asset')}
+      empty={t('No matches found')}
       onKeyDown={handleKeyDown}
       validateData={ThreatStatementImpactedAssetItem.safeParse}
     />
@@ -84,7 +87,7 @@ const EditorImpactedAssets: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, E
       onDismiss={handleRemoveAsset}
       items={statement.impactedAssets?.map(asset => ({
         label: asset,
-        dismissLabel: `Remove ${asset}`,
+        dismissLabel: `${t('Remove')} ${asset}`,
       }))}
     />
     {perFieldExamples.impacted_assets.length > 0 &&

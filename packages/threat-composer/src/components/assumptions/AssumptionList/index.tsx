@@ -22,14 +22,18 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { useAssumptionLinksContext } from '../../../contexts';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
 import { Assumption, AssumptionLink } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import ContentLayout from '../../generic/ContentLayout';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
+import LocalizationContainer from '../../generic/LocalizationContainer';
 import TagSelector from '../../generic/TagSelector';
 import AssumptionCard from '../AssumptionCard';
 import AssumptionCreationCard from '../AssumptionCreationCard';
 
+
 const AssumptionList: FC = () => {
+  const { t, i18n } = useReloadedTranslation();
   const {
     assumptionList,
     removeAssumption,
@@ -83,7 +87,7 @@ const AssumptionList: FC = () => {
 
     if (selectedTags && selectedTags.length > 0) {
       output = output.filter(st => {
-        return st.tags?.some(t => selectedTags.includes(t));
+        return st.tags?.some(tl => selectedTags.includes(tl));
       });
     }
 
@@ -158,72 +162,75 @@ const AssumptionList: FC = () => {
 
   }, [saveAssumption, addAssumptionLinks]);
 
-  return (<ContentLayout title='Assumptions' counter={`(${filteredList.length})`}>
-    <SpaceBetween direction='vertical' size='s'>
-      <Container>
+  return (
+    <LocalizationContainer i18next={i18n}>
+      <ContentLayout title={t('Assumptions')} counter={`(${filteredList.length})`}>
         <SpaceBetween direction='vertical' size='s'>
-          <TextFilter
-            filteringText={filteringText}
-            filteringPlaceholder="Find assumptions"
-            filteringAriaLabel="Filter assumptions"
-            onChange={({ detail }) =>
-              setFilteringText(detail.filteringText)
-            }
-          />
-          <Grid
-            gridDefinition={[
-              { colspan: { default: 12, xs: 3 } },
-              { colspan: { default: 12, xs: 4 } },
-              { colspan: { default: 12, xs: 4 } },
-              { colspan: { default: 1 } },
-            ]}
-          >
-            <TagSelector
-              allTags={allTags}
-              selectedTags={selectedTags}
-              setSelectedTags={setSelectedTags}
-            />
-            <LinkedEntityFilter
-              label='Linked threats'
-              entityDisplayName='threats'
-              selected={selectedLinkedThreatsFilter}
-              setSelected={setSelectedLinkedThreatsFilter}
-            />
-            <LinkedEntityFilter
-              label='Linked mitigations'
-              entityDisplayName='mitigations'
-              selected={selectedLinkedMitigationFilter}
-              setSelected={setSelectedLinkedMitigationFilter}
-            />
-            <Button onClick={handleClearFilter}
-              variant='icon'
-              iconSvg={<svg
-                focusable="false"
-                aria-hidden="true"
-                viewBox="0 0 24 24"
-                tabIndex={-1}
+          <Container>
+            <SpaceBetween direction='vertical' size='s'>
+              <TextFilter
+                filteringText={filteringText}
+                filteringPlaceholder={t('Find assumptions')}
+                filteringAriaLabel={t('Filter assumptions')}
+                onChange={({ detail }) =>
+                  setFilteringText(detail.filteringText)
+                }
+              />
+              <Grid
+                gridDefinition={[
+                  { colspan: { default: 12, xs: 3 } },
+                  { colspan: { default: 12, xs: 4 } },
+                  { colspan: { default: 12, xs: 4 } },
+                  { colspan: { default: 1 } },
+                ]}
               >
-                <path d="M19.79 5.61C20.3 4.95 19.83 4 19 4H6.83l7.97 7.97 4.99-6.36zM2.81 2.81 1.39 4.22 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.17l5.78 5.78 1.41-1.41L2.81 2.81z"></path>
-              </svg>}
-              ariaLabel='Clear filters'
-              disabled={hasNoFilter}
-            />
-          </Grid>
+                <TagSelector
+                  allTags={allTags}
+                  selectedTags={selectedTags}
+                  setSelectedTags={setSelectedTags}
+                />
+                <LinkedEntityFilter
+                  label={t('Linked threats')}
+                  entityDisplayName={t('threats')}
+                  selected={selectedLinkedThreatsFilter}
+                  setSelected={setSelectedLinkedThreatsFilter}
+                />
+                <LinkedEntityFilter
+                  label={t('Linked mitigations')}
+                  entityDisplayName={t('mitigations')}
+                  selected={selectedLinkedMitigationFilter}
+                  setSelected={setSelectedLinkedMitigationFilter}
+                />
+                <Button onClick={handleClearFilter}
+                  variant='icon'
+                  iconSvg={<svg
+                    focusable="false"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    tabIndex={-1}
+                  >
+                    <path d="M19.79 5.61C20.3 4.95 19.83 4 19 4H6.83l7.97 7.97 4.99-6.36zM2.81 2.81 1.39 4.22 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.17l5.78 5.78 1.41-1.41L2.81 2.81z"></path>
+                  </svg>}
+                  ariaLabel={t('Clear filters')}
+                  disabled={hasNoFilter}
+                />
+              </Grid>
+            </SpaceBetween>
+          </Container>
+          {filteredList?.map(entity => (<AssumptionCard
+            key={entity.id}
+            assumption={entity}
+            onRemove={handleRemove}
+            onEdit={saveAssumption}
+            onAddTagToAssumption={handleAddTagToEntity}
+            onRemoveTagFromAssumption={handleRemoveTagFromEntity}
+          />))}
+          <AssumptionCreationCard
+            onSave={handleSaveNew}
+          />
         </SpaceBetween>
-      </Container>
-      {filteredList?.map(entity => (<AssumptionCard
-        key={entity.id}
-        assumption={entity}
-        onRemove={handleRemove}
-        onEdit={saveAssumption}
-        onAddTagToAssumption={handleAddTagToEntity}
-        onRemoveTagFromAssumption={handleRemoveTagFromEntity}
-      />))}
-      <AssumptionCreationCard
-        onSave={handleSaveNew}
-      />
-    </SpaceBetween>
-  </ContentLayout>);
+      </ContentLayout>
+    </LocalizationContainer>);
 };
 
 export default AssumptionList;

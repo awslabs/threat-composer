@@ -21,6 +21,7 @@ import { css } from '@emotion/react';
 import { FC, useMemo, useState, useRef } from 'react';
 import PriorityEdit from '..//PriorityEdit';
 import { TemplateThreatStatement } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 
 export interface PriorityBadgeProps {
   editingStatement: TemplateThreatStatement;
@@ -55,6 +56,8 @@ const PriorityBadge: FC<PriorityBadgeProps> = ({
     />;
   }, [editingStatement, onEditMetadata]);
 
+  const { t } = useReloadedTranslation();
+
   return <div>{editMode ? (editor) :
     (<button
       onClick={() => {
@@ -72,7 +75,7 @@ const PriorityBadge: FC<PriorityBadgeProps> = ({
         outline: inherit;
         verticalAlign: middle;
       `}>
-      <Badge color={PRIORITY_COLOR_MAPPING[priority || 'NoSet'] || 'grey'}>{priority || 'Priority Not Set'}</Badge>
+      <Badge color={PRIORITY_COLOR_MAPPING[priority || 'NoSet'] || 'grey'}>{t(priority || 'Priority Not Set')}</Badge>
     </button>)}</div>;
 };
 

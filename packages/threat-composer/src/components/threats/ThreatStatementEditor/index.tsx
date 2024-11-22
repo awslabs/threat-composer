@@ -22,6 +22,8 @@ import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import React, { FC, useCallback, useMemo, useState, useRef, useEffect, ReactNode, PropsWithChildren } from 'react';
 import { EditorProps } from './types';
+import AutoDirectionContainer from '../../../components/generic/AutoDirectionContainer';
+import LocalizationContainer from '../../../components/generic/LocalizationContainer';
 import { METADATA_KEY_SOURCE, METADATA_KEY_SOURCE_THREAT_PACK, METADATA_KEY_SOURCE_THREAT_PACK_MITIGATION_CANDIDATE, METADATA_KEY_SOURCE_THREAT_PACK_THREAT } from '../../../configs';
 import { DEFAULT_NEW_ENTITY_ID, DEFAULT_WORKSPACE_LABEL } from '../../../configs/constants';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
@@ -31,12 +33,11 @@ import { useMitigationLinksContext } from '../../../contexts/MitigationLinksCont
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
-import { Mitigation, TemplateThreatStatement, ViewNavigationEvent } from '../../../customTypes';
+import { Mitigation, TemplateThreatStatement, ThreatStatementFormat, ViewNavigationEvent } from '../../../customTypes';
 import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
-import threatStatementExamples from '../../../data/threatStatementExamples.json';
-import threatStatementFormat from '../../../data/threatStatementFormat';
 import useEditMetadata from '../../../hooks/useEditMetadata';
+import { useReloadedTranslation } from '../../../i18next';
 import getMetadata from '../../../utils/getMetadata';
 import getNewMitigation from '../../../utils/getNewMitigation';
 import getNewThreatStatement from '../../../utils/getNewThreatStatement';
@@ -75,7 +76,6 @@ const styles = {
   }),
 };
 
-const defaultThreatStatementFormat = threatStatementFormat[63];
 
 export interface ThreatStatementEditorProps {
   onThreatListView?: ViewNavigationEvent['onThreatListView'];
@@ -143,6 +143,10 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
   const { addAssumptionLinks, getLinkedAssumptionLinks, removeAssumptionLinks } = useAssumptionLinksContext();
   const { addMitigationLinks, getLinkedMitigationLinks, removeMitigationLinks } = useMitigationLinksContext();
 
+  const { t, i18n } = useReloadedTranslation();
+
+  const defaultThreatStatementFormat = (t('THREAT_STATEMENT_FORMAT', { returnObjects: true }) as ThreatStatementFormat)[63];
+
   const prevLinkedAssumptionIds = useMemo(() => {
     return getLinkedAssumptionLinks(editingStatement.id).map(la => la.assumptionId);
   }, [getLinkedAssumptionLinks, editingStatement]);
@@ -161,6 +165,17 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
   const { assumptionList, saveAssumption } = useAssumptionsContext();
   const { mitigationList, saveMitigation } = useMitigationsContext();
 
+  const threatStatementExamples: TemplateThreatStatement[] = useMemo(() => {
+    return (t('THREAT_STATEMENT_EXAMPLE_DATA', { returnObjects: true }) as TemplateThreatStatement[]).map(e => {
+      const { statement, displayedStatement } = renderThreatStatement(e, t);
+      return {
+        ...e,
+        statement,
+        displayedStatement,
+      };
+    });
+  }, [t, i18n, i18n.language]);
+
   const Component = useMemo(() => {
     return editor && editorMapping[editor];
   }, [editor]);
@@ -176,7 +191,7 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
 
   useEffect(() => {
     if (editingStatement) {
-      const { statement, suggestions: currentSuggestions, displayedStatement } = renderThreatStatement(editingStatement);
+      const { statement, suggestions: currentSuggestions, displayedStatement } = renderThreatStatement(editingStatement, t);
       if (statement !== editingStatement.statement) {
         setEditingStatement(prev => prev && ({
           ...prev,
@@ -197,7 +212,7 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
       setSuggestions([]);
       setDisplayStatement([]);
     }
-  }, [editingStatement, composerMode]);
+  }, [editingStatement, composerMode, t, i18n.language]);
 
   const handleStartOver = useCallback(() => {
     setEditingStatement(getNewThreatStatement());
@@ -291,11 +306,11 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
   const saveButtonText = useMemo(() => {
     if (!currentWorkspace && workspaceList.length === 0) {
       // For most of use cases, if there is only the default workspace, use list to reduce cognitive load.
-      return editingStatement?.numericId === -1 ? 'Add to list' : 'Save';
+      return editingStatement?.numericId === -1 ? t('Add to list') : t('Save');
     }
 
     const workspace = currentWorkspace?.name || DEFAULT_WORKSPACE_LABEL;
-    return editingStatement?.numericId === -1 ? `Add to workspace ${workspace}` : `Save to workspace ${workspace}`;
+    return editingStatement?.numericId === -1 ? `${t('Add to workspace')} ${workspace}` : `${t('Save to workspace')} ${workspace}`;
 
   }, [currentWorkspace, workspaceList, editingStatement]);
 
@@ -383,35 +398,58 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
     return <TextContent>Not threat statement editing in place</TextContent>;
   }
 
+  const displayStatementAsString: string = useMemo(() => {
+    if (editingStatement.displayedStatement) {
+      return editingStatement.displayedStatement.map((s, _index) =>
+        typeof s === 'string' ? (
+          s
+        ) : s.type === 'b' ? (
+          s.content
+        ) : (
+          s.content
+        ),
+      ).join(' ');
+    }
+
+    return editingStatement.statement || '';
+  }, [editingStatement]);
+
   return (
-    <ContentLayout
-      composerMode={composerMode}
-      saveButtonText={saveButtonText}
-      editingStatement={editingStatement}
-      onCancel={handleCancel}
-      onStartOver={isExampleVisible ? handleStartOver : undefined}
-      onComplete={handleComplete}
-    >
-      <SpaceBetween direction='vertical' size='l'>
-        {composerMode === 'ThreatsOnly' && <Header
-          composerMode={composerMode}
-          statement={editingStatement}
-          saveButtonText={saveButtonText}
-          onCancel={handleCancel}
-          onStartOver={handleStartOver}
-          onComplete={handleComplete} />}
-        <FinalStatement statement={editingStatement} displayStatement={displayStatement} />
-        <FieldSelector
-          composerMode={composerMode}
-          onStartOver={handleStartOver}
-          setEditor={setEditor}
-          statement={editingStatement}
-          currentEditor={editor}
-          suggestions={suggestions}
-          onGiveExampleClick={isExampleVisible ? handleGiveExampleClicked : undefined}
-          setCustomTemplateEditorVisible={setCustomTemplateEditorVisible}
-        />
-        {Component && editor &&
+    <LocalizationContainer i18next={i18n}>
+      <ContentLayout
+        composerMode={composerMode}
+        saveButtonText={saveButtonText}
+        editingStatement={editingStatement}
+        onCancel={handleCancel}
+        onStartOver={isExampleVisible ? handleStartOver : undefined}
+        onComplete={handleComplete}
+      >
+        <SpaceBetween direction='vertical' size='l'>
+          {composerMode === 'ThreatsOnly' && <Header
+            composerMode={composerMode}
+            statement={editingStatement}
+            saveButtonText={saveButtonText}
+            onCancel={handleCancel}
+            onStartOver={handleStartOver}
+            onComplete={handleComplete} />}
+          <AutoDirectionContainer value={displayStatementAsString}>
+            <FinalStatement statement={editingStatement} displayStatement={displayStatement} />
+          </AutoDirectionContainer>
+
+
+          <FieldSelector
+            composerMode={composerMode}
+            onStartOver={handleStartOver}
+            setEditor={setEditor}
+            statement={editingStatement}
+            currentEditor={editor}
+            suggestions={suggestions}
+            onGiveExampleClick={isExampleVisible ? handleGiveExampleClicked : undefined}
+            setCustomTemplateEditorVisible={setCustomTemplateEditorVisible}
+          />
+
+
+          {Component && editor &&
           <Grid
             gridDefinition={[{ colspan: { default: 12, xs: 9 } }, { colspan: { default: 12, xs: 3 } }]}
           >
@@ -425,53 +463,54 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
             </div>
             <Metrics statement={editingStatement} onClick={(token) => setEditor(token as ThreatFieldTypes)} />
           </Grid>}
-        {composerMode === 'Full' && <div css={styles.metadataContainer}>
-          <MitigationLinkComponent
-            variant='container'
-            linkedMitigationIds={linkedMitigationIds}
-            mitigationList={mitigationList}
-            onAddMitigationLink={handleAddMitigationLink}
-            onRemoveMitigationLink={(id) => setLinkedMitigationIds(prev => prev.filter(p => p !== id))}
-          >
-            <MitigationCandidates
-              threatPackId={threatPackId}
-              threatPackThreatId={threatPackThreatId}
+          {composerMode === 'Full' && <div css={styles.metadataContainer}>
+            <MitigationLinkComponent
+              variant='container'
               linkedMitigationIds={linkedMitigationIds}
               mitigationList={mitigationList}
-              onAddMitigationsFromMitigationCandidates={handleAddMitigationsFromMitigationCandidates}
+              onAddMitigationLink={handleAddMitigationLink}
+              onRemoveMitigationLink={(id) => setLinkedMitigationIds(prev => prev.filter(p => p !== id))}
+            >
+              <MitigationCandidates
+                threatPackId={threatPackId}
+                threatPackThreatId={threatPackThreatId}
+                linkedMitigationIds={linkedMitigationIds}
+                mitigationList={mitigationList}
+                onAddMitigationsFromMitigationCandidates={handleAddMitigationsFromMitigationCandidates}
+              />
+            </MitigationLinkComponent>
+          </div>}
+          {composerMode === 'Full' && <div css={styles.metadataContainer}>
+            <AssumptionLinkComponent
+              variant='container'
+              linkedAssumptionIds={linkedAssumptionIds}
+              assumptionList={assumptionList}
+              onAddAssumptionLink={handleAddAssumptionLink}
+              onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
             />
-          </MitigationLinkComponent>
-        </div>}
-        {composerMode === 'Full' && <div css={styles.metadataContainer}>
-          <AssumptionLinkComponent
-            variant='container'
-            linkedAssumptionIds={linkedAssumptionIds}
-            assumptionList={assumptionList}
-            onAddAssumptionLink={handleAddAssumptionLink}
-            onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
-          />
-        </div>}
-        {composerMode === 'Full' && <div css={styles.metadataContainer}>
-          <MetadataEditor
-            variant='container'
-            editingStatement={editingStatement}
-            onEditStatementStatus={(_statement, status) => setEditingStatement((prev => ({
-              ...prev,
-              status,
-            } as TemplateThreatStatement)))}
-            onEditMetadata={handleEditMetadata}
-          />
-        </div>}
-        {isExampleVisible && <FullExamples ref={fullExamplesRef} onClick={handleExampleClicked} />}
-      </SpaceBetween>
-      {customTemplateEditorVisible && <CustomTemplate
-        statement={editingStatement}
-        visible={customTemplateEditorVisible}
-        setVisible={setCustomTemplateEditorVisible}
-        onConfirm={handleCustomTemplateConfirm}
-        defaultTemplate={defaultThreatStatementFormat.template}
-      />}
-    </ContentLayout>);
+          </div>}
+          {composerMode === 'Full' && <div css={styles.metadataContainer}>
+            <MetadataEditor
+              variant='container'
+              editingStatement={editingStatement}
+              onEditStatementStatus={(_statement, status) => setEditingStatement((prev => ({
+                ...prev,
+                status,
+              } as TemplateThreatStatement)))}
+              onEditMetadata={handleEditMetadata}
+            />
+          </div>}
+          {isExampleVisible && <FullExamples ref={fullExamplesRef} onClick={handleExampleClicked} />}
+        </SpaceBetween>
+        {customTemplateEditorVisible && <CustomTemplate
+          statement={editingStatement}
+          visible={customTemplateEditorVisible}
+          setVisible={setCustomTemplateEditorVisible}
+          onConfirm={handleCustomTemplateConfirm}
+          defaultTemplate={defaultThreatStatementFormat.template}
+        />}
+      </ContentLayout>
+    </LocalizationContainer>);
 };
 
 const ThreatStatementEditor: FC<ThreatStatementEditorProps> = (props) => {

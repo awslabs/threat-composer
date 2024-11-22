@@ -19,6 +19,7 @@ import HeaderComponent from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo } from 'react';
 import { ComposerMode, TemplateThreatStatement } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 
 export interface HeaderProps {
   composerMode: ComposerMode;
@@ -36,19 +37,24 @@ const Header: FC<HeaderProps> = ({
   onCancel,
   onStartOver,
 }) => {
+
+  const { t } = useReloadedTranslation();
+
   const actions = useMemo(() => {
     return (
-      <SpaceBetween direction="horizontal" size="xs">
-        <Button onClick={onCancel}>Threat list</Button>
-        {onStartOver && <Button onClick={onStartOver}>Start over</Button>}
-        <Button variant="primary" onClick={onComplete} disabled={!statement.statement}>
-          {saveButtonText}
-        </Button>
-      </SpaceBetween>);
-  }, [onComplete, onCancel, onStartOver]);
+      <div style={{ paddingTop: '5px' }}>
+        <SpaceBetween direction="horizontal" size="s">
+          <Button onClick={onCancel}>{t('Threat list')}</Button>
+          {onStartOver && <Button onClick={onStartOver}>{t('Start over')}</Button>}
+          <Button variant="primary" onClick={onComplete} disabled={!statement.statement}>
+            {saveButtonText}
+          </Button>
+        </SpaceBetween>
+      </div>);
+  }, [onComplete, onCancel, onStartOver, t]);
 
   return (
-    <HeaderComponent variant='h1' actions={actions}>{!statement.numericId || statement.numericId === -1 ? undefined : `Threat ${statement.numericId}`}</HeaderComponent>
+    <HeaderComponent variant='h1' actions={actions}>{!statement.numericId || statement.numericId === -1 ? undefined : `${t('Threat')} ${statement.numericId}`}</HeaderComponent>
   );
 };
 

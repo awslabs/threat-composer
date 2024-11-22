@@ -20,6 +20,7 @@ import { OptionDefinition } from '@cloudscape-design/components/internal/compone
 import { FC, useMemo } from 'react';
 import { TemplateThreatStatement } from '../../../customTypes';
 import threatStatus from '../../../data/status/threatStatus.json';
+import { useReloadedTranslation } from '../../../i18next';
 import expandablePanelHeaderStyles from '../../../styles/expandablePanelHeader';
 import CommentsEdit from '../../generic/CommentsEdit';
 import StatusSelector from '../../generic/StatusSelector';
@@ -44,8 +45,10 @@ const MetadataEditor: FC<MetadataEditorProps> = ({
     return (editingStatement.metadata?.find(m => m.key === 'STRIDE')?.value as string[]) || undefined;
   }, [editingStatement.metadata]);
 
+  const { t } = useReloadedTranslation();
+
   return (
-    <ExpandableSection headerText={<span css={variant === 'default' ? expandablePanelHeaderStyles : undefined}>Metadata</span>} headingTagOverride='h3' variant={variant}>
+    <ExpandableSection headerText={<span css={variant === 'default' ? expandablePanelHeaderStyles : undefined}>{t('Metadata')}</span>} headingTagOverride='h3' variant={variant}>
       <Grid
         gridDefinition={[
           { colspan: { default: 12, xs: 3 } },

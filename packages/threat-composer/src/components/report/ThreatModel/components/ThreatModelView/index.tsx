@@ -26,8 +26,10 @@ import Spinner from '@cloudscape-design/components/spinner';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
+import { i18n } from 'i18next';
 import { FC, useEffect, useCallback, useState, ReactNode, PropsWithChildren, useMemo } from 'react';
 import { DataExchangeFormat, HasContentDetails, ViewNavigationEvent } from '../../../../../customTypes';
+import { useReloadedTranslation } from '../../../../../i18next';
 import printStyles from '../../../../../styles/print';
 import convertToMarkdown from '../../../../../utils/convertToMarkdown';
 import convertToYaml from '../../../../../utils/convertToYaml';
@@ -85,7 +87,7 @@ export interface ThreatModelViewProps extends ViewNavigationEvent {
   downloadFileName?: string;
   onPrintButtonClick?: () => void;
   hasContentDetails?: HasContentDetails;
-  convertToDocx?: (data: DataExchangeFormat) => Promise<Blob>;
+  convertToDocx?: (data: DataExchangeFormat, t?: i18n['t'], deafultDir?: boolean) => Promise<Blob>;
 }
 
 const ThreatModelView: FC<ThreatModelViewProps> = ({
@@ -101,17 +103,17 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
 }) => {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
-
+  const { t, i18n: i18next } = useReloadedTranslation();
   useEffect(() => {
     const updateContent = async () => {
       setLoading(true);
-      const processedContent = await convertToMarkdown(data, composerMode);
+      const processedContent = await convertToMarkdown(data, composerMode, t, i18next.dir(i18next.language));
       setContent(processedContent);
       setLoading(false);
     };
 
     updateContent().catch(err => console.log('Error', err));
-  }, [data, composerMode, hasContentDetails]);
+  }, [t, i18next, i18next.language, data, composerMode, hasContentDetails]);
 
   const handleCopyMarkdown = useCallback(async () => {
     await navigator.clipboard.writeText(content);
@@ -122,11 +124,11 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
   }, [content, downloadFileName]);
 
   const handleDownloadWorddocx = useCallback(async () => {
-    const docxBlob = await convertToDocx?.(data);
+    const docxBlob = await convertToDocx?.(data, t, i18next.dir(i18next.language) === 'rtl');
     if (docxBlob) {
       downloadFileName && downloadContentAsWordDocx(docxBlob, downloadFileName);
     }
-  }, [data, downloadFileName, convertToDocx]);
+  }, [t, i18next, i18next.language, data, downloadFileName, convertToDocx]);
 
   const handleDownloadJson = useCallback(() => {
     downloadFileName && downloadObjectAsJson(data, downloadFileName);
@@ -188,27 +190,28 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
       triggerType="custom"
       content={
         <StatusIndicator type="success">
-          Content copied
+          {t('Content copied')}
         </StatusIndicator>
       }
     >
       <Button
         onClick={handleCopyMarkdown}>
-        Copy as Markdown
+        {t('Copy as Markdown')}
       </Button>
     </Popover>
     {downloadFileName && showPrintDownloadButtons && <ButtonDropdown
       items={[
-        { text: 'Download as Markdown File', id: 'markdown' },
-        ...(convertToDocx ? [{ text: 'Download as Word - Docx File', id: 'docx' }] : []),
-        { text: 'Download as JSON File', id: 'json' },
+        { text: t('Download as Markdown File'), id: 'markdown' },
+        ...(convertToDocx ? [{ text: t('Download as Word - Docx File'), id: 'docx' }] : []),
+        { text: t('Download as JSON File'), id: 'json' },
       ]}
       onItemClick={handleDownloadClick}
     >
-      Download
+      {t('Download')}
     </ButtonDropdown>}
-    {showPrintDownloadButtons && <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>}
-  </SpaceBetween>, [handleCopyMarkdown, downloadFileName, showPrintDownloadButtons, convertToDocx, handleDownloadClick, onPrintButtonClick]);
+    {showPrintDownloadButtons && <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>{t('Print')}</Button>}
+  </SpaceBetween>
+  , [t, i18next.language, handleCopyMarkdown, downloadFileName, showPrintDownloadButtons, convertToDocx, handleDownloadClick, onPrintButtonClick]);
 
   return (<ContentLayout
     isPreview={isPreview}
@@ -227,7 +230,7 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
       {!isPreview && composerMode === 'Full' && hasContentDetails && Object.values(hasContentDetails).some(x => !x) && <div css={printStyles.hiddenPrint}>
         <Box css={styles.nextStepsContainer}>
           <SpaceBetween direction="horizontal" size="xs">
-            <Box fontWeight="bold" css={styles.text}>Suggested next steps: </Box>
+            <Box fontWeight="bold" css={styles.text}>{t('Suggested next steps')}: </Box>
             {getNextStepButtons()}
           </SpaceBetween>
         </Box>

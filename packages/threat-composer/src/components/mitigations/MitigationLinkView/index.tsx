@@ -19,6 +19,7 @@ import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/co
 import TokenGroup from '@cloudscape-design/components/token-group';
 import React, { FC, PropsWithChildren, useMemo } from 'react';
 import { Mitigation } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 
 export interface MitigationLinkProps {
   variant?: ExpandableSectionProps['variant'];
@@ -52,10 +53,12 @@ const MitigationLinkComponent: FC<PropsWithChildren<MitigationLinkProps>> = ({
     return mitigations.filter(x => x.content.toLowerCase().indexOf(searchValue.toLowerCase()) >= 0);
   }, [searchValue, mitigationList, linkedMitigationIds]);
 
+  const { t } = useReloadedTranslation();
+
   return (<ExpandableSection
     variant={variant}
     headingTagOverride={variant === 'container' ? 'h3' : undefined}
-    headerText={`Linked mitigations (${linkedMitigations.length})`}>
+    headerText={`${t('Linked mitigations')} (${linkedMitigations.length})`}>
     <SpaceBetween direction='vertical' size="l">
       <div>
         <Autosuggest
@@ -70,9 +73,9 @@ const MitigationLinkComponent: FC<PropsWithChildren<MitigationLinkProps>> = ({
             setSearchValue('');
           }}
           filteringType='manual'
-          enteredTextLabel={value => `Add new mitigation: "${value}"`}
-          placeholder="Search mitigation"
-          empty="No matches found"
+          enteredTextLabel={value => `${t('Add new mitigation')}: "${value}"`}
+          placeholder={t('Search mitigation')}
+          empty={t('No matches found')}
         />
         <div
           style={{
@@ -83,7 +86,7 @@ const MitigationLinkComponent: FC<PropsWithChildren<MitigationLinkProps>> = ({
             items={
               linkedMitigations.map(x => ({
                 label: x.content,
-                dismissLabel: `Unlink mitigation ${x.numericId}`,
+                dismissLabel: `${t('Unlink mitigation')} ${x.numericId}`,
               }))
             }
             onDismiss={({ detail: { itemIndex } }) => {

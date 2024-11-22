@@ -25,8 +25,10 @@ import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../c
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { AssumptionLink, Mitigation, MitigationLink, MitigationListFilter } from '../../../customTypes';
 import mitigationStatus from '../../../data/status/mitigationStatus.json';
+import { useReloadedTranslation } from '../../../i18next';
 import ContentLayout from '../../generic/ContentLayout';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
+import LocalizationContainer from '../../generic/LocalizationContainer';
 import TagSelector from '../../generic/TagSelector';
 import MitigationCard from '../MitigationCard';
 import MitigationCreationCard from '../MitigationCreationCard';
@@ -46,6 +48,8 @@ export interface MitigationListProps {
 const MitigationList: FC<MitigationListProps> = ({
   initialFilter,
 }) => {
+  const { t, i18n } = useReloadedTranslation();
+
   const {
     mitigationList,
     removeMitigation,
@@ -132,7 +136,7 @@ const MitigationList: FC<MitigationListProps> = ({
   const handleRemoveTagFromEntity = useCallback((mitigation: Mitigation, tag: string) => {
     const updated: Mitigation = {
       ...mitigation,
-      tags: mitigation.tags?.filter(t => t !== tag),
+      tags: mitigation.tags?.filter(tl => tl !== tag),
     };
     saveMitigation(updated);
   }, [saveMitigation]);
@@ -146,7 +150,7 @@ const MitigationList: FC<MitigationListProps> = ({
 
     if (selectedTags && selectedTags.length > 0) {
       output = output.filter(st => {
-        return st.tags?.some(t => selectedTags.includes(t));
+        return st.tags?.some(tl => selectedTags.includes(tl));
       });
     }
 
@@ -207,76 +211,86 @@ const MitigationList: FC<MitigationListProps> = ({
 
   }, [saveMitigation, addMitigationLinks, addAssumptionLinks]);
 
-  return (<ContentLayout title='Mitigations' counter={`(${filteredList.length})`}>
-    <SpaceBetween direction='vertical' size='s'>
-      <Container>
-        <SpaceBetween direction='vertical' size='s'>
-          <TextFilter
-            filteringText={filteringText}
-            filteringPlaceholder="Find mitigations"
-            filteringAriaLabel="Filter mitigations"
-            onChange={({ detail }) =>
-              setFilteringText(detail.filteringText)
-            }
-          />
-          <Grid
-            gridDefinition={[
-              { colspan: { default: 12, xs: 5 } },
-              { colspan: { default: 12, xs: 5 } },
-              { colspan: { default: 12, xs: 4 } },
-              { colspan: { default: 12, xs: 4 } },
-              { colspan: { default: 3 } },
-            ]}
-          >
-            <TagSelector
-              allTags={allTags}
-              selectedTags={selectedTags}
-              setSelectedTags={setSelectedTags}
-            />
-            <Multiselect
-              tokenLimit={0}
-              selectedOptions={ALL_STATUS.filter(x => selectedStatus.includes(x.value))}
+  const translatedAllStatus = useMemo(() => {
+    return ALL_STATUS.map(status => {
+      return {
+        label: t(status.label),
+        value: status.value,
+      };
+    });
+  }, [i18n.language]);
+
+  return (<LocalizationContainer i18next={i18n}>
+    <ContentLayout title={t('Mitigations')} counter={`(${filteredList.length})`}>
+      <SpaceBetween direction='vertical' size='s'>
+        <Container>
+          <SpaceBetween direction='vertical' size='s'>
+            <TextFilter
+              filteringText={filteringText}
+              filteringPlaceholder={t('Find mitigations')}
+              filteringAriaLabel={t('Filter mitigations')}
               onChange={({ detail }) =>
-                setSelectedStatus(detail.selectedOptions?.map(o => o.value || '') || [])
+                setFilteringText(detail.filteringText)
               }
-              deselectAriaLabel={e => `Remove ${e.label}`}
-              options={ALL_STATUS}
-              placeholder="Filtered by status"
-              selectedAriaLabel="Selected"
             />
-            <LinkedEntityFilter
-              label='Linked threats'
-              entityDisplayName='threats'
-              selected={selectedLinkedThreatsFilter}
-              setSelected={setSelectedLinkedThreatsFilter}
-            />
-            <LinkedEntityFilter
-              label='Linked assumptions'
-              entityDisplayName='assumptions'
-              selected={selectedLinkedAssumptionsFilter}
-              setSelected={setSelectedLinkedAssumptionsFilter}
-            />
-            <Button onClick={handleClearFilter}
-              disabled={hasNoFilter}
+            <Grid
+              gridDefinition={[
+                { colspan: { default: 12, xs: 5 } },
+                { colspan: { default: 12, xs: 5 } },
+                { colspan: { default: 12, xs: 4 } },
+                { colspan: { default: 12, xs: 4 } },
+                { colspan: { default: 3 } },
+              ]}
             >
-              Clear filters
-            </Button>
-          </Grid>
-        </SpaceBetween>
-      </Container>
-      {filteredList?.map(entity => (<MitigationCard
-        key={entity.id}
-        entity={entity}
-        onRemove={handleRemove}
-        onEdit={saveMitigation}
-        onAddTagToEntity={handleAddTagToEntity}
-        onRemoveTagFromEntity={handleRemoveTagFromEntity}
-      />))}
-      <MitigationCreationCard
-        onSave={handleSaveNew}
-      />
-    </SpaceBetween>
-  </ContentLayout>);
+              <TagSelector
+                allTags={allTags}
+                selectedTags={selectedTags}
+                setSelectedTags={setSelectedTags}
+              />
+              <Multiselect
+                tokenLimit={0}
+                selectedOptions={translatedAllStatus.filter(x => selectedStatus.includes(x.value))}
+                onChange={({ detail }) =>
+                  setSelectedStatus(detail.selectedOptions?.map(o => o.value || '') || [])
+                }
+                deselectAriaLabel={e => `${t('Remove')} ${e.label}`}
+                options={translatedAllStatus}
+                placeholder={t('Filtered by status')}
+                selectedAriaLabel={t('Selected')}
+              />
+              <LinkedEntityFilter
+                label={t('Linked threats')}
+                entityDisplayName={t('threats')}
+                selected={selectedLinkedThreatsFilter}
+                setSelected={setSelectedLinkedThreatsFilter}
+              />
+              <LinkedEntityFilter
+                label={t('Linked assumptions')}
+                entityDisplayName={t('assumptions')}
+                selected={selectedLinkedAssumptionsFilter}
+                setSelected={setSelectedLinkedAssumptionsFilter}
+              />
+              <Button onClick={handleClearFilter}
+                disabled={hasNoFilter}
+              >
+                {t('Clear filters')}
+              </Button>
+            </Grid>
+          </SpaceBetween>
+        </Container>
+        {filteredList?.map(entity => (<MitigationCard
+          key={entity.id}
+          entity={entity}
+          onRemove={handleRemove}
+          onEdit={saveMitigation}
+          onAddTagToEntity={handleAddTagToEntity}
+          onRemoveTagFromEntity={handleRemoveTagFromEntity}
+        />))}
+        <MitigationCreationCard
+          onSave={handleSaveNew}
+        />
+      </SpaceBetween>
+    </ContentLayout></LocalizationContainer>);
 };
 
 export default MitigationList;

@@ -15,10 +15,12 @@
  ******************************************************************************************************************** */
 import { FC, useMemo } from 'react';
 import ThreatModelView, { ThreatModelViewProps } from './components/ThreatModelView';
+import LocalizationContainer from '../../../components/generic/LocalizationContainer';
 import { APP_MODE_IDE_EXTENSION, APP_MODE_BROWSER_EXTENSION } from '../../../configs/appMode';
 import { useGlobalSetupContext, useWorkspacesContext } from '../../../contexts';
 import { DataExchangeFormat, ViewNavigationEvent } from '../../../customTypes';
 import useImportExport from '../../../hooks/useExportImport';
+import { useReloadedTranslation } from '../../../i18next';
 import getExportFileName from '../../../utils/getExportFileName';
 import hasContent from '../../../utils/hasContent';
 
@@ -35,7 +37,7 @@ const ThreatModel: FC<ThreatModelProps> = ({
   const { getWorkspaceData } = useImportExport();
   const { composerMode, appMode } = useGlobalSetupContext();
   const { currentWorkspace } = useWorkspacesContext();
-
+  const { i18n } = useReloadedTranslation();
   const downloadFileName = useMemo(() => {
     return getExportFileName(composerMode, false, currentWorkspace);
   }, [composerMode, currentWorkspace]);
@@ -46,21 +48,23 @@ const ThreatModel: FC<ThreatModelProps> = ({
   }, [getWorkspaceData]);
 
   return (
-    <ThreatModelView
-      {...props}
-      onPrintButtonClick={() => onPrintButtonClick?.(getWorkspaceData())}
-      showPrintDownloadButtons={appMode !== APP_MODE_IDE_EXTENSION && appMode !== APP_MODE_BROWSER_EXTENSION }
-      composerMode={composerMode}
-      data={getWorkspaceData()}
-      downloadFileName={downloadFileName}
-      hasContentDetails={hasContentDetails}
-      onApplicationInfoView={props.onApplicationInfoView}
-      onArchitectureView={props.onArchitectureView}
-      onDataflowView={props.onDataflowView}
-      onAssumptionListView={props.onAssumptionListView}
-      onThreatListView={props.onThreatListView}
-      onMitigationListView={props.onMitigationListView}
-    />);
+    <LocalizationContainer i18next={i18n}>
+      <ThreatModelView
+        {...props}
+        onPrintButtonClick={() => onPrintButtonClick?.(getWorkspaceData())}
+        showPrintDownloadButtons={appMode !== APP_MODE_IDE_EXTENSION && appMode !== APP_MODE_BROWSER_EXTENSION }
+        composerMode={composerMode}
+        data={getWorkspaceData()}
+        downloadFileName={downloadFileName}
+        hasContentDetails={hasContentDetails}
+        onApplicationInfoView={props.onApplicationInfoView}
+        onArchitectureView={props.onArchitectureView}
+        onDataflowView={props.onDataflowView}
+        onAssumptionListView={props.onAssumptionListView}
+        onThreatListView={props.onThreatListView}
+        onMitigationListView={props.onMitigationListView}
+      />
+    </LocalizationContainer>);
 };
 
 export default ThreatModel;

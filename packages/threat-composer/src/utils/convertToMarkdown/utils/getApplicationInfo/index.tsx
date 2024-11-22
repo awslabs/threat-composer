@@ -13,13 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { i18n } from 'i18next';
 import { DataExchangeFormat } from '../../../../customTypes';
 
 export const getApplicationInfoContent = async (
   data: DataExchangeFormat,
+  t?: i18n['t'],
 ) => {
   const rows: string[] = [];
-  rows.push('## Application Info');
+  const optT = t ? t : (s: string) => s;
+  rows.push(`## ${optT('Application Info')}`);
   if (data.applicationInfo?.description) {
     rows.push(data.applicationInfo.description);
   }
