@@ -20,6 +20,7 @@ import Pagination from '@cloudscape-design/components/pagination';
 import TableComponent, { TableProps as CloudscapeTableProps } from '@cloudscape-design/components/table';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useEffect } from 'react';
+import { useReloadedTranslation } from '../../../../../i18next';
 import {
   DEFAULT_TRACK_BY,
   DEFAULT_LOADING_TEXT,
@@ -52,14 +53,17 @@ const FullDataTable: FC<TableProps & InternalTableProps> = ({
   defaultPageIndex,
   ...props
 }) => {
+
+  const { t } = useReloadedTranslation();
+
   const { items, actions, collectionProps, filterProps, paginationProps } = useCollection(allItems, {
     filtering: {
-      empty: <EmptyState title="No items" subtitle="No items to display." />,
+      empty: <EmptyState title={t('No items')} subtitle={t('No items to display.')} />,
       noMatch: (
         <EmptyState
-          title="No matches"
-          subtitle="We can’t find a match."
-          action={<Button onClick={() => actions.setFiltering('')}>Clear filter</Button>}
+          title={t('No matches')}
+          subtitle={t('We can’t find a match.')}
+          action={<Button onClick={() => actions.setFiltering('')}>{t('Clear filter')}</Button>}
         />
       ),
     },
@@ -94,7 +98,7 @@ const FullDataTable: FC<TableProps & InternalTableProps> = ({
   return (
     <TableComponent
       trackBy={trackBy}
-      loadingText={DEFAULT_LOADING_TEXT}
+      loadingText={t(DEFAULT_LOADING_TEXT)}
       columnDisplay={collectionPreferences.contentDisplay}
       wrapLines={collectionPreferences.wrapLines}
       stripedRows={collectionPreferences.stripedRows}
@@ -115,8 +119,8 @@ const FullDataTable: FC<TableProps & InternalTableProps> = ({
                 (filterComponent ?? (
                   <TextFilter
                     {...filterProps}
-                    filteringPlaceholder={DEFAULT_FILTERING_PLACEHOLDER}
-                    filteringAriaLabel={DEFAULT_FILTERING_ARIA_LABEL}
+                    filteringPlaceholder={t(DEFAULT_FILTERING_PLACEHOLDER)}
+                    filteringAriaLabel={t(DEFAULT_FILTERING_ARIA_LABEL)}
                   />
                 ))
       }

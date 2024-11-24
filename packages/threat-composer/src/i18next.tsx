@@ -92,8 +92,12 @@ undefined
 
   i18n.on(
     'languageChanged',
-    (lng) => lng === i18next.language && forceUpdate(),
-  );
+    (lng) => {
+      lng === i18next.language && forceUpdate();
+      const dir = i18n.dir(lng);
+      document.documentElement.dir = dir;
+    });
+
   return { t: t, i18n: i18next, ready: ready } as UseTranslationResponse<
   string,
   undefined
