@@ -21,3 +21,4 @@ export * from './hooks';
 export * from './configs';
 export * from './utils';
 export * from './data';
+export * from './i18next';

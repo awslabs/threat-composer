@@ -89,7 +89,6 @@ undefined
   const { t, i18n: i18next, ready } = useTranslation();
   const [_, updateState] = useState<{}>();
   const forceUpdate = useCallback(() => updateState({}), []);
-
   i18n.on(
     'languageChanged',
     (lng) => {
@@ -97,6 +96,7 @@ undefined
       const dir = i18n.dir(lng);
       document.documentElement.dir = dir;
     });
+
 
   return { t: t, i18n: i18next, ready: ready } as UseTranslationResponse<
   string,
