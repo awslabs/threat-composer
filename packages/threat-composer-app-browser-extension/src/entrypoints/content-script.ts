@@ -337,7 +337,7 @@ async function handleCodeCatalystCodeViewer(codeCatalystState: TCCodeCatalystSta
     const actionsDiv = document.getElementsByClassName(
       'cs-Tabs__tab-header-actions',
     )[0];
-    actionsDiv.appendChild(tcAnchor);
+    actionsDiv.appendChild(tcButton);
   }
 };
 
