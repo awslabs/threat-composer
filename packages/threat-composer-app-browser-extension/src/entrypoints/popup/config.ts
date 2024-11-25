@@ -24,40 +24,57 @@ export enum ThreatComposerTarget {
 
 
 export interface TCConfig {
-  baseUrlRegex: RegExp;
+  baseUrlRegex: string;
   debug: boolean;
   fileExtension: string;
-  integrationAmazonCodeBrowser: boolean;
-  integrationAmazonCodeBrowserUrlRegexes: RegExp[];
-  integrationBitBucketCodeBrowser: boolean;
-  integrationBitBucketCodeBrowserUrlRegexes: RegExp[];
-  integrationCodeCatalystCodeBrowser: boolean;
-  integrationCodeCatalystCodeBrowserUrlRegexes: RegExp[];
-  integrationGitHubCodeBrowser: boolean;
-  integrationGitHubCodeBrowserUrlRegexes: RegExp[];
-  integrationGitLabCodeBrowser: boolean;
-  integrationGitLabCodeBrowserUrlRegexes: RegExp[];
-  integrationRaw: boolean;
-  integrationRawUrlRegexes: RegExp[];
+  integrations: {[integrationType: string]: IntegrationConfig };
   target: ThreatComposerTarget;
 }
 
+export interface IntegrationConfig {
+  enabled: boolean;
+  urlRegexes: string[];
+}
+
+export const IntegrationTypes = {
+  GITHUB: 'github',
+  GITLAB: 'gitlab',
+  BITBUCKET: 'bitbucket',
+  CODEAMAZON: 'codeamazon',
+  CODECATALYST: 'codecatalyst',
+  RAW: 'raw',
+} as const;
+
 export const DefaultConfig: TCConfig = {
-  baseUrlRegex: /^.*:\/\/.*\/.*\.tc\.json([?#].*)?$/,
+  baseUrlRegex: '^.*:\/\/.*\/.*\.tc\.json([?#].*)?$',
   debug: true,
   fileExtension: '.tc.json',
-  integrationAmazonCodeBrowser: true,
-  integrationAmazonCodeBrowserUrlRegexes: [/code.amazon.com/],
-  integrationBitBucketCodeBrowser: true,
-  integrationBitBucketCodeBrowserUrlRegexes: [/bitbucket.org/],
-  integrationCodeCatalystCodeBrowser: true,
-  integrationCodeCatalystCodeBrowserUrlRegexes: [/codecatalyst.aws/],
-  integrationGitHubCodeBrowser: true,
-  integrationGitHubCodeBrowserUrlRegexes: [/github.com/],
-  integrationGitLabCodeBrowser: true,
-  integrationGitLabCodeBrowserUrlRegexes: [/gitlab.com/],
-  integrationRaw: true,
-  integrationRawUrlRegexes: [/raw.githubusercontent.com/, /raw=1/, /raw/],
+  integrations: {
+    [IntegrationTypes.GITHUB]: {
+      enabled: true,
+      urlRegexes: ['github.com'],
+    },
+    [IntegrationTypes.GITLAB]: {
+      enabled: true,
+      urlRegexes: ['gitlab.com'],
+    },
+    [IntegrationTypes.BITBUCKET]: {
+      enabled: true,
+      urlRegexes: ['bitbucket.org'],
+    },
+    [IntegrationTypes.CODEAMAZON]: {
+      enabled: true,
+      urlRegexes: ['code.amazon.com'],
+    },
+    [IntegrationTypes.CODECATALYST]: {
+      enabled: true,
+      urlRegexes: ['codecatalyst.aws'],
+    },
+    [IntegrationTypes.RAW]: {
+      enabled: true,
+      urlRegexes: ['raw.githubusercontent.com', 'raw=1', 'raw'],
+    },
+  },
   target: ThreatComposerTarget.BUILT_IN,
 };
 
@@ -78,12 +95,12 @@ export function setExtensionConfig(config: TCConfig) {
   });
 }
 
-export const useExtensionConfig = (defaultConfig: TCConfig) => {
-  const [value, setValue] = useState<TCConfig>(defaultConfig);
+export const useExtensionConfig = () => {
+  const [value, setValue] = useState<TCConfig | undefined>();
 
   const handleValueChange = (doSetConfig: (prevConfig: TCConfig) => TCConfig) => {
     setValue((prev) => {
-      const newConfig = doSetConfig(prev);
+      const newConfig = doSetConfig(prev ?? DefaultConfig);
       setExtensionConfig(newConfig);
       return newConfig;
     });

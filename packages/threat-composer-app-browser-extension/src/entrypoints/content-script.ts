@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { getExtensionConfig, TCConfig } from './popup/config';
+import { getExtensionConfig, TCConfig, IntegrationTypes } from './popup/config';
 import { logDebugMessage } from '../debugLogger';
 
 const tcButtonText = 'View in Threat Composer';
@@ -93,6 +93,7 @@ async function getTCJSONCandidate(url: string, element: HTMLElement, config: TCC
       }
     })
     .catch(function (error) {
+      console.log(error);
       logDebugMessage(config, 'Error during fetch: ' + error.message);
     });
 };
@@ -113,25 +114,12 @@ async function handleRawFile(config: TCConfig) {
 };
 
 function isRawSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrationRawUrlRegexes)) {return true;}
+  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.RAW].urlRegexes)) {return true;}
   return false;
 }
 
 function isGitLabSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrationGitLabCodeBrowserUrlRegexes)) {return true;}
-
-  // Check for the presence of the GitLab logo or branding
-  const gitlabLogo = document.querySelector('img[src*="gitlab.com/assets/logo"]');
-  if (gitlabLogo) {
-    return true;
-  }
-
-  // Check for the presence of specific GitLab UI elements
-  const gitlabLayout = document.querySelector('.layout-page');
-  const gitlabHeader = document.querySelector('.navbar-gitlab');
-  if (gitlabLayout && gitlabHeader) {
-    return true;
-  }
+  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.GITLAB].urlRegexes)) {return true;}
 
   // Check for the presence of GitLab-specific classes or IDs
   const gitlabElements = document.querySelectorAll('[class*="gl-"], [id*="gl-"]');
@@ -144,26 +132,26 @@ function isGitLabSite(tcConfig: TCConfig) {
 }
 
 function isGitHubSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrationGitHubCodeBrowserUrlRegexes)) {return true;}
+  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.GITHUB].urlRegexes)) {return true;}
   return false;
 }
 
 function isCodeCatalystSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrationCodeCatalystCodeBrowserUrlRegexes)) {return true;}
+  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.CODECATALYST].urlRegexes)) {return true;}
   return false;
 }
 
 function isAmazonCodeBrowser(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrationAmazonCodeBrowserUrlRegexes)) {return true;}
+  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.CODEAMAZON].urlRegexes)) {return true;}
   return false;
 }
 
 function isBitbucketSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrationBitBucketCodeBrowserUrlRegexes)) {return true;}
+  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.BITBUCKET].urlRegexes)) {return true;}
 
   // Check for the presence of Bitbucket-specific elements
   const bitbucketMeta = document.querySelectorAll('meta[name="application-name"][content="Bitbucket"]');
-  if (bitbucketMeta) {
+  if (bitbucketMeta.length > 0) {
     return true;
   }
 
@@ -356,38 +344,38 @@ async function handleCodeCatalystCodeViewer(codeCatalystState: TCCodeCatalystSta
 async function ContentScriptInScope(tcConfig: TCConfig) {
   let inScopeRegexes = [tcConfig.baseUrlRegex];
 
-  if (tcConfig.integrationRaw) {
-    tcConfig.integrationRawUrlRegexes.forEach(entry => {
+  if (tcConfig.integrations[IntegrationTypes.RAW].enabled) {
+    tcConfig.integrations[IntegrationTypes.RAW].urlRegexes.forEach(entry => {
       inScopeRegexes.push(entry);
     });
   }
 
-  if (tcConfig.integrationAmazonCodeBrowser) {
-    tcConfig.integrationAmazonCodeBrowserUrlRegexes.forEach(entry => {
+  if (tcConfig.integrations[IntegrationTypes.CODEAMAZON].enabled) {
+    tcConfig.integrations[IntegrationTypes.CODEAMAZON].urlRegexes.forEach(entry => {
       inScopeRegexes.push(entry);
     });
   }
 
-  if (tcConfig.integrationBitBucketCodeBrowser) {
-    tcConfig.integrationBitBucketCodeBrowserUrlRegexes.forEach(entry => {
+  if (tcConfig.integrations[IntegrationTypes.BITBUCKET].enabled) {
+    tcConfig.integrations[IntegrationTypes.BITBUCKET].urlRegexes.forEach(entry => {
       inScopeRegexes.push(entry);
     });
   }
 
-  if (tcConfig.integrationCodeCatalystCodeBrowser) {
-    tcConfig.integrationCodeCatalystCodeBrowserUrlRegexes.forEach(entry => {
+  if (tcConfig.integrations[IntegrationTypes.CODECATALYST].enabled) {
+    tcConfig.integrations[IntegrationTypes.CODECATALYST].urlRegexes.forEach(entry => {
       inScopeRegexes.push(entry);
     });
   }
 
-  if (tcConfig.integrationGitHubCodeBrowser) {
-    tcConfig.integrationGitHubCodeBrowserUrlRegexes.forEach(entry => {
+  if (tcConfig.integrations[IntegrationTypes.GITHUB].enabled) {
+    tcConfig.integrations[IntegrationTypes.GITHUB].urlRegexes.forEach(entry => {
       inScopeRegexes.push(entry);
     });
   }
 
-  if (tcConfig.integrationGitLabCodeBrowser) {
-    tcConfig.integrationGitLabCodeBrowserUrlRegexes.forEach(entry => {
+  if (tcConfig.integrations[IntegrationTypes.GITLAB].enabled) {
+    tcConfig.integrations[IntegrationTypes.GITLAB].urlRegexes.forEach(entry => {
       inScopeRegexes.push(entry);
     });
   }
@@ -403,8 +391,8 @@ async function ContentScriptInScope(tcConfig: TCConfig) {
   return match;
 }
 
-function matchesAnyRegex(url: string, regexArray: RegExp[]) {
-  return regexArray.some(regex => regex.test(url));
+function matchesAnyRegex(url: string, regexArray: string[]) {
+  return regexArray.some(regex => new RegExp(regex).test(url));
 }
 
 export default defineContentScript({
@@ -448,10 +436,10 @@ export default defineContentScript({
       }
 
       if (
-        tcConfig.integrationRaw && isRawSite(tcConfig)) {
+        tcConfig.integrations[IntegrationTypes.RAW].enabled && isRawSite(tcConfig)) {
         logDebugMessage(tcConfig, 'Assuming raw file view');
         await handleRawFile(tcConfig);
-      } else if (tcConfig.integrationGitLabCodeBrowser && isGitLabSite(tcConfig)) {
+      } else if (tcConfig.integrations[IntegrationTypes.GITLAB].enabled && isGitLabSite(tcConfig)) {
         logDebugMessage(tcConfig, 'Assuming GitLab code browser');
         await handleGitLabBrowser(gitLabState, tcConfig);
         let observerForGitLabCodeBrowser = new MutationObserver(
@@ -459,7 +447,7 @@ export default defineContentScript({
         );
         observerForGitLabCodeBrowser.observe(document, config); //Scope is `document` as GitLab is a SPA
       } else if (
-        tcConfig.integrationGitHubCodeBrowser && isGitHubSite(tcConfig)
+        tcConfig.integrations[IntegrationTypes.GITHUB].enabled && isGitHubSite(tcConfig)
       ) {
         logDebugMessage(tcConfig,
           'Assuming GitHub code browser',
@@ -470,7 +458,7 @@ export default defineContentScript({
         );
         observerForGitHubCodeViewer.observe(document, config); //Scope is `document` as GitHub is a SPA
       } else if (
-        tcConfig.integrationCodeCatalystCodeBrowser && isCodeCatalystSite(tcConfig)
+        tcConfig.integrations[IntegrationTypes.CODECATALYST].enabled && isCodeCatalystSite(tcConfig)
       ) {
         logDebugMessage(tcConfig, 'Assuming Code Catalyst code browser');
         //Inject script
@@ -485,7 +473,7 @@ export default defineContentScript({
         );
         observerForCodeCatalystCodeViewer.observe(document.body, config);
       } else if (
-        tcConfig.integrationAmazonCodeBrowser && isAmazonCodeBrowser(tcConfig)
+        tcConfig.integrations[IntegrationTypes.CODEAMAZON].enabled && isAmazonCodeBrowser(tcConfig)
       ) {
         logDebugMessage(tcConfig, 'Assuming Amazon code browser');
         await handleAmazonCodeBrowser(codeBrowserState, tcConfig);
@@ -494,9 +482,10 @@ export default defineContentScript({
         );
         observerForAmazonCodeBrowser.observe(document.body, config);
       } else if (
-        tcConfig.integrationBitBucketCodeBrowser &&
+        tcConfig.integrations[IntegrationTypes.BITBUCKET].enabled &&
         isBitbucketSite(tcConfig)
       ) {
+        console.log(tcConfig);
         logDebugMessage(tcConfig, 'URL is bitbucket.org - Assuming Bitbucket code browser');
         await handleBitbucketCodeBrowser(codeBrowserState, tcConfig);
         let observerForBitbucketCodeBrowser = new MutationObserver(
