@@ -26,35 +26,36 @@ export interface ConfigDetailViewProps {
 }
 
 export const ConfigDetailView: FC<ConfigDetailViewProps> = () => {
-    const navigate = useNavigate();
-    const { integrationType } = useParams<{ integrationType: string }>();
-    const { config, setConfig } = useContext(ExtensionConfigContext);
-    const integrationConfig = useMemo(() => config.integrations[integrationType!], [integrationType, config]);
-    const setIntegrationConfig = useCallback((newIntegrationConfig: Partial<IntegrationConfig>) => {
-        setConfig((prev) => {
-            return {
-                ...prev, integrations: {
-                    ...prev.integrations,
-                    [integrationType!]:
-                        { ...prev.integrations[integrationType!], ...newIntegrationConfig }
-                }
-            };
-        });
-    }, [integrationType, setConfig]);
-    return (
-        <Form actions={(
-            <SpaceBetween size="s" direction="horizontal">
-                <Button onClick={() => {
-                    navigate('/');
-                }}>Back</Button>
-            </SpaceBetween>
-        )}>
-            <RegexArrayForm placeholder="Regex to apply to URL" strings={integrationConfig.urlRegexes} setStrings={(newRegexes) => { setIntegrationConfig({ urlRegexes: newRegexes }); }}>
+  const navigate = useNavigate();
+  const { integrationType } = useParams<{ integrationType: string }>();
+  const { config, setConfig } = useContext(ExtensionConfigContext);
+  const integrationConfig = useMemo(() => config.integrations[integrationType!], [integrationType, config]);
+  const setIntegrationConfig = useCallback((newIntegrationConfig: Partial<IntegrationConfig>) => {
+    setConfig((prev) => {
+      return {
+        ...prev,
+        integrations: {
+          ...prev.integrations,
+          [integrationType!]:
+                        { ...prev.integrations[integrationType!], ...newIntegrationConfig },
+        },
+      };
+    });
+  }, [integrationType, setConfig]);
+  return (
+    <Form actions={(
+      <SpaceBetween size="s" direction="horizontal">
+        <Button onClick={() => {
+          navigate('/');
+        }}>Back</Button>
+      </SpaceBetween>
+    )}>
+      <RegexArrayForm placeholder="Regex to apply to URL" strings={integrationConfig.urlRegexes} setStrings={(newRegexes) => { setIntegrationConfig({ urlRegexes: newRegexes }); }}>
 
-            </RegexArrayForm>
+      </RegexArrayForm>
 
 
-        </Form>
+    </Form>
 
-    );
+  );
 };
