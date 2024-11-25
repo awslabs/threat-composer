@@ -17,22 +17,21 @@ import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
 import Container from '@cloudscape-design/components/container';
-import FormField from '@cloudscape-design/components/form-field';
 import Header from '@cloudscape-design/components/header';
-import Input from '@cloudscape-design/components/input';
-import Select from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import Toggle from '@cloudscape-design/components/toggle';
-import { FC } from 'react';
+import { FC, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   TCConfig,
   useExtensionConfig,
   ThreatComposerTarget,
   DefaultConfig,
+  IntegrationTypes,
 } from './config';
+import { ExtensionConfigContext } from './ExtensionConfigProvider';
 
 interface ConfigProps {
-  readonly initialConfig: TCConfig;
 }
 
 // function createTargetOption(target: ThreatComposerTarget) {
@@ -56,8 +55,9 @@ interface ConfigProps {
 //   }
 // }
 
-const Config: FC<ConfigProps> = ({ initialConfig }) => {
-  const [config, setConfig] = useExtensionConfig(initialConfig);
+const Config: FC<ConfigProps> = ({ }) => {
+  const navigate = useNavigate();
+  const { config, setConfig } = useContext(ExtensionConfigContext);
 
   return (
     <Box>
@@ -76,17 +76,26 @@ const Config: FC<ConfigProps> = ({ initialConfig }) => {
             </div>
             <ColumnLayout columns={2}>
               <div>
-                <Toggle
-                  onChange={({ detail }) =>
-                    setConfig((prev) => ({
-                      ...prev,
-                      integrationRaw: detail.checked,
-                    }))
-                  }
-                  checked={config.integrationRaw}
-                >
+                <SpaceBetween size="xs" direction="horizontal">
+                  <Toggle
+                    onChange={({ detail }) =>
+                      setConfig((prev) => ({
+                        ...prev,
+                        integrations: {
+                          ...prev.integrations,
+                          [IntegrationTypes.RAW]: {
+                            ...prev.integrations[IntegrationTypes.RAW],
+                            enabled: detail.checked,
+                          },
+                        },
+                      }))
+                    }
+                    checked={config.integrations[IntegrationTypes.RAW].enabled}
+                  >
                   Anywhere <small>(*.tc.json)</small>
-                </Toggle>
+                  </Toggle>
+                  <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.RAW}`); }} />
+                </SpaceBetween>
               </div>
             </ColumnLayout>
           </SpaceBetween>
@@ -97,61 +106,103 @@ const Config: FC<ConfigProps> = ({ initialConfig }) => {
               <Header variant="h3">Code browser integrations</Header>
             </div>
             <div>
-              <Toggle
-                onChange={({ detail }) =>
-                  setConfig((prev) => ({
-                    ...prev,
-                    integrationGitHubCodeBrowser: detail.checked,
-                  }))
-                }
-                checked={config.integrationGitHubCodeBrowser}
-              >
-                GitHub <small>(github.com/*)</small>
-              </Toggle>
-              <Toggle
-                onChange={({ detail }) =>
-                  setConfig((prev) => ({
-                    ...prev,
-                    integrationAmazonCodeBrowser: detail.checked,
-                  }))
-                }
-                checked={config.integrationAmazonCodeBrowser}
-              >
-                Amazon Code <small>(code.amazon.com/*</small>)
-              </Toggle>
-              <Toggle
-                onChange={({ detail }) =>
-                  setConfig((prev) => ({
-                    ...prev,
-                    integrationCodeCatalystCodeBrowser: detail.checked,
-                  }))
-                }
-                checked={config.integrationCodeCatalystCodeBrowser}
-              >
-                Amazon CodeCatalyst <small>(codecatalyst.aws/*</small>)
-              </Toggle>
-              <Toggle
-                onChange={({ detail }) =>
-                  setConfig((prev) => ({
-                    ...prev,
-                    integrationBitBucketCodeBrowser: detail.checked,
-                  }))
-                }
-                checked={config.integrationBitBucketCodeBrowser}
-              >
-                Bitbucket <small>(bitbucket.org/*</small>)
-              </Toggle>
-              <Toggle
-                onChange={({ detail }) =>
-                  setConfig((prev) => ({
-                    ...prev,
-                    integrationGitLabCodeBrowser: detail.checked,
-                  }))
-                }
-                checked={config.integrationGitLabCodeBrowser}
-              >
-                GitLab
-              </Toggle>
+              <SpaceBetween size="xs" direction="horizontal">
+                <Toggle
+                  onChange={({ detail }) =>
+                    setConfig((prev) => ({
+                      ...prev,
+                      integrations: {
+                        ...prev.integrations,
+                        [IntegrationTypes.GITHUB]: {
+                          ...prev.integrations[IntegrationTypes.GITHUB],
+                          enabled: detail.checked,
+                        },
+                      },
+                    }))
+                  }
+                  checked={config.integrations[IntegrationTypes.GITHUB].enabled}
+                >GitHub
+                </Toggle>
+                <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.GITHUB}`); }} />
+              </SpaceBetween>
+              <SpaceBetween size="xs" direction="horizontal">
+                <Toggle
+                  onChange={({ detail }) =>
+                    setConfig((prev) => ({
+                      ...prev,
+                      integrations: {
+                        ...prev.integrations,
+                        [IntegrationTypes.CODEAMAZON]: {
+                          ...prev.integrations[IntegrationTypes.CODEAMAZON],
+                          enabled: detail.checked,
+                        },
+                      },
+                    }))
+                  }
+                  checked={config.integrations[IntegrationTypes.CODEAMAZON].enabled}
+                >
+                  Amazon Code
+                </Toggle>
+                <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.CODEAMAZON}`); }} />
+              </SpaceBetween>
+              <SpaceBetween size="xs" direction="horizontal">
+                <Toggle
+                  onChange={({ detail }) =>
+                    setConfig((prev) => ({
+                      ...prev,
+                      integrations: {
+                        ...prev.integrations,
+                        [IntegrationTypes.CODEAMAZON]: {
+                          ...prev.integrations[IntegrationTypes.CODEAMAZON],
+                          enabled: detail.checked,
+                        },
+                      },
+                    }))
+                  }
+                  checked={config.integrations[IntegrationTypes.CODECATALYST].enabled}
+                >
+                Amazon CodeCatalyst
+                </Toggle>
+                <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.CODECATALYST}`); }} />
+              </SpaceBetween>
+              <SpaceBetween size="xs" direction="horizontal">
+                <Toggle
+                  onChange={({ detail }) =>
+                    setConfig((prev) => ({
+                      ...prev,
+                      integrations: {
+                        ...prev.integrations,
+                        [IntegrationTypes.BITBUCKET]: {
+                          ...prev.integrations[IntegrationTypes.BITBUCKET],
+                          enabled: detail.checked,
+                        },
+                      },
+                    }))
+                  }
+                  checked={config.integrations[IntegrationTypes.BITBUCKET].enabled}
+                >Bitbucket
+                </Toggle>
+                <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.BITBUCKET}`); }} />
+              </SpaceBetween>
+              <SpaceBetween size="xs" direction="horizontal">
+                <Toggle
+                  onChange={({ detail }) =>
+                    setConfig((prev) => ({
+                      ...prev,
+                      integrations: {
+                        ...prev.integrations,
+                        [IntegrationTypes.GITLAB]: {
+                          ...prev.integrations[IntegrationTypes.GITLAB],
+                          enabled: detail.checked,
+                        },
+                      },
+                    }))
+                  }
+                  checked={config.integrations[IntegrationTypes.GITLAB].enabled}
+                >GitLab
+                </Toggle>
+                <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.GITLAB}`); }} />
+              </SpaceBetween>
             </div>
           </SpaceBetween>
         </Container>
