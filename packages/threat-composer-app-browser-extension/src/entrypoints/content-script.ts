@@ -30,6 +30,7 @@ interface TCGitHubState {
 }
 
 interface TCCodeCatalystState {
+  previousUrl: string;
   stopProcessing: boolean;
 }
 
@@ -298,6 +299,12 @@ async function handleGitLabBrowser(gitLabState: TCGitLabState, tcConfig: TCConfi
 
 async function handleCodeCatalystCodeViewer(codeCatalystState: TCCodeCatalystState, config: TCConfig) {
 
+  if (window.location.href != codeCatalystState.previousUrl) {
+    //Handle CodeCatalyst being a SPA
+    codeCatalystState.previousUrl = window.location.href;
+    codeCatalystState.stopProcessing = false;
+  }
+
   if (ViewInThreatComposerButtonExists()) {return;}
 
   const element = document.getElementsByClassName(
@@ -407,6 +414,7 @@ export default defineContentScript({
     };
 
     const codeCatalystState: TCCodeCatalystState = {
+      previousUrl: '',
       stopProcessing: false,
     };
 
@@ -471,7 +479,7 @@ export default defineContentScript({
         let observerForCodeCatalystCodeViewer = new MutationObserver(
           () => handleCodeCatalystCodeViewer(codeCatalystState, tcConfig),
         );
-        observerForCodeCatalystCodeViewer.observe(document.body, config);
+        observerForCodeCatalystCodeViewer.observe(document, config);
       } else if (
         tcConfig.integrations[IntegrationTypes.CODEAMAZON].enabled && isAmazonCodeBrowser(tcConfig)
       ) {

@@ -13,10 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { Button, SpaceBetween } from '@cloudscape-design/components';
+import { Button, Header, SpaceBetween } from '@cloudscape-design/components';
+import Box from '@cloudscape-design/components/box';
+import Container from '@cloudscape-design/components/container';
+import ContentLayout from '@cloudscape-design/components/content-layout';
 import Form from '@cloudscape-design/components/form';
 import { FC, useCallback, useContext, useMemo } from 'react';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IntegrationConfig } from './config';
 import { ExtensionConfigContext } from './ExtensionConfigProvider';
 import { RegexArrayForm } from './RegexArrayForm';
@@ -37,25 +40,42 @@ export const ConfigDetailView: FC<ConfigDetailViewProps> = () => {
         integrations: {
           ...prev.integrations,
           [integrationType!]:
-                        { ...prev.integrations[integrationType!], ...newIntegrationConfig },
+            { ...prev.integrations[integrationType!], ...newIntegrationConfig },
         },
       };
     });
   }, [integrationType, setConfig]);
   return (
-    <Form actions={(
-      <SpaceBetween size="s" direction="horizontal">
-        <Button onClick={() => {
-          navigate('/');
-        }}>Back</Button>
-      </SpaceBetween>
-    )}>
-      <RegexArrayForm placeholder="Regex to apply to URL" strings={integrationConfig.urlRegexes} setStrings={(newRegexes) => { setIntegrationConfig({ urlRegexes: newRegexes }); }}>
-
-      </RegexArrayForm>
-
-
-    </Form>
-
+    <ContentLayout
+      header={
+        <Box margin={'s'}>
+          <Header
+            variant="h1"
+            description="View Threat Composer exports with a single click"
+          >
+            Threat Composer extension
+          </Header>
+        </Box>
+      }>
+      <Box padding={'m'}>
+        <Container>
+          <SpaceBetween size="xs">
+            <Header variant='h2'>{integrationConfig.name} integration</Header>
+            <p>{integrationConfig.name} integration will be <i>attempted</i> for URLs that match
+              <strong>any</strong> of the specified regular expressions.</p>
+            <Form actions={(
+              <SpaceBetween size="xs" direction="horizontal">
+                <Button onClick={() => {
+                  navigate('/');
+                }}>Back</Button>
+              </SpaceBetween>
+            )}>
+              <RegexArrayForm placeholder="Regex to add" strings={integrationConfig.urlRegexes} setStrings={(newRegexes) => { setIntegrationConfig({ urlRegexes: newRegexes }); }}>
+              </RegexArrayForm>
+            </Form>
+          </SpaceBetween>
+        </Container>
+      </Box>
+    </ContentLayout>
   );
 };
