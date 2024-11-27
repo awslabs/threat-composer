@@ -32,6 +32,7 @@ export interface TCConfig {
 }
 
 export interface IntegrationConfig {
+  name: string;
   enabled: boolean;
   urlRegexes: string[];
 }
@@ -51,26 +52,32 @@ export const DefaultConfig: TCConfig = {
   fileExtension: '.tc.json',
   integrations: {
     [IntegrationTypes.GITHUB]: {
+      name: 'GitHub',
       enabled: true,
       urlRegexes: ['github.com'],
     },
     [IntegrationTypes.GITLAB]: {
+      name: 'GitLab',
       enabled: true,
       urlRegexes: ['gitlab.com'],
     },
     [IntegrationTypes.BITBUCKET]: {
+      name: 'Bitbucket',
       enabled: true,
       urlRegexes: ['bitbucket.org'],
     },
     [IntegrationTypes.CODEAMAZON]: {
+      name: 'Amazon Code Browser',
       enabled: true,
       urlRegexes: ['code.amazon.com'],
     },
     [IntegrationTypes.CODECATALYST]: {
+      name: 'Amazon CodeCatalyst',
       enabled: true,
       urlRegexes: ['codecatalyst.aws'],
     },
     [IntegrationTypes.RAW]: {
+      name: 'Raw',
       enabled: true,
       urlRegexes: ['raw.githubusercontent.com', 'raw=1', 'raw'],
     },
