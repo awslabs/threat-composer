@@ -81,8 +81,8 @@ const Config: FC<ConfigProps> = ({ }) => {
                       ...prev,
                       integrations: {
                         ...prev.integrations,
-                        [IntegrationTypes.CODEAMAZON]: {
-                          ...prev.integrations[IntegrationTypes.CODEAMAZON],
+                        [IntegrationTypes.CODECATALYST]: {
+                          ...prev.integrations[IntegrationTypes.CODECATALYST],
                           enabled: detail.checked,
                         },
                       },
