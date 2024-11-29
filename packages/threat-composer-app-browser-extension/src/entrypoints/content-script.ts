@@ -24,8 +24,7 @@ interface TCJSONSimplifiedSchema {
   schema?: string;
 }
 
-interface TCGitHubState {
-  previousUrl: string;
+interface TCAmazonCodeState {
   stopProcessing: boolean;
 }
 
@@ -34,11 +33,12 @@ interface TCCodeCatalystState {
   stopProcessing: boolean;
 }
 
-interface TCCodeBrowserState {
+interface TCBitbucketState {
   stopProcessing: boolean;
 }
 
-interface TCBitBucketState {
+interface TCGitHubState {
+  previousUrl: string;
   stopProcessing: boolean;
 }
 
@@ -58,18 +58,18 @@ function isLikelyThreatComposerSchema(JSONobj: TCJSONSimplifiedSchema) {
   return JSONobj.schema ? true : false;
 };
 
-async function getTCJSONCandidate(url: string, element: HTMLElement, config: TCConfig) {
+async function getTCJSONCandidate(url: string, element: HTMLElement, tcConfig: TCConfig) {
   return forwardFetchToBackground({ url: url })
     .then(function (tcJSONCandidate) {
-      logDebugMessage(config, 'Able to get a JSON candidate');
+      logDebugMessage(tcConfig, 'Able to get a JSON candidate');
       if (tcJSONCandidate && isLikelyThreatComposerSchema(tcJSONCandidate)) {
-        logDebugMessage(config,
+        logDebugMessage(tcConfig,
           'Looks like it could be a Threat Composer file, enabling ' +
           element.textContent +
           ' button',
         );
         element.onclick = function () {
-          logDebugMessage(config,
+          logDebugMessage(tcConfig,
             'Sending message with candicate JSON object back service worker / background script',
           );
           browser.runtime.sendMessage(tcJSONCandidate);
@@ -86,7 +86,7 @@ async function getTCJSONCandidate(url: string, element: HTMLElement, config: TCC
         }
 
       } else {
-        logDebugMessage(config,
+        logDebugMessage(tcConfig,
           "Does NOT look like it's a Threat Composer file, NOT enabling " +
           element.textContent +
           ' button',
@@ -94,12 +94,11 @@ async function getTCJSONCandidate(url: string, element: HTMLElement, config: TCC
       }
     })
     .catch(function (error) {
-      console.log(error);
-      logDebugMessage(config, 'Error during fetch: ' + error.message);
+      logDebugMessage(tcConfig, 'Error during fetch: ' + error.message);
     });
 };
 
-async function handleRawFile(config: TCConfig) {
+async function handleRaw(tcConfig: TCConfig) {
   const element = document.getElementsByTagName('pre');
   const tcButton = document.createElement('button');
   tcButton.textContent = tcButtonText;
@@ -109,26 +108,21 @@ async function handleRawFile(config: TCConfig) {
     document.body.prepend(tcButton);
     window.scrollTo(0, 0); //Scroll to top
   }
-  logDebugMessage(config, 'Proactively attempting to retrieve candidate');
+  logDebugMessage(tcConfig, 'Proactively attempting to retrieve candidate');
   const url = window.location.toString();
-  await getTCJSONCandidate(url, tcButton, config);
+  await getTCJSONCandidate(url, tcButton, tcConfig);
 };
 
 function isRawSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.RAW].urlRegexes)) {return true;}
+  if (document.getElementsByTagName('pre')[0]) {
+    logDebugMessage(tcConfig, 'Appears to be a raw site due to <pre> tag being present');
+    return true;
+  }
   return false;
 }
 
 function isGitLabSite(tcConfig: TCConfig) {
   if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.GITLAB].urlRegexes)) {return true;}
-
-  // Check for the presence of GitLab-specific classes or IDs
-  const gitlabElements = document.querySelectorAll('[class*="gl-"], [id*="gl-"]');
-  if (gitlabElements.length > 0) {
-    return true;
-  }
-
-  // If none of the above checks pass, assume it's not a GitLab site
   return false;
 }
 
@@ -142,21 +136,13 @@ function isCodeCatalystSite(tcConfig: TCConfig) {
   return false;
 }
 
-function isAmazonCodeBrowser(tcConfig: TCConfig) {
+function isAmazonCodeSite(tcConfig: TCConfig) {
   if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.CODEAMAZON].urlRegexes)) {return true;}
   return false;
 }
 
 function isBitbucketSite(tcConfig: TCConfig) {
   if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.BITBUCKET].urlRegexes)) {return true;}
-
-  // Check for the presence of Bitbucket-specific elements
-  const bitbucketMeta = document.querySelectorAll('meta[name="application-name"][content="Bitbucket"]');
-  if (bitbucketMeta.length > 0) {
-    return true;
-  }
-
-  // If none of the above checks pass, assume it's not a Bitbucket site
   return false;
 }
 
@@ -164,7 +150,16 @@ function ViewInThreatComposerButtonExists() {
   return document.getElementById(tcButtonId);
 }
 
-async function handleGitHubCodeBrowser(gitHubState: TCGitHubState, tcConfig: TCConfig) {
+async function handleGitHub(gitHubState: TCGitHubState, tcConfig: TCConfig) {
+
+  if (ViewInThreatComposerButtonExists()) {return;}
+
+  var regExCheck = new RegExp(tcConfig.fileExtension);
+
+  if (isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
+    await handleRaw(tcConfig);
+    return;
+  }
 
   if (window.location.href != gitHubState.previousUrl) {
     //Handle GitHub being a SPA
@@ -172,15 +167,10 @@ async function handleGitHubCodeBrowser(gitHubState: TCGitHubState, tcConfig: TCC
     gitHubState.stopProcessing = false;
   }
 
-  if (ViewInThreatComposerButtonExists()) {return;}
-
-  var regExCheck = new RegExp(tcConfig.fileExtension);
-
   if (window.location.href.match(regExCheck)) {
     let element = document.querySelector('[aria-label="Copy raw content"]');
 
     if (element && !gitHubState.stopProcessing) {
-      logDebugMessage(tcConfig, 'Element (copy raw content) found and stopProcessing = false... lets do it');
       gitHubState.stopProcessing = true;
       const rawButton = document.querySelector('[aria-label="Copy raw content"]');
       const tcButton = document.createElement('button');
@@ -199,9 +189,16 @@ async function handleGitHubCodeBrowser(gitHubState: TCGitHubState, tcConfig: TCC
   }
 };
 
-async function handleAmazonCodeBrowser(codeBrowserState: TCCodeBrowserState, config: TCConfig) {
+async function handleAmazonCode(codeBrowserState: TCAmazonCodeState, tcConfig: TCConfig) {
 
   if (ViewInThreatComposerButtonExists()) {return;}
+
+  var regExCheck = new RegExp(tcConfig.fileExtension);
+
+  if (isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
+    await handleRaw(tcConfig);
+    return;
+  }
 
   const element = document.getElementsByClassName('file_header');
   if (element && !codeBrowserState.stopProcessing) {
@@ -218,33 +215,37 @@ async function handleAmazonCodeBrowser(codeBrowserState: TCCodeBrowserState, con
       tcButton.style.pointerEvents = 'none';
       tcListItem.appendChild(tcButton);
       fileActionsButtonGroup.appendChild(tcListItem);
-      logDebugMessage(config, 'Proactively attempting to retrieve candidate');
+      logDebugMessage(tcConfig, 'Proactively attempting to retrieve candidate');
       const url = window.location + '?raw=1';
-      await getTCJSONCandidate(url, tcButton, config);
+      await getTCJSONCandidate(url, tcButton, tcConfig);
     }
   }
 };
 
 function checkNoPresentation(element: HTMLElement) {
-  // Base case: if the element is a div with role="presentation"
   if (element.tagName === 'DIV' && element.getAttribute('role') === 'presentation') {
     return false;
   }
 
-  // Recursive case: check all child elements
   for (let child of element.children) {
     if (!checkNoPresentation(child as HTMLElement)) {
       return false;
     }
   }
 
-  // If we've made it this far, no matching elements were found
   return true;
 }
 
-async function handleBitbucketCodeBrowser(bitBucketState: TCBitBucketState, config: TCConfig) {
+async function handleBitbucket(bitBucketState: TCBitbucketState, tcConfig: TCConfig) {
 
   if (ViewInThreatComposerButtonExists()) {return;}
+
+  var regExCheck = new RegExp(tcConfig.fileExtension);
+
+  if (isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
+    await handleRaw(tcConfig);
+    return;
+  }
 
   const element = document.querySelectorAll("[data-testid='file-actions']")[0];
 
@@ -262,13 +263,22 @@ async function handleBitbucketCodeBrowser(bitBucketState: TCBitBucketState, conf
       const rawPathSegment = match[1].replace(/^src\//, 'raw/');
       const currentUrl = window.location.href;
       const url = currentUrl.replace(match[1], rawPathSegment);
-      logDebugMessage(config, 'Proactively attempting to retrieve candidate');
-      await getTCJSONCandidate(url, editButtonClone.childNodes[0] as HTMLElement, config);
+      logDebugMessage(tcConfig, 'Proactively attempting to retrieve candidate');
+      await getTCJSONCandidate(url, editButtonClone.childNodes[0] as HTMLElement, tcConfig);
     }
   }
 }
 
-async function handleGitLabBrowser(gitLabState: TCGitLabState, tcConfig: TCConfig) {
+async function handleGitLab(gitLabState: TCGitLabState, tcConfig: TCConfig) {
+
+  if (ViewInThreatComposerButtonExists()) {return;}
+
+  var regExCheck = new RegExp(tcConfig.fileExtension);
+
+  if (isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
+    await handleRaw(tcConfig);
+    return;
+  }
 
   if (window.location.href != gitLabState.previousUrl) {
     //Handle GitLab being a SPA
@@ -276,13 +286,10 @@ async function handleGitLabBrowser(gitLabState: TCGitLabState, tcConfig: TCConfi
     gitLabState.stopProcessing = false;
   }
 
-  if (ViewInThreatComposerButtonExists()) {return;}
-
   var regExCheck = new RegExp(tcConfig.fileExtension);
   if (window.location.href.match(regExCheck)) {
     const element = (document.querySelectorAll("a[title='Open raw']")[0] as HTMLElement);
     if (element && !gitLabState.stopProcessing) {
-      logDebugMessage(tcConfig, 'Triggering UI update for GitLab');
       gitLabState.stopProcessing = true;
       const tcButton = document.createElement('a');
       tcButton.id = tcButtonId;
@@ -297,15 +304,22 @@ async function handleGitLabBrowser(gitLabState: TCGitLabState, tcConfig: TCConfi
   }
 }
 
-async function handleCodeCatalystCodeViewer(codeCatalystState: TCCodeCatalystState, config: TCConfig) {
+async function handleCodeCatalyst(codeCatalystState: TCCodeCatalystState, tcConfig: TCConfig) {
+
+  if (ViewInThreatComposerButtonExists()) {return;}
+
+  var regExCheck = new RegExp(tcConfig.fileExtension);
+
+  if (isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
+    await handleRaw(tcConfig);
+    return;
+  }
 
   if (window.location.href != codeCatalystState.previousUrl) {
     //Handle CodeCatalyst being a SPA
     codeCatalystState.previousUrl = window.location.href;
     codeCatalystState.stopProcessing = false;
   }
-
-  if (ViewInThreatComposerButtonExists()) {return;}
 
   const element = document.getElementsByClassName(
     'cs-Tabs__tab-header-actions',
@@ -333,7 +347,7 @@ async function handleCodeCatalystCodeViewer(codeCatalystState: TCCodeCatalystSta
         const rawText = document.getElementById('raw-div')!.textContent;
         if (rawText) {
           const jsonObj: TCJSONSimplifiedSchema = JSON.parse(rawText);
-          logDebugMessage(config,
+          logDebugMessage(tcConfig,
             'Sending message with candicate JSON object back service worker / background script',
           );
           browser.runtime.sendMessage(jsonObj);
@@ -349,13 +363,7 @@ async function handleCodeCatalystCodeViewer(codeCatalystState: TCCodeCatalystSta
 };
 
 async function ContentScriptInScope(tcConfig: TCConfig) {
-  let inScopeRegexes = [tcConfig.baseUrlRegex];
-
-  if (tcConfig.integrations[IntegrationTypes.RAW].enabled) {
-    tcConfig.integrations[IntegrationTypes.RAW].urlRegexes.forEach(entry => {
-      inScopeRegexes.push(entry);
-    });
-  }
+  let inScopeRegexes:string[] = [];
 
   if (tcConfig.integrations[IntegrationTypes.CODEAMAZON].enabled) {
     tcConfig.integrations[IntegrationTypes.CODEAMAZON].urlRegexes.forEach(entry => {
@@ -409,7 +417,7 @@ export default defineContentScript({
       stopProcessing: false,
     };
 
-    const codeBrowserState: TCCodeBrowserState = {
+    const amazonCodeState: TCAmazonCodeState = {
       stopProcessing: false,
     };
 
@@ -418,7 +426,7 @@ export default defineContentScript({
       stopProcessing: false,
     };
 
-    const bitBucketState: TCBitBucketState = {
+    const bitbucketState: TCBitbucketState = {
       stopProcessing: false,
     };
 
@@ -431,44 +439,38 @@ export default defineContentScript({
 
       const tcConfig = await getExtensionConfig();
 
-      const config = {
+      const observerConfig = {
         childList: true,
         subtree: true,
       };
 
       if (!await ContentScriptInScope(tcConfig)) {
-        logDebugMessage(tcConfig, 'Not triggering content script main logic - URL not in scope');
+        logDebugMessage(tcConfig, 'Aborting execution. URL not in scope of any regexes');
         return;
       } else {
-        logDebugMessage(tcConfig, 'Triggering content script main logic - URL IS in scope');
+        logDebugMessage(tcConfig, 'Continuing content script execution. URL IS in scope of atleast one regex');
       }
 
-      if (
-        tcConfig.integrations[IntegrationTypes.RAW].enabled && isRawSite(tcConfig)) {
-        logDebugMessage(tcConfig, 'Assuming raw file view');
-        await handleRawFile(tcConfig);
-      } else if (tcConfig.integrations[IntegrationTypes.GITLAB].enabled && isGitLabSite(tcConfig)) {
-        logDebugMessage(tcConfig, 'Assuming GitLab code browser');
-        await handleGitLabBrowser(gitLabState, tcConfig);
-        let observerForGitLabCodeBrowser = new MutationObserver(
-          () => handleGitLabBrowser(gitLabState, tcConfig),
+      if (tcConfig.integrations[IntegrationTypes.GITLAB].enabled && isGitLabSite(tcConfig)) {
+        logDebugMessage(tcConfig, 'Assuming GitLab...');
+        await handleGitLab(gitLabState, tcConfig);
+        let observerForGitLab = new MutationObserver(
+          () => handleGitLab(gitLabState, tcConfig),
         );
-        observerForGitLabCodeBrowser.observe(document, config); //Scope is `document` as GitLab is a SPA
+        observerForGitLab.observe(document, observerConfig); //Scope is `document` as GitLab is a SPA
       } else if (
         tcConfig.integrations[IntegrationTypes.GITHUB].enabled && isGitHubSite(tcConfig)
       ) {
-        logDebugMessage(tcConfig,
-          'Assuming GitHub code browser',
+        logDebugMessage(tcConfig, 'Assuming GitHub...');
+        await handleGitHub(gitHubState, tcConfig);
+        let observerForGitHub = new MutationObserver(
+          () => handleGitHub(gitHubState, tcConfig),
         );
-        await handleGitHubCodeBrowser(gitHubState, tcConfig);
-        let observerForGitHubCodeViewer = new MutationObserver(
-          () => handleGitHubCodeBrowser(gitHubState, tcConfig),
-        );
-        observerForGitHubCodeViewer.observe(document, config); //Scope is `document` as GitHub is a SPA
+        observerForGitHub.observe(document, observerConfig); //Scope is `document` as GitHub is a SPA
       } else if (
         tcConfig.integrations[IntegrationTypes.CODECATALYST].enabled && isCodeCatalystSite(tcConfig)
       ) {
-        logDebugMessage(tcConfig, 'Assuming Code Catalyst code browser');
+        logDebugMessage(tcConfig, 'Assuming Amazon CodeCatalyst...');
         //Inject script
         const s = document.createElement('script');
         s.src = browser.runtime.getURL('scriptInjectForCodeCatalyst.js');
@@ -476,30 +478,29 @@ export default defineContentScript({
           this.remove();
         };
         (document.head || document.documentElement).appendChild(s);
-        let observerForCodeCatalystCodeViewer = new MutationObserver(
-          () => handleCodeCatalystCodeViewer(codeCatalystState, tcConfig),
+        let observerForCodeCatalyst = new MutationObserver(
+          () => handleCodeCatalyst(codeCatalystState, tcConfig),
         );
-        observerForCodeCatalystCodeViewer.observe(document, config);
+        observerForCodeCatalyst.observe(document, observerConfig);
       } else if (
-        tcConfig.integrations[IntegrationTypes.CODEAMAZON].enabled && isAmazonCodeBrowser(tcConfig)
+        tcConfig.integrations[IntegrationTypes.CODEAMAZON].enabled && isAmazonCodeSite(tcConfig)
       ) {
-        logDebugMessage(tcConfig, 'Assuming Amazon code browser');
-        await handleAmazonCodeBrowser(codeBrowserState, tcConfig);
-        let observerForAmazonCodeBrowser = new MutationObserver(
-          () => handleAmazonCodeBrowser(codeBrowserState, tcConfig),
+        logDebugMessage(tcConfig, 'Assuming Amazon Code...');
+        await handleAmazonCode(amazonCodeState, tcConfig);
+        let observerForAmazonCode = new MutationObserver(
+          () => handleAmazonCode(amazonCodeState, tcConfig),
         );
-        observerForAmazonCodeBrowser.observe(document.body, config);
+        observerForAmazonCode.observe(document.body, observerConfig);
       } else if (
         tcConfig.integrations[IntegrationTypes.BITBUCKET].enabled &&
         isBitbucketSite(tcConfig)
       ) {
-        console.log(tcConfig);
-        logDebugMessage(tcConfig, 'URL is bitbucket.org - Assuming Bitbucket code browser');
-        await handleBitbucketCodeBrowser(codeBrowserState, tcConfig);
-        let observerForBitbucketCodeBrowser = new MutationObserver(
-          () => handleBitbucketCodeBrowser(bitBucketState, tcConfig),
+        logDebugMessage(tcConfig, 'Assuming Bitbucket...');
+        await handleBitbucket(bitbucketState, tcConfig);
+        let observerForBitbucket = new MutationObserver(
+          () => handleBitbucket(bitbucketState, tcConfig),
         );
-        observerForBitbucketCodeBrowser.observe(document.body, config);
+        observerForBitbucket.observe(document.body, observerConfig);
       }
     })();
   },

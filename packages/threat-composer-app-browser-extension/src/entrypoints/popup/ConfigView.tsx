@@ -15,7 +15,6 @@
  ******************************************************************************************************************** */
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
-import ColumnLayout from '@cloudscape-design/components/column-layout';
 import Container from '@cloudscape-design/components/container';
 import ContentLayout from '@cloudscape-design/components/content-layout';
 import Header from '@cloudscape-design/components/header';
@@ -54,53 +53,7 @@ const Config: FC<ConfigProps> = ({ }) => {
         <SpaceBetween size="m">
           <Container>
             <SpaceBetween size="xxs">
-              <Header variant="h3">'View Raw' file integration</Header>
-              <ColumnLayout columns={2}>
-                <SpaceBetween size="xxs" direction="horizontal">
-                  <Toggle
-                    onChange={({ detail }) =>
-                      setConfig((prev) => ({
-                        ...prev,
-                        integrations: {
-                          ...prev.integrations,
-                          [IntegrationTypes.RAW]: {
-                            ...prev.integrations[IntegrationTypes.RAW],
-                            enabled: detail.checked,
-                          },
-                        },
-                      }))
-                    }
-                    checked={config.integrations[IntegrationTypes.RAW].enabled}
-                  >
-                  Anywhere <small>(*.tc.json)</small>
-                  </Toggle>
-                  <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.RAW}`); }} />
-                </SpaceBetween>
-              </ColumnLayout>
-            </SpaceBetween>
-          </Container>
-          <Container>
-            <SpaceBetween size="xxs">
-              <Header variant="h3">Code browser integrations</Header>
-              <SpaceBetween size="xxs" direction="horizontal">
-                <Toggle
-                  onChange={({ detail }) =>
-                    setConfig((prev) => ({
-                      ...prev,
-                      integrations: {
-                        ...prev.integrations,
-                        [IntegrationTypes.GITHUB]: {
-                          ...prev.integrations[IntegrationTypes.GITHUB],
-                          enabled: detail.checked,
-                        },
-                      },
-                    }))
-                  }
-                  checked={config.integrations[IntegrationTypes.GITHUB].enabled}
-                >GitHub
-                </Toggle>
-                <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.GITHUB}`); }} />
-              </SpaceBetween>
+              <Header variant="h3">Integrations</Header>
               <SpaceBetween size="xxs" direction="horizontal">
                 <Toggle
                   onChange={({ detail }) =>
@@ -159,6 +112,25 @@ const Config: FC<ConfigProps> = ({ }) => {
                 >Bitbucket
                 </Toggle>
                 <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.BITBUCKET}`); }} />
+              </SpaceBetween>
+              <SpaceBetween size="xxs" direction="horizontal">
+                <Toggle
+                  onChange={({ detail }) =>
+                    setConfig((prev) => ({
+                      ...prev,
+                      integrations: {
+                        ...prev.integrations,
+                        [IntegrationTypes.GITHUB]: {
+                          ...prev.integrations[IntegrationTypes.GITHUB],
+                          enabled: detail.checked,
+                        },
+                      },
+                    }))
+                  }
+                  checked={config.integrations[IntegrationTypes.GITHUB].enabled}
+                >GitHub
+                </Toggle>
+                <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.GITHUB}`); }} />
               </SpaceBetween>
               <SpaceBetween size="xxs" direction="horizontal">
                 <Toggle
