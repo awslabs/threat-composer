@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { ThreatComposerTarget, getExtensionConfig } from './popup/config';
+import { getExtensionConfig } from './popup/config';
 import { logDebugMessage } from '../debugLogger';
 
 
@@ -23,16 +23,8 @@ export default defineBackground(() => {
   browser.runtime.onMessage.addListener(function (request: any, sender: any, sendResponse: any) {
 
     getExtensionConfig().then(config => {
-      const tcViewer = config.target;
-      let tcUrl = '';
 
-      if (tcViewer == ThreatComposerTarget.BUILT_IN) {
-        tcUrl = browser.runtime.getURL('');
-      } else if (tcViewer == ThreatComposerTarget.GITHUB_PAGES) {
-        tcUrl = 'https://awslabs.github.io/threat-composer';
-      } else if (tcViewer == ThreatComposerTarget.CUSTOM_HOST) {
-        tcUrl = config.customUrl ?? '';
-      }
+      const tcUrl = browser.runtime.getURL('');
 
       if (request.schema) { //This is likely the JSON from a threat model
         logDebugMessage(config, 'Message recieved - Threat Model JSON');

@@ -16,19 +16,10 @@
 import { useState } from 'react';
 import { logDebugMessage } from '../../debugLogger';
 
-export enum ThreatComposerTarget {
-  BUILT_IN = 'BUILT_IN',
-  GITHUB_PAGES = 'GITHUB_PAGES',
-  CUSTOM_HOST = 'CUSTOM_HOST',
-}
-
-
 export interface TCConfig {
-  baseUrlRegex: string;
   debug: boolean;
   fileExtension: string;
   integrations: {[integrationType: string]: IntegrationConfig };
-  target: ThreatComposerTarget;
 }
 
 export interface IntegrationConfig {
@@ -38,34 +29,17 @@ export interface IntegrationConfig {
 }
 
 export const IntegrationTypes = {
-  GITHUB: 'github',
-  GITLAB: 'gitlab',
-  BITBUCKET: 'bitbucket',
   CODEAMAZON: 'codeamazon',
   CODECATALYST: 'codecatalyst',
-  RAW: 'raw',
+  BITBUCKET: 'bitbucket',
+  GITHUB: 'github',
+  GITLAB: 'gitlab',
 } as const;
 
 export const DefaultConfig: TCConfig = {
-  baseUrlRegex: '^.*:\/\/.*\/.*\.tc\.json([?#].*)?$',
   debug: true,
   fileExtension: '.tc.json',
   integrations: {
-    [IntegrationTypes.GITHUB]: {
-      name: 'GitHub',
-      enabled: true,
-      urlRegexes: ['github.com'],
-    },
-    [IntegrationTypes.GITLAB]: {
-      name: 'GitLab',
-      enabled: true,
-      urlRegexes: ['gitlab.com'],
-    },
-    [IntegrationTypes.BITBUCKET]: {
-      name: 'Bitbucket',
-      enabled: true,
-      urlRegexes: ['bitbucket.org'],
-    },
     [IntegrationTypes.CODEAMAZON]: {
       name: 'Amazon Code Browser',
       enabled: true,
@@ -76,15 +50,23 @@ export const DefaultConfig: TCConfig = {
       enabled: true,
       urlRegexes: ['codecatalyst.aws'],
     },
-    [IntegrationTypes.RAW]: {
-      name: 'Raw',
+    [IntegrationTypes.BITBUCKET]: {
+      name: 'Bitbucket',
       enabled: true,
-      urlRegexes: ['raw.githubusercontent.com', 'raw=1', 'raw'],
+      urlRegexes: ['bitbucket.org'],
+    },
+    [IntegrationTypes.GITHUB]: {
+      name: 'GitHub',
+      enabled: true,
+      urlRegexes: ['github.com', 'raw.githubusercontent.com'],
+    },
+    [IntegrationTypes.GITLAB]: {
+      name: 'GitLab',
+      enabled: true,
+      urlRegexes: ['gitlab.com'],
     },
   },
-  target: ThreatComposerTarget.BUILT_IN,
 };
-
 
 export async function getExtensionConfig(): Promise<TCConfig> {
   const config = await browser.storage.local.get(['tcConfig']); //TODO: Consider if this could return an exeption or is it just undefined?
