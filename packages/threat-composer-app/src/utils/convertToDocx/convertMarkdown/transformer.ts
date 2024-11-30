@@ -130,6 +130,7 @@ type Context = Readonly<{
   images: ImageDataMap;
   indent: number;
   list?: ListInfo;
+  bidirectional?: boolean;
 }>;
 
 export interface DocxOptions
@@ -153,6 +154,7 @@ export interface DocxOptions
    * **You must set** if your markdown includes images. See example for [browser](https://github.com/inokawa/remark-docx/blob/main/stories/playground.stories.tsx) and [Node.js](https://github.com/inokawa/remark-docx/blob/main/src/index.spec.ts).
    */
   imageResolver?: ImageResolver;
+  bidirectional?: boolean;
 }
 
 export type DocxChild = Paragraph | Table | TableOfContents;
@@ -181,6 +183,7 @@ export const mdastToDocx = async (
     revision,
     styles,
     background,
+    bidirectional,
   }: DocxOptions,
   images: ImageDataMap,
 ): Promise<any> => {
@@ -188,6 +191,7 @@ export const mdastToDocx = async (
     deco: {},
     images,
     indent: 0,
+    bidirectional: bidirectional,
   });
   const doc = new Document({
     title,
@@ -258,10 +262,10 @@ const convertNodes = (
       case 'tableCell':
         invariant(false, 'unreachable');
       case 'html':
-        results.push(buildHtml(node));
+        results.push(buildHtml(node, ctx));
         break;
       case 'code':
-        results.push(buildCode(node));
+        results.push(buildCode(node, ctx));
         break;
       case 'yaml':
         // FIXME: unimplemented
@@ -328,7 +332,7 @@ const convertNodes = (
 const buildParagraph = ({ children }: mdast.Paragraph, ctx: Context) => {
   const list = ctx.list;
   const { nodes } = convertNodes(children, ctx);
-
+  console.log('ctx', ctx);
   if (list && list.checked != null) {
     nodes.unshift(
       new CheckBox({
@@ -341,6 +345,7 @@ const buildParagraph = ({ children }: mdast.Paragraph, ctx: Context) => {
   return new Paragraph({
     children: nodes,
     style: 'normalPara',
+    bidirectional: ctx.bidirectional,
     indent:
       ctx.indent > 0
         ? {
@@ -390,6 +395,7 @@ const buildHeading = ({ children, depth }: mdast.Heading, ctx: Context) => {
   const { nodes } = convertNodes(children, ctx);
   return new Paragraph({
     heading,
+    bidirectional: ctx.bidirectional,
     children: nodes,
   });
 };
@@ -447,6 +453,7 @@ const buildTable = ({ children, align }: mdast.Table, ctx: Context) => {
   });
 
   return new Table({
+    visuallyRightToLeft: ctx.bidirectional,
     rows: children.map((r, index) => {
       return index === 0 ? buildTableHeaderRow(r, ctx, cellAligns) : buildTableRow(r, ctx, cellAligns);
     }),
@@ -505,16 +512,18 @@ const buildTableCell = (
   });
 };
 
-const buildHtml = ({ value }: mdast.HTML) => {
+const buildHtml = ({ value }: mdast.HTML, ctx: Context) => {
   // FIXME: transform to text for now
   return new Paragraph({
+    bidirectional: ctx.bidirectional,
     children: [buildText(value, {})],
   });
 };
 
-const buildCode = ({ value, lang: _lang, meta: _meta }: mdast.Code) => {
+const buildCode = ({ value, lang: _lang, meta: _meta }: mdast.Code, ctx: Context) => {
   // FIXME: transform to text for now
   return new Paragraph({
+    bidirectional: ctx.bidirectional,
     children: [buildText(value, {})],
   });
 };
@@ -565,6 +574,7 @@ const buildFootnote = ({ children }: mdast.Footnote, ctx: Context) => {
   // FIXME: transform to paragraph for now
   const { nodes } = convertNodes(children, ctx);
   return new Paragraph({
+    bidirectional: ctx.bidirectional,
     children: nodes,
   });
 };

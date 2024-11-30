@@ -26,16 +26,15 @@ import { ReactNode, FC, useMemo, useState, useEffect, useCallback } from 'react'
 import ExpandableToken from './components/ExpandableToken';
 import Token from './components/Token';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
-import { ComposerMode, TemplateThreatStatement } from '../../../customTypes';
+import { ComposerMode, TemplateThreatStatement, ThreatStatementFormat } from '../../../customTypes';
 import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
-import threatStatementFormat from '../../../data/threatStatementFormat';
 
+import { useReloadedTranslation } from '../../../i18next';
 import getRecommendedEditor from '../../../utils/getRecommandedEditor';
 import parseThreatStatement from '../../../utils/parseThreatStatement';
 import Suggestions from '../Suggestions';
 
-const defaultThreatStatementFormat = threatStatementFormat[63];
 
 export interface FieldSelectorProps {
   composerMode: ComposerMode;
@@ -64,6 +63,10 @@ const FieldSelector: FC<FieldSelectorProps> = ({
   setCustomTemplateEditorVisible,
 }) => {
   const [expandedImpactedGoal, setExpandedImpactedGoal] = useState(false);
+
+  const { t, i18n } = useReloadedTranslation();
+
+  const defaultThreatStatementFormat = (t('THREAT_STATEMENT_FORMAT', { returnObjects: true }) as ThreatStatementFormat)[63];
 
   useEffect(() => {
     currentEditor === 'impacted_goal' && setExpandedImpactedGoal(true);
@@ -98,7 +101,7 @@ const FieldSelector: FC<FieldSelectorProps> = ({
         renderShortenImpactedGoal = true;
       } else {
         if (renderShortenImpactedGoal) {
-          output.push('negatively impacting ');
+          output.push(`${t('negatively impacting')} `);
         } else {
           output.push(before);
         }
@@ -109,7 +112,7 @@ const FieldSelector: FC<FieldSelectorProps> = ({
           filled={!!filled}
           tooltip={threatFieldData[token]?.tooltip}
           onClick={() => setEditor(token as ThreatFieldTypes)}>
-          {content}
+          {t(content)}
         </Token>);
 
         token === 'impacted_goal' &&
@@ -136,7 +139,7 @@ const FieldSelector: FC<FieldSelectorProps> = ({
       outputProcessor,
     });
 
-  }, [statement, setEditor, currentEditor, suggestions, expandedImpactedGoal, setExpandedImpactedGoal]);
+  }, [t, i18n.language, statement, setEditor, currentEditor, suggestions, expandedImpactedGoal, setExpandedImpactedGoal]);
 
   const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(({ detail }) => {
     switch (detail.id) {
@@ -152,16 +155,15 @@ const FieldSelector: FC<FieldSelectorProps> = ({
     header={<Header
       info={composerMode === 'Full' ? undefined : <Button variant='icon' iconName='status-info' onClick={showInfoModal} />}
       actions={<SpaceBetween direction='horizontal' size='s'>
-        {composerMode === 'EditorOnly' && <Button onClick={onStartOver}>Start over</Button>}
-        {onGiveExampleClick && <Button onClick={onGiveExampleClick}>Give me a random example</Button>}
+        {composerMode === 'EditorOnly' && <Button onClick={onStartOver}>{t('Start over')}</Button>}
+        {onGiveExampleClick && <Button onClick={onGiveExampleClick}>{t('Give me a random example')}</Button>}
         <ButtonDropdown items={[
-          { id: 'customTemplate', text: 'Custom Template' },
+          { id: 'customTemplate', text: t('Custom Template') },
         ]}
-        ariaLabel="More actions"
-        variant="icon"
+        ariaLabel={t('More actions')}
         onItemClick={handleMoreActions} />
       </SpaceBetween>}
-      description='Start by clicking ANY field you like and work from there...'>Let's write a threat statement!</Header>}>
+      description={t('Start by clicking ANY field you like and work from there...')}>{t("Let's write a threat statement!")}</Header>}>
     <SpaceBetween direction='vertical' size='s'>
       <TextContent>
         <div css={styles.selector}>

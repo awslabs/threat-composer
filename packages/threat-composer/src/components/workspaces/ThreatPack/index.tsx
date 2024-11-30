@@ -22,6 +22,8 @@ import { useMemo, FC, useCallback, useState } from 'react';
 import GeneralInfo from './components/GeneralInfo';
 import { useThreatPacksContext } from '../../../contexts/ThreatPacksContext';
 import { TemplateThreatStatement } from '../../../customTypes/threats';
+import { useReloadedTranslation } from '../../../i18next';
+import AutoDirectionContainer from '../../generic/AutoDirectionContainer';
 import Table, { ColumnDefinition } from '../../generic/Table';
 
 export interface ThreatPackProp {
@@ -34,6 +36,7 @@ const ThreatPack: FC<ThreatPackProp> = ({
   onEditThreat,
 }) => {
   const { threatPacks, threatPackUsage, addThreats } = useThreatPacksContext();
+  const { t, i18n } = useReloadedTranslation();
 
   const threatPack = useMemo(() => {
     return threatPacks.find(x => x.id === threatPackId);
@@ -45,7 +48,7 @@ const ThreatPack: FC<ThreatPackProp> = ({
     // Merge the threatPackUsage and current selectedItems
     if (threatPack) {
       const usedThreatPackThreatIds = threatPackId && threatPackUsage[threatPackId] ? Object.keys(threatPackUsage[threatPackId]) : [];
-      const currentSelectedItems = (threatPack.threats || []).filter(t => usedThreatPackThreatIds.includes(t.id)) || [];
+      const currentSelectedItems = (threatPack.threats || []).filter(tl => usedThreatPackThreatIds.includes(tl.id)) || [];
       return [...currentSelectedItems, ...selectedItems.filter(si => !currentSelectedItems.some(csi => csi.id === si.id))];
     }
 
@@ -56,69 +59,77 @@ const ThreatPack: FC<ThreatPackProp> = ({
     await addThreats(threatPackId, selectedItems);
     setSelectedItems([]);
   }, [threatPackId, selectedItems]);
+  const wrap = useCallback((c:string) => {
+    return (<AutoDirectionContainer value={c}>{c}</AutoDirectionContainer>);
+  }, [t, i18n, i18n.language]);
 
   const colDef: ColumnDefinition<TemplateThreatStatement>[] = useMemo(() => [
     {
       id: 'statement',
-      header: 'Threat',
-      cell: (data) => data.statement,
+      header: t('Threat'),
+      cell: (data) => wrap(data.statement || ''),
       sortingField: 'statement',
       minWidth: 500,
     },
     {
       id: 'threatSource',
-      header: 'Threat source',
-      cell: (data) => data.threatSource,
+      header: t('Threat source'),
+      cell: (data) => wrap(data.threatSource || ''),
       sortingField: 'threatSource',
     },
     {
       id: 'prerequisites',
-      header: 'Prerequisites',
-      cell: (data) => data.prerequisites,
+      header: t('Prerequisites'),
+      cell: (data) => wrap(data.prerequisites || ''),
       sortingField: 'prerequisites',
     },
     {
       id: 'threatImpact',
-      header: 'Threat impact',
-      cell: (data) => data.threatImpact,
+      header: t('Threat impact'),
+      cell: (data) => wrap(data.threatImpact ||''),
       sortingField: 'threatImpact',
     },
     {
       id: 'threatAction',
-      header: 'Threat action',
-      cell: (data) => data.threatAction,
+      header: t('Threat action'),
+      cell: (data) => wrap(data.threatAction||''),
       sortingField: 'threatAction',
     },
     {
       id: 'impactedGoal',
-      header: 'Impacted goal',
-      cell: (data) => (<TextContent>
-        <ul>{data.impactedGoal?.map((x, index) => <li key={index}>{x}</li>)}</ul>
-      </TextContent>),
+      header: t('Impacted goal'),
+      cell: (data) => (
+        <AutoDirectionContainer value={data.impactedGoal?.join(' ') || ''}><TextContent>
+          <ul>{data.impactedGoal?.map((x, index) => <li key={index}>{x}</li>)}</ul>
+        </TextContent>
+        </AutoDirectionContainer>),
       sortingField: 'impactedGoal',
     },
     {
       id: 'impactedAssets',
-      header: 'Impacted assets',
-      cell: (data) => (<TextContent>
-        <ul>{data.impactedAssets?.map((x, index) => <li key={index}>{x}</li>)}</ul>
-      </TextContent>),
+      header: t('Impacted assets'),
+      cell: (data) => (
+        <AutoDirectionContainer value={data.impactedAssets?.join(' ') || ''}>
+          <TextContent>
+            <ul>{data.impactedAssets?.map((x, index) => <li key={index}>{x}</li>)}</ul>
+          </TextContent>
+        </AutoDirectionContainer>),
       sortingField: 'impactedAssets',
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: t('Actions'),
       cell: (data) => (
         <Button
           variant="inline-link"
           onClick={() => onEditThreat?.(threatPackId, data)}
         >
-          Open in editor
+          {t('Open in editor')}
         </Button>
       ),
       minWidth: 170,
     },
-  ], [threatPackId]);
+  ], [wrap, t, i18n, i18n.language, threatPackId]);
 
   const actions = useMemo(() => {
     return (<SpaceBetween direction='horizontal' size='s'>
@@ -127,7 +138,7 @@ const ThreatPack: FC<ThreatPackProp> = ({
         disabled={selectedItems.length === 0
           || selectedItems.every(i => !!threatPackUsage[i.id])
         }>
-        Add to workspace
+        {t('Add to workspace')}
       </Button>
     </SpaceBetween>);
   }, [handleAddToWorkspace, selectedItems, threatPackUsage]);
@@ -145,7 +156,7 @@ const ThreatPack: FC<ThreatPackProp> = ({
       <Header
         variant="h2"
       >
-        Threat Pack - {threatPack.name}
+        {t('Threat Pack')} - {threatPack.name}
       </Header>
     }
   >
@@ -154,7 +165,7 @@ const ThreatPack: FC<ThreatPackProp> = ({
       <Table
         columnDefinitions={colDef}
         actions={actions}
-        header="Threats"
+        header={t('Threats')}
         items={threatPack.threats || []}
         isItemDisabled={isItemDisabled}
         selectedItems={totalSelectedItems}

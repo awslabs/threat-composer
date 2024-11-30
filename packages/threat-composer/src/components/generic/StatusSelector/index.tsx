@@ -16,6 +16,7 @@
 import FormField from '@cloudscape-design/components/form-field';
 import Select, { SelectProps } from '@cloudscape-design/components/select';
 import React, { FC } from 'react';
+import { useReloadedTranslation } from '../../../i18next';
 
 export interface StatusSelectorProps {
   options: SelectProps.Option[];
@@ -35,8 +36,10 @@ const StatusSelector: FC<StatusSelectorProps> = React.forwardRef<SelectProps.Ref
   onFocus,
   onBlur,
 }, ref) => {
+  const { t } = useReloadedTranslation();
+
   return (<FormField
-    label={showLabel ? 'Status' : undefined}
+    label={showLabel ? t('Status') : undefined}
   >
     <Select
       ref={ref}
@@ -47,7 +50,7 @@ const StatusSelector: FC<StatusSelectorProps> = React.forwardRef<SelectProps.Ref
       options={options}
       onFocus={onFocus}
       onBlur={onBlur}
-      placeholder='Select status'
+      placeholder={t('Select status')}
     />
   </FormField>);
 });

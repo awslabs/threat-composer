@@ -22,6 +22,7 @@ import { css } from '@emotion/react';
 import { FC, useMemo, useCallback, useState } from 'react';
 import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
+import { useReloadedTranslation } from '../../../i18next';
 import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
 
 const styles = {
@@ -54,6 +55,8 @@ export interface SuggestionsProps {
 }
 
 const Suggestions: FC<SuggestionsProps> = ({ suggestions, setEditor }) => {
+
+  const { t } = useReloadedTranslation();
   const [showMoresuggestions, setShowMoresuggestions] = useState(suggestions && suggestions?.length > 2);
 
   const suggestionGroups = useMemo(() => {
@@ -80,7 +83,7 @@ const Suggestions: FC<SuggestionsProps> = ({ suggestions, setEditor }) => {
     return (<div key={token} css={styles.suggestionGroup}>
       <div css={styles.suggestionButtonWrapper}>
         <Button variant='link' onClick={() => setEditor(token as ThreatFieldTypes)}>
-          {token !== 'GENERAL' && group && threatFieldData[token]?.displayTitle}
+          {token !== 'GENERAL' && group && t(threatFieldData[token]?.displayTitle)}
         </Button>
       </div>
       <div css={styles.suggestion}>
@@ -89,10 +92,10 @@ const Suggestions: FC<SuggestionsProps> = ({ suggestions, setEditor }) => {
         </SpaceBetween>
       </div>
     </div>);
-  }, [setEditor]);
+  }, [t, setEditor]);
 
   if (suggestions && suggestions.length > 0 && suggestionGroups) {
-    return (<ExpandableSection headerText={`Suggestions (${suggestions.length})`} defaultExpanded={true}>
+    return (<ExpandableSection headerText={`${t('Suggestions')} (${suggestions.length})`} defaultExpanded={true}>
       <TextContent>
         <div css={styles.suggestionGroups}>
           {Object.keys(suggestionGroups)
@@ -104,7 +107,7 @@ const Suggestions: FC<SuggestionsProps> = ({ suggestions, setEditor }) => {
             iconName={showMoresuggestions ? 'treeview-collapse' : 'treeview-expand'}
             onClick={() => setShowMoresuggestions(prev => !prev)}
             variant='link'>
-            {showMoresuggestions ? 'Show less suggestions' : 'Show more suggestions'}
+            {t(showMoresuggestions ? 'Show less suggestions' : 'Show more suggestions')}
           </Button>)}
       </TextContent>
     </ExpandableSection>);

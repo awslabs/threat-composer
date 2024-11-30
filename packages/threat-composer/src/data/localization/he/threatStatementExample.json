@@ -1,0 +1,68 @@
+[
+    {
+      "id": "EXAMPLE_000001",
+      "numericId": -1,
+      "threatSource": "שחקן פנימי",
+      "prerequisites": "עם גישה מורשית לחשבונות AWS",
+      "threatAction": "שינוי התצורה של שירותי AWS ו/או משאבים בתוך גבול האמון",
+      "threatImpact": "אובדן אמון בשירותים להתנהג כפי שהוגדרו",
+      "impactedGoal": [],
+      "impactedAssets": [
+        "נכסים בתוך גבול האמון"
+      ],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": [
+            "T"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "EXAMPLE_000003",
+      "numericId": -1,
+      "threatSource": "גורם איום",
+      "prerequisites": "עם בעלות על שם דומיין דומה",
+      "threatAction": "להערים על המשתמשים שלנו לתקשר עם נקודת קצה לא לגיטימית",
+      "threatImpact": "יירוט של בקשות API תקפות",
+      "impactedGoal": [],
+      "impactedAssets": [
+        "רישום רכב",
+        "רישום רכב למכירה",
+        "סטטוס רישום",
+        "מסמכי רישום רכב"
+      ],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": [
+            "S"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "EXAMPLE_000004",
+      "numericId": -1,
+      "threatSource": "גורם איום",
+      "prerequisites": "בעל גישה לדפדפן האינטרנט של המשתמש",
+      "threatAction": "להתחזות למשתמש מאומת",
+      "threatImpact": "היכולת של התוקף לעשות כל מה שהמשתמש יכול לעשות",
+      "impactedGoal": [],
+      "impactedAssets": [
+        "רישום רכב",
+        "רישום רכב למכירה",
+        "סטטוס רישום",
+        "מסמכי רישום רכב"
+      ],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": [
+            "S"
+          ]
+        }
+      ]
+    }
+  ]

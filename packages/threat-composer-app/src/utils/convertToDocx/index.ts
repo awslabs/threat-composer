@@ -15,6 +15,7 @@
  ******************************************************************************************************************** */
 import { DataExchangeFormat } from '@aws/threat-composer';
 import { Document, Packer } from 'docx';
+import { i18n } from 'i18next';
 import { ORDERED_LIST_REF, DEFAULT_NUMBERINGS, SPACING, LIST_PARA_SPACING } from './config';
 import getApplicationInfo from './getApplicationInfo';
 import { getApplicationName } from './getApplicationName';
@@ -30,17 +31,16 @@ import getThreats from './getThreats';
  * Convert threat model data into Docx format
  * @param data
  */
-const convertToDocx = async (data: DataExchangeFormat) => {
-  const applicatonName = await getApplicationName(data);
-  const applicationInfo = await getApplicationInfo(data);
-  const architecture = await getArchitecture(data);
-  const dataflow = await getDataflow(data);
+const convertToDocx = async (data: DataExchangeFormat, t?: i18n['t'], defaultDir: boolean = false) => {
+  const applicatonName = await getApplicationName(data, defaultDir);
+  const applicationInfo = await getApplicationInfo(data, defaultDir, t);
+  const architecture = await getArchitecture(data, defaultDir, t);
+  const dataflow = await getDataflow(data, defaultDir, t);
 
-  const assumptions = await getAssumptions(data);
-  const threats = await getThreats(data);
-  const mitigations = await getMitigations(data);
-  const assets = await getAssets(data);
-
+  const assumptions = await getAssumptions(data, defaultDir, t);
+  const threats = await getThreats(data, false, defaultDir, t);
+  const mitigations = await getMitigations(data, defaultDir, t);
+  const assets = await getAssets(data, defaultDir, t);
 
   const docx = new Document({
     title: data.applicationInfo?.name,

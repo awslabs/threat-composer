@@ -13,20 +13,26 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { i18n } from 'i18next';
 import { DataExchangeFormat } from '../../../../customTypes';
 import escapeMarkdown from '../../../../utils/escapeMarkdown';
+import { createHTMLbyDirection } from '../../../../utils/localization';
 import parseTableCellContent from '../../../../utils/parseTableCellContent';
 import standardizeNumericId from '../../../../utils/standardizeNumericId';
 
 export const getAssumptionsContent = async (
   data: DataExchangeFormat,
+  t: i18n['t'],
+  defaultDir: string,
 ) => {
   const rows: string[] = [];
-  rows.push('## Assumptions');
+  const optT = t;
+
+  rows.push(`## ${optT('Assumptions')}`);
 
   rows.push('\n');
 
-  rows.push('| Assumption Number | Assumption | Linked Threats | Linked Mitigations | Comments |');
+  rows.push(`| ${optT('Assumption Number')} | ${optT('Assumption')} | ${optT('Linked Threats')} | ${optT('Linked Mitigations')} | ${optT('Comments')} |`);
   rows.push('| --- | --- | --- | --- | --- |');
 
   if (data.assumptions) {
@@ -41,7 +47,7 @@ export const getAssumptionsContent = async (
           return `[**${threatId}**](#${threatId}): ${escapeMarkdown(threat.statement || '')}`;
         }
         return null;
-      }).filter(t => !!t).join('<br/>');
+      }).filter(tl => !!tl).map(tl => createHTMLbyDirection(tl!!, defaultDir)).join('<br/>');
 
       const mitigationsContent = mitigationLinks.map(tl => {
         const mitigation = data.mitigations?.find(m => m.id === tl.linkedId);
@@ -50,11 +56,11 @@ export const getAssumptionsContent = async (
           return `[**${mitigationId}**](#${mitigationId}): ${escapeMarkdown(mitigation.content)}`;
         }
         return null;
-      }).filter(t => !!t).join('<br/>');
+      }).filter(tl => !!tl).map(tl => createHTMLbyDirection(tl!!, defaultDir)).join('<br/>');
 
-      const assumptionId = `A-${standardizeNumericId(x.numericId)}`;
-      const comments = await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || '');
-      return `| <a name="${assumptionId}"></a>${assumptionId} | ${escapeMarkdown(x.content)} | ${threatsContent} | ${mitigationsContent} | ${comments} |`;
+      const assumptionId = createHTMLbyDirection(`A-${standardizeNumericId(x.numericId)}`, defaultDir);
+      const comments = createHTMLbyDirection(await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || ''), defaultDir);
+      return `| <a name="${assumptionId}"></a>${assumptionId} | ${createHTMLbyDirection(escapeMarkdown(x.content), defaultDir)} | ${threatsContent} | ${mitigationsContent} | ${comments} |`;
     });
 
     rows.push(...(await Promise.all(promises)));

@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThreatStatementFormat } from '../customTypes';
+import { ThreatStatementFormat } from '../../../customTypes';
 
 const threatStatementFormat: ThreatStatementFormat = {
   7: {

@@ -23,10 +23,12 @@ import { MITIGATION_STATUS_COLOR_MAPPING } from '../../../configs/status';
 import { Mitigation, MitigationSchema } from '../../../customTypes';
 import mitigationStatus from '../../../data/status/mitigationStatus.json';
 import useEditMetadata from '../../../hooks/useEditMetadata';
+import { useReloadedTranslation } from '../../../i18next';
 import AssumptionLink from '../../assumptions/AssumptionLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import MetadataEditor from '../../generic/EntityMetadataEditor';
 import GenericCard from '../../generic/GenericCard';
+import LocalizationContainer from '../../generic/LocalizationContainer';
 import StatusBadge from '../../generic/StatusBadge';
 import Textarea from '../../generic/Textarea';
 import MitigationThreatLink from '../MitigationThreatLink';
@@ -67,60 +69,70 @@ const MitigationCard: FC<MitigationCardProps> = ({
 
   const handleMetadataEdit = useEditMetadata(onEdit);
 
-  return (<GenericCard
-    header={`Mitigation ${entity.numericId}`}
-    entityId={entity.id}
-    tags={entity.tags}
-    onCopy={() => onCopy?.(entity.id)}
-    onRemove={() => onRemove?.(entity.id)}
-    onEdit={() => setEditingMode(true)}
-    info={<StatusBadge
-      options={mitigationStatus as OptionDefinition[]}
-      selectedOption={entity.status}
-      setSelectedOption={(option) => onEdit?.({
-        ...entity,
-        status: option,
-      })}
-      statusColorMapping={MITIGATION_STATUS_COLOR_MAPPING}
-    />}
-    onAddTagToEntity={(_entityId, tag) => onAddTagToEntity?.(entity, tag)}
-    onRemoveTagFromEntity={(_entityId, tag) => onRemoveTagFromEntity?.(entity, tag)}
-  >
-    <SpaceBetween direction='vertical' size='s'>
-      <ColumnLayout columns={2}>
-        {editingMode ? (
-          <SpaceBetween direction='vertical' size='s'>
-            <Textarea
-              value={editingValue}
-              onChange={({ detail }) => setEditingValue(detail.value)}
-              validateData={MitigationSchema.shape.content.safeParse}
-              singleLine
-            />
-            <SpaceBetween direction='horizontal' size='s'>
-              <Button onClick={handleCancel}>Cancel</Button>
-              <Button variant='primary' onClick={handleSave}>Save</Button>
+  const { t, i18n } = useReloadedTranslation();
+  return (
+    <LocalizationContainer i18next={i18n}>
+      <GenericCard
+        header={`${t('Mitigation')} ${entity.numericId}`}
+        entityId={entity.id}
+        tags={entity.tags}
+        onCopy={() => onCopy?.(entity.id)}
+        onRemove={() => onRemove?.(entity.id)}
+        onEdit={() => setEditingMode(true)}
+        info={
+          <StatusBadge
+            options={mitigationStatus as OptionDefinition[]}
+            selectedOption={entity.status}
+            setSelectedOption={(option) =>
+              onEdit?.({
+                ...entity,
+                status: option,
+              })
+            }
+            statusColorMapping={MITIGATION_STATUS_COLOR_MAPPING}
+          />
+        }
+        onAddTagToEntity={(_entityId, tag) => onAddTagToEntity?.(entity, tag)}
+        onRemoveTagFromEntity={(_entityId, tag) =>
+          onRemoveTagFromEntity?.(entity, tag)
+        }
+      >
+        <SpaceBetween direction="vertical" size="s">
+          <ColumnLayout columns={2}>
+            {editingMode ? (
+              <SpaceBetween direction="vertical" size="s">
+                <Textarea
+                  value={editingValue}
+                  onChange={({ detail }) => setEditingValue(detail.value)}
+                  validateData={MitigationSchema.shape.content.safeParse}
+                  singleLine
+                />
+                <SpaceBetween direction="horizontal" size="s">
+                  <Button onClick={handleCancel}>{t('Cancel')}</Button>
+                  <Button variant="primary" onClick={handleSave}>
+                    {t('Save')}
+                  </Button>
+                </SpaceBetween>
+              </SpaceBetween>
+            ) : (
+              <TextContent>
+                <CopyToClipbord>{entity.content || ''}</CopyToClipbord>
+              </TextContent>
+            )}
+            <SpaceBetween direction="vertical" size="s">
+              <MitigationThreatLink mitigationId={entity.id} />
+              <AssumptionLink linkedEntityId={entity.id} type="Mitigation" />
             </SpaceBetween>
-          </SpaceBetween>
-        ) : (<TextContent>
-          <CopyToClipbord>
-            {entity.content || ''}
-          </CopyToClipbord>
-        </TextContent>)}
-        <SpaceBetween direction='vertical' size='s'>
-          <MitigationThreatLink mitigationId={entity.id} />
-          <AssumptionLink
-            linkedEntityId={entity.id}
-            type='Mitigation'
+          </ColumnLayout>
+          <MetadataEditor
+            variant="default"
+            entity={entity}
+            onEditEntity={handleMetadataEdit}
           />
         </SpaceBetween>
-      </ColumnLayout>
-      <MetadataEditor
-        variant='default'
-        entity={entity}
-        onEditEntity={handleMetadataEdit}
-      />
-    </SpaceBetween>
-  </GenericCard>);
+      </GenericCard>
+    </LocalizationContainer>
+  );
 };
 
 export default MitigationCard;

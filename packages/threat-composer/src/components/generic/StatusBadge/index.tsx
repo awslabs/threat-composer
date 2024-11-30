@@ -19,6 +19,7 @@ import { SelectProps } from '@cloudscape-design/components/select';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { FC, useMemo, useState, useRef } from 'react';
+import { useReloadedTranslation } from '../../../i18next';
 import StatusSelector, { StatusSelectorProps } from '../StatusSelector';
 
 export interface StatusBadgeProps extends Omit<StatusSelectorProps, 'showLabel'> {
@@ -48,6 +49,8 @@ const StatusBadge: FC<StatusBadgeProps> = ({
     />;
   }, [options, selectedOption, setSelectedOption]);
 
+  const { t } = useReloadedTranslation();
+
   return <div>{editMode ? (editor) :
     (<button
       onClick={() => {
@@ -65,7 +68,7 @@ const StatusBadge: FC<StatusBadgeProps> = ({
         outline: inherit;
         verticalAlign: middle;
       `}>
-      <Badge color={statusColorMapping[selectedOption || 'NotSet'] || 'grey'}>{selectedOption && options.find(x => x.value === selectedOption)?.label || 'Status Not Set'}</Badge>
+      <Badge color={statusColorMapping[selectedOption || 'NotSet'] || 'grey'}>{t(selectedOption && options.find(x => x.value === selectedOption)?.label || 'Status Not Set')}</Badge>
     </button>)}</div>;
 };
 

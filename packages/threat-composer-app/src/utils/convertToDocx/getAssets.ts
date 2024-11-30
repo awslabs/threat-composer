@@ -15,7 +15,9 @@
  ******************************************************************************************************************** */
 import { TemplateThreatStatement, DataExchangeFormat, standardizeNumericId } from '@aws/threat-composer';
 import { Paragraph, HeadingLevel, TextRun, TableCell, TableRow } from 'docx';
+import { i18n } from 'i18next';
 import Table from './components/Table';
+import { bidirectionalOfText } from './convertMarkdown/utils';
 import getAnchorLink from './getAnchorLink';
 import getBookmark from './getBookmark';
 import getHeaderRow from './getHeaderRow';
@@ -24,11 +26,13 @@ interface AssetMap {
   [assetName: string]: TemplateThreatStatement[];
 }
 
-const getThreatsTableCell = (threats: TemplateThreatStatement[]) => {
+const getThreatsTableCell = (threats: TemplateThreatStatement[], defaultDir: boolean) => {
   return new TableCell({
     children: threats.map(t => {
       const threatId = `T-${standardizeNumericId(t.numericId)}`;
+      console.log('TableCell', bidirectionalOfText(threatId + t.statement, defaultDir));
       return new Paragraph({
+        bidirectional: bidirectionalOfText(threatId + t.statement, defaultDir),
         children: [
           getAnchorLink(threatId),
           new TextRun(' '),
@@ -39,29 +43,33 @@ const getThreatsTableCell = (threats: TemplateThreatStatement[]) => {
   });
 };
 
-const getDataRow = (assetName: string, index: number, assetMap: AssetMap) => {
+const getDataRow = (assetName: string, index: number, assetMap: AssetMap, defaultDir: boolean) => {
   const atId = `AS-${standardizeNumericId(index + 1)}`;
 
   const tableRow = new TableRow({
     children: [
       new TableCell({
         children: [new Paragraph({
+          bidirectional: bidirectionalOfText(atId, defaultDir),
           children: [
             getBookmark(atId),
           ],
         })],
       }),
       new TableCell({
-        children: [new Paragraph(assetName)],
+        children: [new Paragraph({
+          bidirectional: bidirectionalOfText(assetName, defaultDir),
+          text: assetName,
+        })],
       }),
-      getThreatsTableCell(assetMap[assetName] || []),
+      getThreatsTableCell(assetMap[assetName] || [], defaultDir),
     ],
   });
 
   return tableRow;
 };
 
-const getDataRows = (data: DataExchangeFormat) => {
+const getDataRows = (data: DataExchangeFormat, defaultDir: boolean) => {
   if (data.threats) {
     const assetThreatMap: AssetMap = {};
 
@@ -73,7 +81,7 @@ const getDataRows = (data: DataExchangeFormat) => {
       assetThreatMap[ia].push(t);
     }));
 
-    return Object.keys(assetThreatMap).map((at, index) => getDataRow(at, index, assetThreatMap));
+    return Object.keys(assetThreatMap).map((at, index) => getDataRow(at, index, assetThreatMap, defaultDir));
   }
 
   return [];
@@ -81,20 +89,25 @@ const getDataRows = (data: DataExchangeFormat) => {
 
 const getAssets = async (
   data: DataExchangeFormat,
+  defaultDir: boolean = false,
+  t?: i18n['t'],
 ) => {
   const children: any[] = [];
+  const translate = ((s: string): string => t ? t(s) : s);
 
   children.push(new Paragraph({
+    bidirectional: defaultDir,
     heading: HeadingLevel.HEADING_1,
     children: [
-      new TextRun('Impacted Assets'),
+      new TextRun(translate('Impacted Assets')),
     ],
   }));
 
-  const headerRow = getHeaderRow(['Assets Number', 'Asset', 'Related Threats ']);
-  const dataRows = getDataRows(data);
+  const headerRow = getHeaderRow(['Assets Number', 'Asset', 'Related Threats '].map(translate));
+  const dataRows = getDataRows(data, defaultDir);
 
   const table = new Table({
+    visuallyRightToLeft: defaultDir,
     rows: [
       headerRow,
       ...dataRows,

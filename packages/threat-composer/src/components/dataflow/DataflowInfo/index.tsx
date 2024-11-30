@@ -16,14 +16,17 @@
 import { FC } from 'react';
 import { useDataflowInfoContext } from '../../../contexts/DataflowContext/context';
 import { DataflowInfoSchema, EditableComponentBaseProps } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
 
 const DataflowInfo: FC<EditableComponentBaseProps> = (props) => {
   const { dataflowInfo, setDataflowInfo } = useDataflowInfoContext();
+  const { t } = useReloadedTranslation();
+
   return <BaseDiagramInfo
     {...props}
-    headerTitle='Dataflow'
-    diagramTitle='Dataflow Diagram'
+    headerTitle={t('Dataflow')}
+    diagramTitle={t('Dataflow Diagram')}
     entity={dataflowInfo}
     onConfirm={(diagram) => setDataflowInfo(diagram)}
     validateData={DataflowInfoSchema.shape.description.safeParse}

@@ -15,43 +15,50 @@
  ******************************************************************************************************************** */
 import { DataExchangeFormat } from '@aws/threat-composer';
 import { Paragraph, HeadingLevel, TextRun } from 'docx';
+import { i18n } from 'i18next';
 import convertMarkdown from './convertMarkdown';
 import getImage from './getImage';
 
 const getDataflow = async (
   data: DataExchangeFormat,
+  defaultDir: boolean = false,
+  t?: i18n['t'],
 ) => {
   const children: any[] = [];
+  const translate = ((s: string): string => t ? t(s) : s);
 
   children.push(new Paragraph({
+    bidirectional: defaultDir,
     heading: HeadingLevel.HEADING_1,
     children: [
-      new TextRun('Dataflow'),
+      new TextRun(translate('Dataflow')),
     ],
   }));
 
   if (data.dataflow) {
     if (data.dataflow.description) {
       children.push(new Paragraph({
+        bidirectional: defaultDir,
         heading: HeadingLevel.HEADING_2,
         children: [
-          new TextRun('Introduction'),
+          new TextRun(translate('Introduction')),
         ],
       }));
 
-      const sections = await convertMarkdown(data.dataflow.description);
+      const sections = await convertMarkdown(data.dataflow.description, defaultDir);
       children.push(...sections);
     }
 
     if (data.dataflow.image) {
       children.push(new Paragraph({
+        bidirectional: defaultDir,
         heading: HeadingLevel.HEADING_2,
         children: [
-          new TextRun('Dataflow Diagram'),
+          new TextRun(translate('Dataflow Diagram')),
         ],
       }));
 
-      const image = await getImage(data.dataflow.image);
+      const image = await getImage(data.dataflow.image, defaultDir);
       children.push(image);
     }
   }

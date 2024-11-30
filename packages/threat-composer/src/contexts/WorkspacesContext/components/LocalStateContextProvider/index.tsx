@@ -40,6 +40,7 @@ const WorkspacesLocalStateContextProvider: FC<WorkspacesContextProviderProps> = 
     handleAddWorkspace,
     handleRemoveWorkspace,
     handleRenameWorkspace,
+    handleChangeLanguage,
   } = useWorkspaces(workspaceList, setWorkspaceList, currentWorkspace, setCurrentWorkspace, onWorkspaceChanged);
 
   return (<WorkspacesContext.Provider value={{
@@ -50,6 +51,7 @@ const WorkspacesLocalStateContextProvider: FC<WorkspacesContextProviderProps> = 
     addWorkspace: handleAddWorkspace,
     removeWorkspace: handleRemoveWorkspace,
     renameWorkspace: handleRenameWorkspace,
+    changeLanguage: handleChangeLanguage,
     ...props,
   }}>
     {children(currentWorkspace?.id || null)}

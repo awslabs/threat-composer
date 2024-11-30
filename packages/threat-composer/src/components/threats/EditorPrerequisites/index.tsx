@@ -19,6 +19,7 @@ import { TextareaProps } from '@cloudscape-design/components/textarea';
 import { FC, useCallback, forwardRef, useRef, RefObject, useImperativeHandle } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { TemplateThreatStatementSchema } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import Textarea from '../../generic/Textarea';
 import EditorLayout from '../EditorLayout';
 import styles from '../EditorLayout/styles';
@@ -51,10 +52,11 @@ const EditorPrerequisites: FC<EditorProps> = forwardRef<TextareaProps.Ref, Edito
     inputRef.current?.focus();
   }, [handleChange]);
 
+  const { t } = useReloadedTranslation();
 
   return (<EditorLayout
-    title={fieldData.displayTitle}
-    description={fieldData.description}
+    title={t(fieldData.displayTitle)}
+    description={t(fieldData.description)}
   >
     <div css={styles.textEditorLayout}>
       <div css={styles.input}>
@@ -62,7 +64,7 @@ const EditorPrerequisites: FC<EditorProps> = forwardRef<TextareaProps.Ref, Edito
           ref={inputRef as RefObject<TextareaProps.Ref>}
           onChange={({ detail }) => handleChange(detail.value)}
           value={statement.prerequisites || ''}
-          placeholder="Enter prerequisites"
+          placeholder={t('Enter prerequisites')}
           spellcheck
           singleLine
           validateData={TemplateThreatStatementSchema.shape.prerequisites.safeParse}

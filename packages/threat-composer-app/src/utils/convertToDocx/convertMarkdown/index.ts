@@ -19,24 +19,25 @@ import gfm from 'remark-gfm';
 import markdown from 'remark-parse';
 import { unified } from 'unified';
 import docx from './plugin';
+import { bidirectionalOfText } from './utils';
 import fetchImage from '../fetchImage';
-
-const processor = unified()
-  .use(markdown)
-  .use(gfm)
-  .use(frontmatter)
-  .use(docx,
-    {
-      output: 'sections',
-      imageResolver: fetchImage,
-    },
-  );
 
 /**
  * Convert the markdown into Docx format
  * @param content
  */
-const convertMarkdown = async (content: string) => {
+const convertMarkdown = async (content: string, defaultDir: boolean = false) => {
+  const processor = unified()
+    .use(markdown)
+    .use(gfm)
+    .use(frontmatter)
+    .use(docx,
+      {
+        output: 'sections',
+        imageResolver: fetchImage,
+        bidirectional: bidirectionalOfText(content, defaultDir),
+      },
+    );
   const doc = await processor.process(content);
   const sections = await doc.result;
 

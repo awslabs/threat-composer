@@ -20,6 +20,7 @@ import { FC, ReactNode, useCallback } from 'react';
 import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { ContentEntityBase, EntityBase } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
+import { useReloadedTranslation } from '../../../i18next';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import Textarea, { TextAreaProps } from '../../generic/Textarea';
 import MetadataEditor from '../EntityMetadataEditor';
@@ -56,6 +57,8 @@ const GenericEntityCreationCard: FC<GenericEntityCreationCardProps> = ({
 
   const handleEditMetadata = useEditMetadata(setEditingEntity as (updated: EntityBase) => void);
 
+  const { t } = useReloadedTranslation();
+
   return (<GenericCard
     header={header}
     tags={editingEntity?.tags}
@@ -65,8 +68,8 @@ const GenericEntityCreationCard: FC<GenericEntityCreationCardProps> = ({
   >
     <SpaceBetween direction='vertical' size='s'>
       <SpaceBetween direction='horizontal' size='s'>
-        <Button onClick={onReset}>Reset</Button>
-        <Button variant='primary' disabled={!editingEntity.content} onClick={onSave}>Save</Button>
+        <Button onClick={onReset}>{t('Reset')}</Button>
+        <Button variant='primary' disabled={!editingEntity.content} onClick={onSave}>{t('Save')}</Button>
       </SpaceBetween>
       <ColumnLayout columns={customEditors ? 2 : 1}>
         <Textarea

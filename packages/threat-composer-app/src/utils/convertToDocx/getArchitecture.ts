@@ -15,43 +15,49 @@
  ******************************************************************************************************************** */
 import { DataExchangeFormat } from '@aws/threat-composer';
 import { Paragraph, HeadingLevel, TextRun } from 'docx';
+import { i18n } from 'i18next';
 import convertMarkdown from './convertMarkdown';
 import getImage from './getImage';
 
 const getArchitecture = async (
   data: DataExchangeFormat,
+  defaultDir: boolean = false,
+  t?: i18n['t'],
 ) => {
   const children: any[] = [];
-
+  const translate = ((s: string): string => t ? t(s) : s);
   children.push(new Paragraph({
+    bidirectional: defaultDir,
     heading: HeadingLevel.HEADING_1,
     children: [
-      new TextRun('Architecture'),
+      new TextRun(translate('Architecture')),
     ],
   }));
 
   if (data.architecture) {
     if (data.architecture.description) {
       children.push(new Paragraph({
+        bidirectional: defaultDir,
         heading: HeadingLevel.HEADING_2,
         children: [
-          new TextRun('Introduction'),
+          new TextRun(translate('Introduction')),
         ],
       }));
 
-      const sections = await convertMarkdown(data.architecture.description);
+      const sections = await convertMarkdown(data.architecture.description, defaultDir);
       children.push(...sections);
     }
 
     if (data.architecture.image) {
       children.push(new Paragraph({
+        bidirectional: defaultDir,
         heading: HeadingLevel.HEADING_2,
         children: [
-          new TextRun('Architecture Diagram'),
+          new TextRun(translate('Architecture Diagram')),
         ],
       }));
 
-      const image = await getImage(data.architecture.image);
+      const image = await getImage(data.architecture.image, defaultDir);
       children.push(image);
     }
   }

@@ -20,6 +20,7 @@ import TokenGroup, { TokenGroupProps } from '@cloudscape-design/components/token
 import { FC, useCallback, useState, forwardRef } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { ThreatStatementImpactedGoalItem } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import Autosuggest from '../../generic/Autosuggest';
 import EditorLayout from '../EditorLayout';
 import ExampleList from '../ExampleList';
@@ -70,9 +71,11 @@ const EditorImpactedGoal: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, Edi
     }
   }, [handleAddImpactedGoal, value]);
 
+  const { t } = useReloadedTranslation();
+
   return (<EditorLayout
-    title={fieldData.displayTitle}
-    description={fieldData.description}
+    title={t(fieldData.displayTitle)}
+    description={t(fieldData.description)}
   >
     <Autosuggest
       onChange={({ detail }) => setValue(detail.value)}
@@ -81,18 +84,18 @@ const EditorImpactedGoal: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, Edi
       options={fieldData.tokens?.map(token => ({
         value: token,
       }))}
-      enteredTextLabel={enteredValue => `Use: "${enteredValue}"`}
-      ariaLabel="Autosuggest for impacted goals"
-      placeholder="Select an impacted goal or enter new one"
-      empty="No matches found"
+      enteredTextLabel={enteredValue => `${t('Use')}: "${enteredValue}"`}
+      ariaLabel={t('Autosuggest for impacted goals')}
+      placeholder={t('Select an impacted goal or enter new one')}
+      empty={t('No matches found')}
       onKeyDown={handleKeyDown}
       validateData={ThreatStatementImpactedGoalItem.safeParse}
     />
     <TokenGroup
       onDismiss={handleRemoveImpactedGoal}
       items={statement.impactedGoal?.map(goal => ({
-        label: goal,
-        dismissLabel: `Remove ${goal}`,
+        label: t(goal),
+        dismissLabel: `${('Remove')} ${goal}`,
       }))}
     />
     {perFieldExamples.impacted_goal.length > 0 &&

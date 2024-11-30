@@ -15,22 +15,26 @@
  ******************************************************************************************************************** */
 import { DataExchangeFormat } from '@aws/threat-composer';
 import { HeadingLevel, TextRun, Paragraph } from 'docx';
+import { i18n } from 'i18next';
 import convertMarkdown from './convertMarkdown';
 
 const getApplicationInfo = async (
   data: DataExchangeFormat,
+  defaultDir: boolean = false,
+  t?: i18n['t'],
 ) => {
   const children: any[] = [];
-
   children.push(new Paragraph({
+    bidirectional: defaultDir,
     heading: HeadingLevel.HEADING_1,
     children: [
-      new TextRun('Application Info'),
+      new TextRun(((s) => t ? t(s) : s)('Application Info')),
     ],
   }));
 
   if (data.applicationInfo?.description) {
-    const sections = await convertMarkdown(data.applicationInfo?.description);
+    const description = data.applicationInfo?.description;
+    const sections = await convertMarkdown(description, defaultDir);
     children.push(...sections);
   }
 

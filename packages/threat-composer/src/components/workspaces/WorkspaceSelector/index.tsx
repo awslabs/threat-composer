@@ -28,10 +28,12 @@ import {
 import Select, { SelectProps } from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { css } from '@emotion/react';
-import { FC, useMemo, useState, useCallback, PropsWithChildren } from 'react';
+import { FC, useMemo, useEffect, useState, useCallback, PropsWithChildren } from 'react';
+import { useTranslation } from 'react-i18next';
 import { APP_MODE_IDE_EXTENSION } from '../../../configs';
 import {
   DEFAULT_WORKSPACE_ID,
+  DEFAULT_WORKSPACE_LANGUAGE,
   DEFAULT_WORKSPACE_LABEL,
   EXAMPLES_SECTION_WORKSPACE_LABEL,
 } from '../../../configs/constants';
@@ -45,6 +47,7 @@ import {
 import useCloneWorkspace from '../../../hooks/useCloneWorkspace';
 import useImportExport from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
+import { LanguageResources } from '../../../i18next';
 import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
 import isWorkspaceExample from '../../../utils/isWorkspaceExample';
 import ThemeToggle from '../../generic/ThemeToggle';
@@ -122,6 +125,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     addWorkspace,
     renameWorkspace,
     switchWorkspace,
+    changeLanguage,
   } = useWorkspacesContext();
 
   const cloneWorkspace = useCloneWorkspace();
@@ -167,6 +171,23 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
         }
       },
       [switchWorkspace],
+    );
+
+  const handleSelectLanguage: NonCancelableEventHandler<SelectProps.ChangeDetail> =
+    useCallback( async ({ detail }) => {
+      const selectedItem = detail.selectedOption;
+      console.log(currentWorkspace?.id, selectedItem.value);
+      if (currentWorkspace?.id) {
+        if (selectedItem.value === DEFAULT_WORKSPACE_LANGUAGE) {
+          await changeLanguage(currentWorkspace?.id, selectedItem.value);
+        } else {
+          selectedItem.value &&
+              selectedItem.label &&
+              await changeLanguage(currentWorkspace?.id, selectedItem.value);
+        }
+      }
+    },
+    [changeLanguage, currentWorkspace],
     );
 
   const handleSingletonPrimaryButtonClick = useCallback(() => {
@@ -358,6 +379,13 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     currentWorkspace,
   ]);
 
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    i18n.changeLanguage(currentWorkspace?.language ?? DEFAULT_WORKSPACE_LANGUAGE).then(() => console.log('changed language')).catch(e => console.log('Cannot change language', e));
+  }, [currentWorkspace]);
+
+
   return (
     <>
       <SpaceBetween direction="horizontal" size="xs">
@@ -390,6 +418,15 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
           />
         )}
         {appMode !== 'ide-extension' && composerMode === 'Full' && <div css={styles.themeToggle}><ThemeToggle /></div>}
+        {currentWorkspace?.id && <Select
+          controlId='LanguageSelect'
+          selectedOption={{
+            value: currentWorkspace?.language ?? i18n.language,
+            label: currentWorkspace?.language ?? i18n.language,
+          }}
+          options={Object.keys(LanguageResources).map((code) => { return { label: code, value: code };})}
+          onChange={handleSelectLanguage}
+        />}
       </SpaceBetween>
       {fileImportModalVisible && (
         <FileImport

@@ -13,21 +13,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { i18n } from 'i18next';
 import { DataExchangeFormat } from '../../../../customTypes';
 
 export const getArchitectureContent = async (
   data: DataExchangeFormat,
+  t?: i18n['t'],
 ) => {
   const rows: string[] = [];
-  rows.push('## Architecture');
+  const optT = t ? t : (s: string) => s;
+  rows.push(`## ${optT('Architecture')}`);
   if (data.architecture) {
     if (data.architecture.description) {
-      rows.push('### Introduction');
+      rows.push(`### ${optT('Introduction')}`);
       rows.push(data.architecture.description);
     }
 
     if (data.architecture.image) {
-      rows.push('### Architecture Diagram');
+      rows.push(`### ${optT('Architecture Diagram')}`);
       rows.push(`![Architecture Diagram](${data.architecture.image})`);
     }
   }

@@ -19,6 +19,7 @@ import { TextareaProps } from '@cloudscape-design/components/textarea';
 import { FC, forwardRef, useCallback, useRef, RefObject, useImperativeHandle } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext';
 import { TemplateThreatStatementSchema } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import Textarea from '../../generic/Textarea';
 import EditorLayout from '../EditorLayout';
 import styles from '../EditorLayout/styles';
@@ -51,9 +52,11 @@ const EditorThreatImpact: FC<EditorProps> = forwardRef<TextareaProps.Ref, Editor
     inputRef.current?.focus();
   }, [handleChange]);
 
+  const { t } = useReloadedTranslation();
+
   return (<EditorLayout
-    title={fieldData.displayTitle}
-    description={fieldData.description}
+    title={t(fieldData.displayTitle)}
+    description={t(fieldData.description)}
   >
     <div css={styles.textEditorLayout}>
       <div css={styles.input}>
@@ -62,7 +65,7 @@ const EditorThreatImpact: FC<EditorProps> = forwardRef<TextareaProps.Ref, Editor
           spellcheck
           onChange={({ detail }) => handleChange(detail.value)}
           value={statement.threatImpact || ''}
-          placeholder="Enter threat impact"
+          placeholder={t('Enter threat impact')}
           validateData={TemplateThreatStatementSchema.shape.threatImpact.safeParse}
           rows={2}
           singleLine

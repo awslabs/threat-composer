@@ -13,22 +13,28 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { i18n } from 'i18next';
 import { STATUS_NOT_SET } from '../../../../configs';
 import { DataExchangeFormat } from '../../../../customTypes';
 import mitigationStatus from '../../../../data/status/mitigationStatus.json';
 import escapeMarkdown from '../../../../utils/escapeMarkdown';
+import { createHTMLbyDirection } from '../../../../utils/localization';
 import parseTableCellContent from '../../../../utils/parseTableCellContent';
 import standardizeNumericId from '../../../../utils/standardizeNumericId';
 
 export const getMitigationsContent = async (
   data: DataExchangeFormat,
+  t: i18n['t'],
+  defaultDir: string,
 ) => {
   const rows: string[] = [];
-  rows.push('## Mitigations');
+  const optT = t;
+
+  rows.push(`## ${optT('Mitigations')}`);
 
   rows.push('\n');
 
-  rows.push('| Mitigation Number | Mitigation | Threats Mitigating | Assumptions | Status | Comments |');
+  rows.push(`| ${optT('Mitigation Number')} | ${optT('Mitigation')} | ${optT('Threats Mitigating')} | ${optT('Assumptions')} | ${optT('Status')} | ${optT('Comments')} |`);
   rows.push('| --- | --- | --- | --- | --- | --- |');
 
   if (data.mitigations) {
@@ -43,7 +49,7 @@ export const getMitigationsContent = async (
           return `[**${threatId}**](#${threatId}): ${escapeMarkdown(threat.statement || '')}`;
         }
         return null;
-      }).filter(t => !!t).join('<br/>');
+      }).filter(tl => !!tl).map(tl => createHTMLbyDirection(tl!!, defaultDir)).join('<br/>');
 
       const assumptionsContent = assumpptionLinks.map(al => {
         const assumption = data.assumptions?.find(a => a.id === al.assumptionId);
@@ -52,14 +58,14 @@ export const getMitigationsContent = async (
           return `[**${assumptionId}**](#${assumptionId}): ${escapeMarkdown(assumption.content)}`;
         }
         return null;
-      }).filter(a => !!a).join('<br/>');
+      }).filter(a => !!a).map(tl => createHTMLbyDirection(tl!!, defaultDir)).join('<br/>');
+      const statusContent = (x.status && mitigationStatus.find(ms => ms.value === x.status)?.label) || STATUS_NOT_SET;
+      const status = createHTMLbyDirection(optT(statusContent), defaultDir);
 
-      const status = (x.status && mitigationStatus.find(ms => ms.value === x.status)?.label) || STATUS_NOT_SET;
+      const comments = createHTMLbyDirection(await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || ''), defaultDir);
 
-      const comments = await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || '');
-
-      const mitigationId = `M-${standardizeNumericId(x.numericId)}`;
-      return `| <a name="${mitigationId}"></a>${mitigationId} | ${escapeMarkdown(x.content)} | ${threatsContent} | ${assumptionsContent} | ${status} | ${comments} |`;
+      const mitigationId = createHTMLbyDirection(`M-${standardizeNumericId(x.numericId)}`, defaultDir);
+      return `| <a name="${mitigationId}"></a>${mitigationId} | ${createHTMLbyDirection(escapeMarkdown(x.content), defaultDir)} | ${threatsContent} | ${assumptionsContent} | ${status} | ${comments} |`;
     });
 
     rows.push(...(await Promise.all(promises)));

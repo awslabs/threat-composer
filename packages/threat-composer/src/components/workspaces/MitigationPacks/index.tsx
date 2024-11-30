@@ -21,6 +21,9 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo } from 'react';
 import { useMitigationPacksContext } from '../../../contexts/MitigationPacksContext';
 import { MitigationPack } from '../../../customTypes/referencePacks';
+import { useReloadedTranslation } from '../../../i18next';
+import AutoDirectionContainer from '../../generic/AutoDirectionContainer';
+import LocalizationContainer from '../../generic/LocalizationContainer';
 import Table, { ColumnDefinition } from '../../generic/Table';
 
 
@@ -32,50 +35,55 @@ const MitigationPacks: FC<MitigationPacksProps> = ({
   onMitigationPackLinkClicked,
 }) => {
   const { mitigationPackUsage, mitigationPacks } = useMitigationPacksContext();
+  const { t, i18n } = useReloadedTranslation();
 
   const colDef: ColumnDefinition<MitigationPack>[] = useMemo(() => [
     {
       id: 'id',
       minWidth: 150,
-      header: 'Id',
-      cell: (data) => (<Button variant="inline-link" onClick={() => onMitigationPackLinkClicked?.(data.id)}>
-        {data.id}
-      </Button>),
+      header: t('Id'),
+      cell: (data) => (
+        <AutoDirectionContainer value={data.id}>
+          <Button variant="inline-link" onClick={() => onMitigationPackLinkClicked?.(data.id)}>
+            {data.id}
+          </Button>
+        </AutoDirectionContainer>
+      ),
       sortingField: 'id',
       isRowHeader: true,
     },
     {
       id: 'name',
       minWidth: 120,
-      header: 'Name',
-      cell: (data) => data.name,
+      header: t('Name'),
+      cell: (data) => <AutoDirectionContainer value={data.name}>{data.name}</AutoDirectionContainer>,
       sortingField: 'name',
     },
     {
       id: 'description',
       minWidth: 200,
-      header: 'Description',
-      cell: (data) => <Box>{data.description}</Box>,
+      header: t('Description'),
+      cell: (data) => <AutoDirectionContainer value={data.description}><Box>{data.description}</Box></AutoDirectionContainer>,
       sortingField: 'description',
     },
     {
       id: 'countMitigations',
-      header: 'Total mitigations',
+      header: t('Total mitigations'),
       cell: (data) => data.mitigations?.length,
     },
     {
       id: 'countReferencedMitigations',
-      header: 'Referenced mitigations',
+      header: t('Referenced mitigations'),
       cell: (data) => (mitigationPackUsage[data.id] && Object.keys(mitigationPackUsage[data.id]).length) || 0,
     },
   ], [mitigationPackUsage, onMitigationPackLinkClicked]);
 
-  return (<ContentLayout header={<Header
+  return (<LocalizationContainer i18next={i18n}><ContentLayout header={<Header
     variant="h2"
-    description="Allow you to quickly find and add bulk or selected mitigation candidates to your current workspace"
+    description={t('Allow you to quickly find and add bulk or selected mitigation candidates to your current workspace')}
     counter={`(${mitigationPacks.length})`}
   >
-    Mitigation Packs
+    {t('Mitigation Packs')}
   </Header>}>
     <SpaceBetween direction='vertical' size='s'>
       <Table
@@ -83,7 +91,8 @@ const MitigationPacks: FC<MitigationPacksProps> = ({
         items={mitigationPacks}
         disableRowSelect={true}
       /></SpaceBetween>
-  </ContentLayout>);
+  </ContentLayout>
+  </LocalizationContainer>);
 };
 
 export default MitigationPacks;

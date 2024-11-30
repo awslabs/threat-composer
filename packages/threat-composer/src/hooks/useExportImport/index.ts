@@ -25,6 +25,7 @@ import { useMitigationLinksContext } from '../../contexts/MitigationLinksContext
 import { useMitigationsContext } from '../../contexts/MitigationsContext/context';
 import { useThreatsContext } from '../../contexts/ThreatsContext/context';
 import { DataExchangeFormat, TemplateThreatStatement } from '../../customTypes';
+import { useReloadedTranslation } from '../../i18next';
 import cleanupThreatData from '../../utils/cleanupThreatData';
 import { downloadObjectAsJson } from '../../utils/downloadContent';
 import getExportFileName from '../../utils/getExportFileName';
@@ -54,6 +55,8 @@ const useImportExport = () => {
   const { statementList, setStatementList } = useThreatsContext();
   const { assumptionLinkList, setAssumptionLinkList } = useAssumptionLinksContext();
   const { mitigationLinkList, setMitigationLinkList } = useMitigationLinksContext();
+
+  const { t, i18n } = useReloadedTranslation();
 
   const getWorkspaceData = useCallback((): DataExchangeFormat => {
 
@@ -124,7 +127,7 @@ const useImportExport = () => {
   }, []);
 
   const importData = useCallback(async (data: DataExchangeFormat) => {
-    const calculatedThreats = recalculateThreatData(data.threats || []);
+    const calculatedThreats = recalculateThreatData(data.threats || [], t);
 
     if (data.schema > 0) {
       setApplicationInfo(data.applicationInfo || {});
@@ -148,6 +151,8 @@ const useImportExport = () => {
     setStatementList,
     setAssumptionLinkList,
     setMitigationLinkList,
+    t,
+    i18n.language,
   ]);
 
   return {

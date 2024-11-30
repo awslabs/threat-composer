@@ -20,9 +20,14 @@ import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useState, useCallback, useMemo, useEffect } from 'react';
 import { useApplicationInfoContext } from '../../../contexts/ApplicationContext/context';
-import { ApplicationInfoSchema, EditableComponentBaseProps } from '../../../customTypes';
+import {
+  ApplicationInfoSchema,
+  EditableComponentBaseProps,
+} from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import ContentLayout from '../../generic/ContentLayout';
 import Input from '../../generic/Input';
+import LocalizationContainer from '../../generic/LocalizationContainer';
 import MarkdownEditor from '../../generic/MarkdownEditor';
 import MarkdownViewer from '../../generic/MarkdownViewer';
 
@@ -30,8 +35,13 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
   onEditModeChange,
   MarkdownEditorComponentType = MarkdownEditor,
 }) => {
+
+  const { t, i18n } = useReloadedTranslation();
+
   const { applicationInfo, setApplicationInfo } = useApplicationInfoContext();
-  const [editMode, setEditMode] = useState(!applicationInfo.name && !applicationInfo.description);
+  const [editMode, setEditMode] = useState(
+    !applicationInfo.name && !applicationInfo.description,
+  );
   const [content, setContent] = useState('');
   const [name, setName] = useState('');
 
@@ -40,7 +50,7 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
   }, [editMode]);
 
   const handleSaveApplicationInfo = useCallback(() => {
-    setApplicationInfo(prev => ({
+    setApplicationInfo((prev) => ({
       ...prev,
       description: content,
       name,
@@ -55,41 +65,53 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
   }, [applicationInfo]);
 
   const actions = useMemo(() => {
-    return editMode ? (<SpaceBetween direction='horizontal' size='s'>
-      <Button onClick={() => setEditMode(false)}>Cancel</Button>
-      <Button variant='primary' onClick={handleSaveApplicationInfo}>Confirm</Button>
-    </SpaceBetween>) : (<Button onClick={handleEdit}>Edit</Button>);
-  }, [editMode, handleSaveApplicationInfo, handleEdit, setEditMode]);
+    return editMode ? (
+      <SpaceBetween direction="horizontal" size="s">
+        <Button onClick={() => setEditMode(false)}>{t('Cancel')}</Button>
+        <Button variant="primary" onClick={handleSaveApplicationInfo}>
+          {t('Confirm')}
+        </Button>
+      </SpaceBetween>
+    ) : (
+      <Button onClick={handleEdit}>{t('Edit')}</Button>
+    );
+  }, [editMode, handleSaveApplicationInfo, handleEdit, setEditMode, t, i18n.language]);
 
-  return (<ContentLayout title='Application information'>
-    <Container
-      header={<Header actions={actions}>{applicationInfo.name || 'Application Introduction'}</Header>}
-    >{editMode ? (<SpaceBetween direction='vertical' size='s'>
-        <FormField
-          label="Application name"
+  return (
+    <LocalizationContainer i18next={i18n}>
+      <ContentLayout title={t('Application information')}>
+        <Container
+          header={
+            <Header actions={actions}>
+              {applicationInfo.name || t('Application Introduction')}
+            </Header>
+          }
         >
-          <Input
-            value={name}
-            onChange={event =>
-              setName(event.detail.value)
-            }
-            validateData={ApplicationInfoSchema.shape.name.safeParse}
-            placeholder='Enter application name'
-          />
-        </FormField>
-        <MarkdownEditorComponentType
-          value={content}
-          onChange={setContent}
-          label='Description'
-          parentHeaderLevel='h2'
-          validateData={ApplicationInfoSchema.shape.description.safeParse}
-        />
-      </SpaceBetween>) :
-        (<MarkdownViewer>
-          {applicationInfo.description || ''}
-        </MarkdownViewer>)}
-    </Container>
-  </ContentLayout>);
+          {editMode ? (
+            <SpaceBetween direction="vertical" size="s">
+              <FormField label={t('Application name')}>
+                <Input
+                  value={name}
+                  onChange={(event) => setName(event.detail.value)}
+                  validateData={ApplicationInfoSchema.shape.name.safeParse}
+                  placeholder={t('Enter application name')}
+                />
+              </FormField>
+              <MarkdownEditorComponentType
+                value={content}
+                onChange={setContent}
+                label={t('Description')}
+                parentHeaderLevel="h2"
+                validateData={ApplicationInfoSchema.shape.description.safeParse}
+              />
+            </SpaceBetween>
+          ) : (
+            <MarkdownViewer>{applicationInfo.description || ''}</MarkdownViewer>
+          )}
+        </Container>
+      </ContentLayout>
+    </LocalizationContainer>
+  );
 };
 
 export default ApplicationInfo;

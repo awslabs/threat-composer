@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren } from 'react';
+import { Suspense, FC, PropsWithChildren } from 'react';
 import WindowExporter from '../../components/generic/WindowExporter';
 import { ComposerMode, DataExchangeFormat, ViewNavigationEvent } from '../../customTypes';
+import { LanguageProvider } from '../../i18next';
 import ApplicationInfoContextProvider from '../ApplicationContext';
 import ArchitectureInfoContextProvider from '../ArchitectureContext';
 import AssumptionLinksContextProvider from '../AssumptionLinksContext';
@@ -28,6 +29,7 @@ import MitigationPacksContextProvider from '../MitigationPacksContext';
 import MitigationsContextProvider from '../MitigationsContext';
 import ThreatPacksContextProvider from '../ThreatPacksContext';
 import ThreatsContextProvider from '../ThreatsContext';
+
 
 export interface WorkspaceContextAggregatorProps extends ViewNavigationEvent {
   workspaceId: string | null;
@@ -43,33 +45,37 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
   workspaceId,
 }) => {
   return (
-    <ThreatsContextProvider
-      workspaceId={workspaceId || null}
-    >
-      <MitigationsContextProvider workspaceId={workspaceId}>
-        <AssumptionsContextProvider workspaceId={workspaceId}>
-          <MitigationLinksContextProvider workspaceId={workspaceId}>
-            <AssumptionLinksContextProvider workspaceId={workspaceId}>
-              <ApplicationInfoContextProvider workspaceId={workspaceId}>
-                <ArchitectureInfoContextProvider workspaceId={workspaceId}>
-                  <DataflowInfoContextProvider workspaceId={workspaceId}>
-                    <ThreatPacksContextProvider workspaceId={workspaceId}>
-                      <MitigationPacksContextProvider workspaceId={workspaceId}>
-                        <CrossWorkspaceContextProvider>
-                          <WindowExporter>
-                            {children}
-                          </WindowExporter>
-                        </CrossWorkspaceContextProvider>
-                      </MitigationPacksContextProvider>
-                    </ThreatPacksContextProvider>
-                  </DataflowInfoContextProvider>
-                </ArchitectureInfoContextProvider>
-              </ApplicationInfoContextProvider>
-            </AssumptionLinksContextProvider>
-          </MitigationLinksContextProvider>
-        </AssumptionsContextProvider >
-      </MitigationsContextProvider>
-    </ThreatsContextProvider>
+    <Suspense fallback={<div>Loading Translations...</div>}>
+      <LanguageProvider>
+        <ThreatsContextProvider
+          workspaceId={workspaceId || null}
+        >
+          <MitigationsContextProvider workspaceId={workspaceId}>
+            <AssumptionsContextProvider workspaceId={workspaceId}>
+              <MitigationLinksContextProvider workspaceId={workspaceId}>
+                <AssumptionLinksContextProvider workspaceId={workspaceId}>
+                  <ApplicationInfoContextProvider workspaceId={workspaceId}>
+                    <ArchitectureInfoContextProvider workspaceId={workspaceId}>
+                      <DataflowInfoContextProvider workspaceId={workspaceId}>
+                        <ThreatPacksContextProvider workspaceId={workspaceId}>
+                          <MitigationPacksContextProvider workspaceId={workspaceId}>
+                            <CrossWorkspaceContextProvider>
+                              <WindowExporter>
+                                {children}
+                              </WindowExporter>
+                            </CrossWorkspaceContextProvider>
+                          </MitigationPacksContextProvider>
+                        </ThreatPacksContextProvider>
+                      </DataflowInfoContextProvider>
+                    </ArchitectureInfoContextProvider>
+                  </ApplicationInfoContextProvider>
+                </AssumptionLinksContextProvider>
+              </MitigationLinksContextProvider>
+            </AssumptionsContextProvider >
+          </MitigationsContextProvider>
+        </ThreatsContextProvider>
+      </LanguageProvider>
+    </Suspense>
   );
 };
 

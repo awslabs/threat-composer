@@ -15,6 +15,7 @@
  ******************************************************************************************************************** */
 import { useMemo } from 'react';
 import { EntityBase, MetadataCommentSchema } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import MarkdownEditor from '../MarkdownEditor';
 
 export interface CommentsEditProps<T> {
@@ -30,8 +31,9 @@ const CommentsEdit = <T extends EntityBase>({
     return (entity.metadata?.find(m => m.key === 'Comments')?.value as string) || '';
   }, [entity.metadata]);
 
+  const { t } = useReloadedTranslation();
   return (<MarkdownEditor
-    label='Comments'
+    label={t('Comments')}
     value={comments}
     onChange={(value) => onEditEntity(entity, 'Comments', value)}
     rows={3}

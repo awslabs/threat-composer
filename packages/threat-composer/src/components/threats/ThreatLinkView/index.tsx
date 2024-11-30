@@ -18,6 +18,7 @@ import ExpandableSection from '@cloudscape-design/components/expandable-section'
 import TokenGroup from '@cloudscape-design/components/token-group';
 import React, { FC, useMemo } from 'react';
 import { TemplateThreatStatement } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 
 export interface ThreatLinkProps {
   linkedThreatIds: string[];
@@ -47,7 +48,9 @@ const ThreatLinkComponent: FC<ThreatLinkProps> = ({
     return threats.filter(x => x.statement && x.statement.toLowerCase().indexOf(searchValue.toLowerCase()) >= 0);
   }, [searchValue, threatList, linkedThreatIds]);
 
-  return (<ExpandableSection headerText={`Linked threats (${linkedThreats.length})`}>
+  const { t } = useReloadedTranslation();
+
+  return (<ExpandableSection headerText={`${t('Linked threats')} (${linkedThreats.length})`}>
     <Autosuggest
       onChange={({ detail }) => setSearchValue(detail.value)}
       value={searchValue}
@@ -60,9 +63,9 @@ const ThreatLinkComponent: FC<ThreatLinkProps> = ({
         setSearchValue('');
       }}
       filteringType='manual'
-      enteredTextLabel={value => `Use: "${value}"`}
-      placeholder="Search threat"
-      empty="No matches found"
+      enteredTextLabel={value => `${t('Use')}: "${value}"`}
+      placeholder={t('Search threat')}
+      empty={t('No matches found')}
     />
     <div
       style={{
@@ -73,7 +76,7 @@ const ThreatLinkComponent: FC<ThreatLinkProps> = ({
         items={
           linkedThreats.map(x => ({
             label: x.statement,
-            dismissLabel: `Unlink threat ${x.numericId}`,
+            dismissLabel: `${t('Unlink threat')} ${x.numericId}`,
           }))
         }
         onDismiss={({ detail: { itemIndex } }) => {

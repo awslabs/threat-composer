@@ -13,19 +13,25 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { i18n } from 'i18next';
 import { DataExchangeFormat, TemplateThreatStatement } from '../../../../customTypes';
 import escapeMarkdown from '../../../../utils/escapeMarkdown';
+import { createHTMLbyDirection } from '../../../../utils/localization';
 import standardizeNumericId from '../../../../utils/standardizeNumericId';
 
 export const getAssetsContent = async (
   data: DataExchangeFormat,
+  t: i18n['t'],
+  defaultDir: string,
 ) => {
   const rows: string[] = [];
-  rows.push('## Impacted Assets');
+  const optT = t;
+
+  rows.push(`## ${optT('Impacted Assets')}`);
 
   rows.push('\n');
 
-  rows.push('| Assets Number | Asset | Related Threats |');
+  rows.push(`| ${optT('Assets Number')} | ${optT('Asset')} | ${optT('Related Threats')} |`);
   rows.push('| --- | --- | --- |');
 
   if (data.threats) {
@@ -33,23 +39,23 @@ export const getAssetsContent = async (
       [assetName: string]: TemplateThreatStatement[];
     } = {};
 
-    data.threats.forEach(t => t.impactedAssets?.forEach(ia => {
+    data.threats.forEach(tl => tl.impactedAssets?.forEach(ia => {
       if (!assetThreatMap[ia]) {
         assetThreatMap[ia] = [];
       }
 
-      assetThreatMap[ia].push(t);
+      assetThreatMap[ia].push(tl);
     }));
 
     const promises = Object.keys(assetThreatMap).map(async (at, index) => {
-      const atId = `AS-${standardizeNumericId(index + 1)}`;
+      const atId = createHTMLbyDirection(`AS-${standardizeNumericId(index + 1)})`, defaultDir);
 
-      const threatsContent = assetThreatMap[at].map(t => {
-        const threatId = `T-${standardizeNumericId(t.numericId)}`;
-        return `[**${threatId}**](#${threatId}): ${escapeMarkdown((t.statement || ''))}`;
-      }).join('<br/>');
+      const threatsContent = assetThreatMap[at].map(tl => {
+        const threatId = `T-${standardizeNumericId(tl.numericId)}`;
+        return `[**${threatId}**](#${threatId}): ${createHTMLbyDirection(escapeMarkdown((tl.statement || '')), defaultDir)}`;
+      }).map(tl => createHTMLbyDirection(tl!!, defaultDir)).join('<br/>');
 
-      return `| ${atId} | ${escapeMarkdown(at)} | ${threatsContent} |`;
+      return `| ${atId} | ${createHTMLbyDirection(escapeMarkdown(at), defaultDir)} | ${threatsContent} |`;
     });
 
     rows.push(...(await Promise.all(promises)));

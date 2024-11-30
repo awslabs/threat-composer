@@ -18,8 +18,10 @@ import ColumnLayout from '@cloudscape-design/components/column-layout';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useState, useCallback } from 'react';
+import LocalizationContainer from '../../../components/generic/LocalizationContainer';
 import { Assumption, AssumptionSchema } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
+import { useReloadedTranslation } from '../../../i18next';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import MetadataEditor from '../../generic/EntityMetadataEditor';
 import GenericCard from '../../generic/GenericCard';
@@ -62,51 +64,60 @@ const AssumptionCard: FC<AssumptionCardProps> = ({
   }, [assumption]);
 
   const handleMetadataEdit = useEditMetadata(onEdit);
+  const { t, i18n } = useReloadedTranslation();
 
-  return (<GenericCard
-    header={`Assumption ${assumption.numericId}`}
-    entityId={assumption.id}
-    tags={assumption.tags}
-    onCopy={() => onCopy?.(assumption.id)}
-    onRemove={() => onRemove?.(assumption.id)}
-    onEdit={() => setEditingMode(true)}
-    onAddTagToEntity={(_entityId, tag) => onAddTagToAssumption?.(assumption, tag)}
-    onRemoveTagFromEntity={(_entityId, tag) => onRemoveTagFromAssumption?.(assumption, tag)}
-  >
-    <SpaceBetween direction='vertical' size='s'>
-      <ColumnLayout columns={2}>
-        {editingMode ? (
-          <SpaceBetween direction='vertical' size='s'>
-            <Textarea
-              value={editingValue}
-              onChange={({ detail }) => setEditingValue(detail.value)}
-              validateData={AssumptionSchema.shape.content.safeParse}
-              singleLine
-            />
-            <SpaceBetween direction='horizontal' size='s'>
-              <Button onClick={handleCancel}>Cancel</Button>
-              <Button variant='primary' onClick={handleSave}>Save</Button>
+  return (
+    <LocalizationContainer i18next={i18n}>
+      <GenericCard
+        header={`${t('Assumption')} ${assumption.numericId}`}
+        entityId={assumption.id}
+        tags={assumption.tags}
+        onCopy={() => onCopy?.(assumption.id)}
+        onRemove={() => onRemove?.(assumption.id)}
+        onEdit={() => setEditingMode(true)}
+        onAddTagToEntity={(_entityId, tag) =>
+          onAddTagToAssumption?.(assumption, tag)
+        }
+        onRemoveTagFromEntity={(_entityId, tag) =>
+          onRemoveTagFromAssumption?.(assumption, tag)
+        }
+      >
+        <SpaceBetween direction="vertical" size="s">
+          <ColumnLayout columns={2}>
+            {editingMode ? (
+              <SpaceBetween direction="vertical" size="s">
+                <Textarea
+                  value={editingValue}
+                  onChange={({ detail }) => setEditingValue(detail.value)}
+                  validateData={AssumptionSchema.shape.content.safeParse}
+                  singleLine
+                />
+                <SpaceBetween direction="horizontal" size="s">
+                  <Button onClick={handleCancel}>{t('Cancel')}</Button>
+                  <Button variant="primary" onClick={handleSave}>
+                    {t('Save')}
+                  </Button>
+                </SpaceBetween>
+              </SpaceBetween>
+            ) : (
+              <TextContent>
+                <CopyToClipbord>{assumption.content || ''}</CopyToClipbord>
+              </TextContent>
+            )}
+            <SpaceBetween direction="vertical" size="s">
+              <AssumptionThreatLink assumptionId={assumption.id} />
+              <AssumptionMitigationLink assumptionId={assumption.id} />
             </SpaceBetween>
-          </SpaceBetween>) : (<TextContent>
-          <CopyToClipbord>
-            {assumption.content || ''}
-          </CopyToClipbord>
-        </TextContent>)}
-        <SpaceBetween direction='vertical' size='s'>
-          <AssumptionThreatLink
-            assumptionId={assumption.id}
+          </ColumnLayout>
+          <MetadataEditor
+            variant="default"
+            entity={assumption}
+            onEditEntity={handleMetadataEdit}
           />
-          <AssumptionMitigationLink
-            assumptionId={assumption.id} />
         </SpaceBetween>
-      </ColumnLayout>
-      <MetadataEditor
-        variant='default'
-        entity={assumption}
-        onEditEntity={handleMetadataEdit}
-      />
-    </SpaceBetween>
-  </GenericCard>);
+      </GenericCard>
+    </LocalizationContainer>
+  );
 };
 
 export default AssumptionCard;

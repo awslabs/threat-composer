@@ -16,6 +16,7 @@
 import { SelectProps } from '@cloudscape-design/components/select';
 import React, { FC, useMemo } from 'react';
 import { TemplateThreatStatement } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import LevelSelector from '../../generic/LevelSelector';
 
 export interface PriorityEditProps {
@@ -37,13 +38,14 @@ const PriorityEdit: FC<PriorityEditProps> = React.forwardRef<SelectProps.Ref, Pr
     return (editingStatement.metadata?.find(m => m.key === 'Priority')?.value as string) || undefined;
   }, [editingStatement.metadata]);
 
+  const { t } = useReloadedTranslation();
   return (
     <LevelSelector
       ref={ref}
       {...props}
       allowNoValue
-      placeholder='Select Priority'
-      label={showLabel ? 'Priority' : undefined}
+      placeholder={t('Select Priority')}
+      label={showLabel ? t('Priority') : undefined}
       selectedLevel={priority}
       setSelectedLevel={(selectedLevel) => onEditMetadata(editingStatement, 'Priority', selectedLevel)}
     />

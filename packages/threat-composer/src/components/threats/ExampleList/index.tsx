@@ -25,6 +25,7 @@ import { css } from '@emotion/react';
 import { useCallback, useMemo, useState } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { PerFieldExample } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import renderArrayField from '../../../utils/renderArrayField';
 import shuffle from '../../../utils/shuffle';
 
@@ -53,6 +54,8 @@ const ExampleList = <T extends string | PerFieldExample | string[]>({
   const [showFullExample, setShowFullExample] = useState(false);
   const { threatStatementExamples } = useThreatsContext();
   const [filterText, setFilterText] = useState('');
+
+  const { t } = useReloadedTranslation();
 
   const randomDislayList = useMemo(() => {
     let randomExamples = shuffle(examples);
@@ -124,14 +127,14 @@ const ExampleList = <T extends string | PerFieldExample | string[]>({
   return (<TextContent>
     <SpaceBetween direction='vertical' size='m'>
       <SpaceBetween direction='horizontal' size='m'>
-        <span>Examples:</span>
+        <span>{t('Examples')}:</span>
         {showFullExampleToggle &&
-          <Toggle checked={showFullExample} onChange={({ detail }) => setShowFullExample(detail.checked)}>Show full examples</Toggle>}
+          <Toggle checked={showFullExample} onChange={({ detail }) => setShowFullExample(detail.checked)}>{t('Show full examples')}</Toggle>}
       </SpaceBetween>
       {showSearch && <Grid gridDefinition={[
         { colspan: { default: 12, xxs: 6 } },
       ]}>
-        <Input value={filterText} onChange={({ detail }) => setFilterText(detail.value)} placeholder='Search examples' />
+        <Input value={filterText} onChange={({ detail }) => setFilterText(detail.value)} placeholder={t('Search examples')} />
       </Grid>}
       <ul>
         {randomDislayList.slice(0, showMoreExamples ? undefined : DEFAULT_NUM_DISPLAY).map((example, index) => (
@@ -142,7 +145,7 @@ const ExampleList = <T extends string | PerFieldExample | string[]>({
         iconName={showMoreExamples ? 'treeview-collapse' : 'treeview-expand'}
         onClick={() => setShowMoreExamples(prev => !prev)}
         variant='link'>
-        {showMoreExamples ? 'Show less examples' : 'Show more examples'}
+        {showMoreExamples ? t('Show less examples') : t('Show more examples')}
       </Button>)}
     </SpaceBetween>
   </TextContent>);

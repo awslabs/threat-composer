@@ -21,7 +21,11 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo } from 'react';
 import { useThreatPacksContext } from '../../../contexts/ThreatPacksContext';
 import { ThreatPack } from '../../../customTypes/referencePacks';
+import { useReloadedTranslation } from '../../../i18next';
+import AutoDirectionContainer from '../../generic/AutoDirectionContainer';
+import LocalizationContainer from '../../generic/LocalizationContainer';
 import Table, { ColumnDefinition } from '../../generic/Table';
+
 
 export interface ThreatPacksProps {
   onThreatPackLinkClicked?: (id: string) => void;
@@ -31,49 +35,50 @@ const ThreatPacks: FC<ThreatPacksProps> = ({
   onThreatPackLinkClicked,
 }) => {
   const { threatPackUsage, threatPacks } = useThreatPacksContext();
+  const { t, i18n } = useReloadedTranslation();
 
   const colDef: ColumnDefinition<ThreatPack>[] = useMemo(() => [
     {
       id: 'id',
       minWidth: 150,
-      header: 'Id',
-      cell: (data) => <Button variant="inline-link" onClick={() => onThreatPackLinkClicked?.(data.id)}>{data.id}</Button>,
+      header: t('Id'),
+      cell: (data) => <AutoDirectionContainer value={data.id}><Button variant="inline-link" onClick={() => onThreatPackLinkClicked?.(data.id)}>{data.id}</Button></AutoDirectionContainer>,
       sortingField: 'id',
       isRowHeader: true,
     },
     {
       id: 'name',
       minWidth: 120,
-      header: 'Name',
-      cell: (data) => data.name,
+      header: t('Name'),
+      cell: (data) => <AutoDirectionContainer value={data.name}>{data.name}</AutoDirectionContainer>,
       sortingField: 'name',
     },
     {
       id: 'description',
       minWidth: 200,
-      header: 'Description',
-      cell: (data) => <Box>{data.description}</Box>,
+      header: t('Description'),
+      cell: (data) => <AutoDirectionContainer value={data.description}><Box>{data.description}</Box></AutoDirectionContainer>,
       sortingField: 'description',
     },
     {
       id: 'countThreats',
-      header: 'Total threats',
+      header: t('Total threats'),
       cell: (data) => data.threats?.length,
     },
     {
       id: 'countReferencedThreats',
-      header: 'Referenced threats',
+      header: t('Referenced threats'),
       cell: (data) => (threatPackUsage[data.id] && Object.keys(threatPackUsage[data.id]).length) || 0,
     },
   ], [threatPackUsage, onThreatPackLinkClicked]);
 
-  return (<ContentLayout
+  return (<LocalizationContainer i18next={i18n}><ContentLayout
     header={<Header
       variant="h2"
-      description="Allow you to quickly find and add bulk or selected threat statements to your current workspace"
+      description={t('Allow you to quickly find and add bulk or selected threat statements to your current workspace')}
       counter={`(${threatPacks.length})`}
     >
-      Threat Packs
+      {t('Threat Packs')}
     </Header>
     }>
     <SpaceBetween direction='vertical' size='s'>
@@ -82,7 +87,8 @@ const ThreatPacks: FC<ThreatPacksProps> = ({
         items={threatPacks}
         disableRowSelect={true}
       /></SpaceBetween>
-  </ContentLayout>);
+  </ContentLayout>
+  </LocalizationContainer>);
 };
 
 export default ThreatPacks;

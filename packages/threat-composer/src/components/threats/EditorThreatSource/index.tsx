@@ -21,6 +21,7 @@ import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useCallback, useEffect, useRef, forwardRef } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { TemplateThreatStatementSchema } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import Input from '../../generic/Input';
 import EditorLayout from '../EditorLayout';
 import styles from '../EditorLayout/styles';
@@ -44,9 +45,11 @@ const EditorThreatSource: FC<EditorProps> = forwardRef<InputProps.Ref, EditorPro
     }));
   }, [setStatement]);
 
+  const { t } = useReloadedTranslation();
+
   return (<EditorLayout
-    title={fieldData.displayTitle}
-    description={fieldData.description}
+    title={t(fieldData.displayTitle)}
+    description={t(fieldData.description)}
   >
     <div css={styles.textEditorLayout}>
       <div css={styles.input}>
@@ -55,7 +58,7 @@ const EditorThreatSource: FC<EditorProps> = forwardRef<InputProps.Ref, EditorPro
           spellcheck
           onChange={({ detail }) => handleChange(detail.value)}
           value={statement.threatSource || ''}
-          placeholder='Enter threat source'
+          placeholder={t('Enter threat source')}
           validateData={TemplateThreatStatementSchema.shape.threatSource.safeParse}
           stretch
         />
@@ -68,7 +71,7 @@ const EditorThreatSource: FC<EditorProps> = forwardRef<InputProps.Ref, EditorPro
       {perFieldExamples.threat_source.length > 0 &&
         <ExampleList examples={perFieldExamples.threat_source} onSelect={handleChange} showSearch={false}></ExampleList>}
       {previousInputs.threat_source.length > 0 && <TextContent>
-        <span>From previous input</span>
+        <span>{t('From previous input')}</span>
         <ul>
           {previousInputs.threat_source.map((threatSource, index) => (<li key={index}><Button variant='link' onClick={() => handleChange(threatSource)}>{threatSource}</Button></li>))}
         </ul>

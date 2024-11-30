@@ -13,11 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { useReloadedTranslation } from '@aws/threat-composer';
+import { I18nProvider } from '@cloudscape-design/components/i18n';
+import messages from '@cloudscape-design/components/i18n/messages/all.all';
 import { FC } from 'react';
 import Full from './components/Full';
 import Standalone from './components/Standalone';
 import getComposerMode from '../../utils/getComposerMode';
-
 
 /**
  * Demo app for threat-composer
@@ -26,10 +28,17 @@ const App: FC = () => {
   const composerMode = getComposerMode();
 
   console.log('App-ComposerMode', composerMode);
-
-  return (composerMode === 'ThreatsOnly' || composerMode === 'EditorOnly') ? (
-    <Standalone composeMode={composerMode} />
-  ) : (<Full />);
+  const { i18n } = useReloadedTranslation();
+  console.log('LANG', i18n.language);
+  return (
+    <I18nProvider locale={i18n.language} messages={[messages]}>
+      {composerMode === 'ThreatsOnly' || composerMode === 'EditorOnly' ? (
+        <Standalone composeMode={composerMode} />
+      ) : (
+        <Full />
+      )}
+    </I18nProvider>
+  );
 };
 
 export default App;

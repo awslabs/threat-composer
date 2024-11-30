@@ -27,6 +27,8 @@ import {
   DEFAULT_PAGE_SIZE_OPTIONS,
 } from './config';
 import { TableProps } from './types';
+import { useReloadedTranslation } from '../../../i18next';
+import LocalizationContainer from '../../generic/LocalizationContainer';
 
 /**
  * A table presents data in a two-dimensional format, arranged in columns and rows in a rectangular form.
@@ -38,18 +40,19 @@ const Table: FC<TableProps> = ({ disableSettings, preferences: collectionPrefere
     wrapLines: true,
     stripedRows: true,
   });
+  const { t, i18n } = useReloadedTranslation();
 
   const visibleContentOptions = useMemo(() => {
     return [
       {
-        label: 'Main properties',
+        label: t('Main properties'),
         options: props.columnDefinitions.map((cd) => ({
           id: cd.id || '',
           label: (typeof cd.header === 'string' ? cd.header : cd.id) || '',
         })),
       },
     ];
-  }, [props.columnDefinitions]);
+  }, [t, i18n, i18n.language, props.columnDefinitions]);
 
   const handlePreferenceChange: NonCancelableEventHandler<CollectionPreferencesProps.Preferences<any>> = useCallback(
     ({ detail }) => {
@@ -68,32 +71,37 @@ const Table: FC<TableProps> = ({ disableSettings, preferences: collectionPrefere
     }
 
     return (
-      <CollectionPreferences
-        title={DEFAULT_COLLECTION_PREFERENCES_TITLE}
-        confirmLabel={DEFAULT_COLLECTION_PREFERENCES_CONFRIM_LABEL}
-        cancelLabel={DEFAULT_COLLECTION_PREFERENCES_CANCEL_LABEL}
-        pageSizePreference={{
-          title: 'Page size',
-          options: DEFAULT_PAGE_SIZE_OPTIONS,
-        }}
-        wrapLinesPreference={{
-          label: 'Wrap lines',
-          description: 'Check to see all the text and wrap the lines',
-        }}
-        stripedRowsPreference={{
-          label: 'Striped rows',
-          description: 'Check to add alternating shaded rows',
-        }}
-        visibleContentPreference={{
-          title: 'Select visible columns',
-          options: visibleContentOptions,
-        }}
-        preferences={preferences}
-        onConfirm={handlePreferenceChange}
-        {...props.collectionPreferencesProps}
-      />
+      <LocalizationContainer i18next={i18n}>
+        <CollectionPreferences
+          title={t(DEFAULT_COLLECTION_PREFERENCES_TITLE)}
+          confirmLabel={t(DEFAULT_COLLECTION_PREFERENCES_CONFRIM_LABEL)}
+          cancelLabel={t(DEFAULT_COLLECTION_PREFERENCES_CANCEL_LABEL) }
+          pageSizePreference={{
+            title: t('Page size'),
+            options: DEFAULT_PAGE_SIZE_OPTIONS.map(item => {return { value: item.value, label: `${item.value} ${t('rows')}` };}),
+          }}
+          wrapLinesPreference={{
+            label: t('Wrap lines'),
+            description: t('Check to see all the text and wrap the lines'),
+          }}
+          stripedRowsPreference={{
+            label: t('Striped rows'),
+            description: t('Check to add alternating shaded rows'),
+          }}
+          visibleContentPreference={{
+            title: t('Select visible columns'),
+            options: visibleContentOptions,
+          }}
+          preferences={preferences}
+          onConfirm={handlePreferenceChange}
+          {...props.collectionPreferencesProps}
+        />
+      </LocalizationContainer>
     );
   }, [
+    t,
+    i18n,
+    i18n.language,
     disableSettings,
     preferences,
     props.collectionPreferencesProps,

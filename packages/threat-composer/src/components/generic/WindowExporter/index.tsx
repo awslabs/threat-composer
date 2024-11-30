@@ -17,6 +17,7 @@ import { useCallback, FC, PropsWithChildren, useEffect } from 'react';
 import { useWorkspacesContext } from '../../../contexts';
 import useExportImport, { PLACEHOLDER_EXCHANGE_DATA } from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
+import { useReloadedTranslation } from '../../../i18next';
 import convertToMarkdown from '../../../utils/convertToMarkdown';
 
 /**
@@ -32,7 +33,7 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({ children }) => {
     renameWorkspace,
   } = useWorkspacesContext();
   const { deleteWorkspace } = useRemoveData();
-
+  const { t, i18n } = useReloadedTranslation();
   const setWorkspaceData = useCallback(
     async (data: any) => {
       const parsedData = parseImportedData(data || PLACEHOLDER_EXCHANGE_DATA);
@@ -42,7 +43,7 @@ const WindowExporter: FC<PropsWithChildren<{}>> = ({ children }) => {
   );
 
   const getCurrentWorkspaceDataMarkdown = useCallback(async () => {
-    return convertToMarkdown(getWorkspaceData());
+    return convertToMarkdown(getWorkspaceData(), undefined, t, i18n.dir(i18n.language));
   }, [getWorkspaceData]);
 
 

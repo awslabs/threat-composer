@@ -23,6 +23,7 @@ import { FC, useState, useMemo, useCallback, useImperativeHandle, forwardRef } f
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { TemplateThreatStatement } from '../../../customTypes';
 import STRIDE from '../../../data/stride';
+import { useReloadedTranslation } from '../../../i18next';
 import intersectArrays from '../../../utils/intersectArrays';
 import shuffle from '../../../utils/shuffle';
 
@@ -134,9 +135,11 @@ const FullExamples: FC<FullExamplesProps & { ref?: React.LegacyRef<any> }> = for
     ];
   }, []);
 
+  const { t } = useReloadedTranslation();
+
   return (
     <ExpandableSection
-      headerText="Full examples"
+      headerText={t('Full examples')}
       expanded={expanded}
       onChange={({ detail }) => setExpanded(detail.expanded)}
     >
@@ -149,7 +152,7 @@ const FullExamples: FC<FullExamplesProps & { ref?: React.LegacyRef<any> }> = for
               filteringAriaLabel: 'your choice',
               dismissAriaLabel: 'Dismiss',
               filteringPlaceholder:
-                'Filter examples by metadata or content',
+                t('Filter examples by metadata or content'),
               groupValuesText: 'Values',
               groupPropertiesText: 'Properties',
               operatorsText: 'Operators',

@@ -16,6 +16,7 @@
 import Container from '@cloudscape-design/components/container';
 import { FC } from 'react';
 import { ThreatPack } from '../../../../../customTypes';
+import AutoDirectionContainer from '../../../../generic/AutoDirectionContainer';
 
 export interface GeneralInfoProps {
   threatPack: ThreatPack;
@@ -24,9 +25,12 @@ export interface GeneralInfoProps {
 const GeneralInfo: FC<GeneralInfoProps> = ({
   threatPack,
 }) => {
-  return (<Container>
-    {threatPack.description}
-  </Container>);
+  return (
+    <AutoDirectionContainer value={threatPack.description}>
+      <Container>
+        {threatPack.description}
+      </Container>
+    </AutoDirectionContainer>);
 };
 
 export default GeneralInfo;

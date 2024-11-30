@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { useMemo } from 'react';
 import { TemplateThreatStatement } from '../../../../customTypes';
-import threatStatementExamplesData from '../../../../data/threatStatementExamples.json';
+import { useReloadedTranslation } from '../../../../i18next';
 import renderThreatStatement from '../../../../utils/renderThreatStatement';
 import { PerFieldExamplesType, DEFAULT_PER_FIELD_EXAMPLES } from '../../context';
 import {
@@ -28,19 +28,21 @@ import {
 const useThreatExamples = (
   statementList: TemplateThreatStatement[],
 ) => {
-  const threatStatementExamples = useMemo(() => {
-    return threatStatementExamplesData.map(e => {
-      const { statement, displayedStatement } = renderThreatStatement(e);
+  const { t, i18n } = useReloadedTranslation();
+
+  const threatStatementExamples: TemplateThreatStatement[] = useMemo(() => {
+    return (t('THREAT_STATEMENT_EXAMPLE_DATA', { returnObjects: true }) as TemplateThreatStatement[]).map(e => {
+      const { statement, displayedStatement } = renderThreatStatement(e, t);
       return {
         ...e,
         statement,
         displayedStatement,
       };
     });
-  }, []);
+  }, [t, i18n, i18n.language]);
 
   const perFieldExamples: PerFieldExamplesType = useMemo(() => {
-    return (threatStatementExamples as TemplateThreatStatement[]).reduce((agg: PerFieldExamplesType, st: TemplateThreatStatement, index: number) => {
+    return threatStatementExamples.reduce((agg: PerFieldExamplesType, st: TemplateThreatStatement, index: number) => {
       return {
         threat_source: addNewValueToStringArray(agg.threat_source, st.threatSource),
         prerequisites: addNewValueToPerFieldExampleArray(agg.prerequisites, 'prerequisites', st, index),
@@ -50,7 +52,7 @@ const useThreatExamples = (
         impacted_assets: addNewValueArrayToStringArray(agg.impacted_assets, st.impactedAssets),
       };
     }, DEFAULT_PER_FIELD_EXAMPLES);
-  }, [threatStatementExamples]);
+  }, [t, threatStatementExamples]);
 
   const previousInputs: PerFieldExamplesType = useMemo(() => {
     return statementList
@@ -65,7 +67,7 @@ const useThreatExamples = (
           impacted_assets: addNewValueArrayToStringArray(agg.impacted_assets, st.impactedAssets),
         };
       }, DEFAULT_PER_FIELD_EXAMPLES);
-  }, [statementList]);
+  }, [t, statementList]);
 
   return {
     threatStatementExamples,

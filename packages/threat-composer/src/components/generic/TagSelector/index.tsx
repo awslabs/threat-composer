@@ -15,6 +15,7 @@
  ******************************************************************************************************************** */
 import Multiselect from '@cloudscape-design/components/multiselect';
 import React, { FC, useMemo } from 'react';
+import { useReloadedTranslation } from '../../../i18next';
 
 export interface TagSelectorProps {
   allTags: string[];
@@ -27,6 +28,8 @@ const TagSelector: FC<TagSelectorProps> = ({
   selectedTags,
   setSelectedTags,
 }) => {
+  const { t } = useReloadedTranslation();
+
   const sortedTags = useMemo(() => {
     return allTags.sort((a, b) => {
       return a.toLowerCase().localeCompare(b.toLowerCase());
@@ -42,14 +45,14 @@ const TagSelector: FC<TagSelectorProps> = ({
     onChange={({ detail }) =>
       setSelectedTags(detail.selectedOptions?.map(o => o.value || '') || [])
     }
-    deselectAriaLabel={e => `Remove ${e.label}`}
+    deselectAriaLabel={e => `${t('Remove')} ${e.label}`}
     options={sortedTags.map(g => ({
       label: g,
       value: g,
     }))}
     filteringType="auto"
-    placeholder="Filtered by tags"
-    selectedAriaLabel="Selected"
+    placeholder={t('Filtered by tags')}
+    selectedAriaLabel={t('Selected')}
   />);
 };
 

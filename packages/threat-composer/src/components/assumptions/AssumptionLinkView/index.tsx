@@ -18,6 +18,7 @@ import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/co
 import TokenGroup from '@cloudscape-design/components/token-group';
 import React, { FC, useMemo } from 'react';
 import { Assumption } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 
 export interface AssumptionLinkProps {
   variant?: ExpandableSectionProps['variant'];
@@ -50,10 +51,12 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
     return assumptions.filter(x => (x.content.toLowerCase().indexOf(searchValue.toLowerCase()) >= 0));
   }, [searchValue, assumptionList, linkedAssumptionIds]);
 
+  const { t } = useReloadedTranslation();
+
   return (<ExpandableSection
     variant={variant}
     headingTagOverride={variant === 'container' ? 'h3' : undefined}
-    headerText={`Linked assumptions (${linkedAssumptions.length})`}>
+    headerText={`${t('Linked assumptions')} (${linkedAssumptions.length})`}>
     <Autosuggest
       onChange={({ detail }) => setSearchValue(detail.value)}
       value={searchValue}
@@ -66,15 +69,15 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
         setSearchValue('');
       }}
       filteringType='manual'
-      enteredTextLabel={value => `Add new assumption: "${value}"`}
-      placeholder="Search assumption"
-      empty="No matches found"
+      enteredTextLabel={value => `${t('Add new assumption')}: "${value}"`}
+      placeholder={t('Search assumption')}
+      empty={t('No matches found')}
     />
     <TokenGroup
       items={
         linkedAssumptions.map(x => ({
           label: x.content,
-          dismissLabel: `Unlink assumption ${x.numericId}`,
+          dismissLabel: `${t('Unlink assumption')} ${x.numericId}`,
         }))
       }
       onDismiss={({ detail: { itemIndex } }) => {

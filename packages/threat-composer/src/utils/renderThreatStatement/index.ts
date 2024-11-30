@@ -13,23 +13,26 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement, threatFieldTypeMapping, ThreatFieldTypes, ThreatStatementDisplayToken } from '../../customTypes';
+import i18next from 'i18next';
+import { TemplateThreatStatement, threatFieldTypeMapping, ThreatFieldTypes, ThreatStatementDisplayToken, ThreatStatementFormat } from '../../customTypes';
+import threatStatementFormat from '../../data/localization/en/threatStatementFormat';
 import threatFieldData from '../../data/threatFieldData';
-import threatStatementFormat from '../../data/threatStatementFormat';
+// import { useReloadedTranslation } from '../../i18next';
 import calculateFieldCombination from '../calculateFieldCombination';
 import getFieldContentByToken from '../getFieldContentByToken';
 import parseThreatStatement from '../parseThreatStatement';
 
-const threatStatementFormatKeys = Object.keys(threatStatementFormat);
+const threatStatementFormatKeys = Object.keys(threatStatementFormat as ThreatStatementFormat);
 
 export const PLACEHOLDER = '<placeholder>';
 
-const renderThreatStatement = (statement: TemplateThreatStatement): {
+const renderThreatStatement = (statement: TemplateThreatStatement, t?: typeof i18next.t): {
   statement: string;
   displayedStatement?: (ThreatStatementDisplayToken | string)[];
   suggestions: string[];
 } => {
   const { fieldCombination, filledField } = calculateFieldCombination(statement);
+  const optT = t ? t : (s: string): string => s;
 
   // No field is filled
   if (fieldCombination === 0) {
@@ -46,7 +49,7 @@ const renderThreatStatement = (statement: TemplateThreatStatement): {
     const content = statement[threatFieldTypeMapping[token]];
     if (content !== '' && typeof content === 'string' && content.split(' ').length === 1) {
       suggestions.push(
-        `[${token}] Looks like your ${token} is a single word, consider being more descriptive`,
+        `[${token}] ${optT('Looks like your')} ${optT(token)} ${optT('is a single word, consider being more descriptive')}`,
       );
     }
   });
@@ -71,22 +74,22 @@ const renderThreatStatement = (statement: TemplateThreatStatement): {
   // Multiple fields are filled
   if (!statement.threatSource) {
     suggestions.push(
-      '[threat_source] Consider specifying who or what is the source of the threat',
+      `[threat_source] ${optT('Consider specifying who or what is the source of the threat')}`,
     );
   }
 
   if (!statement.prerequisites) {
     suggestions.push(
-      '[prerequisites] Consider what conditions or requirement that must be met in order for a threat sources actions to be viable',
+      `[prerequisites] ${optT('Consider what conditions or requirement that must be met in order for a threat sources actions to be viable')}`,
     );
     suggestions.push(
-      '[prerequisites] No prerequisites this is often a sign you can decompose into multiple threat statements that have different prerequisites',
+      `[prerequisites] ${optT('No prerequisites this is often a sign you can decompose into multiple threat statements that have different prerequisites')}`,
     );
   }
 
   if (!statement.threatAction) {
     suggestions.push(
-      '[threat_action] Consider what actions are being performed by, or related to the threat source. Knowing this is required in order to mitigate the threat',
+      `[threat_action] ${optT('Consider what actions are being performed by, or related to the threat source. Knowing this is required in order to mitigate the threat')}`,
     );
   }
 
@@ -102,7 +105,11 @@ const renderThreatStatement = (statement: TemplateThreatStatement): {
   let format = null;
 
   if (threatStatementFormatKeys.includes(updatedFieldCombination.toString())) {
-    format = threatStatementFormat[updatedFieldCombination];
+    if (t) {
+      format = (t('THREAT_STATEMENT_FORMAT', { returnObjects: true }) as ThreatStatementFormat)[updatedFieldCombination];
+    } else {
+      format = threatStatementFormat[updatedFieldCombination];
+    }
   }
 
   suggestions.push(...format?.suggestions || []);
