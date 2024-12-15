@@ -75,7 +75,7 @@ The tool supports the export of data out of the browser local storage to a local
 
 ### Network accessibility
 
-By default the [WebACL](https://docs.aws.amazon.com/waf/latest/developerguide/web-acl.html) associated with the CloudFront distribution is configured to only allow `192.160.0.0/24` (non-routable networks) to reach the static assets. You’d need to modify the configuration of the CDK application to ensure that you are able to scope access to your network(s) (see ‘Configuration’ section).
+By default the [WebACL](https://docs.aws.amazon.com/waf/latest/developerguide/web-acl.html) associated with the CloudFront distribution is configured to only allow `192.168.0.0/24` (non-routable networks) to reach the static assets. You’d need to modify the configuration of the CDK application to ensure that you are able to scope access to your network(s) (see ‘Configuration’ section).
 
 ### Authentication
 
