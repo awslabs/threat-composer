@@ -37,6 +37,8 @@ const WORKSPACE_EXAMPLE_FILE = path.join(
   "workspaceExamples.ts"
 );
 
+const WORKSPACE_EXPORT_PREFIX = "ThreatComposer_Workspace_";
+
 type DataType = "ThreatPack" | "MitigationPack" | "WorkspaceExample";
 
 const CONFIG_DATA_FOLDER = {
@@ -90,7 +92,11 @@ const injectDataEntry = (
       `${fileNames
         .map((fn) => {
           if (dataType === "WorkspaceExample") {
-            return `{ name: '${fn}', value: ${fn}, },`;
+            const name = fn
+              .replace(WORKSPACE_EXPORT_PREFIX, "")
+              .replace(/[_]+/gm, " ");
+
+            return `{ name: '${name}', value: ${fn}, },`;
           }
 
           return `${fn},`;
