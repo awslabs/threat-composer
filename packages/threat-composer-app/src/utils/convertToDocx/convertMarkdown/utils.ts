@@ -13,6 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { getTextDirection } from '@aws/threat-composer';
+
 export const unreachable = (_: never): never => {
   throw new Error('unreachable');
 };
@@ -22,4 +24,10 @@ export const unreachable = (_: never): never => {
  */
 export function invariant(cond: any, message: string): asserts cond {
   if (!cond) throw new Error(message);
+}
+
+export function bidirectionalOfText(text: string, defaultDir: boolean): boolean {
+  const dir = getTextDirection(text);
+  console.log('bid', text, dir, defaultDir);
+  return dir === 'rtl' || (dir === 'auto' && defaultDir);
 }

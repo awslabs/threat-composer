@@ -23,6 +23,7 @@ import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { FC, PropsWithChildren, useMemo, useRef, ReactNode, useState } from 'react';
 import Tags from './components/Tags';
+import { useReloadedTranslation } from '../../../i18next';
 import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
 import Tooltip from '../Tooltip';
 
@@ -45,20 +46,20 @@ const styles = {
     alignItems: 'center',
     [getMobileMediaQuery()]: {
       display: 'block',
-      marginTop: awsui.spaceScaledS,
+      marginBlockStart: awsui.spaceScaledS,
     },
   }),
   tags: css({
-    marginRight: awsui.spaceScaledS,
-    marginLeft: awsui.spaceScaledS,
+    marginInlineEnd: awsui.spaceScaledS,
+    marginInlineStart: awsui.spaceScaledS,
     [getMobileMediaQuery()]: {
-      marginLeft: '0px',
+      marginInlineStart: '0px',
     },
   }),
   info: css({
-    marginLeft: awsui.spaceScaledS,
+    marginInlineStart: awsui.spaceScaledS,
     [getMobileMediaQuery()]: {
-      marginLeft: '0px',
+      marginInlineStart: '0px',
     },
   }),
 };
@@ -78,10 +79,12 @@ const GenericCard: FC<PropsWithChildren<GenericCardProps>> = ({
   const ref = useRef<any>(null);
   const [removeDialogVisible, setRemoveDialogVisible] = useState(false);
 
+  const { t } = useReloadedTranslation();
+
   const actions = useMemo(() => {
     return (<SpaceBetween direction='horizontal' size='s'>
-      {onRemove && <Tooltip tooltip='Remove From Workspace'><Button onClick={() => setRemoveDialogVisible(true)} variant='icon' iconName='remove' /></Tooltip>}
-      {onEdit && <Tooltip tooltip='Edit'><Button onClick={() => onEdit?.(entityId)} variant='icon' iconName='edit' /></Tooltip>}
+      {onRemove && <Tooltip tooltip={t('Remove From Workspace')}><Button onClick={() => setRemoveDialogVisible(true)} variant='icon' iconName='remove' /></Tooltip>}
+      {onEdit && <Tooltip tooltip={t('Edit')}><Button onClick={() => onEdit?.(entityId)} variant='icon' iconName='edit' /></Tooltip>}
       {moreActions}
     </SpaceBetween>);
   }, [onRemove, onEdit, entityId]);
@@ -108,7 +111,7 @@ const GenericCard: FC<PropsWithChildren<GenericCardProps>> = ({
       visible={removeDialogVisible}
       onCancelClicked={() => setRemoveDialogVisible(false)}
       onDeleteClicked={() => onRemove?.(entityId)}
-      deleteButtonText='Remove'
+      deleteButtonText={t('Remove')}
     ></DeleteConfirmationDialog>}
   </div>);
 };

@@ -14,6 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 export const DEFAULT_WORKSPACE_ID = 'default';
+export const DEFAULT_WORKSPACE_LANGUAGE = 'en';
 export const DEFAULT_WORKSPACE_LABEL = 'Default';
 export const DEFAULT_NEW_ENTITY_ID = 'new';
 

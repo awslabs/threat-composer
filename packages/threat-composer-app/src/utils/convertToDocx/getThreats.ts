@@ -15,19 +15,22 @@
  ******************************************************************************************************************** */
 import { AssumptionLink, DataExchangeFormat, MitigationLink, TemplateThreatStatement, standardizeNumericId, threatStatus, STATUS_NOT_SET } from '@aws/threat-composer';
 import { Paragraph, HeadingLevel, TextRun, TableRow, TableCell } from 'docx';
+import { i18n } from 'i18next';
 import Table from './components/Table';
+import { bidirectionalOfText } from './convertMarkdown/utils';
 import getAnchorLink from './getAnchorLink';
 import getBookmark from './getBookmark';
 import getHeaderRow from './getHeaderRow';
 import renderComment from './renderComments';
 
-const getAssumptionLinksCell = (assumptionLinks: AssumptionLink[], data: DataExchangeFormat) => {
+const getAssumptionLinksCell = (assumptionLinks: AssumptionLink[], data: DataExchangeFormat, defaultDir: boolean) => {
   return new TableCell({
     children: assumptionLinks.map(al => {
       const assumption = data.assumptions?.find(m => m.id === al.assumptionId);
       if (assumption) {
         const assumptionId = `A-${standardizeNumericId(assumption.numericId)}`;
         return new Paragraph({
+          bidirectional: bidirectionalOfText(assumptionId+assumption.content, defaultDir),
           children: [
             getAnchorLink(assumptionId),
             new TextRun(' '),
@@ -40,13 +43,14 @@ const getAssumptionLinksCell = (assumptionLinks: AssumptionLink[], data: DataExc
   });
 };
 
-const getMitigationLinksCell = (mitigationLinks: MitigationLink[], data: DataExchangeFormat) => {
+const getMitigationLinksCell = (mitigationLinks: MitigationLink[], data: DataExchangeFormat, defaultDir:boolean) => {
   return new TableCell({
     children: mitigationLinks.map(ml => {
       const mitigation = data.mitigations?.find(m => m.id === ml.mitigationId);
       if (mitigation) {
         const mitigationId = `M-${standardizeNumericId(mitigation.numericId)}`;
         return new Paragraph({
+          bidirectional: bidirectionalOfText(mitigationId+mitigation.content, defaultDir),
           children: [
             getAnchorLink(mitigationId),
             new TextRun(' '),
@@ -59,11 +63,11 @@ const getMitigationLinksCell = (mitigationLinks: MitigationLink[], data: DataExc
   });
 };
 
-const getDataRow = async (threat: TemplateThreatStatement, data: DataExchangeFormat) => {
+const getDataRow = async (threat: TemplateThreatStatement, data: DataExchangeFormat, defaultDir: boolean) => {
   const mitigationLinks = data.mitigationLinks?.filter(ml => ml.linkedId === threat.id) || [];
   const assumptionLinks = data.assumptionLinks?.filter(al => al.linkedId === threat.id) || [];
   const threatId = `T-${standardizeNumericId(threat.numericId)}`;
-  const comments = await renderComment(threat.metadata);
+  const comments = await renderComment(threat.metadata, defaultDir);
   const status = (threat.status && threatStatus.find(x => x.value === threat.status)?.label) || STATUS_NOT_SET;
   const priority = threat.metadata?.find(m => m.key === 'Priority')?.value as string || '';
   const STRIDE = ((threat.metadata?.find(m => m.key === 'STRIDE')?.value || []) as string[]).join(', ');
@@ -72,21 +76,31 @@ const getDataRow = async (threat: TemplateThreatStatement, data: DataExchangeFor
     children: [
       new TableCell({
         children: [new Paragraph({
+          bidirectional: bidirectionalOfText(threatId, defaultDir),
           children: [
             getBookmark(threatId),
           ],
         })],
       }),
       new TableCell({
-        children: [new Paragraph(threat.statement || '')],
+        children: [new Paragraph({
+          bidirectional: bidirectionalOfText(threat.statement || '', defaultDir),
+          text: threat.statement || '',
+        })],
       }),
-      getMitigationLinksCell(mitigationLinks, data),
-      getAssumptionLinksCell(assumptionLinks, data),
+      getMitigationLinksCell(mitigationLinks, data, defaultDir),
+      getAssumptionLinksCell(assumptionLinks, data, defaultDir),
       new TableCell({
-        children: [new Paragraph(status)],
+        children: [new Paragraph({
+          bidirectional: bidirectionalOfText(status, defaultDir),
+          text: status,
+        })],
       }),
       new TableCell({
-        children: [new Paragraph(priority)],
+        children: [new Paragraph({
+          bidirectional: bidirectionalOfText(priority, defaultDir),
+          text: priority,
+        })],
       }),
       new TableCell({
         children: [new Paragraph(STRIDE)],
@@ -100,31 +114,36 @@ const getDataRow = async (threat: TemplateThreatStatement, data: DataExchangeFor
   return tableRow;
 };
 
-const getDataRows = async (data: DataExchangeFormat) => {
-  const promises = data.threats?.map(async (x) => getDataRow(x, data)) || [];
+const getDataRows = async (data: DataExchangeFormat, defaultDir: boolean) => {
+  const promises = data.threats?.map(async (x) => getDataRow(x, data, defaultDir)) || [];
   return Promise.all(promises);
 };
 
 const getThreats = async (
   data: DataExchangeFormat,
   threatsOnly = false,
+  defaultDir: boolean = false,
+  t?: i18n['t'],
 ) => {
   const children: any[] = [];
+  const translate = ((s: string): string => t ? t(s) : s);
 
   children.push(new Paragraph({
+    bidirectional: defaultDir,
     heading: HeadingLevel.HEADING_1,
     children: [
-      new TextRun('Threats'),
+      new TextRun(translate('Threats')),
     ],
   }));
 
-  const dataRows = await getDataRows(data);
+  const dataRows = await getDataRows(data, defaultDir);
 
   const table = new Table({
+    visuallyRightToLeft: defaultDir,
     rows: [
       getHeaderRow(
-        threatsOnly ? ['Threat Number', 'Threat', 'Status', 'Priority', 'STRIDE', 'Comments']
-          : ['Threat Number', 'Threat', 'Mitigations', 'Assumptions', 'Status', 'Priority', 'STRIDE', 'Comments']),
+        (threatsOnly ? ['Threat Number', 'Threat', 'Status', 'Priority', 'STRIDE', 'Comments']
+          : ['Threat Number', 'Threat', 'Mitigations', 'Assumptions', 'Status', 'Priority', 'STRIDE', 'Comments']).map(translate)),
       ...dataRows,
     ],
   });

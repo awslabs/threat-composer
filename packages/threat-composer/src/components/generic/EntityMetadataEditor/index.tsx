@@ -17,6 +17,7 @@
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
 import Grid from '@cloudscape-design/components/grid';
 import { EntityBase } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import expandablePanelHeaderStyles from '../../../styles/expandablePanelHeader';
 import CommentsEdit from '../CommentsEdit';
 
@@ -33,9 +34,11 @@ const MetadataEditor = <T extends EntityBase>({
   onEditEntity,
   defaultExpanded,
 }: MetadataEditorProps<T>) => {
+
+  const { t } = useReloadedTranslation();
   return (
     <ExpandableSection
-      headerText={<span css={expandablePanelHeaderStyles}>Metadata</span>}
+      headerText={<span css={expandablePanelHeaderStyles}>{t('Metadata')}</span>}
       headingTagOverride='h3'
       variant={variant}
       defaultExpanded={defaultExpanded}

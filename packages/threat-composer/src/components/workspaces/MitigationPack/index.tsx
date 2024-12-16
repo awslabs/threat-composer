@@ -21,7 +21,9 @@ import { useMemo, FC, useCallback, useState } from 'react';
 import GeneralInfo from './components/GeneralInfo';
 import { useMitigationPacksContext } from '../../../contexts/MitigationPacksContext';
 import { Mitigation } from '../../../customTypes/mitigations';
+import { useReloadedTranslation } from '../../../i18next';
 import getMetadata from '../../../utils/getMetadata';
+import AutoDirectionContainer from '../../generic/AutoDirectionContainer';
 import Table, { ColumnDefinition } from '../../generic/Table';
 
 export interface MitigationPackProp {
@@ -32,6 +34,7 @@ const MitigationPack: FC<MitigationPackProp> = ({
   mitigationPackId,
 }) => {
   const { mitigationPacks, mitigationPackUsage, addMitigations } = useMitigationPacksContext();
+  const { t, i18n } = useReloadedTranslation();
 
   const mitigationPack = useMemo(() => {
     return mitigationPacks.find(x => x.id === mitigationPackId);
@@ -65,18 +68,18 @@ const MitigationPack: FC<MitigationPackProp> = ({
   }>[] = useMemo(() => [
     {
       id: 'content',
-      header: 'Mitigation',
-      cell: (data) => data.content,
+      header: t('Mitigation'),
+      cell: (data) => <AutoDirectionContainer value={data.content}>{data.content}</AutoDirectionContainer>,
       minWidth: 400,
       sortingField: 'content',
     },
     {
       id: 'comments',
-      header: 'Comments',
-      cell: (data) => data.comments,
+      header: t('Comments'),
+      cell: (data) => <AutoDirectionContainer value={data.comments}>{data.comments}</AutoDirectionContainer>,
       sortingField: 'comments',
     },
-  ], []);
+  ], [t, i18n, i18n.language]);
 
   const actions = useMemo(() => {
     return (<SpaceBetween direction='horizontal' size='s'>
@@ -85,10 +88,10 @@ const MitigationPack: FC<MitigationPackProp> = ({
         disabled={selectedItems.length === 0
           || selectedItems.every(i => !!mitigationPackUsage[i.id])
         }>
-        Add to workspace
+        {t('Add to workspace')}
       </Button>
     </SpaceBetween>);
-  }, [handleAddToWorkspace, selectedItems, mitigationPackUsage]);
+  }, [t, i18n, i18n.language, handleAddToWorkspace, selectedItems, mitigationPackUsage]);
 
   const isItemDisabled = useCallback((item: Mitigation) => {
     return !!mitigationPackUsage?.[mitigationPackId]?.[item.id];
@@ -99,7 +102,7 @@ const MitigationPack: FC<MitigationPackProp> = ({
       const usedMitigationPackMitigationIds = mitigationPackId && mitigationPackUsage[mitigationPackId]
         ? Object.keys(mitigationPackUsage[mitigationPackId])
         : [];
-      const currentSelectedItems = (mitigationPack.mitigations || []).filter(t => usedMitigationPackMitigationIds.includes(t.id)) || [];
+      const currentSelectedItems = (mitigationPack.mitigations || []).filter(tl => usedMitigationPackMitigationIds.includes(tl.id)) || [];
       return [...currentSelectedItems, ...selectedItems.filter(si => !currentSelectedItems.some(csi => csi.id === si.id))];
     }
 
@@ -114,14 +117,14 @@ const MitigationPack: FC<MitigationPackProp> = ({
     <Header
       variant="h2"
     >
-      Mitigation Pack - {mitigationPack.name}
+      {t('Mitigation Pack')} - {mitigationPack.name}
     </Header>
   }><SpaceBetween direction='vertical' size='s'>
       <GeneralInfo mitigationPack={mitigationPack} />
       <Table
         columnDefinitions={colDef}
         actions={actions}
-        header="Mitigations"
+        header={t('Mitigations')}
         items={items}
         isItemDisabled={isItemDisabled}
         selectedItems={totalSelectedItems}

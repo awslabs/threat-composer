@@ -16,9 +16,9 @@
 import { EntityBase } from '@aws/threat-composer';
 import convertMarkdown from './convertMarkdown';
 
-const renderComment = async (metadata: EntityBase['metadata']) => {
+const renderComment = async (metadata: EntityBase['metadata'], defaultDir: boolean) => {
   const comments = metadata?.find(m => m.key === 'Comments')?.value as string;
-  const renderedComents = comments ? await convertMarkdown(comments) : [];
+  const renderedComents = comments ? await convertMarkdown(comments, defaultDir) : [];
   return renderedComents;
 };
 

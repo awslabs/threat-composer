@@ -19,17 +19,27 @@ import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { Mitigation, MitigationSchema } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import getNewMitigation from '../../../utils/getNewMitigation';
 import AssumptionLinkView from '../../assumptions/AssumptionLinkView';
 import GenericEntityCreationCard from '../../generic/GenericEntityCreationCard';
+import LocalizationContainer from '../../generic/LocalizationContainer';
 import ThreatLinkView from '../../threats/ThreatLinkView';
 
 export interface MitigationCreationCardProps {
-  onSave?: (entity: Mitigation, linkedAssumptionIds: string[], linkedThreatIds: string[]) => void;
+  onSave?: (
+    entity: Mitigation,
+    linkedAssumptionIds: string[],
+    linkedThreatIds: string[]
+  ) => void;
 }
 
-const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => {
-  const [editingEntity, setEditingEntity] = useState<Mitigation>(getNewMitigation());
+const MitigationCreationCard: FC<MitigationCreationCardProps> = ({
+  onSave,
+}) => {
+  const [editingEntity, setEditingEntity] = useState<Mitigation>(
+    getNewMitigation(),
+  );
   const [linkedAssumptionIds, setLinkedAssumptionIds] = useState<string[]>([]);
   const [linkedThreatIds, setLinkedThreatIds] = useState<string[]>([]);
 
@@ -49,41 +59,61 @@ const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => 
     setLinkedThreatIds([]);
   }, []);
 
-  const handleAddAssumptionLink = useCallback((assumptionIdOrNewAssumption: string) => {
-    if (assumptionList.find(a => a.id === assumptionIdOrNewAssumption)) {
-      setLinkedAssumptionIds(prev => [...prev, assumptionIdOrNewAssumption]);
-    } else {
-      const newAssumption = saveAssumption({
-        numericId: -1,
-        content: assumptionIdOrNewAssumption,
-        id: DEFAULT_NEW_ENTITY_ID,
-      });
-      setLinkedAssumptionIds(prev => [...prev, newAssumption.id]);
-    }
-  }, [assumptionList, saveAssumption, setLinkedAssumptionIds]);
+  const handleAddAssumptionLink = useCallback(
+    (assumptionIdOrNewAssumption: string) => {
+      if (assumptionList.find((a) => a.id === assumptionIdOrNewAssumption)) {
+        setLinkedAssumptionIds((prev) => [
+          ...prev,
+          assumptionIdOrNewAssumption,
+        ]);
+      } else {
+        const newAssumption = saveAssumption({
+          numericId: -1,
+          content: assumptionIdOrNewAssumption,
+          id: DEFAULT_NEW_ENTITY_ID,
+        });
+        setLinkedAssumptionIds((prev) => [...prev, newAssumption.id]);
+      }
+    },
+    [assumptionList, saveAssumption, setLinkedAssumptionIds],
+  );
 
-  return (<GenericEntityCreationCard
-    editingEntity={editingEntity}
-    setEditingEntity={setEditingEntity}
-    header='Add new mitigation'
-    onSave={handleSave}
-    onReset={handleReset}
-    validateData={MitigationSchema.shape.content.safeParse}
-    customEditors={<SpaceBetween direction='vertical' size='s'>
-      <ThreatLinkView
-        linkedThreatIds={linkedThreatIds}
-        threatList={statementList}
-        onAddThreatLink={(id) => setLinkedThreatIds(prev => [...prev, id])}
-        onRemoveThreatLink={(id) => setLinkedThreatIds(prev => prev.filter(p => p !== id))}
+  const { t, i18n } = useReloadedTranslation();
+
+  return (
+    <LocalizationContainer i18next={i18n}>
+      <GenericEntityCreationCard
+        editingEntity={editingEntity}
+        setEditingEntity={setEditingEntity}
+        header={t('Add new mitigation')}
+        onSave={handleSave}
+        onReset={handleReset}
+        validateData={MitigationSchema.shape.content.safeParse}
+        customEditors={
+          <SpaceBetween direction="vertical" size="s">
+            <ThreatLinkView
+              linkedThreatIds={linkedThreatIds}
+              threatList={statementList}
+              onAddThreatLink={(id) =>
+                setLinkedThreatIds((prev) => [...prev, id])
+              }
+              onRemoveThreatLink={(id) =>
+                setLinkedThreatIds((prev) => prev.filter((p) => p !== id))
+              }
+            />
+            <AssumptionLinkView
+              linkedAssumptionIds={linkedAssumptionIds}
+              assumptionList={assumptionList}
+              onAddAssumptionLink={handleAddAssumptionLink}
+              onRemoveAssumptionLink={(id) =>
+                setLinkedAssumptionIds((prev) => prev.filter((p) => p !== id))
+              }
+            />
+          </SpaceBetween>
+        }
       />
-      <AssumptionLinkView
-        linkedAssumptionIds={linkedAssumptionIds}
-        assumptionList={assumptionList}
-        onAddAssumptionLink={handleAddAssumptionLink}
-        onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
-      />
-    </SpaceBetween>}
-  />);
+    </LocalizationContainer>
+  );
 };
 
 export default MitigationCreationCard;

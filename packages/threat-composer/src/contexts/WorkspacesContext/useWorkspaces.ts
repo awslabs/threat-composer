@@ -87,6 +87,26 @@ const useWorkspaces = (
     });
   }, []);
 
+  const handleChangeLanguage = useCallback(async (id: string, language: string) => {
+    setWorkspaceList(prev => {
+      const index = prev.findIndex(w => w.id === id);
+      const newList = [...index < 1 ? [] : prev.slice(0, index), {
+        id,
+        name: prev[index].name,
+        language: language,
+      }, ...prev.slice(index + 1)];
+      return newList;
+    });
+
+    setCurrentWorkspace(prev => {
+      return {
+        id,
+        name: prev?.name ?? '',
+        language: language,
+      };
+    });
+  }, []);
+
   useEffect(() => {
     window.threatcomposer?.dispatchEvent?.(
       new CustomEvent(EVENT_WORKSPACE_CHANGED, {
@@ -101,6 +121,7 @@ const useWorkspaces = (
     handleAddWorkspace,
     handleRemoveWorkspace,
     handleRenameWorkspace,
+    handleChangeLanguage,
   };
 };
 

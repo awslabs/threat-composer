@@ -22,6 +22,7 @@ import { css } from '@emotion/react';
 import { FC, useCallback, useState } from 'react';
 import { TagSchema } from '../../../../../customTypes';
 import { useMobileMediaQuery } from '../../../../../hooks/useMediaQuery';
+import { useReloadedTranslation } from '../../../../../i18next';
 import getMobileMediaQuery from '../../../../../utils/getMobileMediaQuery';
 import Input from '../../../../generic/Input';
 
@@ -69,24 +70,26 @@ const Tags: FC<TagsProps> = ({
     setValue('');
   }, [onAddTagToEntity, entityId, value]);
 
+  const { t } = useReloadedTranslation();
+
   return (<div css={styles.tags}>
-    {tags && tags.length > 0 && <TokenGroup
-      onDismiss={({ detail: { itemIndex } }) => {
-        tags && onRemoveTagFromEntity?.(entityId, tags?.[itemIndex]);
-      }}
-      items={tags.map(t => ({
-        label: t,
-        dismissLabel: `Remove ${t}`,
-      }))}
-    />}
     <div css={styles.input}>
       <Input value={value}
         onKeyDown={handleKeyDown}
         onChange={({ detail }) => setValue(detail.value)}
         validateData={TagSchema.safeParse}
-        secondaryControl={isMoblieView ? <Button onClick={handleAddTag}>Add Tag</Button> : undefined}
-        placeholder='Add tag' />
+        secondaryControl={isMoblieView ? <Button onClick={handleAddTag}>{t('Add Tag')}</Button> : undefined}
+        placeholder={t('Add Tag')} />
     </div>
+    {tags && tags.length > 0 && <TokenGroup
+      onDismiss={({ detail: { itemIndex } }) => {
+        tags && onRemoveTagFromEntity?.(entityId, tags?.[itemIndex]);
+      }}
+      items={tags.map(tag => ({
+        label: tag,
+        dismissLabel: `${t('Remove')} ${tag}`,
+      }))}
+    />}
   </div>);
 };
 

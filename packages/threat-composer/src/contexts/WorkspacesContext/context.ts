@@ -25,6 +25,7 @@ export interface WorkspacesContextApi {
   removeWorkspace: (id: string) => Promise<void>;
   addWorkspace: (workspaceName: string, storageType?: Workspace['storageType'], metadata?: Workspace['metadata']) => Promise<Workspace>;
   renameWorkspace: (id: string, newWorkspaceName: string) => Promise<void>;
+  changeLanguage: (id: string, language: string) => Promise<void>;
 }
 
 const initialState: WorkspacesContextApi = {
@@ -35,6 +36,7 @@ const initialState: WorkspacesContextApi = {
   addWorkspace: () => Promise.resolve(PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE),
   removeWorkspace: () => Promise.resolve(),
   renameWorkspace: () => Promise.resolve(),
+  changeLanguage: () => Promise.resolve(),
 };
 
 export const WorkspacesContext = createContext<WorkspacesContextApi>(initialState);

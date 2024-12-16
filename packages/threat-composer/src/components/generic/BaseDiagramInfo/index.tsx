@@ -19,7 +19,12 @@ import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useCallback, useState, useMemo, useEffect } from 'react';
-import { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
+import LocalizationContainer from '../../../components/generic/LocalizationContainer';
+import {
+  BaseImageInfo,
+  EditableComponentBaseProps,
+} from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import imageStyles from '../../../styles/image';
 import ContentLayout from '../../generic/ContentLayout';
 import ImageEdit from '../ImageEdit';
@@ -43,7 +48,12 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
   onEditModeChange,
   MarkdownEditorComponentType = MarkdownEditor,
 }) => {
-  const [editMode, setEditMode] = useState(!entity.description && !entity.image);
+
+  const { t, i18n } = useReloadedTranslation();
+
+  const [editMode, setEditMode] = useState(
+    !entity.description && !entity.image,
+  );
   const [image, setImage] = useState<string>('');
   const [content, setContent] = useState('');
 
@@ -66,38 +76,59 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
   }, [entity, setContent, setEditMode, setImage]);
 
   const actions = useMemo(() => {
-    return editMode ? (<SpaceBetween direction='horizontal' size='s'>
-      <Button key='cancelBtn' onClick={() => setEditMode(false)}>Cancel</Button>
-      <Button key='confirmBtn' variant='primary' onClick={handleSaveDiagramInfo}>Confirm</Button>
-    </SpaceBetween>) : (<Button onClick={handleEdit}>Edit</Button>);
-  }, [editMode, handleSaveDiagramInfo, handleEdit, setEditMode]);
+    return editMode ? (
+      <SpaceBetween direction="horizontal" size="s">
+        <Button key="cancelBtn" onClick={() => setEditMode(false)}>
+          {t('Cancel')}
+        </Button>
+        <Button
+          key="confirmBtn"
+          variant="primary"
+          onClick={handleSaveDiagramInfo}
+        >
+          {t('Confirm')}
+        </Button>
+      </SpaceBetween>
+    ) : (
+      <Button onClick={handleEdit}>{t('Edit')}</Button>
+    );
+  }, [editMode, handleSaveDiagramInfo, handleEdit, setEditMode, t, i18n.language]);
 
-  return (<ContentLayout
-    title={headerTitle}
-    actions={actions}
-  >
-    <Container>
-      {editMode ? (<SpaceBetween direction='vertical' size='s'>
-        <MarkdownEditorComponentType
-          label='Introduction'
-          value={content}
-          onChange={setContent}
-          parentHeaderLevel='h3'
-          validateData={validateData}
-        />
-        <Header variant='h3'>{headerTitle} Diagram</Header>
-        <ImageEdit value={image} onChange={setImage} />
-      </SpaceBetween>) :
-        (<SpaceBetween direction='vertical' size='s'>
-          <Header variant='h3' key='diagramInfo'>Introduction</Header>
-          <MarkdownViewer>
-            {entity.description || ''}
-          </MarkdownViewer>
-          <Header variant='h3' key='diagram'>{diagramTitle}</Header>
-          {entity.image && <img css={imageStyles} src={entity.image} alt={diagramTitle} />}
-        </SpaceBetween>)}
-    </Container>
-  </ContentLayout>
+
+  return (
+    <LocalizationContainer i18next={i18n}>
+      <div style={{ paddingTop: '5px' }}/>
+      <ContentLayout title={headerTitle} actions={actions}>
+        <Container>
+          {editMode ? (
+            <SpaceBetween direction="vertical" size="s">
+              <MarkdownEditorComponentType
+                label={t('Introduction')}
+                value={content}
+                onChange={setContent}
+                parentHeaderLevel="h3"
+                validateData={validateData}
+              />
+              <Header variant="h3">{headerTitle} {t('Diagram')}</Header>
+              <ImageEdit value={image} onChange={setImage} />
+            </SpaceBetween>
+          ) : (
+            <SpaceBetween direction="vertical" size="s">
+              <Header variant="h3" key="diagramInfo">
+                {t('Introduction')}
+              </Header>
+              <MarkdownViewer>{entity.description || ''}</MarkdownViewer>
+              <Header variant="h3" key="diagram">
+                {diagramTitle}
+              </Header>
+              {entity.image && (
+                <img css={imageStyles} src={entity.image} alt={diagramTitle} />
+              )}
+            </SpaceBetween>
+          )}
+        </Container>
+      </ContentLayout>
+    </LocalizationContainer>
   );
 };
 

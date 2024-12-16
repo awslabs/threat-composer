@@ -15,14 +15,17 @@
  ******************************************************************************************************************** */
 import { DataExchangeFormat, escapeMarkdown } from '@aws/threat-composer';
 import { Paragraph, HeadingLevel, TextRun } from 'docx';
+import { bidirectionalOfText } from './convertMarkdown/utils';
 
 export const getApplicationName = async (
   data: DataExchangeFormat,
+  defaultDir: boolean = false,
 ) => {
   if (data.applicationInfo?.name) {
     const title = escapeMarkdown(data.applicationInfo?.name);
     return [
       new Paragraph({
+        bidirectional: bidirectionalOfText(title, defaultDir),
         heading: HeadingLevel.TITLE,
         children: [
           new TextRun(title),

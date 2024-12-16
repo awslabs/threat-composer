@@ -13,21 +13,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { i18n } from 'i18next';
 import { DataExchangeFormat } from '../../../../customTypes';
 
 export const getDataflowContent = async (
   data: DataExchangeFormat,
+  t?: i18n['t'],
 ) => {
   const rows: string[] = [];
-  rows.push('## Dataflow');
+  const optT = t ? t : (s: string) => s;
+  rows.push(`## ${optT('Dataflow')}`);
   if (data.dataflow) {
     if (data.dataflow.description) {
-      rows.push('### Introduction');
+      rows.push(`### ${optT('Introduction')}`);
       rows.push(data.dataflow.description);
     }
 
     if (data.dataflow.image) {
-      rows.push('### Dataflow Diagram');
+      rows.push(`### ${optT('Dataflow Diagram')}`);
       rows.push(`![Dataflow Diagram](${data.dataflow.image})`);
     }
   }

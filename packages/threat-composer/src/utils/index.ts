@@ -17,3 +17,4 @@ export { default as getThreatFromThreatPacksThreat } from './getThreatFromThreat
 export { default as getNewThreatStatement } from './getNewThreatStatement';
 export { default as escapeMarkdown } from './escapeMarkdown';
 export { default as standardizeNumericId } from './standardizeNumericId';
+export { getTextDirection } from './localization';

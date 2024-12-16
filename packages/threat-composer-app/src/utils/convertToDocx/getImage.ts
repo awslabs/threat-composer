@@ -16,11 +16,12 @@
 import { ExternalHyperlink, ImageRun, Paragraph } from 'docx';
 import fetchImage from './fetchImage';
 
-const getImage = async (imageUrl: string) => {
+const getImage = async (imageUrl: string, defaultDir: boolean = false) => {
   const image = await fetchImage(imageUrl);
 
   if (imageUrl.startsWith('https://') || imageUrl.startsWith('http://')) {
     return new Paragraph({
+      bidirectional: defaultDir,
       children: [
         new ExternalHyperlink({
           link: imageUrl,

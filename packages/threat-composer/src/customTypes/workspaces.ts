@@ -27,6 +27,7 @@ export const WorkspaceSchema = z.object({
   name: z.string().max(SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH).regex(REGEX_WORKSPACE_NAME, `Invalid. Workspace name pattern ${REGEX_WORKSPACE_NAME}`),
   storageType: z.enum([STORAGE_LOCAL_STATE, STORAGE_LOCAL_STORAGE]).optional(),
   metadata: MetadataNodeSchema.optional(),
+  language: z.string().length(36).optional(),
 });
 
 export type Workspace = z.infer<typeof WorkspaceSchema>;

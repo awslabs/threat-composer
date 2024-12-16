@@ -14,6 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
+import { i18n } from 'i18next';
 import { getApplicationInfoContent } from './utils/getApplicationInfo';
 import { getApplicationName } from './utils/getApplicationName';
 import { getArchitectureContent } from './utils/getArchitecture';
@@ -26,20 +27,20 @@ import { DataExchangeFormat } from '../../customTypes';
 import hasContent from '../hasContent';
 import sanitizeHtml from '../sanitizeHtml';
 
-const convertToMarkdown = async (data: DataExchangeFormat, composerMode = 'Full') => {
+const convertToMarkdown = async (data: DataExchangeFormat, composerMode = 'Full', t: i18n['t'], defaultDir: string) => {
   const sanitizedData = sanitizeHtml(data);
   const [_, hasContentDetails] = hasContent(data);
 
   const processedContent = (composerMode === 'Full' ? [
     (!hasContentDetails || hasContentDetails.applicationName) && await getApplicationName(sanitizedData),
-    (!hasContentDetails || hasContentDetails.applicationInfo) && await getApplicationInfoContent(sanitizedData),
-    (!hasContentDetails || hasContentDetails.architecture) && await getArchitectureContent(sanitizedData),
-    (!hasContentDetails || hasContentDetails.dataflow) && await getDataflowContent(sanitizedData),
-    (!hasContentDetails || hasContentDetails.assumptions) && await getAssumptionsContent(sanitizedData),
-    (!hasContentDetails || hasContentDetails.threats) && await getThreatsContent(sanitizedData),
-    (!hasContentDetails || hasContentDetails.mitigations) && await getMitigationsContent(sanitizedData),
-    (!hasContentDetails || hasContentDetails.threats) && await getAssetsContent(sanitizedData),
-  ] : [await getThreatsContent(sanitizedData, true)]).filter(x => !!x).join('\n');
+    (!hasContentDetails || hasContentDetails.applicationInfo) && await getApplicationInfoContent(sanitizedData, t),
+    (!hasContentDetails || hasContentDetails.architecture) && await getArchitectureContent(sanitizedData, t),
+    (!hasContentDetails || hasContentDetails.dataflow) && await getDataflowContent(sanitizedData, t),
+    (!hasContentDetails || hasContentDetails.assumptions) && await getAssumptionsContent(sanitizedData, t, defaultDir),
+    (!hasContentDetails || hasContentDetails.threats) && await getThreatsContent(sanitizedData, t, defaultDir),
+    (!hasContentDetails || hasContentDetails.mitigations) && await getMitigationsContent(sanitizedData, t, defaultDir),
+    (!hasContentDetails || hasContentDetails.threats) && await getAssetsContent(sanitizedData, t, defaultDir),
+  ] : [await getThreatsContent(sanitizedData, t, defaultDir, true)]).filter(x => !!x).join('\n');
 
   return processedContent;
 };

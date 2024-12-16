@@ -22,6 +22,7 @@ import imageCompression from 'browser-image-compression';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { IMAGE_BASE64_MAX_LENGTH } from '../../../configs';
 import { ImageUrlSchema } from '../../../customTypes';
+import { useReloadedTranslation } from '../../../i18next';
 import imageStyles from '../../../styles/image';
 import getBase64 from '../../../utils/getBase64';
 import Input from '../../generic/Input';
@@ -54,6 +55,8 @@ const ImageEdit: FC<ImageUploadProps> = ({
   const [imageSource, setImageSource] = useState<string>(!value ? 'no' : isValueBase64String ? 'file' : 'url');
   const [image, setImage] = useState<string>(isValueBase64String ? value : '');
   const [errorText, setErrorText] = useState<string>();
+
+  const { t } = useReloadedTranslation();
 
   useEffect(() => {
     if (imageSource === 'no') {
@@ -96,27 +99,28 @@ const ImageEdit: FC<ImageUploadProps> = ({
 
   return <SpaceBetween direction='vertical' size='s'>
     <FormField
-      label="Image source"
+      label={t('Image source')}
       key="imageSource"
     >
       <RadioGroup
         onChange={({ detail }) => setImageSource(detail.value)}
         value={imageSource}
         items={[
-          { value: 'file', label: 'From file upload' },
-          { value: 'url', label: 'From url' },
-          { value: 'no', label: 'No Image' },
+          { value: 'file', label: t('From file upload') },
+          { value: 'url', label: t('From url') },
+          { value: 'no', label: t('No Image') },
         ]}
       />
     </FormField>
     {imageSource === 'file' && <SpaceBetween
       direction='vertical'
       size='s'>
-      {image && <Header key='header' variant='h3'>Preview</Header>}
-      {image && <img key='image' css={imageStyles} src={image} alt='Preview Diagram' />}
+      {image && <Header key='header' variant='h3'>{t('Preview')}</Header>}
+      {image && <img key='image' css={imageStyles} src={image} alt={t('Preview Diagram')} />}
       <FileUpload
         key='fileUpload'
-        label='Image Upload'
+        buttonText={t('Choose file')}
+        label={t('Image Upload')}
         accept='image/*'
         errorText={errorText}
         files={selectedFiles}
@@ -127,8 +131,8 @@ const ImageEdit: FC<ImageUploadProps> = ({
       label="Image Url"
       key="imageUrl"
     >
-      {inputValue && <Header key='header' variant='h3'>Preview</Header>}
-      {inputValue && <img css={imageStyles} src={inputValue} alt='Preview Diagram' />}
+      {inputValue && <Header key='header' variant='h3'>{t('Preview')}</Header>}
+      {inputValue && <img css={imageStyles} src={inputValue} alt={t('Preview Diagram')} />}
       <Input
         value={inputValue}
         onChange={event =>

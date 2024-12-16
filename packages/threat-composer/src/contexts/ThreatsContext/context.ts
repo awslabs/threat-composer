@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
 import { PerFieldExample, TemplateThreatStatement } from '../../customTypes';
-import threatStatementExamplesData from '../../data/threatStatementExamples.json';
+import threatStatementExamplesData from '../../data/localization/en/threatStatementExamples.json';
 export type View = 'list' | 'editor';
 
 export type PerFieldExamplesType = {
