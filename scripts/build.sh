@@ -4,4 +4,4 @@ set -e
 
 pdk install --frozen-lockfile
 pdk build
-pdk workspaces run eslint
+pdk eslint
