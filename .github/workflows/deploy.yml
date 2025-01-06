@@ -21,8 +21,8 @@ jobs:
       - run: npm install -g oss-attribution-generator
       - run: npm install -g @aws/pdk
       - run: pdk install --frozen-lockfile
-      - run: REACT_APP_ROUTE_BASE_PATH=/threat-composer REACT_APP_GITHUB_PAGES=true PUBLIC_URL=https://awslabs.github.io/threat-composer PATH=/tmp/git-secrets/bin:$PATH pdk run build
-      - run: sed -i "s/<\/body>/<img\ src=\"https:\/\/assets.threat-composer.aws.dev\/1x1.png\"\ style=\"visibility:hidden;\">&/g" packages/threat-composer-app/build/website/index.html
+      - run: REACT_APP_ROUTE_BASE_PATH=/threat-composer REACT_APP_GITHUB_PAGES=true PUBLIC_URL=https://vineetpandey.github.io/threat-composer PATH=/tmp/git-secrets/bin:$PATH pdk run build
+      # - run: sed -i "s/<\/body>/<img\ src=\"https:\/\/assets.threat-composer.aws.dev\/1x1.png\"\ style=\"visibility:hidden;\">&/g" packages/threat-composer-app/build/website/index.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
