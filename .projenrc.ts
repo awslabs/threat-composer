@@ -16,4 +16,10 @@ monorepo.addImplicitDependency(appProject, uiProject);
 monorepo.addImplicitDependency(infraProject, appProject);
 monorepo.addImplicitDependency(browserExtensionProject, appProject);
 
+monorepo.package.addPackageResolutions(...[
+  "**/@typescript-eslint/eslint-plugin@6.21.0",
+  "**/@typescript-eslint/parser@5.49.0"
+],
+);
+
 monorepo.synth();

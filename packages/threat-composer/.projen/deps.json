@@ -130,7 +130,7 @@
     },
     {
       "name": "projen",
-      "version": "^0.82.8",
+      "version": "^0.79.24",
       "type": "build"
     },
     {
@@ -205,6 +205,10 @@
     },
     {
       "name": "@emotion/react",
+      "type": "runtime"
+    },
+    {
+      "name": "@mdxeditor/editor",
       "type": "runtime"
     },
     {
