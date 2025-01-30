@@ -4,6 +4,7 @@
 !/.projen/deps.json
 !/.projen/files.json
 !/package.json
+!/LICENSE
 !/.npmignore
 logs
 *.log
@@ -39,4 +40,3 @@ junit.xml
 /dist/
 !/.eslintrc.json
 !/project.json
-!/LICENSE

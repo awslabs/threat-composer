@@ -4,6 +4,7 @@
 !/.projen/deps.json
 !/.projen/files.json
 !/package.json
+!/LICENSE
 !/.npmignore
 logs
 *.log
@@ -38,8 +39,7 @@ jspm_packages/
 /lib
 /dist/
 !/.eslintrc.json
-.nx/*
-!.nx/plugins
+.nx/cache
 !/nx.json
 !/.nxignore
 .temp/
@@ -49,4 +49,3 @@ storybook.out/
 .output/
 !/.syncpackrc.json
 !/.projenrc.ts
-!/LICENSE

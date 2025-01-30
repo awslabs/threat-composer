@@ -4,6 +4,7 @@
 !/.projen/deps.json
 !/.projen/files.json
 !/package.json
+!/LICENSE
 !/.npmignore
 logs
 *.log
@@ -44,4 +45,3 @@ junit.xml
 .cdk.staging/
 .parcel-cache/
 !/project.json
-!/LICENSE

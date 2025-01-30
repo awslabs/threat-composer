@@ -42,6 +42,7 @@ class ThreatComposerUIComponentsProject extends TypeScriptProject {
         "zod",
         "unified",
         "yaml",
+        "@mdxeditor/editor",
       ],
       devDeps: [
         "@cloudscape-design/jest-preset",
