@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { useThemeContext } from '@aws/threat-composer';
 import AppLayoutComponent, {
   AppLayoutProps as AppLayoutComponentProps,
 } from '@cloudscape-design/components/app-layout';
@@ -20,8 +21,11 @@ import BreadcrumbGroup, { BreadcrumbGroupProps } from '@cloudscape-design/compon
 import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import SideNavigation, { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
 import { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
+import { Mode } from '@cloudscape-design/global-styles';
 import { FC, ReactNode, useState, useCallback, createContext, PropsWithChildren, ReactElement, useContext, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import appLogoDark from '../../assets/logo-dark.svg';
+import appLogoLight from '../../assets/logo-light.svg';
 import { SEARCH_PARAM_MODE } from '../../config/searchParams';
 import { NavHeaderProps } from '../NavHeader';
 
@@ -95,6 +99,8 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
   const [notifications, setNotifications] = useState(props.notifications);
   const location = useLocation();
 
+  const { theme } = useThemeContext();
+
   const headerHref = useMemo(() => {
     const mode = searchParams.get(SEARCH_PARAM_MODE);
     const href = 'href' in props ? props.href : '/';
@@ -163,7 +169,7 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
             props.navigation
           ) : (
             <SideNavigation
-              header={{ text: title, href: headerHref }}
+              header={{ text: title, href: headerHref, logo: { alt: 'logo', src: theme == Mode.Light ? appLogoLight : appLogoDark } }}
               activeHref={activeHref}
               onFollow={onNavigate}
               items={props.navigationItems}
