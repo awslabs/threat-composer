@@ -39,9 +39,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
-        with:
-          artifact_name: "github-pages"
+        uses: actions/deploy-pages@v4
   release:
     needs: deploy
     runs-on: ubuntu-latest
