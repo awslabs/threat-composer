@@ -4,14 +4,12 @@
     <defs>
         <style>
             @media (prefers-color-scheme: dark) {
-            .uuid-90a36257-c228-4a1a-8a9e-fa18199417a3 { fill: white; }
-            */
-            .uuid-92c2478a-2de9-4463-af09-91c93d0a959e{fill:gray; }
+                .uuid-90a36257-c228-4a1a-8a9e-fa18199417a3 { fill: black; }
+                .uuid-92c2478a-2de9-4463-af09-91c93d0a959e {fill: gray; }
             }
             @media (prefers-color-scheme: light) {
-            .uuid-90a36257-c228-4a1a-8a9e-fa18199417a3 { fill: white; }
-            */
-            .uuid-92c2478a-2de9-4463-af09-91c93d0a959e{fill:black; }
+                .uuid-90a36257-c228-4a1a-8a9e-fa18199417a3 { fill: white; }
+                .uuid-92c2478a-2de9-4463-af09-91c93d0a959e {fill: black; }
             }
         </style>
     </defs>
