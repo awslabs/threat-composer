@@ -24,7 +24,7 @@ jobs:
       - run: REACT_APP_ROUTE_BASE_PATH=/threat-composer REACT_APP_GITHUB_PAGES=true PUBLIC_URL=https://vineetpandey.github.io/threat-composer PATH=/tmp/git-secrets/bin:$PATH pdk run build
       # - run: sed -i "s/<\/body>/<img\ src=\"https:\/\/assets.threat-composer.aws.dev\/1x1.png\"\ style=\"visibility:hidden;\">&/g" packages/threat-composer-app/build/website/index.html
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: packages/threat-composer-app/build/website
   deploy:
@@ -39,9 +39,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
-        with:
-          artifact_name: "github-pages"
+        uses: actions/deploy-pages@v4
   release:
     needs: deploy
     runs-on: ubuntu-latest
