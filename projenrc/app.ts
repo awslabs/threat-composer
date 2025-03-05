@@ -31,6 +31,7 @@ class ThreatComposerReactAppProject extends ReactTypeScriptProject {
         "@cloudscape-design/jest-preset",
         "@types/react-router-dom",
         "@types/uuid",
+        "@babel/plugin-proposal-private-property-in-object",
         "merge",
       ],
       jestOptions: {
