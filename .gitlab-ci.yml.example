@@ -1,0 +1,31 @@
+# The following provides a sample .gitlab-ci file to build the threat composer application
+# If you would like to use GitLab to build the threat-composer Web fronted for you
+# rename this file to .gitlab-ci.yml or add the stages to your existing CI/CD setup
+# the build step builds the container and tags it as latest, and stores it in GitLab's container registry
+
+stages: # List of stages for jobs, and their order of execution
+  - build
+  - test
+
+
+build:
+  stage: build
+  timeout: 1h
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""]
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}:latest"
+      # --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}"
+  # rules:
+  #   - if: $CI_COMMIT_TAG
+
+unit-test-job: # This job runs in the test stage.
+  stage: test # It only starts when the job in the build stage completes successfully.
+  script:
+    - echo "Running unit tests... This does nothing yet."
+    - sleep 5
+    - echo "No tests run, add some tests!"
