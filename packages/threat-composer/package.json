@@ -69,7 +69,7 @@
     "@cloudscape-design/design-tokens": "^3.0.34",
     "@cloudscape-design/global-styles": "^1.0.23",
     "@emotion/react": "^11.11.0",
-    "@mdxeditor/editor": "^3.21.1",
+    "@mdxeditor/editor": "^3.27",
     "browser-image-compression": "^2.0.2",
     "d3": "^7",
     "indefinite": "^2.4.3",

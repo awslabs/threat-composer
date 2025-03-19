@@ -209,6 +209,7 @@
     },
     {
       "name": "@mdxeditor/editor",
+      "version": "^3.27",
       "type": "runtime"
     },
     {
