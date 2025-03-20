@@ -19,7 +19,7 @@ import FormField from '@cloudscape-design/components/form-field';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { Mode } from '@cloudscape-design/global-styles';
-import { MDXEditor, MDXEditorMethods, DiffSourceToggleWrapper, ListsToggle, toolbarPlugin, diffSourcePlugin, linkPlugin, linkDialogPlugin, UndoRedo, headingsPlugin, quotePlugin, markdownShortcutPlugin, BoldItalicUnderlineToggles, BlockTypeSelect, CodeToggle, CreateLink, InsertCodeBlock, InsertImage, imagePlugin, InsertTable, tablePlugin, listsPlugin } from '@mdxeditor/editor';
+import { MDXEditor, MDXEditorMethods, DiffSourceToggleWrapper, ListsToggle, toolbarPlugin, diffSourcePlugin, linkPlugin, linkDialogPlugin, UndoRedo, headingsPlugin, quotePlugin, codeBlockPlugin, codeMirrorPlugin, markdownShortcutPlugin, BoldItalicUnderlineToggles, BlockTypeSelect, CodeToggle, CreateLink, InsertCodeBlock, InsertImage, imagePlugin, InsertTable, tablePlugin, listsPlugin } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
 import { FC, useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useApplicationInfoContext } from '../../../contexts/ApplicationContext/context';
@@ -85,24 +85,31 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
         <MDXEditor
           ref={mdxEditorRef}
           markdown={applicationInfo.description || ''}
-          className = {theme == Mode.Dark ? 'dark-theme dark-editor' : 'light-theme light-editor'}
+          className={theme == Mode.Dark ? 'dark-theme dark-editor' : 'light-theme light-editor'}
+          autoFocus={true}
           plugins={[
             toolbarPlugin({
               toolbarContents: () => (
                 <>
                   <DiffSourceToggleWrapper>
-                    <BoldItalicUnderlineToggles options={['Bold', 'Italic']}/>
+                    <BoldItalicUnderlineToggles options={['Bold', 'Italic']} />
                     <BlockTypeSelect />
                     <CodeToggle />
                     <CreateLink />
                     <InsertImage />
                     <InsertTable />
-                    <ListsToggle options={['bullet', 'number']}/>
+                    <ListsToggle options={['bullet', 'number']} />
                     <InsertCodeBlock />
                     <UndoRedo />
                   </DiffSourceToggleWrapper>
                 </>
               ),
+            }),
+            codeBlockPlugin({ defaultCodeBlockLanguage: '' }),
+            codeMirrorPlugin({
+              codeBlockLanguages: {
+                '': 'text',
+              },
             }),
             tablePlugin(),
             diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: applicationInfo.description || '' }),
@@ -112,7 +119,7 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
             headingsPlugin(),
             linkPlugin(),
             linkDialogPlugin(),
-            imagePlugin( { disableImageResize: true }),
+            imagePlugin({ disableImageResize: true }),
           ]
           } />
       </SpaceBetween>) :

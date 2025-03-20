@@ -19,7 +19,7 @@ import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { Mode } from '@cloudscape-design/global-styles';
-import { MDXEditor, MDXEditorMethods, DiffSourceToggleWrapper, ListsToggle, toolbarPlugin, diffSourcePlugin, linkPlugin, linkDialogPlugin, UndoRedo, headingsPlugin, quotePlugin, markdownShortcutPlugin, BoldItalicUnderlineToggles, BlockTypeSelect, CodeToggle, CreateLink, InsertCodeBlock, InsertImage, imagePlugin, InsertTable, tablePlugin, listsPlugin } from '@mdxeditor/editor';
+import { MDXEditor, MDXEditorMethods, DiffSourceToggleWrapper, ListsToggle, toolbarPlugin, diffSourcePlugin, linkPlugin, linkDialogPlugin, UndoRedo, headingsPlugin, quotePlugin, markdownShortcutPlugin, BoldItalicUnderlineToggles, BlockTypeSelect, CodeToggle, CreateLink, InsertCodeBlock, codeBlockPlugin, codeMirrorPlugin, InsertImage, imagePlugin, InsertTable, tablePlugin, listsPlugin } from '@mdxeditor/editor';
 import { FC, useCallback, useState, useMemo, useEffect, useRef } from 'react';
 import { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
 import '@mdxeditor/editor/style.css';
@@ -87,6 +87,7 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
           ref={mdxEditorRef}
           markdown={entity.description || ''}
           className={theme == Mode.Dark ? 'dark-theme dark-editor' : 'light-theme light-editor'}
+          autoFocus={true}
           plugins={[
             toolbarPlugin({
               toolbarContents: () => (
@@ -104,6 +105,13 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
                   </DiffSourceToggleWrapper>
                 </>
               ),
+            }),
+            codeBlockPlugin({ defaultCodeBlockLanguage: '' }),
+            codeBlockPlugin(),
+            codeMirrorPlugin({
+              codeBlockLanguages: {
+                '': 'text',
+              },
             }),
             tablePlugin(),
             diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: entity.description || '' }),
