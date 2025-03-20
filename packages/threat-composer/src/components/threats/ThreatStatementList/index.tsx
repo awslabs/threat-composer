@@ -328,12 +328,12 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
           filteredThreats={filteredStatementList}
         >
           <Button variant="primary" onClick={() => handleAddStatement()}>
-            Add new statement
+            Add new threat
           </Button>
         </WorkspaceSelector>) :
         (<SpaceBetween direction='horizontal' size='s'>
           <Button variant="primary" onClick={() => handleAddStatement()}>
-            Add new statement
+            Add new threat
           </Button>
         </SpaceBetween>)}
       </>);
