@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import React from 'react';
 import { createBrowserRouter, createMemoryRouter, redirect } from 'react-router-dom';
 import initialWorkspaceLoader from './initialWorkspaceLoader';
 import {
@@ -32,25 +33,26 @@ import {
   ROUTE_WORKSPACE_PATH,
   ROUTE_PREVIEW_PATH,
 } from '../config/routes';
-import Application from '../containers/Application';
-import AppRoot from '../containers/AppRoot';
-import Architecture from '../containers/Architecture';
-import AssumptionList from '../containers/AssumptionList';
-import Dataflow from '../containers/Dataflow';
-import MitigationList from '../containers/MitigationList';
-import MitigationPack from '../containers/MitigationPack';
-import MitigationPacks from '../containers/MitigationPacks';
-import ThreatModelPreview from '../containers/ThreatModelPreview';
-import ThreatModelReport from '../containers/ThreatModelReport';
-import ThreatPack from '../containers/ThreatPack';
-import ThreatPacks from '../containers/ThreatPacks';
-import ThreatStatementEditor from '../containers/ThreatStatementEditor';
-import ThreatStatementList from '../containers/ThreatStatementList';
-import WorkspaceHome from '../containers/WorkspaceHome';
-import WorkspaceRoot from '../containers/WorkspaceRoot';
 import isMemoryRouterUsed from '../utils/isMemoryRouterUsed';
 
 const ROUTE_BASE_PATH = process.env.REACT_APP_ROUTE_BASE_PATH;
+
+const AppRoot = React.lazy(() => import('../containers/AppRoot'));
+const WorkspaceRoot = React.lazy(() => import('../containers/WorkspaceRoot'));
+const Architecture = React.lazy(() => import('../containers/Architecture'));
+const Application = React.lazy(() => import('../containers/Application'));
+const Dataflow = React.lazy(() => import('../containers/Dataflow'));
+const AssumptionList = React.lazy(() => import('../containers/AssumptionList'));
+const MitigationList = React.lazy(() => import('../containers/MitigationList'));
+const MitigationPack = React.lazy(() => import('../containers/MitigationPack'));
+const MitigationPacks = React.lazy(() => import('../containers/MitigationPacks'));
+const ThreatModelPreview = React.lazy(() => import('../containers/ThreatModelPreview'));
+const ThreatModelReport = React.lazy(() => import('../containers/ThreatModelReport'));
+const ThreatPack = React.lazy(() => import('../containers/ThreatPack'));
+const ThreatPacks = React.lazy(() => import('../containers/ThreatPacks'));
+const ThreatStatementEditor = React.lazy(() => import('../containers/ThreatStatementEditor'));
+const ThreatStatementList = React.lazy(() => import('../containers/ThreatStatementList'));
+const WorkspaceHome = React.lazy(() => import('../containers/WorkspaceHome'));
 
 const workspaceRoutes = [
   {

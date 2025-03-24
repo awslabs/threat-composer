@@ -18,27 +18,23 @@ import Container from '@cloudscape-design/components/container';
 import FormField from '@cloudscape-design/components/form-field';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { Mode } from '@cloudscape-design/global-styles';
-import { MDXEditor, MDXEditorMethods, DiffSourceToggleWrapper, ListsToggle, toolbarPlugin, diffSourcePlugin, linkPlugin, linkDialogPlugin, UndoRedo, headingsPlugin, quotePlugin, codeBlockPlugin, codeMirrorPlugin, markdownShortcutPlugin, BoldItalicUnderlineToggles, BlockTypeSelect, CodeToggle, CreateLink, InsertCodeBlock, InsertImage, imagePlugin, InsertTable, tablePlugin, listsPlugin } from '@mdxeditor/editor';
-import '@mdxeditor/editor/style.css';
-import { FC, useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { FC, useState, useCallback, useMemo, useEffect } from 'react';
 import { useApplicationInfoContext } from '../../../contexts/ApplicationContext/context';
 import { ApplicationInfoSchema, EditableComponentBaseProps } from '../../../customTypes';
 import ContentLayout from '../../generic/ContentLayout';
 import Input from '../../generic/Input';
+import MarkdownEditor from '../../generic/MarkdownEditor';
 import MarkdownViewer from '../../generic/MarkdownViewer';
-import { useThemeContext } from '../../generic/ThemeProvider';
 
 
 const ApplicationInfo: FC<EditableComponentBaseProps> = ({
   onEditModeChange,
+  MarkdownEditorComponentType = MarkdownEditor,
 }) => {
   const { applicationInfo, setApplicationInfo } = useApplicationInfoContext();
   const [editMode, setEditMode] = useState(!applicationInfo.name && !applicationInfo.description);
   const [content, setContent] = useState('');
   const [name, setName] = useState('');
-  const mdxEditorRef = useRef<MDXEditorMethods>(null);
-  const { theme } = useThemeContext();
 
   useEffect(() => {
     onEditModeChange?.(editMode);
@@ -47,7 +43,7 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
   const handleSaveApplicationInfo = useCallback(() => {
     setApplicationInfo(prev => ({
       ...prev,
-      description: mdxEditorRef.current?.getMarkdown(),
+      description: content,
       name,
     }));
     setEditMode(false);
@@ -82,46 +78,13 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
             placeholder='Enter application name'
           />
         </FormField>
-        <MDXEditor
-          ref={mdxEditorRef}
-          markdown={applicationInfo.description || ''}
-          className={theme == Mode.Dark ? 'dark-theme dark-editor' : 'light-theme light-editor'}
-          autoFocus={true}
-          plugins={[
-            toolbarPlugin({
-              toolbarContents: () => (
-                <>
-                  <DiffSourceToggleWrapper>
-                    <BoldItalicUnderlineToggles options={['Bold', 'Italic']} />
-                    <BlockTypeSelect />
-                    <CodeToggle />
-                    <CreateLink />
-                    <InsertImage />
-                    <InsertTable />
-                    <ListsToggle options={['bullet', 'number']} />
-                    <InsertCodeBlock />
-                    <UndoRedo />
-                  </DiffSourceToggleWrapper>
-                </>
-              ),
-            }),
-            codeBlockPlugin({ defaultCodeBlockLanguage: '' }),
-            codeMirrorPlugin({
-              codeBlockLanguages: {
-                '': 'text',
-              },
-            }),
-            tablePlugin(),
-            diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: applicationInfo.description || '' }),
-            markdownShortcutPlugin(),
-            listsPlugin(),
-            quotePlugin(),
-            headingsPlugin(),
-            linkPlugin(),
-            linkDialogPlugin(),
-            imagePlugin({ disableImageResize: true }),
-          ]
-          } />
+        <MarkdownEditorComponentType
+          value={content}
+          onChange={setContent}
+          label='Description'
+          parentHeaderLevel='h2'
+          validateData={ApplicationInfoSchema.shape.description.safeParse}
+        />
       </SpaceBetween>) :
         (<MarkdownViewer>
           {applicationInfo.description || ''}

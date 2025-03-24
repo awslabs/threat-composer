@@ -30,4 +30,5 @@ export { default as MitigationPacksComponent } from './workspaces/MitigationPack
 export { default as MitigationPackComponent } from './workspaces/MitigationPack';
 export { default as ThemeProvider } from './generic/ThemeProvider';
 export { default as MarkdownEditor, MarkdownEditorProps } from './generic/MarkdownEditor';
+export { default as Loading } from './generic/Loading';
 export * from './generic/ThemeProvider';
