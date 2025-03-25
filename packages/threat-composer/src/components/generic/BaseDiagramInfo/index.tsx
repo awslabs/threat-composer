@@ -18,16 +18,12 @@ import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { Mode } from '@cloudscape-design/global-styles';
-import { MDXEditor, MDXEditorMethods, DiffSourceToggleWrapper, ListsToggle, toolbarPlugin, diffSourcePlugin, linkPlugin, linkDialogPlugin, UndoRedo, headingsPlugin, quotePlugin, markdownShortcutPlugin, BoldItalicUnderlineToggles, BlockTypeSelect, CodeToggle, CreateLink, InsertCodeBlock, codeBlockPlugin, codeMirrorPlugin, InsertImage, imagePlugin, InsertTable, tablePlugin, listsPlugin } from '@mdxeditor/editor';
-import { FC, useCallback, useState, useMemo, useEffect, useRef } from 'react';
+import { FC, useCallback, useState, useMemo, useEffect } from 'react';
 import { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
-import '@mdxeditor/editor/style.css';
 import imageStyles from '../../../styles/image';
 import ContentLayout from '../../generic/ContentLayout';
-import { useThemeContext } from '../../generic/ThemeProvider';
 import ImageEdit from '../ImageEdit';
-import { MarkdownEditorProps } from '../MarkdownEditor';
+import MarkdownEditor, { MarkdownEditorProps } from '../MarkdownEditor';
 import MarkdownViewer from '../MarkdownViewer';
 
 export interface BaseDiagramInfoProps extends EditableComponentBaseProps {
@@ -43,13 +39,13 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
   diagramTitle,
   entity,
   onConfirm,
+  validateData,
   onEditModeChange,
+  MarkdownEditorComponentType = MarkdownEditor,
 }) => {
   const [editMode, setEditMode] = useState(!entity.description && !entity.image);
   const [image, setImage] = useState<string>('');
   const [content, setContent] = useState('');
-  const mdxEditorRef = useRef<MDXEditorMethods>(null);
-  const { theme } = useThemeContext();
 
   useEffect(() => {
     onEditModeChange?.(editMode);
@@ -58,7 +54,7 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
   const handleSaveDiagramInfo = useCallback(() => {
     onConfirm({
       image,
-      description: mdxEditorRef.current?.getMarkdown(),
+      description: content,
     });
     setEditMode(false);
   }, [image, content, onConfirm]);
@@ -82,48 +78,13 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
   >
     <Container>
       {editMode ? (<SpaceBetween direction='vertical' size='s'>
-        <Header variant='h3'>Introduction</Header>
-        <MDXEditor
-          ref={mdxEditorRef}
-          markdown={entity.description || ''}
-          className={theme == Mode.Dark ? 'dark-theme dark-editor' : 'light-theme light-editor'}
-          autoFocus={true}
-          plugins={[
-            toolbarPlugin({
-              toolbarContents: () => (
-                <>
-                  <DiffSourceToggleWrapper>
-                    <BoldItalicUnderlineToggles options={['Bold', 'Italic']} />
-                    <BlockTypeSelect />
-                    <CodeToggle />
-                    <CreateLink />
-                    <InsertImage />
-                    <InsertTable />
-                    <ListsToggle options={['bullet', 'number']} />
-                    <InsertCodeBlock />
-                    <UndoRedo />
-                  </DiffSourceToggleWrapper>
-                </>
-              ),
-            }),
-            codeBlockPlugin({ defaultCodeBlockLanguage: '' }),
-            codeBlockPlugin(),
-            codeMirrorPlugin({
-              codeBlockLanguages: {
-                '': 'text',
-              },
-            }),
-            tablePlugin(),
-            diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: entity.description || '' }),
-            markdownShortcutPlugin(),
-            listsPlugin(),
-            quotePlugin(),
-            headingsPlugin(),
-            linkPlugin(),
-            linkDialogPlugin(),
-            imagePlugin({ disableImageResize: true }),
-          ]
-          } />
+        <MarkdownEditorComponentType
+          label='Introduction'
+          value={content}
+          onChange={setContent}
+          parentHeaderLevel='h3'
+          validateData={validateData}
+        />
         <Header variant='h3'>{headerTitle} Diagram</Header>
         <ImageEdit value={image} onChange={setImage} />
       </SpaceBetween>) :
