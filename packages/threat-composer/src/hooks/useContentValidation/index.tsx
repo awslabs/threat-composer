@@ -14,14 +14,14 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { BaseChangeDetail } from '@cloudscape-design/components/input/interfaces';
-import { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import { NonCancelableCustomEvent, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import { useCallback, useEffect, useState } from 'react';
 import { z } from 'zod';
 import sanitizeHtml from '../../utils/sanitizeHtml';
 
-const useContentValidation = (
+const useContentValidation = <T extends NonCancelableEventHandler<BaseChangeDetail> | ((newValue: string) => void)>(
   value: string,
-  onChange?: NonCancelableEventHandler<BaseChangeDetail>,
+  onChange?: T,
   validateData?: (newValue: string) => z.SafeParseReturnType<string | undefined, string | undefined>,
 ) => {
   const [tempValue, setTempValue] = useState(value);
@@ -34,10 +34,12 @@ const useContentValidation = (
     }
   }, [value]);
 
-  const handleChange: NonCancelableEventHandler<BaseChangeDetail> = useCallback((event) => {
-    const newValue = event.detail.value;
+  const handleChange = useCallback((eventData: NonCancelableCustomEvent<BaseChangeDetail> | string) => {
+    let newValue = typeof eventData === 'string' ? eventData : eventData.detail.value;
+
     setTempValue(newValue);
     const cleanValue = sanitizeHtml(newValue);
+
     if (cleanValue !== newValue) {
       setErrorText('Html tags not supported');
       return;
@@ -47,12 +49,19 @@ const useContentValidation = (
       const validation = validateData(newValue);
       if (!validation.success) {
         setErrorText(validation.error.issues.map(i => i.message).join('; '));
-        return ;
+        return;
       }
     }
 
     setErrorText('');
-    onChange?.(event);
+
+    if (onChange) {
+      if (typeof eventData === 'string') {
+        (onChange as ((newValue: string) => void))?.(newValue);
+      } else {
+        (onChange as NonCancelableEventHandler<BaseChangeDetail>)?.(eventData);
+      }
+    }
   }, [setTempValue, setErrorText, onChange, validateData]);
 
   return {
