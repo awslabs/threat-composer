@@ -41,6 +41,10 @@ const MarkdownEditorWithPrompt: FC<MarkdownEditorProps> = ({
     className={theme == Mode.Dark ? 'dark-theme dark-editor' : 'light-theme light-editor'}
     autoFocus={true}
     onChange={props.onChange}
+    toMarkdownOptions={{
+      emphasis: '_',
+      bullet: '-',
+    }}
     plugins={[
       toolbarPlugin({
         toolbarContents: () => (
@@ -66,11 +70,11 @@ const MarkdownEditorWithPrompt: FC<MarkdownEditorProps> = ({
         },
       }),
       tablePlugin(),
-      diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: value }),
+      diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: previousValue }),
       markdownShortcutPlugin(),
       listsPlugin(),
       quotePlugin(),
-      headingsPlugin(),
+      headingsPlugin({ allowedHeadingLevels: [3, 4, 5, 6] }),
       linkPlugin(),
       linkDialogPlugin(),
       imagePlugin({ disableImageResize: true }),
