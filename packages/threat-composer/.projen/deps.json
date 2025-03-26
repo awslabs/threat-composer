@@ -85,17 +85,12 @@
     },
     {
       "name": "@typescript-eslint/eslint-plugin",
-      "version": "^6",
+      "version": "^7",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/parser",
-      "version": "^6",
-      "type": "build"
-    },
-    {
-      "name": "constructs",
-      "version": "^10.0.0",
+      "version": "^7",
       "type": "build"
     },
     {
@@ -126,11 +121,6 @@
     },
     {
       "name": "merge",
-      "type": "build"
-    },
-    {
-      "name": "projen",
-      "version": "^0.82.8",
       "type": "build"
     },
     {

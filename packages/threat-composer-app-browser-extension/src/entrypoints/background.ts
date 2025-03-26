@@ -14,8 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { ThreatComposerTarget, getExtensionConfig } from './popup/config';
 import { logDebugMessage } from '../debugLogger';
+import { ThreatComposerTarget, getExtensionConfig } from './popup/config';
 
 
 export default defineBackground(() => {

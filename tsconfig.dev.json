@@ -31,7 +31,6 @@
     "test/**/*.ts",
     "**/*.ts",
     ".projenrc.ts",
-    ".projenrc.ts",
     "projenrc/**/*.ts"
   ],
   "exclude": [

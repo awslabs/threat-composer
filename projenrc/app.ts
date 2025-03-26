@@ -25,7 +25,6 @@ class ThreatComposerReactAppProject extends ReactTypeScriptProject {
         "remark-gfm@^3",
         "remark-parse@^10",
         "unified@^10",
-        "@mdxeditor/editor@^3.27",
         uiProject.package.packageName,
       ],
       devDeps: [

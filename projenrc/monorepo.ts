@@ -34,7 +34,7 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
     );
     this.tryFindObjectFile("package.json")?.addOverride(
       "resolutions.@babel/traverse",
-      "^7.23.2"
+      "^7.25.0"
     );
     this.tryFindObjectFile("package.json")?.addOverride(
       "resolutions.postcss",

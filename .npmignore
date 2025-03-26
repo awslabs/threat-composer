@@ -18,3 +18,4 @@ tsconfig.tsbuildinfo
 /.eslintrc.json
 /.gitattributes
 /.projenrc.ts
+/projenrc
