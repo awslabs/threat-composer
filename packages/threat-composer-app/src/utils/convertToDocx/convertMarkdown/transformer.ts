@@ -23,7 +23,6 @@ import {
   TableCell,
   TableOfContents,
   TextRun,
-  ImageRun,
   ExternalHyperlink,
   HeadingLevel,
   LevelFormat,
@@ -38,6 +37,7 @@ import type * as mdast from './mdast';
 import { invariant } from './utils';
 import Table from '../components/Table';
 import TableHeaderCell from '../components/TableHeaderCell';
+import { getImageRun } from '../getImage';
 
 const ORDERED_LIST_REF = 'ordered';
 const INDENT = 0.5;
@@ -111,6 +111,7 @@ export type ImageData = {
   image: IImageOptions['data'];
   width: number;
   height: number;
+  type: 'jpg' | 'png' | 'gif' | 'bmp' | 'svg';
 };
 
 export type ImageResolver = (url: string) => Promise<ImageData> | ImageData;
@@ -551,14 +552,11 @@ const buildImage = (
   const img = images[url];
   invariant(img, `Fetch image was failed: ${url}`);
 
-  const { image, width, height } = img;
-  return new ImageRun({
-    data: image,
-    transformation: {
-      width,
-      height,
-    },
-  });
+  const { image, width, height, type } = img;
+
+  const imageRun = getImageRun (image, type, width, height);
+
+  return imageRun;
 };
 
 const buildFootnote = ({ children }: mdast.Footnote, ctx: Context) => {

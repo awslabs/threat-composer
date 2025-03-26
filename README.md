@@ -185,7 +185,7 @@ The [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected
 
 ### Prerequisites
 
-- [NodeJS](https://nodejs.org/en/) (version 18 or higher)
+- [NodeJS](https://nodejs.org/en/) (version 20 or higher)
 - [Yarn](https://yarnpkg.com/) (installed via `npm install -g yarn`)
 - [PDK](https://aws.github.io/aws-pdk/overview/index.html) (installed via `npm install -g @aws/pdk`)
 - [AWS CLI](https://aws.amazon.com/cli/) (version 2 or higher)

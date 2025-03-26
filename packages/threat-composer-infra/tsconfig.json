@@ -33,7 +33,5 @@
   "include": [
     "src/**/*.ts"
   ],
-  "exclude": [
-    "cdk.out"
-  ]
+  "exclude": []
 }
