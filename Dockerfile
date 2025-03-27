@@ -1,9 +1,9 @@
-FROM --platform=linux/x86_64 public.ecr.aws/amazonlinux/amazonlinux:latest as build
+FROM public.ecr.aws/amazonlinux/amazonlinux:latest as build
 
 RUN dnf install tar gzip python3 gcc-c++ make python3-pip rsync shadow-utils -y
 
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 22
+ENV NODE_VERSION 20
 
 # Use bash for the shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
