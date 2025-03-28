@@ -13,8 +13,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { STRIDE } from '@aws/threat-composer-core';
-import { z } from 'zod';
 import {
   FREE_TEXT_INPUT_MAX_LENGTH,
   SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH,
@@ -30,7 +28,9 @@ import {
   METADATA_KEY_PRIORITY,
   ALLOW_METADATA_TAGS,
   METADATA_KEY_PREFIX_CUSTOM,
-} from '../configs';
+  STRIDE,
+} from '@aws/threat-composer-core';
+import { z } from 'zod';
 
 export const TagSchema = z.string().nonempty().max(SINGLE_FIELD_INPUT_TAG_MAX_LENGTH);
 

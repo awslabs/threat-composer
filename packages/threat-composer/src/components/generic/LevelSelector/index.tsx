@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { LEVEL_SELECTOR_OPTIONS } from '@aws/threat-composer-core';
 import FormField from '@cloudscape-design/components/form-field';
 import Select, { SelectProps } from '@cloudscape-design/components/select';
 import React, { FC } from 'react';
-import { LEVEL_SELECTOR_OPTIONS } from '../../../configs';
 
 export const NO_VALUE = '-';
 

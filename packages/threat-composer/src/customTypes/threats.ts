@@ -13,9 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import {
+  SINGLE_FIELD_INPUT_MAX_LENGTH,
+  LEVEL_HIGH,
+  LEVEL_MEDIUM,
+  LEVEL_LOW,
+  LEVEL_NOT_SET,
+} from '@aws/threat-composer-core';
 import { z } from 'zod';
 import { EntityBaseSchema, StatusSchema } from './entities';
-import { SINGLE_FIELD_INPUT_MAX_LENGTH, LEVEL_HIGH, LEVEL_MEDIUM, LEVEL_LOW, LEVEL_NOT_SET, STATUS_NOT_SET, THREAT_STATUS_IDENTIFIED, THREAT_STATUS_NOT_USEFUL, THREAT_STATUS_RESOLVED } from '../configs';
+import { STATUS_NOT_SET, THREAT_STATUS_IDENTIFIED, THREAT_STATUS_NOT_USEFUL, THREAT_STATUS_RESOLVED } from '../configs';
 import threatStatus from '../data/status/threatStatus.json';
 
 export const ThreatStatementDisplayTokenSchema = z.object({

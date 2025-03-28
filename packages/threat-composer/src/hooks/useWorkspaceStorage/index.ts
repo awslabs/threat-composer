@@ -13,8 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { STORAGE_LOCAL_STATE, STORAGE_LOCAL_STORAGE } from '@aws/threat-composer-core';
 import { useMemo } from 'react';
-import { APP_MODE_IDE_EXTENSION, STORAGE_LOCAL_STATE, STORAGE_LOCAL_STORAGE } from '../../configs';
+import { APP_MODE_IDE_EXTENSION } from '../../configs';
 import { useGlobalSetupContext } from '../../contexts';
 import { useWorkspaceExamplesContext } from '../../contexts/WorkspaceExamplesContext';
 import { useWorkspacesContext } from '../../contexts/WorkspacesContext';

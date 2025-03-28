@@ -26,16 +26,11 @@ export const METADATA_KEY_SOURCE_MITIGATION_PACK_MITIGATION = 'mitigationPackMit
 
 export const METADATA_KEY_DESCRIPTION = 'Description';
 
-export const METADATA_KEY_COMMENTS = 'Comments';
-export const METADATA_KEY_STRIDE = 'STRIDE';
-export const METADATA_KEY_PRIORITY = 'Priority';
-
-export const METADATA_KEY_PREFIX_CUSTOM = 'custom:';
-
 export const ALLOW_METADATA_TAGS = [
-  METADATA_KEY_COMMENTS,
-  METADATA_KEY_PRIORITY,
-  METADATA_KEY_STRIDE,
+  // These are now imported from threat-composer-core where needed
+  // METADATA_KEY_COMMENTS,
+  // METADATA_KEY_PRIORITY,
+  // METADATA_KEY_STRIDE,
 
   METADATA_KEY_SOURCE,
   METADATA_KEY_SOURCE_THREAT_PACK,

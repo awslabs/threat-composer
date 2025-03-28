@@ -14,9 +14,10 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
+import { STORAGE_LOCAL_STATE } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren, useCallback, useMemo } from 'react';
 import { WorkspaceExamplesContext, useWorkspaceExamplesContext } from './context';
-import { EXAMPLES_WORKSPACE_ID_PREFIX, STORAGE_LOCAL_STATE } from '../../configs';
+import { EXAMPLES_WORKSPACE_ID_PREFIX } from '../../configs';
 import workspaceExamplesData from '../../data/workspaceExamples/workspaceExamples';
 
 const WorkspaceExamplesContextProvider: FC<PropsWithChildren<{}>> = ({
@@ -51,4 +52,3 @@ export default WorkspaceExamplesContextProvider;
 export {
   useWorkspaceExamplesContext,
 };
-

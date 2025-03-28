@@ -13,15 +13,4 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ALL_LEVELS, LEVEL_HIGH, LEVEL_MEDIUM, LEVEL_LOW } from './constants';
-
-export const LEVEL_SELECTOR_OPTIONS = [
-  { label: LEVEL_HIGH, value: LEVEL_HIGH },
-  { label: LEVEL_MEDIUM, value: LEVEL_MEDIUM },
-  { label: LEVEL_LOW, value: LEVEL_LOW },
-];
-
-export const LEVEL_SELECTOR_OPTIONS_INCLUDING_ALL = [
-  { lable: ALL_LEVELS, value: ALL_LEVELS },
-  ...LEVEL_SELECTOR_OPTIONS,
-];
+// These constants are now imported from threat-composer-core where needed

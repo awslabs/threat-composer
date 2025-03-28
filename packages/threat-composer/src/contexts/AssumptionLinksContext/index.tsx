@@ -13,12 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { STORAGE_LOCAL_STATE } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren } from 'react';
 import AssumptionLinksLocalStateContextProvider from './components/LocalStateContextProvider';
 import AssumptionLinksLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useAssumptionLinksContext } from './context';
 import { AssumptionLinksContextProviderProps } from './types';
-import { STORAGE_LOCAL_STATE } from '../../configs';
 import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
 
 const AssumptionLinksContextProvider: FC<PropsWithChildren<AssumptionLinksContextProviderProps>> = (props) => {

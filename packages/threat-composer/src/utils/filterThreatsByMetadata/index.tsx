@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ALL_LEVELS } from '../../configs';
+import { ALL_LEVELS } from '@aws/threat-composer-core';
 import { TemplateThreatStatement } from '../../customTypes';
 
 const filterThreatsByMetadata = (threatList: TemplateThreatStatement[], metadataKey: string, metadataValue?: string) => {

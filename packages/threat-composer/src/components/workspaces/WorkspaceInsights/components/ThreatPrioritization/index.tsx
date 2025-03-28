@@ -14,6 +14,12 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import {
+  LEVEL_HIGH,
+  LEVEL_LOW,
+  LEVEL_MEDIUM,
+  LEVEL_NOT_SET,
+} from '@aws/threat-composer-core';
+import {
   Button,
   Box,
   ColumnLayout,
@@ -27,10 +33,6 @@ import {
 } from '@cloudscape-design/design-tokens';
 import { useMemo, useCallback, FC } from 'react';
 import {
-  LEVEL_HIGH,
-  LEVEL_LOW,
-  LEVEL_MEDIUM,
-  LEVEL_NOT_SET,
   DEFAULT_NEW_ENTITY_ID,
 } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';

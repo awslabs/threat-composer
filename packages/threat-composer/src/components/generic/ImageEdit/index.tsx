@@ -14,13 +14,13 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
+import { IMAGE_BASE64_MAX_LENGTH } from '@aws/threat-composer-core';
 import FormField from '@cloudscape-design/components/form-field';
 import Header from '@cloudscape-design/components/header';
 import RadioGroup from '@cloudscape-design/components/radio-group';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import imageCompression from 'browser-image-compression';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { IMAGE_BASE64_MAX_LENGTH } from '../../../configs';
 import { ImageUrlSchema } from '../../../customTypes';
 import imageStyles from '../../../styles/image';
 import getBase64 from '../../../utils/getBase64';

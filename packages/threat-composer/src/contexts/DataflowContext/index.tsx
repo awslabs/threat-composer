@@ -13,12 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { STORAGE_LOCAL_STATE } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren } from 'react';
 import DataflowLocalStateContextProvider from './components/LocalStateContextProvider';
 import DataflowLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useDataflowInfoContext } from './context';
 import { DataflowContextProviderProps } from './types';
-import { STORAGE_LOCAL_STATE } from '../../configs';
 import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
 
 const DataflowContextProvider: FC<PropsWithChildren<DataflowContextProviderProps>> = (props) => {
