@@ -26,7 +26,6 @@ import Input from '../../generic/Input';
 import MarkdownEditor from '../../generic/MarkdownEditor';
 import MarkdownViewer from '../../generic/MarkdownViewer';
 
-
 const ApplicationInfo: FC<EditableComponentBaseProps> = ({
   onEditModeChange,
   MarkdownEditorComponentType = MarkdownEditor,
@@ -82,7 +81,6 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
           value={content}
           onChange={setContent}
           label='Description'
-          parentHeaderLevel='h2'
           validateData={ApplicationInfoSchema.shape.description.safeParse}
         />
       </SpaceBetween>) :

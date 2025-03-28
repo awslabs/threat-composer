@@ -34,7 +34,7 @@ const CommentsEdit = <T extends EntityBase>({
     label='Comments'
     value={comments}
     onChange={(value) => onEditEntity(entity, 'Comments', value)}
-    rows={3}
+    allowedHeadingLevels={[4, 5]}
     validateData={MetadataCommentSchema.safeParse}
   />);
 };

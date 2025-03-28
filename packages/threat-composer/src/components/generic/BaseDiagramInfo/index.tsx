@@ -82,7 +82,6 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
           label='Introduction'
           value={content}
           onChange={setContent}
-          parentHeaderLevel='h3'
           validateData={validateData}
         />
         <Header variant='h3'>{headerTitle} Diagram</Header>

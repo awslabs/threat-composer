@@ -13,25 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { MarkdownEditorProps, useThemeContext, useContentValidation } from '@aws/threat-composer';
-import { FormField } from '@cloudscape-design/components';
-import { Mode } from '@cloudscape-design/global-styles';
-import { MDXEditor, MDXEditorMethods, DiffSourceToggleWrapper, ListsToggle, toolbarPlugin, diffSourcePlugin, linkPlugin, linkDialogPlugin, UndoRedo, headingsPlugin, codeBlockPlugin, codeMirrorPlugin, markdownShortcutPlugin, BoldItalicUnderlineToggles, BlockTypeSelect, CodeToggle, CreateLink, InsertCodeBlock, InsertImage, imagePlugin, InsertTable, tablePlugin, listsPlugin } from '@mdxeditor/editor';
-import { FC, useState, useRef } from 'react';
+/** @jsxImportSource @emotion/react */
+import { MarkdownEditorProps, MarkdownEditor } from '@aws/threat-composer';
+import { FC, useState } from 'react';
 import { unstable_usePrompt } from 'react-router-dom';
-
-import '@mdxeditor/editor/style.css';
 
 const MarkdownEditorWithPrompt: FC<MarkdownEditorProps> = ({
   value,
-  onChange,
-  validateData,
   ...props
 }) => {
   const [previousValue] = useState(value);
-  const mdxEditorRef = useRef<MDXEditorMethods>(null);
-  const { theme } = useThemeContext();
-  const { tempValue, errorText, handleChange } = useContentValidation(value, onChange, validateData);
 
   unstable_usePrompt({
     message: 'You have unsaved changes, proceed anyway?',
@@ -40,54 +31,7 @@ const MarkdownEditorWithPrompt: FC<MarkdownEditorProps> = ({
       currentLocation.pathname !== nextLocation.pathname,
   });
 
-  return (<FormField
-    {...props}
-    errorText={errorText}
-  >
-    <MDXEditor
-      ref={mdxEditorRef}
-      markdown={errorText ? value : tempValue}
-      className={theme == Mode.Dark ? 'dark-theme dark-editor' : 'light-theme light-editor'}
-      autoFocus={true}
-      onChange={handleChange}
-      toMarkdownOptions={{
-        emphasis: '_',
-        bullet: '-',
-      }}
-      plugins={[
-        toolbarPlugin({
-          toolbarContents: () => (
-            <>
-              <DiffSourceToggleWrapper>
-                <BoldItalicUnderlineToggles options={['Bold', 'Italic']} />
-                <BlockTypeSelect />
-                <CodeToggle />
-                <CreateLink />
-                <InsertImage />
-                <InsertTable />
-                <ListsToggle options={['bullet', 'number']} />
-                <InsertCodeBlock />
-                <UndoRedo />
-              </DiffSourceToggleWrapper>
-            </>
-          ),
-        }),
-        codeBlockPlugin({ defaultCodeBlockLanguage: '' }),
-        codeMirrorPlugin({
-          codeBlockLanguages: {
-            '': 'text',
-          },
-        }),
-        tablePlugin(),
-        diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: previousValue }),
-        markdownShortcutPlugin(),
-        listsPlugin(),
-        headingsPlugin({ allowedHeadingLevels: [3, 4, 5, 6] }),
-        linkPlugin(),
-        linkDialogPlugin(),
-        imagePlugin({ disableImageResize: true }),
-      ]
-      } /></FormField>);
+  return <MarkdownEditor value={value} allowedHeadingLevels={[3, 4, 5, 6]} {...props} />;
 };
 
 export default MarkdownEditorWithPrompt;

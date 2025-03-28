@@ -14,63 +14,98 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import Box from '@cloudscape-design/components/box';
-import Grid from '@cloudscape-design/components/grid';
-import { FC } from 'react';
-import MarkdownViewer from '../MarkdownViewer';
-import Textarea, { TextAreaProps } from '../Textarea';
+import { FormField, FormFieldProps } from '@cloudscape-design/components';
+import { colorTextStatusError, borderRadiusInput } from '@cloudscape-design/design-tokens';
+import { Mode } from '@cloudscape-design/global-styles';
+import { css } from '@emotion/react';
+import { MDXEditor, MDXEditorMethods, DiffSourceToggleWrapper, ListsToggle, toolbarPlugin, diffSourcePlugin, linkPlugin, linkDialogPlugin, UndoRedo, headingsPlugin, codeBlockPlugin, codeMirrorPlugin, markdownShortcutPlugin, BoldItalicUnderlineToggles, BlockTypeSelect, CodeToggle, CreateLink, InsertCodeBlock, InsertImage, imagePlugin, InsertTable, tablePlugin, listsPlugin, HEADING_LEVEL } from '@mdxeditor/editor';
+import { FC, useState, useRef } from 'react';
+import { useContentValidation } from '../../../hooks';
+import { TextAreaProps } from '../Textarea';
+import { useThemeContext } from '../ThemeProvider';
 
-const parentHeaderLevelMapping: any = {
-  h1: '##',
-  h2: '###',
-  h3: '####',
-  h4: '#####',
+import '@mdxeditor/editor/style.css';
+
+const styles = {
+  error: css({
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderRadius: ` ${borderRadiusInput}`,
+    color: colorTextStatusError,
+    borderColor: colorTextStatusError,
+  }),
 };
 
-export interface MarkdownEditorProps {
+export interface MarkdownEditorProps extends FormFieldProps {
   onChange: (value: string) => void;
   value: string;
-  label: string;
-  description?: string;
-  parentHeaderLevel?: 'h1' | 'h2' | 'h3';
-  rows?: number;
   validateData?: TextAreaProps['validateData'];
+  allowedHeadingLevels?: HEADING_LEVEL[];
 }
+
+const ALLOWED_HEADING_LEVELS: HEADING_LEVEL[] = [3, 4, 5, 6];
 
 const MarkdownEditor: FC<MarkdownEditorProps> = ({
   value,
   onChange,
-  label,
-  description,
-  parentHeaderLevel,
-  rows = 20,
   validateData,
+  allowedHeadingLevels = ALLOWED_HEADING_LEVELS,
+  ...props
 }) => {
-  return (
-    <Grid
-      gridDefinition={[{ colspan: { default: 12, xs: 6 } },
-        { colspan: { default: 12, xs: 6 } }]}>
-      <Textarea
-        label={label}
-        description={description}
-        constraintText={`Styling with Markdown is supported. ${parentHeaderLevel
-          ? `Use ${parentHeaderLevelMapping[parentHeaderLevel]} as sub headers to match the rendered header level for this section` : ''}
-      `}
-        stretch
-        value={value}
-        onChange={event =>
-          onChange(event.detail.value)
-        }
-        rows={rows}
-        validateData={validateData}
-      />
-      <Box margin='l'>
-        <MarkdownViewer>
-          {value}
-        </MarkdownViewer>
-      </Box>
-    </Grid >
-  );
+  const [previousValue] = useState(value);
+  const mdxEditorRef = useRef<MDXEditorMethods>(null);
+  const { theme } = useThemeContext();
+  const { tempValue, errorText, handleChange } = useContentValidation(value, onChange, validateData);
+
+  return (<FormField
+    {...props}
+    errorText={errorText}
+  >
+    <div css={errorText && styles.error}>
+      <MDXEditor
+        ref={mdxEditorRef}
+        markdown={errorText ? value : tempValue}
+        className={theme == Mode.Dark ? 'dark-theme dark-editor' : 'light-theme light-editor'}
+        autoFocus={true}
+        onChange={handleChange}
+        toMarkdownOptions={{
+          emphasis: '_',
+          bullet: '-',
+        }}
+        plugins={[
+          toolbarPlugin({
+            toolbarContents: () => (
+              <DiffSourceToggleWrapper>
+                <BoldItalicUnderlineToggles options={['Bold', 'Italic']} />
+                <BlockTypeSelect />
+                <CodeToggle />
+                <CreateLink />
+                <InsertImage />
+                <InsertTable />
+                <ListsToggle options={['bullet', 'number']} />
+                <InsertCodeBlock />
+                <UndoRedo />
+              </DiffSourceToggleWrapper>
+            ),
+          }),
+          codeBlockPlugin({ defaultCodeBlockLanguage: '' }),
+          codeMirrorPlugin({
+            codeBlockLanguages: {
+              '': 'text',
+            },
+          }),
+          tablePlugin(),
+          diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: previousValue }),
+          markdownShortcutPlugin(),
+          listsPlugin(),
+          headingsPlugin({ allowedHeadingLevels }),
+          linkPlugin(),
+          linkDialogPlugin(),
+          imagePlugin({ disableImageResize: true }),
+        ]
+        } />
+    </div>
+  </FormField>);
 };
 
 export default MarkdownEditor;
