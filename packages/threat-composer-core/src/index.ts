@@ -19,3 +19,6 @@ export { default as STRIDE, StrideItem } from './data/stride';
 
 // Constants exports
 export * from './constants';
+
+// Schema exports
+export * from './schemas/entities';

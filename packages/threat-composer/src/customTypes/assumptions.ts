@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { ContentEntityBaseSchema, EntityLinkBaseSchema } from '@aws/threat-composer-core';
 import { z } from 'zod';
-import { ContentEntityBaseSchema, EntityLinkBaseSchema } from './entities';
 
 export const AssumptionSchema = ContentEntityBaseSchema.extend({
   /**
@@ -38,4 +38,3 @@ export const AssumptionLinkSchema = EntityLinkBaseSchema.extend({
 }).strict();
 
 export type AssumptionLink = z.infer<typeof AssumptionLinkSchema>;
-

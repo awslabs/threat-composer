@@ -10,7 +10,7 @@ class ThreatComposerCoreProject extends TypeScriptProject {
       name: "@aws/threat-composer-core",
       sampleCode: false,
       deps: [
-        "zod", // Required for schema validation
+        "zod@3.22.4", // Required for schema validation
       ],
       devDeps: [],
       peerDeps: [],

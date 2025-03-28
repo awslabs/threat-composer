@@ -11,6 +11,7 @@ class ThreatComposerReactAppProject extends ReactTypeScriptProject {
       defaultReleaseBranch: "main",
       name: "@aws/threat-composer-app",
       deps: [
+        "@aws/threat-composer-core",
         "@cloudscape-design/components",
         "@cloudscape-design/global-styles",
         "@cloudscape-design/design-tokens",

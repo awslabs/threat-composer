@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { Metadata } from '../../customTypes';
+import { Metadata } from '@aws/threat-composer-core';
 
 const getMetadata= (metadata?: Metadata[]): {
   [key: string]: Metadata['value'];

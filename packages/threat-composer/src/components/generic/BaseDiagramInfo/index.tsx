@@ -14,12 +14,13 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
+import { BaseImageInfo } from '@aws/threat-composer-core';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useCallback, useState, useMemo, useEffect } from 'react';
-import { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
+import { EditableComponentBaseProps } from '../../../customTypes';
 import imageStyles from '../../../styles/image';
 import ContentLayout from '../../generic/ContentLayout';
 import ImageEdit from '../ImageEdit';

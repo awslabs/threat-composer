@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { BaseImageInfoSchema } from '@aws/threat-composer-core';
 import { z } from 'zod';
-import { BaseImageInfoSchema } from './entities';
 
 export const ArchitectureInfoSchema = BaseImageInfoSchema.extend({}).strict();
 

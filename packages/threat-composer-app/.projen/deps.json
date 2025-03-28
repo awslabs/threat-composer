@@ -102,6 +102,10 @@
       "type": "runtime"
     },
     {
+      "name": "@aws/threat-composer-core",
+      "type": "runtime"
+    },
+    {
       "name": "@cloudscape-design/components",
       "type": "runtime"
     },

@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { EntityBase } from '@aws/threat-composer-core';
 import { useCallback } from 'react';
-import { EntityBase } from '../../customTypes';
 
 const useEditMetadata = <T extends EntityBase>(onSaveEntity?: (updated: T) => void) => {
   return useCallback((entity: T, key: string, value: string | string[] | undefined) => {

@@ -14,9 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
+import { EntityBase } from '@aws/threat-composer-core';
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
 import Grid from '@cloudscape-design/components/grid';
-import { EntityBase } from '../../../customTypes';
 import expandablePanelHeaderStyles from '../../../styles/expandablePanelHeader';
 import CommentsEdit from '../CommentsEdit';
 

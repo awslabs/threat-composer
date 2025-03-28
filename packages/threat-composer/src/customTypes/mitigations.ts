@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { ContentEntityBaseSchema, EntityLinkBaseSchema, StatusSchema } from '@aws/threat-composer-core';
 import { z } from 'zod';
-import { ContentEntityBaseSchema, EntityLinkBaseSchema, StatusSchema } from './entities';
 import { MITIGATION_STATUS_IDENTIFIED, MITIGATION_STATUS_IN_PROGRESS, MITIGATION_STATUS_RESOLVED, MITIGATION_STATUS_RESOLVED_WILLNOTACTION, STATUS_NOT_SET } from '../configs';
 import mitigationStatus from '../data/status/mitigationStatus.json';
 

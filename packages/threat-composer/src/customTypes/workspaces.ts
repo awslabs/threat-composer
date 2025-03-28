@@ -18,9 +18,9 @@ import {
   SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH,
   STORAGE_LOCAL_STATE,
   STORAGE_LOCAL_STORAGE,
+  MetadataNodeSchema,
 } from '@aws/threat-composer-core';
 import { z } from 'zod';
-import { MetadataNodeSchema } from './entities';
 
 export const WorkspaceSchema = z.object({
   id: z.string().length(36),

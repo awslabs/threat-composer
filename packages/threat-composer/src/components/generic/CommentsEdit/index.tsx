@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { EntityBase, MetadataCommentSchema } from '@aws/threat-composer-core';
 import { useMemo } from 'react';
-import { EntityBase, MetadataCommentSchema } from '../../../customTypes';
 import MarkdownEditor from '../MarkdownEditor';
 
 export interface CommentsEditProps<T> {

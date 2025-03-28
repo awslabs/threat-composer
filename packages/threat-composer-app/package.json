@@ -41,6 +41,7 @@
   "dependencies": {
     "@aws-northstar/ui": "^1.1.1",
     "@aws/threat-composer": "^0.0.0",
+    "@aws/threat-composer-core": "^0.0.0",
     "@cloudscape-design/components": "^3.0.517",
     "@cloudscape-design/design-tokens": "^3.0.34",
     "@cloudscape-design/global-styles": "^1.0.23",

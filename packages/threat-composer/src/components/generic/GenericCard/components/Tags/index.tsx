@@ -14,13 +14,13 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
+import { TagSchema } from '@aws/threat-composer-core';
 import Button from '@cloudscape-design/components/button';
 import { CancelableEventHandler, BaseKeyDetail } from '@cloudscape-design/components/internal/events';
 import TokenGroup from '@cloudscape-design/components/token-group';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { FC, useCallback, useState } from 'react';
-import { TagSchema } from '../../../../../customTypes';
 import { useMobileMediaQuery } from '../../../../../hooks/useMediaQuery';
 import getMobileMediaQuery from '../../../../../utils/getMobileMediaQuery';
 import Input from '../../../../generic/Input';
