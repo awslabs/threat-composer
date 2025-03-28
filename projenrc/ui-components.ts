@@ -17,6 +17,7 @@ class ThreatComposerUIComponentsProject extends TypeScriptProject {
       name: "@aws/threat-composer",
       sampleCode: false,
       deps: [
+        "@aws/threat-composer-core",
         "@cloudscape-design/components",
         "@cloudscape-design/collection-hooks",
         "@cloudscape-design/global-styles",

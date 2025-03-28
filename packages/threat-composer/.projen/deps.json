@@ -130,7 +130,7 @@
     },
     {
       "name": "projen",
-      "version": "^0.82.8",
+      "version": "^0.79.24",
       "type": "build"
     },
     {
@@ -181,6 +181,10 @@
     },
     {
       "name": "@aws-northstar/ui",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws/threat-composer-core",
       "type": "runtime"
     },
     {

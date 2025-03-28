@@ -45,6 +45,14 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
       "^0.2.1"
     );
 
+    this.tryFindObjectFile("package.json")?.addOverride("workspaces.packages", [
+      "packages/threat-composer-core",
+      "packages/threat-composer",
+      "packages/threat-composer-app",
+      "packages/threat-composer-app-browser-extension",
+      "packages/threat-composer-infra",
+    ]);
+
     this.tryFindObjectFile("package.json")?.addOverride("workspaces.nohoist", [
       "**/wxt",
     ]);

@@ -47,7 +47,7 @@
     "jest": "^29.5.0",
     "jest-junit": "^15",
     "merge": "^2.1.1",
-    "projen": "^0.82.8",
+    "projen": "^0.79.24",
     "prop-types": "^15.8.1",
     "react": "18.0.0",
     "react-dom": "18.0.0",
@@ -63,6 +63,7 @@
   },
   "dependencies": {
     "@aws-northstar/ui": "^1.1.1",
+    "@aws/threat-composer-core": "^0.0.0",
     "@cloudscape-design/board-components": "^3.0.52",
     "@cloudscape-design/collection-hooks": "^1.0.36",
     "@cloudscape-design/components": "^3.0.517",

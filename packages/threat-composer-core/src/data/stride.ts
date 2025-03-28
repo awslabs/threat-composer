@@ -13,7 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-const STRIDE = [{
+
+export interface StrideItem {
+  label: string;
+  value: string;
+  violates: string;
+  description: string;
+}
+
+const STRIDE: StrideItem[] = [{
   label: 'Spoofing',
   value: 'S',
   violates: 'Authenticity',

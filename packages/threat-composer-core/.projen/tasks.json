@@ -76,15 +76,7 @@
     },
     "post-compile": {
       "name": "post-compile",
-      "description": "Runs after successful compilation",
-      "steps": [
-        {
-          "exec": "rsync -arv --prune-empty-dirs --include=*/ --include=*.css --include=*.png --include=*.gif --exclude=* ./src/* ./lib"
-        },
-        {
-          "exec": "yarn run storybook:build"
-        }
-      ]
+      "description": "Runs after successful compilation"
     },
     "post-upgrade": {
       "name": "post-upgrade",
@@ -96,22 +88,6 @@
       "steps": [
         {
           "exec": "rm -rf {lib,dist}"
-        }
-      ]
-    },
-    "storybook": {
-      "name": "storybook",
-      "steps": [
-        {
-          "exec": "storybook dev -p 6006"
-        }
-      ]
-    },
-    "storybook:build": {
-      "name": "storybook:build",
-      "steps": [
-        {
-          "exec": "storybook build -o storybook.out"
         }
       ]
     },
@@ -145,13 +121,13 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@babel/preset-env,@babel/preset-react,@babel/preset-typescript,@cloudscape-design/jest-preset,@storybook/addon-essentials,@storybook/addon-interactions,@storybook/addon-links,@storybook/blocks,@storybook/react,@storybook/react-webpack5,@storybook/testing-library,@types/d3,@types/indefinite,@types/jest,@types/lodash.isequal,@types/sanitize-html,@types/uuid,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-storybook,jest,merge,prop-types,storybook,ts-jest,typescript,@aws-northstar/ui,@aws/threat-composer-core,@cloudscape-design/board-components,@cloudscape-design/collection-hooks,@cloudscape-design/components,@cloudscape-design/design-tokens,@cloudscape-design/global-styles,@emotion/react,browser-image-compression,d3,indefinite,lodash.isequal,react-markdown,react-simply-carousel,rehype-raw,rehype-stringify,remark-frontmatter,remark-gfm,remark-parse,remark-rehype,sanitize-html,unified,use-local-storage-state,uuid,yaml,zod"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@types/jest,eslint-import-resolver-typescript,eslint-plugin-import,jest,ts-jest,typescript,zod"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @babel/preset-env @babel/preset-react @babel/preset-typescript @cloudscape-design/jest-preset @storybook/addon-essentials @storybook/addon-interactions @storybook/addon-links @storybook/blocks @storybook/react @storybook/react-webpack5 @storybook/testing-library @types/d3 @types/indefinite @types/jest @types/lodash.isequal @types/node @types/react-dom @types/react @types/sanitize-html @types/uuid @typescript-eslint/eslint-plugin @typescript-eslint/parser constructs eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-storybook eslint jest jest-junit merge projen prop-types react-dom react storybook ts-jest typescript @aws-northstar/ui @aws/threat-composer-core @cloudscape-design/board-components @cloudscape-design/collection-hooks @cloudscape-design/components @cloudscape-design/design-tokens @cloudscape-design/global-styles @emotion/react browser-image-compression d3 indefinite lodash.isequal react-markdown react-simply-carousel rehype-raw rehype-stringify remark-frontmatter remark-gfm remark-parse remark-rehype sanitize-html unified use-local-storage-state uuid yaml zod"
+          "exec": "yarn upgrade @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser constructs eslint-import-resolver-typescript eslint-plugin-import eslint jest jest-junit projen ts-jest typescript zod"
         },
         {
           "exec": "npx projen"
