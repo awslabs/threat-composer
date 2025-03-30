@@ -83,6 +83,7 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
           value={content}
           onChange={setContent}
           validateData={validateData}
+          focus={true}
         />
         <Header variant='h3'>{headerTitle} Diagram</Header>
         <ImageEdit value={image} onChange={setImage} />

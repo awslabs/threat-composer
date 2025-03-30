@@ -41,6 +41,7 @@ export interface MarkdownEditorProps extends FormFieldProps {
   value: string;
   validateData?: TextAreaProps['validateData'];
   allowedHeadingLevels?: HEADING_LEVEL[];
+  focus?: boolean;
 }
 
 const ALLOWED_HEADING_LEVELS: HEADING_LEVEL[] = [3, 4, 5, 6];
@@ -50,6 +51,7 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
   onChange,
   validateData,
   allowedHeadingLevels = ALLOWED_HEADING_LEVELS,
+  focus = false,
   ...props
 }) => {
   const [previousValue] = useState(value);
@@ -66,7 +68,7 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
         ref={mdxEditorRef}
         markdown={errorText ? value : tempValue}
         className={theme == Mode.Dark ? 'dark-theme dark-editor' : 'light-theme light-editor'}
-        autoFocus={true}
+        autoFocus={focus}
         onChange={handleChange}
         toMarkdownOptions={{
           emphasis: '_',
