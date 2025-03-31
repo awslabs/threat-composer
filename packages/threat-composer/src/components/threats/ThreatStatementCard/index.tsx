@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { TemplateThreatStatement, threatStatus } from '@aws/threat-composer-core';
+import { TemplateThreatStatement, threatStatus, THREAT_STATUS_COLOR_MAPPING } from '@aws/threat-composer-core';
 import { SpaceBetween } from '@cloudscape-design/components';
 import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
@@ -22,7 +22,6 @@ import { OptionDefinition } from '@cloudscape-design/components/internal/compone
 import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useCallback, useMemo } from 'react';
-import { THREAT_STATUS_COLOR_MAPPING } from '../../../configs/status';
 import AssumptionLink from '../../assumptions/AssumptionLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import GenericCard from '../../generic/GenericCard';

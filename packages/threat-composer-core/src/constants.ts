@@ -44,7 +44,7 @@ export const MITIGATION_STATUS_RESOLVED = 'mitigationResolved';
 export const MITIGATION_STATUS_RESOLVED_WILLNOTACTION = 'mitigationResolvedWillNotAction';
 export const DEFAULT_MITIGATION_STATUS = MITIGATION_STATUS_IDENTIFIED;
 
-export const MITIGATION_STATUS_COLOR_MAPPING = {
+export const MITIGATION_STATUS_COLOR_MAPPING: any = {
   mitigationIdentified: 'grey',
   mitigationInProgress: 'blue',
   mitigationResolved: 'green',
@@ -58,7 +58,7 @@ export const THREAT_STATUS_RESOLVED = 'threatResolved';
 export const THREAT_STATUS_NOT_USEFUL = 'threatResolvedNotUseful';
 export const DEFAULT_THREAT_STATUS = THREAT_STATUS_IDENTIFIED;
 
-export const THREAT_STATUS_COLOR_MAPPING = {
+export const THREAT_STATUS_COLOR_MAPPING: any = {
   threatIdentified: 'grey',
   threatResolvedNotUseful: 'blue',
   threatResolved: 'green',

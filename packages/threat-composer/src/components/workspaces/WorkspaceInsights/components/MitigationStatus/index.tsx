@@ -13,7 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { mitigationStatus } from '@aws/threat-composer-core';
+import {
+  mitigationStatus, MITIGATION_STATUS_IDENTIFIED,
+  MITIGATION_STATUS_IN_PROGRESS,
+  MITIGATION_STATUS_RESOLVED,
+  MITIGATION_STATUS_RESOLVED_WILLNOTACTION,
+  STATUS_NOT_SET,
+} from '@aws/threat-composer-core';
 import {
   Button,
   Box,
@@ -28,13 +34,6 @@ import {
   colorChartsStatusLow,
 } from '@cloudscape-design/design-tokens';
 import { useMemo, useCallback, FC } from 'react';
-import {
-  MITIGATION_STATUS_IDENTIFIED,
-  MITIGATION_STATUS_IN_PROGRESS,
-  MITIGATION_STATUS_RESOLVED,
-  MITIGATION_STATUS_RESOLVED_WILLNOTACTION,
-  STATUS_NOT_SET,
-} from '../../../../../configs';
 import { useMitigationsContext } from '../../../../../contexts/MitigationsContext';
 import DashboardNumber from '../../../../generic/DashboardNumber';
 import useMitigationListLinkClicked from '../../hooks/useMitigationListLinkClicked';

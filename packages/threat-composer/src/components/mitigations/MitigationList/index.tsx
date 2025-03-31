@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { AssumptionLink, Mitigation, MitigationLink, MitigationListFilter, mitigationStatus } from '@aws/threat-composer-core';
+import { AssumptionLink, STATUS_NOT_SET, Mitigation, MitigationLink, MitigationListFilter, mitigationStatus } from '@aws/threat-composer-core';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Grid from '@cloudscape-design/components/grid';
@@ -21,7 +21,6 @@ import Multiselect from '@cloudscape-design/components/multiselect';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { STATUS_NOT_SET } from '../../../configs';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import ContentLayout from '../../generic/ContentLayout';

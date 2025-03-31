@@ -13,9 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { Mitigation } from '@aws/threat-composer-core';
+import { DEFAULT_MITIGATION_STATUS, Mitigation } from '@aws/threat-composer-core';
 import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
-import { DEFAULT_MITIGATION_STATUS } from '../../configs/status';
 
 const getNewMitigation = (content: string = ''): Mitigation => {
   return {

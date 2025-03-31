@@ -20,4 +20,3 @@ export * from './content';
 export * from './styles';
 export * from './metadata';
 export * from './appMode';
-export * from './status';

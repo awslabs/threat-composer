@@ -13,7 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { threatStatus } from '@aws/threat-composer-core';
+import {
+  threatStatus, STATUS_NOT_SET,
+  THREAT_STATUS_IDENTIFIED,
+  THREAT_STATUS_NOT_USEFUL,
+  THREAT_STATUS_RESOLVED,
+} from '@aws/threat-composer-core';
 import {
   Button,
   Box,
@@ -29,10 +34,6 @@ import {
 import { useMemo, useCallback, FC } from 'react';
 import {
   DEFAULT_NEW_ENTITY_ID,
-  STATUS_NOT_SET,
-  THREAT_STATUS_IDENTIFIED,
-  THREAT_STATUS_NOT_USEFUL,
-  THREAT_STATUS_RESOLVED,
 } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import DashboardNumber from '../../../../generic/DashboardNumber';

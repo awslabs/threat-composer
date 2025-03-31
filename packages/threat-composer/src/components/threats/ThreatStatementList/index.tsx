@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { LEVEL_SELECTOR_OPTIONS, LEVEL_NOT_SET, TemplateThreatStatement, ThreatStatementListFilter, threatStatus } from '@aws/threat-composer-core';
+import { LEVEL_SELECTOR_OPTIONS, LEVEL_NOT_SET, STATUS_NOT_SET, TemplateThreatStatement, ThreatStatementListFilter, threatStatus } from '@aws/threat-composer-core';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Grid from '@cloudscape-design/components/grid';
@@ -24,7 +24,7 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { css } from '@emotion/react';
 import { FC, PropsWithChildren, useCallback, useMemo, useState } from 'react';
-import { DEFAULT_NEW_ENTITY_ID, STATUS_NOT_SET } from '../../../configs';
+import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { GlobalSetupContextApi, useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
