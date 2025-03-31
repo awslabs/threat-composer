@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Workspace } from '@aws/threat-composer-core';
 import { FC } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_CURRENT_WORKSPACE, LOCAL_STORAGE_KEY_WORKSPACE_LIST } from '../../../../configs/localStorageKeys';
-import { Workspace } from '../../../../customTypes';
 import WorkspacesMigration from '../../../../migrations/WorkspacesMigration';
 import { useWorkspaceExamplesContext } from '../../../WorkspaceExamplesContext';
 import { WorkspacesContext } from '../../context';

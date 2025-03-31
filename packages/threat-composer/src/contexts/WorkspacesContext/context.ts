@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Workspace } from '@aws/threat-composer-core';
 import { useContext, createContext } from 'react';
-import { Workspace } from '../../customTypes';
 import { PLACEHOLDER_EXCHANGE_DATA_FOR_WORKSPACE } from '../../hooks/useExportImport';
 
 export interface WorkspacesContextApi {

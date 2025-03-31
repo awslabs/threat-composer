@@ -13,8 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Workspace } from '@aws/threat-composer-core';
 import { EXPORT_FILE_NAME } from '../../configs/export';
-import { ComposerMode, Workspace } from '../../customTypes';
+import { ComposerMode } from '../../customTypes';
 
 const getExportFileName = (composerMode: ComposerMode, filtered: boolean, currentWorkspace: Workspace | null) => {
   const exportFileName = `${EXPORT_FILE_NAME}_Workspace_${currentWorkspace ? currentWorkspace.name.replace(' ', '-') : 'Default'}${composerMode !== 'Full' ? '_ThreatsOnly' : ''}${filtered ? '_Filtered' : ''}`;

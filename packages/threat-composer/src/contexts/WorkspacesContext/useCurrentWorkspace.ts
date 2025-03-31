@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Workspace } from '@aws/threat-composer-core';
 import { useEffect, useMemo } from 'react';
 import { DEFAULT_WORKSPACE_ID } from '../../configs';
-import { Workspace } from '../../customTypes';
 
 const useCurrentWorkspace = (
   lastWorkspace: Workspace | null,

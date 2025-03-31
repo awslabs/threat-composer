@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { WorkspaceSchema, Workspace } from '@aws/threat-composer-core';
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import FormField from '@cloudscape-design/components/form-field';
@@ -21,7 +22,6 @@ import { InputProps } from '@cloudscape-design/components/input';
 import Modal from '@cloudscape-design/components/modal';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import React, { FC, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { WorkspaceSchema, Workspace } from '../../../customTypes';
 import Input from '../../generic/Input';
 
 export interface EditWorkspaceProps {

@@ -16,7 +16,6 @@
 export * from './mitigations';
 export * from './threats';
 export * from './threatFieldTypes';
-export * from './workspaces';
 export * from './composerMode';
 export * from './dataExchange';
 export * from './events';

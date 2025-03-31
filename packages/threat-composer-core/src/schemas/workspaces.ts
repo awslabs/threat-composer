@@ -13,14 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { z } from 'zod';
 import {
   REGEX_WORKSPACE_NAME,
   SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH,
   STORAGE_LOCAL_STATE,
   STORAGE_LOCAL_STORAGE,
-  MetadataNodeSchema,
-} from '@aws/threat-composer-core';
-import { z } from 'zod';
+} from '../constants';
+import { MetadataNodeSchema } from './entities';
 
 export const WorkspaceSchema = z.object({
   id: z.string().length(36),
