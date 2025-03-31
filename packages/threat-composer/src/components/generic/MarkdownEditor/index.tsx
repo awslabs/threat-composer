@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 import { FormField, FormFieldProps } from '@cloudscape-design/components';
-import { colorTextStatusError, borderRadiusInput } from '@cloudscape-design/design-tokens';
+import { colorTextStatusError, borderRadiusInput, colorBorderInputDefault, colorBorderInputFocused } from '@cloudscape-design/design-tokens';
 import { Mode } from '@cloudscape-design/global-styles';
 import { css } from '@emotion/react';
 import { MDXEditor, MDXEditorMethods, DiffSourceToggleWrapper, ListsToggle, toolbarPlugin, diffSourcePlugin, linkPlugin, linkDialogPlugin, UndoRedo, headingsPlugin, codeBlockPlugin, codeMirrorPlugin, markdownShortcutPlugin, BoldItalicUnderlineToggles, BlockTypeSelect, CodeToggle, CreateLink, InsertCodeBlock, InsertImage, imagePlugin, InsertTable, tablePlugin, listsPlugin, HEADING_LEVEL } from '@mdxeditor/editor';
@@ -27,12 +27,20 @@ import { useThemeContext } from '../ThemeProvider';
 import '@mdxeditor/editor/style.css';
 
 const styles = {
-  error: css({
+  default: css({
     borderWidth: '2px',
     borderStyle: 'solid',
     borderRadius: ` ${borderRadiusInput}`,
-    color: colorTextStatusError,
-    borderColor: colorTextStatusError,
+    borderColor: colorBorderInputDefault,
+  }),
+  error: css({
+    '&&': { // Double ampersand for higher specificity
+      borderWidth: '2px',
+      borderStyle: 'solid',
+      borderRadius: ` ${borderRadiusInput}`,
+      color: colorTextStatusError,
+      borderColor: colorTextStatusError,
+    },
   }),
 };
 
@@ -63,7 +71,16 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
     {...props}
     errorText={errorText}
   >
-    <div css={errorText && styles.error}>
+    <div css={[
+      styles.default,
+      {
+        '&:focus-within': {
+          borderColor: colorBorderInputFocused,
+        },
+      },
+      errorText && styles.error, // Put error last so it overrides previous styles
+    ]}>
+
       <MDXEditor
         ref={mdxEditorRef}
         markdown={errorText ? value : tempValue}
