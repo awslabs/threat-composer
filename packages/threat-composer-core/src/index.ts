@@ -33,3 +33,5 @@ export * from './schemas/dataExchange';
 
 // Utils exports
 export { default as validateData } from './utils/validateData';
+export { default as standardizeNumericId } from './utils/standardizeNumericId';
+export { default as escapeMarkdown } from './utils/escapeMarkdown';

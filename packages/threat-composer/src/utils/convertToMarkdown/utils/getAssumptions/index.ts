@@ -13,10 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat } from '@aws/threat-composer-core';
-import escapeMarkdown from '../../../../utils/escapeMarkdown';
+import { DataExchangeFormat, escapeMarkdown, standardizeNumericId } from '@aws/threat-composer-core';
 import parseTableCellContent from '../../../../utils/parseTableCellContent';
-import standardizeNumericId from '../../../../utils/standardizeNumericId';
 
 export const getAssumptionsContent = async (
   data: DataExchangeFormat,

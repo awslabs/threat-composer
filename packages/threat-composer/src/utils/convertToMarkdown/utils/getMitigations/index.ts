@@ -13,10 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat, mitigationStatus, STATUS_NOT_SET } from '@aws/threat-composer-core';
-import escapeMarkdown from '../../../../utils/escapeMarkdown';
+import { DataExchangeFormat, escapeMarkdown, mitigationStatus, standardizeNumericId, STATUS_NOT_SET } from '@aws/threat-composer-core';
 import parseTableCellContent from '../../../../utils/parseTableCellContent';
-import standardizeNumericId from '../../../../utils/standardizeNumericId';
 
 export const getMitigationsContent = async (
   data: DataExchangeFormat,

@@ -13,8 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat } from '@aws/threat-composer-core';
-import escapeMarkdown from '../../../../utils/escapeMarkdown';
+import { DataExchangeFormat, escapeMarkdown } from '@aws/threat-composer-core';
 
 export const getApplicationName = async (
   data: DataExchangeFormat,

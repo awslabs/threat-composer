@@ -15,5 +15,3 @@
  ******************************************************************************************************************** */
 export { default as getThreatFromThreatPacksThreat } from './getThreatFromThreatPacksThreat';
 export { default as getNewThreatStatement } from './getNewThreatStatement';
-export { default as escapeMarkdown } from './escapeMarkdown';
-export { default as standardizeNumericId } from './standardizeNumericId';
