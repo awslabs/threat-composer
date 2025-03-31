@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement, threatFieldTypeMapping, ThreatFieldTypes, ThreatStatementDisplayToken } from '../../customTypes';
+import { TemplateThreatStatement, threatFieldTypeMapping, ThreatFieldTypes, ThreatStatementDisplayToken } from '@aws/threat-composer-core';
 import threatFieldData from '../../data/threatFieldData';
 import threatStatementFormat from '../../data/threatStatementFormat';
 import calculateFieldCombination from '../calculateFieldCombination';

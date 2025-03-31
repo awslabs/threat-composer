@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { TemplateThreatStatement } from '@aws/threat-composer-core';
 import { v4 as uuidV4 } from 'uuid';
 import { DEFAULT_THREAT_STATUS } from '../../configs/status';
-import { TemplateThreatStatement } from '../../customTypes';
 
 const getNewThreatStatement = (): TemplateThreatStatement => {
   return {

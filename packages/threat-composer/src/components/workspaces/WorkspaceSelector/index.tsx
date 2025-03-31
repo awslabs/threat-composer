@@ -15,6 +15,9 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 
+import {
+  TemplateThreatStatement,
+} from '@aws/threat-composer-core';
 import DeleteConfirmationDialog from '@aws-northstar/ui/components/DeleteConfirmationDialog';
 import Alert from '@cloudscape-design/components/alert';
 import Button from '@cloudscape-design/components/button';
@@ -40,7 +43,6 @@ import { useWorkspaceExamplesContext } from '../../../contexts/WorkspaceExamples
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext';
 import {
   DataExchangeFormat,
-  TemplateThreatStatement,
 } from '../../../customTypes';
 import useCloneWorkspace from '../../../hooks/useCloneWorkspace';
 import useImportExport from '../../../hooks/useExportImport';

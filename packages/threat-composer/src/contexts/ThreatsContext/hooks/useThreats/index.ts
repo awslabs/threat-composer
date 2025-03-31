@@ -13,8 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { TemplateThreatStatement } from '@aws/threat-composer-core';
 import { useCallback, useEffect, useState } from 'react';
-import { ComposerMode, TemplateThreatStatement } from '../../../../customTypes';
+import { ComposerMode } from '../../../../customTypes';
 import getNewThreatStatement from '../../../../utils/getNewThreatStatement';
 import { View } from '../../types';
 

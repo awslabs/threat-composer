@@ -14,12 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
+import { TemplateThreatStatement, threatStatus } from '@aws/threat-composer-core';
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
 import Grid from '@cloudscape-design/components/grid';
 import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
 import { FC, useMemo } from 'react';
-import { TemplateThreatStatement } from '../../../customTypes';
-import threatStatus from '../../../data/status/threatStatus.json';
 import expandablePanelHeaderStyles from '../../../styles/expandablePanelHeader';
 import CommentsEdit from '../../generic/CommentsEdit';
 import StatusSelector from '../../generic/StatusSelector';

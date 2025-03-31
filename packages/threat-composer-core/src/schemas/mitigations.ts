@@ -25,6 +25,8 @@ import {
 
 import mitigationStatus from '../data/status/mitigationStatus.json';
 
+export { mitigationStatus };
+
 export const MitigationSchema = ContentEntityBaseSchema.extend({
   status: StatusSchema.refine((schema) => {
     return !schema || mitigationStatus.map(x => x.value).includes(schema);

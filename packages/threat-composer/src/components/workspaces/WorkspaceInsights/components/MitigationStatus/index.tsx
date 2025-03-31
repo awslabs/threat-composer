@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { mitigationStatus } from '@aws/threat-composer-core';
 import {
   Button,
   Box,
@@ -35,7 +36,6 @@ import {
   STATUS_NOT_SET,
 } from '../../../../../configs';
 import { useMitigationsContext } from '../../../../../contexts/MitigationsContext';
-import { mitigationStatus } from '../../../../../data';
 import DashboardNumber from '../../../../generic/DashboardNumber';
 import useMitigationListLinkClicked from '../../hooks/useMitigationListLinkClicked';
 import { WorkspaceInsightsProps } from '../../types';

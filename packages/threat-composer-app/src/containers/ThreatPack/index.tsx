@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThreatPackComponent, DEFAULT_WORKSPACE_ID, DEFAULT_NEW_ENTITY_ID, TemplateThreatStatement } from '@aws/threat-composer';
+import { ThreatPackComponent, DEFAULT_WORKSPACE_ID, DEFAULT_NEW_ENTITY_ID } from '@aws/threat-composer';
+import { TemplateThreatStatement } from '@aws/threat-composer-core';
 import { FC, useCallback } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ROUTE_THREAT_EDITOR } from '../../config/routes';

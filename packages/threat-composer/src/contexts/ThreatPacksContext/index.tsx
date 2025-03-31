@@ -13,12 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { TemplateThreatStatement } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren, useCallback, useMemo } from 'react';
 
 import { ThreatPacksContext, useThreatPacksContext } from './context';
 import { ThreatPacksContextProviderProps } from './types';
 import { METADATA_KEY_SOURCE, METADATA_KEY_SOURCE_THREAT_PACK, METADATA_KEY_SOURCE_THREAT_PACK_THREAT, METADATA_SOURCE_THREAT_PACK } from '../../configs';
-import { ThreatPack, ThreatPackUsage, TemplateThreatStatement } from '../../customTypes';
+import { ThreatPack, ThreatPackUsage } from '../../customTypes';
 import threatPacks from '../../data/threatPacks/threatPacks';
 import getMetadata from '../../utils/getMetadata';
 import getThreatFromThreactPackThreat from '../../utils/getThreatFromThreatPacksThreat';

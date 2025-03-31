@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { STRIDE } from '@aws/threat-composer-core';
+import { STRIDE, TemplateThreatStatement } from '@aws/threat-composer-core';
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import ExpandableSection from '@cloudscape-design/components/expandable-section';
@@ -22,7 +22,6 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useState, useMemo, useCallback, useImperativeHandle, forwardRef } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { TemplateThreatStatement } from '../../../customTypes';
 import intersectArrays from '../../../utils/intersectArrays';
 import shuffle from '../../../utils/shuffle';
 

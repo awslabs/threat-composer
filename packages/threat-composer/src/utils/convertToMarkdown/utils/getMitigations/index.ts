@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { mitigationStatus } from '@aws/threat-composer-core';
 import { STATUS_NOT_SET } from '../../../../configs';
 import { DataExchangeFormat } from '../../../../customTypes';
-import mitigationStatus from '../../../../data/status/mitigationStatus.json';
 import escapeMarkdown from '../../../../utils/escapeMarkdown';
 import parseTableCellContent from '../../../../utils/parseTableCellContent';
 import standardizeNumericId from '../../../../utils/standardizeNumericId';

@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { TemplateThreatStatement } from '@aws/threat-composer-core';
 import parseThreatStatement from '.';
-import { TemplateThreatStatement } from '../../customTypes';
 
 describe('parseThreatStatement', () => {
   test('parses threat statement element with template and generates output', () => {

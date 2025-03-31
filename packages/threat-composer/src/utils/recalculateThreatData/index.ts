@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement } from '../../customTypes';
+import { TemplateThreatStatement } from '@aws/threat-composer-core';
 import renderThreatStatement from '../renderThreatStatement';
 
 const recalculateThreatData = (threats: TemplateThreatStatement[]) => {

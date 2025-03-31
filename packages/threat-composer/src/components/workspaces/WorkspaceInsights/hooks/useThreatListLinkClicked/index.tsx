@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { ThreatStatementListFilter } from '@aws/threat-composer-core';
 import { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
 import { useCallback } from 'react';
-import { ThreatStatementListFilter, ViewNavigationEvent } from '../../../../../customTypes';
+import { ViewNavigationEvent } from '../../../../../customTypes';
 
 const useThreatListLinkClicked = (onThreatListView: ViewNavigationEvent['onThreatListView']) => {
   return useCallback((filter?: ThreatStatementListFilter): CancelableEventHandler<BaseNavigationDetail> => (event) => {

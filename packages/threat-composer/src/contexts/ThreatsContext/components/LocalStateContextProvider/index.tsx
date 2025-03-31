@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { TemplateThreatStatement } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { TemplateThreatStatement } from '../../../../customTypes';
 import { useGlobalSetupContext } from '../../../GlobalSetupContext/context';
 import { LocalStateContextProviderBaseProps } from '../../../types';
 import { ThreatsContext } from '../../context';

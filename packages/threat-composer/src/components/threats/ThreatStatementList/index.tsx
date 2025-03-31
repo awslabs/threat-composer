@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { LEVEL_SELECTOR_OPTIONS, LEVEL_NOT_SET } from '@aws/threat-composer-core';
+import { LEVEL_SELECTOR_OPTIONS, LEVEL_NOT_SET, TemplateThreatStatement, ThreatStatementListFilter, threatStatus } from '@aws/threat-composer-core';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Grid from '@cloudscape-design/components/grid';
@@ -28,8 +28,7 @@ import { DEFAULT_NEW_ENTITY_ID, STATUS_NOT_SET } from '../../../configs';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { GlobalSetupContextApi, useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { TemplateThreatStatement, ThreatStatementListFilter, ViewNavigationEvent } from '../../../customTypes';
-import threatStatus from '../../../data/status/threatStatus.json';
+import { ViewNavigationEvent } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import AssetSelector from '../../generic/AssetSelector';

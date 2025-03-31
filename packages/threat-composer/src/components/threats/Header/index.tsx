@@ -14,11 +14,12 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
+import { TemplateThreatStatement } from '@aws/threat-composer-core';
 import Button from '@cloudscape-design/components/button';
 import HeaderComponent from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useMemo } from 'react';
-import { ComposerMode, TemplateThreatStatement } from '../../../customTypes';
+import { ComposerMode } from '../../../customTypes';
 
 export interface HeaderProps {
   composerMode: ComposerMode;

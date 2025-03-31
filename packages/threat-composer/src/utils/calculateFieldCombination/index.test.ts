@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { TemplateThreatStatement } from '@aws/threat-composer-core';
 import calculateFieldCombination from '.';
-import { TemplateThreatStatement } from '../../customTypes';
 
 describe('calculateFieldCombination', () => {
   test('should return the field combination score', async () => {

@@ -14,13 +14,13 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
+import { ThreatFieldTypes } from '@aws/threat-composer-core';
 import Button from '@cloudscape-design/components/button';
 import ExpandableSection from '@cloudscape-design/components/expandable-section';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import { css } from '@emotion/react';
 import { FC, useMemo, useCallback, useState } from 'react';
-import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
 import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
 

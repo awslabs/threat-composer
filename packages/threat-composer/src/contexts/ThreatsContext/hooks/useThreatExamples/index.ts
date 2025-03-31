@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { TemplateThreatStatement } from '@aws/threat-composer-core';
 import { useMemo } from 'react';
-import { TemplateThreatStatement } from '../../../../customTypes';
 import threatStatementExamplesData from '../../../../data/threatStatementExamples.json';
 import renderThreatStatement from '../../../../utils/renderThreatStatement';
 import { PerFieldExamplesType, DEFAULT_PER_FIELD_EXAMPLES } from '../../context';

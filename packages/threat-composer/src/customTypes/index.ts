@@ -13,8 +13,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export * from './threats';
-export * from './threatFieldTypes';
 export * from './composerMode';
 export * from './dataExchange';
 export * from './events';

@@ -13,9 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ArchitectureInfoSchema, ApplicationInfoSchema, AssumptionSchema, AssumptionLinkSchema, DataflowInfoSchema, MitigationSchema, MitigationLinkSchema, WorkspaceSchema, Workspace } from '@aws/threat-composer-core';
+import { ArchitectureInfoSchema, ApplicationInfoSchema, AssumptionSchema, AssumptionLinkSchema, DataflowInfoSchema, MitigationSchema, MitigationLinkSchema, TemplateThreatStatementSchema, WorkspaceSchema, Workspace } from '@aws/threat-composer-core';
 import { z } from 'zod';
-import { TemplateThreatStatementSchema } from './threats';
 import { EventHandler } from '../utils/EventController';
 
 export const DataExchangeFormatSchema = z.object({

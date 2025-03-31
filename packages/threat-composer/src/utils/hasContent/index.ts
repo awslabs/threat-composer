@@ -19,10 +19,10 @@ import {
   DataflowInfo,
   Assumption,
   Mitigation,
+  TemplateThreatStatement,
 } from '@aws/threat-composer-core';
 import {
   DataExchangeFormat,
-  TemplateThreatStatement,
   HasContentDetails,
 } from '../../customTypes';
 

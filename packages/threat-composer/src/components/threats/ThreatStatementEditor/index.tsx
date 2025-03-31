@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { Mitigation } from '@aws/threat-composer-core';
+import { Mitigation, TemplateThreatStatement, ThreatFieldTypes } from '@aws/threat-composer-core';
 import ContentLayoutComponent from '@cloudscape-design/components/content-layout';
 import Grid from '@cloudscape-design/components/grid';
 import SpaceBetween from '@cloudscape-design/components/space-between';
@@ -32,8 +32,7 @@ import { useMitigationLinksContext } from '../../../contexts/MitigationLinksCont
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
-import { TemplateThreatStatement, ViewNavigationEvent } from '../../../customTypes';
-import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
+import { ViewNavigationEvent } from '../../../customTypes';
 import threatFieldData from '../../../data/threatFieldData';
 import threatStatementExamples from '../../../data/threatStatementExamples.json';
 import threatStatementFormat from '../../../data/threatStatementFormat';

@@ -17,12 +17,12 @@ import {
   ThreatStatementEditor as ThreatStatementEditorComponent,
   useThreatsContext,
   getThreatFromThreatPacksThreat,
-  TemplateThreatStatement,
   useThreatPacksContext,
   DEFAULT_NEW_ENTITY_ID,
   ThreatPack,
   getNewThreatStatement,
 } from '@aws/threat-composer';
+import { TemplateThreatStatement } from '@aws/threat-composer-core';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { ROUTE_THREAT_LIST } from '../../config/routes';

@@ -13,18 +13,23 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { z } from 'zod';
 import {
   SINGLE_FIELD_INPUT_MAX_LENGTH,
   LEVEL_HIGH,
   LEVEL_MEDIUM,
   LEVEL_LOW,
   LEVEL_NOT_SET,
-  EntityBaseSchema,
-  StatusSchema,
-} from '@aws/threat-composer-core';
-import { z } from 'zod';
-import { STATUS_NOT_SET, THREAT_STATUS_IDENTIFIED, THREAT_STATUS_NOT_USEFUL, THREAT_STATUS_RESOLVED } from '../configs';
+  STATUS_NOT_SET,
+  THREAT_STATUS_IDENTIFIED,
+  THREAT_STATUS_NOT_USEFUL,
+  THREAT_STATUS_RESOLVED,
+} from '../constants';
+import { EntityBaseSchema, StatusSchema } from './entities';
+
 import threatStatus from '../data/status/threatStatus.json';
+
+export { threatStatus };
 
 export const ThreatStatementDisplayTokenSchema = z.object({
   /**
@@ -88,7 +93,7 @@ export const TemplateThreatStatementSchema = EntityBaseSchema.extend({
    * The status of the threats.
    */
   status: StatusSchema.refine((schema) => {
-    return !schema || threatStatus.map(x => x.value).includes(schema);
+    return !schema || threatStatus.map((x: { value: string }) => x.value).includes(schema);
   }, 'Invalid threat status'),
 }).strict();
 
@@ -105,6 +110,7 @@ export interface ThreatFieldData {
   examples?: string[];
   tokens?: string[];
 }
+
 export interface ThreatStatementListFilter {
   linkedMitigations?: boolean;
   linkedAssumptions?: boolean;
@@ -136,3 +142,17 @@ export const PerFieldExampleSchema = z.object({
 });
 
 export type PerFieldExample = z.infer<typeof PerFieldExampleSchema>;
+
+// ThreatFieldTypes related exports
+export type ThreatFieldTypes = 'threat_source' | 'prerequisites' | 'threat_action' | 'threat_impact' | 'impacted_goal' | 'impacted_assets';
+
+export const threatFieldTypeMapping: {
+  [key in ThreatFieldTypes]: keyof TemplateThreatStatement;
+} = {
+  threat_source: 'threatSource',
+  prerequisites: 'prerequisites',
+  threat_action: 'threatAction',
+  threat_impact: 'threatImpact',
+  impacted_goal: 'impactedGoal',
+  impacted_assets: 'impactedAssets',
+};

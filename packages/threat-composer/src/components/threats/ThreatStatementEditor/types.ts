@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement, ThreatFieldData } from '../../../customTypes';
+import { TemplateThreatStatement, ThreatFieldData } from '@aws/threat-composer-core';
 
 export interface EditorProps {
   statement: TemplateThreatStatement;

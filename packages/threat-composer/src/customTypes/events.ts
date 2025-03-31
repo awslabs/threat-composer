@@ -13,8 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { MitigationListFilter } from '@aws/threat-composer-core';
-import { ThreatStatementListFilter } from './threats';
+import { MitigationListFilter, ThreatStatementListFilter } from '@aws/threat-composer-core';
 
 export interface ViewNavigationEvent {
   onApplicationInfoView?: () => void;

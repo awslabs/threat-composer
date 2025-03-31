@@ -17,9 +17,9 @@ import {
   DEFAULT_WORKSPACE_ID,
   WorkspaceContextAggregator,
   WorkspacesContext,
-  ThreatStatementListFilter,
   WorkspaceExamplesContext,
 } from '@aws/threat-composer';
+import { ThreatStatementListFilter } from '@aws/threat-composer-core';
 import { useCallback, FC } from 'react';
 import { useNavigate, useParams, useSearchParams, Outlet } from 'react-router-dom';
 import {

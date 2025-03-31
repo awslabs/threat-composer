@@ -14,6 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
+import { TemplateThreatStatement, ThreatFieldTypes } from '@aws/threat-composer-core';
 import Button from '@cloudscape-design/components/button';
 import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
 import Container from '@cloudscape-design/components/container';
@@ -26,8 +27,7 @@ import { ReactNode, FC, useMemo, useState, useEffect, useCallback } from 'react'
 import ExpandableToken from './components/ExpandableToken';
 import Token from './components/Token';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
-import { ComposerMode, TemplateThreatStatement } from '../../../customTypes';
-import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
+import { ComposerMode } from '../../../customTypes';
 import threatFieldData from '../../../data/threatFieldData';
 import threatStatementFormat from '../../../data/threatStatementFormat';
 

@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { TemplateThreatStatement } from '@aws/threat-composer-core';
 import { SelectProps } from '@cloudscape-design/components/select';
 import React, { FC, useMemo } from 'react';
-import { TemplateThreatStatement } from '../../../customTypes';
 import LevelSelector from '../../generic/LevelSelector';
 
 export interface PriorityEditProps {

@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { PerFieldExample, TemplateThreatStatement } from '../../customTypes';
+import { PerFieldExample, TemplateThreatStatement } from '@aws/threat-composer-core';
 
 export const addNewValueToStringArray = (arr: string[], newValue?: string) => {
   return newValue && !arr.includes(newValue) ? [...arr, newValue] : arr;

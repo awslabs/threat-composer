@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { TemplateThreatStatement } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_STATEMENT_LIST, LOCAL_STORAGE_KEY_EDITING_STATEMENT } from '../../../../configs/localStorageKeys';
-import { TemplateThreatStatement } from '../../../../customTypes';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { useGlobalSetupContext } from '../../../GlobalSetupContext/context';
 import { ThreatsContext } from '../../context';

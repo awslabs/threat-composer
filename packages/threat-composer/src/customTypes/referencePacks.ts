@@ -13,9 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { MitigationSchema, MitigationLinkSchema } from '@aws/threat-composer-core';
+import { MitigationSchema, MitigationLinkSchema, TemplateThreatStatementSchema } from '@aws/threat-composer-core';
 import { z } from 'zod';
-import { TemplateThreatStatementSchema } from './threats';
 
 export const ReferencePackBaseSchema = z.object({
   id: z.string().length(36),

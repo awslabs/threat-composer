@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { threatStatus } from '@aws/threat-composer-core';
 import {
   Button,
   Box,
@@ -34,7 +35,6 @@ import {
   THREAT_STATUS_RESOLVED,
 } from '../../../../../configs';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
-import { threatStatus } from '../../../../../data';
 import DashboardNumber from '../../../../generic/DashboardNumber';
 import useThreatListLinkClicked from '../../hooks/useThreatListLinkClicked';
 import { WorkspaceInsightsProps } from '../../types';

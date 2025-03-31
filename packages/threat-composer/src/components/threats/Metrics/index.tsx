@@ -13,12 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { TemplateThreatStatement } from '@aws/threat-composer-core';
 import { TextContent } from '@cloudscape-design/components';
 import Container from '@cloudscape-design/components/container';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC } from 'react';
 import Status from './components/Status';
-import { TemplateThreatStatement } from '../../../customTypes';
 import threatFieldData from '../../../data/threatFieldData';
 
 export interface MetricsProps {

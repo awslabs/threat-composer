@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { PerFieldExample, TemplateThreatStatement } from '@aws/threat-composer-core';
 import { useContext, createContext } from 'react';
-import { PerFieldExample, TemplateThreatStatement } from '../../customTypes';
 import threatStatementExamplesData from '../../data/threatStatementExamples.json';
 export type View = 'list' | 'editor';
 
