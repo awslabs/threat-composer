@@ -30,3 +30,6 @@ export * from './schemas/workspaces';
 export * from './schemas/mitigations';
 export * from './schemas/threats';
 export * from './schemas/dataExchange';
+
+// Utils exports
+export { default as validateData } from './utils/validateData';
