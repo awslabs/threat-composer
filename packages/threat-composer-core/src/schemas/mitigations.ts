@@ -13,16 +13,23 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ContentEntityBaseSchema, EntityLinkBaseSchema, StatusSchema } from '@aws/threat-composer-core';
 import { z } from 'zod';
-import { MITIGATION_STATUS_IDENTIFIED, MITIGATION_STATUS_IN_PROGRESS, MITIGATION_STATUS_RESOLVED, MITIGATION_STATUS_RESOLVED_WILLNOTACTION, STATUS_NOT_SET } from '../configs';
+import { ContentEntityBaseSchema, EntityLinkBaseSchema, StatusSchema } from './entities';
+import {
+  MITIGATION_STATUS_IDENTIFIED,
+  MITIGATION_STATUS_IN_PROGRESS,
+  MITIGATION_STATUS_RESOLVED,
+  MITIGATION_STATUS_RESOLVED_WILLNOTACTION,
+  STATUS_NOT_SET,
+} from '../constants';
+
 import mitigationStatus from '../data/status/mitigationStatus.json';
 
 export const MitigationSchema = ContentEntityBaseSchema.extend({
   status: StatusSchema.refine((schema) => {
     return !schema || mitigationStatus.map(x => x.value).includes(schema);
   }, 'Invalid mitigation status'),
-}).strict();;
+}).strict();
 
 export type Mitigation = z.infer<typeof MitigationSchema>;
 
@@ -35,7 +42,7 @@ export const MitigationLinkSchema = EntityLinkBaseSchema.extend({
    * The linked entity Id.
    */
   linkedId: z.string().length(36),
-}).strict();;
+}).strict();
 
 export type MitigationLink = z.infer<typeof MitigationLinkSchema>;
 

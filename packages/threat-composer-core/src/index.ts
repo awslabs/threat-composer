@@ -27,3 +27,4 @@ export * from './schemas/architecture';
 export * from './schemas/dataflow';
 export * from './schemas/assumptions';
 export * from './schemas/workspaces';
+export * from './schemas/mitigations';

@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Mitigation } from '@aws/threat-composer-core';
 import { useCallback } from 'react';
 import { v4 as uuidV4 } from 'uuid';
 import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
-import { Mitigation } from '../../customTypes';
 
 const useMitigations = (
   _mitigationList: Mitigation[],

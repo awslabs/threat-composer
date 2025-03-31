@@ -18,10 +18,10 @@ import {
   ArchitectureInfo,
   DataflowInfo,
   Assumption,
+  Mitigation,
 } from '@aws/threat-composer-core';
 import {
   DataExchangeFormat,
-  Mitigation,
   TemplateThreatStatement,
   HasContentDetails,
 } from '../../customTypes';

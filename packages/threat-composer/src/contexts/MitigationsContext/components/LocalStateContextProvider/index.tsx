@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Mitigation } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { Mitigation } from '../../../../customTypes';
 import { LocalStateContextProviderBaseProps } from '../../../types';
 import { MitigationsContext } from '../../context';
 import { MitigationsContextProviderProps } from '../../types';

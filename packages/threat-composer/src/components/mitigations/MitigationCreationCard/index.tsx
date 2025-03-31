@@ -13,12 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Mitigation, MitigationSchema } from '@aws/threat-composer-core';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useState, useCallback } from 'react';
 import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { Mitigation, MitigationSchema } from '../../../customTypes';
 import getNewMitigation from '../../../utils/getNewMitigation';
 import AssumptionLinkView from '../../assumptions/AssumptionLinkView';
 import GenericEntityCreationCard from '../../generic/GenericEntityCreationCard';

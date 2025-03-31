@@ -13,8 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Mitigation } from '@aws/threat-composer-core';
 import { useContext, createContext } from 'react';
-import { Mitigation, TemplateThreatStatement, ThreatPack, ThreatPackUsage } from '../../customTypes';
+import { TemplateThreatStatement, ThreatPack, ThreatPackUsage } from '../../customTypes';
 
 export interface ThreatPacksContextApi {
   threatPacks: ThreatPack[];

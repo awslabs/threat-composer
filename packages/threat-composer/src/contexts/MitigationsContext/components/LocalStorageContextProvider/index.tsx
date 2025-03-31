@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Mitigation } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_MITIGATION_LIST } from '../../../../configs/localStorageKeys';
-import { Mitigation } from '../../../../customTypes';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { MitigationsContext } from '../../context';
 import { MitigationsContextProviderProps } from '../../types';

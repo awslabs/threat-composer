@@ -13,12 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Mitigation } from '@aws/threat-composer-core';
 import Button from '@cloudscape-design/components/button';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { useMemo, FC, useState, useEffect } from 'react';
 import { METADATA_KEY_SOURCE_THREAT_PACK, METADATA_KEY_SOURCE_THREAT_PACK_MITIGATION_CANDIDATE } from '../../../configs';
 import { useThreatPacksContext } from '../../../contexts';
-import { Mitigation } from '../../../customTypes/mitigations';
 import getMetadata from '../../../utils/getMetadata';
 import Table, { ColumnDefinition } from '../../generic/Table';
 

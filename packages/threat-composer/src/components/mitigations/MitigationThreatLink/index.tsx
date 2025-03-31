@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { MitigationLink } from '@aws/threat-composer-core';
 import { FC, useEffect, useState } from 'react';
 import { useMitigationLinksContext } from '../../../contexts/MitigationLinksContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { MitigationLink } from '../../../customTypes';
 import ThreatLinkView from '../../threats/ThreatLinkView';
 
 export interface MitigationThreatLinkProps {

@@ -34,6 +34,37 @@ export const LEVEL_HIGH = 'High';
 export const LEVEL_MEDIUM = 'Medium';
 export const LEVEL_LOW = 'Low';
 
+// Status constants
+export const STATUS_NOT_SET = 'NoSet';
+
+// Mitigation status constants
+export const MITIGATION_STATUS_IDENTIFIED = 'mitigationIdentified';
+export const MITIGATION_STATUS_IN_PROGRESS = 'mitigationInProgress';
+export const MITIGATION_STATUS_RESOLVED = 'mitigationResolved';
+export const MITIGATION_STATUS_RESOLVED_WILLNOTACTION = 'mitigationResolvedWillNotAction';
+export const DEFAULT_MITIGATION_STATUS = MITIGATION_STATUS_IDENTIFIED;
+
+export const MITIGATION_STATUS_COLOR_MAPPING = {
+  mitigationIdentified: 'grey',
+  mitigationInProgress: 'blue',
+  mitigationResolved: 'green',
+  mitigationResolvedWillNotAction: 'red',
+  NotSet: 'grey',
+};
+
+// Threat status constants
+export const THREAT_STATUS_IDENTIFIED = 'threatIdentified';
+export const THREAT_STATUS_RESOLVED = 'threatResolved';
+export const THREAT_STATUS_NOT_USEFUL = 'threatResolvedNotUseful';
+export const DEFAULT_THREAT_STATUS = THREAT_STATUS_IDENTIFIED;
+
+export const THREAT_STATUS_COLOR_MAPPING = {
+  threatIdentified: 'grey',
+  threatResolvedNotUseful: 'blue',
+  threatResolved: 'green',
+  NotSet: 'grey',
+};
+
 // Metadata constants
 export const METADATA_KEY_COMMENTS = 'Comments';
 export const METADATA_KEY_STRIDE = 'STRIDE';

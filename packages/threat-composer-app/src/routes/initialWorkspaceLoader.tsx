@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { LOCAL_STORAGE_KEY_CURRENT_WORKSPACE, Workspace } from '@aws/threat-composer';
+import { LOCAL_STORAGE_KEY_CURRENT_WORKSPACE } from '@aws/threat-composer';
+import { Workspace } from '@aws/threat-composer-core';
 import { generatePath, redirect } from 'react-router-dom';
 import { ROUTE_WORKSPACE_DEFAULT, ROUTE_WORKSPACE_PATH } from '../config/routes';
 

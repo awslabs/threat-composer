@@ -13,12 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Mitigation } from '@aws/threat-composer-core';
 import { SpaceBetween } from '@cloudscape-design/components';
 import Autosuggest from '@cloudscape-design/components/autosuggest';
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
 import TokenGroup from '@cloudscape-design/components/token-group';
 import React, { FC, PropsWithChildren, useMemo } from 'react';
-import { Mitigation } from '../../../customTypes';
 
 export interface MitigationLinkProps {
   variant?: ExpandableSectionProps['variant'];

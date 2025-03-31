@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Mitigation } from '@aws/threat-composer-core';
 import { useContext, createContext } from 'react';
 import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
-import { Mitigation } from '../../customTypes';
 export type View = 'list' | 'editor';
 
 export interface MitigationsContextApi {

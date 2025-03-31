@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Mitigation } from '@aws/threat-composer-core';
 import Button from '@cloudscape-design/components/button';
 import ContentLayout from '@cloudscape-design/components/content-layout';
 import Header from '@cloudscape-design/components/header';
@@ -20,7 +21,6 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import { useMemo, FC, useCallback, useState } from 'react';
 import GeneralInfo from './components/GeneralInfo';
 import { useMitigationPacksContext } from '../../../contexts/MitigationPacksContext';
-import { Mitigation } from '../../../customTypes/mitigations';
 import getMetadata from '../../../utils/getMetadata';
 import Table, { ColumnDefinition } from '../../generic/Table';
 

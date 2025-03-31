@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { MitigationListFilter } from '@aws/threat-composer-core';
 import { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
 import { useCallback } from 'react';
-import { MitigationListFilter, ViewNavigationEvent } from '../../../../../customTypes';
+import { ViewNavigationEvent } from '../../../../../customTypes';
 
 const useMitigationListLinkClicked = (onMitigationListView: ViewNavigationEvent['onMitigationListView']) => {
   return useCallback((filter?: MitigationListFilter): CancelableEventHandler<BaseNavigationDetail> => (event) => {
