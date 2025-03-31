@@ -82,7 +82,6 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
           onChange={setContent}
           label='Description'
           validateData={ApplicationInfoSchema.shape.description.safeParse}
-          focus={true}
         />
       </SpaceBetween>) :
         (<MarkdownViewer>
