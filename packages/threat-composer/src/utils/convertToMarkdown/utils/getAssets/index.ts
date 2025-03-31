@@ -13,8 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement } from '@aws/threat-composer-core';
-import { DataExchangeFormat } from '../../../../customTypes';
+import { DataExchangeFormat, TemplateThreatStatement } from '@aws/threat-composer-core';
 import escapeMarkdown from '../../../../utils/escapeMarkdown';
 import standardizeNumericId from '../../../../utils/standardizeNumericId';
 

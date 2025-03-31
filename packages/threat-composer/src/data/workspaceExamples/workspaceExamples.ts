@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { WorkspaceExample } from '@aws/threat-composer-core';
 import genAIChatbot from './GenAIChatbot.tc.json';
 import threatComposer from './ThreatComposer.tc.json';
-import { WorkspaceExample } from '../../customTypes';
 // {IMPORT_PLACEHOLDER}
 
 const workspaceExamples = [

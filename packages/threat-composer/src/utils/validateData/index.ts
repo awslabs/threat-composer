@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat, DataExchangeFormatSchema } from '../../customTypes';
+import { DataExchangeFormat, DataExchangeFormatSchema } from '@aws/threat-composer-core';
 
 const validateData = (data: DataExchangeFormat) => {
   const validation = DataExchangeFormatSchema.safeParse(data);

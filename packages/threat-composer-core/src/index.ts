@@ -29,3 +29,4 @@ export * from './schemas/assumptions';
 export * from './schemas/workspaces';
 export * from './schemas/mitigations';
 export * from './schemas/threats';
+export * from './schemas/dataExchange';

@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 export * from './composerMode';
-export * from './dataExchange';
+export * from './threatComposerNamespace';
 export * from './events';
 export * from './components';
 export * from './referencePacks';

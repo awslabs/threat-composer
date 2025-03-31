@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { DataExchangeFormat } from '@aws/threat-composer-core';
 import { stringify } from 'yaml';
-import { DataExchangeFormat } from '../../customTypes';
 
 /**
  * Convert the threat model into Yaml format

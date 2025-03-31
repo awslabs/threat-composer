@@ -13,9 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { threatStatus } from '@aws/threat-composer-core';
+import { DataExchangeFormat, threatStatus } from '@aws/threat-composer-core';
 import { STATUS_NOT_SET } from '../../../../configs/status';
-import { DataExchangeFormat } from '../../../../customTypes';
 import escapeMarkdown from '../../../../utils/escapeMarkdown';
 import parseTableCellContent from '../../../../utils/parseTableCellContent';
 import standardizeNumericId from '../../../../utils/standardizeNumericId';

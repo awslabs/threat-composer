@@ -13,11 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { DataExchangeFormat } from '@aws/threat-composer-core';
 import { FC, useMemo } from 'react';
 import ThreatModelView, { ThreatModelViewProps } from './components/ThreatModelView';
 import { APP_MODE_IDE_EXTENSION, APP_MODE_BROWSER_EXTENSION } from '../../../configs/appMode';
 import { useGlobalSetupContext, useWorkspacesContext } from '../../../contexts';
-import { DataExchangeFormat, ViewNavigationEvent } from '../../../customTypes';
+import { ViewNavigationEvent } from '../../../customTypes';
 import useImportExport from '../../../hooks/useExportImport';
 import getExportFileName from '../../../utils/getExportFileName';
 import hasContent from '../../../utils/hasContent';

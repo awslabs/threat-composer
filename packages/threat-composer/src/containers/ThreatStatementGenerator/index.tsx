@@ -13,13 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { DataExchangeFormat } from '@aws/threat-composer-core';
 import { FC } from 'react';
 import ThreatStatementEditor from '../../components/threats/ThreatStatementEditor';
 import ThreatStatementList from '../../components/threats/ThreatStatementList';
 import ContextAggregator from '../../contexts/ContextAggregator';
 import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../contexts/ThreatsContext/context';
-import { ComposerMode, DataExchangeFormat } from '../../customTypes';
+import { ComposerMode } from '../../customTypes';
 
 const ThreatStatementGeneratorInner: FC = () => {
   const { view } = useThreatsContext();

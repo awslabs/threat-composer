@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat } from '@aws/threat-composer';
+import { DataExchangeFormat } from '@aws/threat-composer-core';
 import { HeadingLevel, TextRun, Paragraph } from 'docx';
 import convertMarkdown from './convertMarkdown';
 

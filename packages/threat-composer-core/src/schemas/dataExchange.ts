@@ -13,9 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ArchitectureInfoSchema, ApplicationInfoSchema, AssumptionSchema, AssumptionLinkSchema, DataflowInfoSchema, MitigationSchema, MitigationLinkSchema, TemplateThreatStatementSchema, WorkspaceSchema, Workspace } from '@aws/threat-composer-core';
 import { z } from 'zod';
-import { EventHandler } from '../utils/EventController';
+import { ApplicationInfoSchema } from './application';
+import { ArchitectureInfoSchema } from './architecture';
+import { AssumptionSchema, AssumptionLinkSchema } from './assumptions';
+import { DataflowInfoSchema } from './dataflow';
+import { MitigationSchema, MitigationLinkSchema } from './mitigations';
+import { TemplateThreatStatementSchema } from './threats';
+import { WorkspaceSchema } from './workspaces';
 
 export const DataExchangeFormatSchema = z.object({
   schema: z.number(),
@@ -53,23 +58,4 @@ export interface HasContentDetails {
   assumptions: boolean;
   mitigations: boolean;
   threats: boolean;
-}
-
-export interface ThreatComposerNamespace {
-  getWorkspaceList?: () => Workspace[];
-  getCurrentWorkspaceMetadata?: () => Workspace | null;
-  getCurrentWorkspaceData?: () => DataExchangeFormat;
-  getCurrentWorkspaceDataMarkdown?: () => Promise<string>;
-  stringifyWorkspaceData: (arg0: any) => string;
-  setCurrentWorkspaceData?: (arg0: DataExchangeFormat) => Promise<void>;
-  switchWorkspace?: (id: string | null) => void;
-  createWorkspace?: (workspaceName: string,
-    storageType?: Workspace['storageType'],
-    metadata?: Workspace['metadata']) => Promise<Workspace>;
-  deleteWorkspace?: (id: string) => Promise<void>;
-  renameWorkspace?: (id: string, newWorkspaceName: string) => Promise<void>;
-  dispatchEvent: (event: CustomEvent) => void;
-  addEventListener: (eventName: string, eventHandler: EventHandler) => void;
-  applyDensity?: (density?: string) => void;
-  applyTheme?: (theme?: string) => void;
 }

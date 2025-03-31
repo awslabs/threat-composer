@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement } from '@aws/threat-composer-core';
+import { DataExchangeFormat, TemplateThreatStatement } from '@aws/threat-composer-core';
 import { useCallback } from 'react';
 import { useWorkspacesContext } from '../../contexts';
 import { useApplicationInfoContext } from '../../contexts/ApplicationContext/context';
@@ -25,7 +25,6 @@ import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext/context
 import { useMitigationLinksContext } from '../../contexts/MitigationLinksContext/context';
 import { useMitigationsContext } from '../../contexts/MitigationsContext/context';
 import { useThreatsContext } from '../../contexts/ThreatsContext/context';
-import { DataExchangeFormat } from '../../customTypes';
 import cleanupThreatData from '../../utils/cleanupThreatData';
 import { downloadObjectAsJson } from '../../utils/downloadContent';
 import getExportFileName from '../../utils/getExportFileName';

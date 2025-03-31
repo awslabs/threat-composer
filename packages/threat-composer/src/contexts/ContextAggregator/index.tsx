@@ -13,8 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { DataExchangeFormat } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren } from 'react';
-import { AppMode, ComposerMode, DataExchangeFormat } from '../../customTypes';
+import { AppMode, ComposerMode } from '../../customTypes';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import WorkspaceContextAggregator from '../WorkspaceContextAggregator';
 import WorkspaceExamplesContext from '../WorkspaceExamplesContext';

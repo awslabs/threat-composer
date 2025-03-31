@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat, standardizeNumericId, STATUS_NOT_SET } from '@aws/threat-composer';
-import { AssumptionLink, MitigationLink, TemplateThreatStatement, threatStatus } from '@aws/threat-composer-core';
+import { standardizeNumericId, STATUS_NOT_SET } from '@aws/threat-composer';
+import { AssumptionLink, DataExchangeFormat, MitigationLink, TemplateThreatStatement, threatStatus } from '@aws/threat-composer-core';
 import { Paragraph, HeadingLevel, TextRun, TableRow, TableCell } from 'docx';
 import Table from './components/Table';
 import getAnchorLink from './getAnchorLink';

@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { DataExchangeFormat } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren } from 'react';
 import WindowExporter from '../../components/generic/WindowExporter';
-import { ComposerMode, DataExchangeFormat, ViewNavigationEvent } from '../../customTypes';
+import { ComposerMode, ViewNavigationEvent } from '../../customTypes';
 import ApplicationInfoContextProvider from '../ApplicationContext';
 import ArchitectureInfoContextProvider from '../ArchitectureContext';
 import AssumptionLinksContextProvider from '../AssumptionLinksContext';

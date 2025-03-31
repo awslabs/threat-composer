@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { DataExchangeFormat } from '@aws/threat-composer-core';
 import { useContext, createContext } from 'react';
-import { DataExchangeFormat } from '../../customTypes';
 
 export interface CrossWorkspaceContextApi {
   cloneWorkspaceData: (targetWorkspaceId: string, data: DataExchangeFormat) => Promise<void>;

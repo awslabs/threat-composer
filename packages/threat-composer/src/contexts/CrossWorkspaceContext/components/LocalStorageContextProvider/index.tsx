@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { DataExchangeFormat } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren, useCallback } from 'react';
-import { DataExchangeFormat } from '../../../../customTypes';
 import setLocalStorageKey from '../../../../utils/setLocalStorageKey';
 import { getLocalStorageKey as getApplicationInfoLocalStorageKey } from '../../../ApplicationContext/components/LocalStorageContextProvider';
 import { getLocalStorageKey as getArchitectureInfoLocalStorageKey } from '../../../ArchitectureContext/components/LocalStorageContextProvider';

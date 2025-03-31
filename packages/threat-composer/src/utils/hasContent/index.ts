@@ -17,15 +17,12 @@ import {
   ApplicationInfo,
   ArchitectureInfo,
   DataflowInfo,
+  DataExchangeFormat,
+  HasContentDetails,
   Assumption,
   Mitigation,
   TemplateThreatStatement,
 } from '@aws/threat-composer-core';
-import {
-  DataExchangeFormat,
-  HasContentDetails,
-} from '../../customTypes';
-
 
 export const hasApplicationName = (applicationInfo?: ApplicationInfo) => {
   return !!(applicationInfo && applicationInfo.name);

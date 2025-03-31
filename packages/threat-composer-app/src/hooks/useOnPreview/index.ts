@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat } from '@aws/threat-composer';
+import { DataExchangeFormat } from '@aws/threat-composer-core';
 import { useCallback } from 'react';
 import { generatePath } from 'react-router-dom';
 import { ROUTE_PREVIEW } from '../../config/routes';

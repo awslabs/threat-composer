@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { WorkspaceExampleWithId } from '@aws/threat-composer-core';
 import { useContext, createContext } from 'react';
-import { WorkspaceExampleWithId } from '../../customTypes';
 
 export interface WorkspaceExamplesContextApi {
   workspaceExamples: WorkspaceExampleWithId[];
