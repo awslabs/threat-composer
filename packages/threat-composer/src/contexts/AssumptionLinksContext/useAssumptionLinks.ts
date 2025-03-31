@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { AssumptionLink } from '@aws/threat-composer-core';
 import { useCallback } from 'react';
-import { AssumptionLink } from '../../customTypes';
 
 export const isSameAssumptionLink = (entity1: AssumptionLink, entity2: AssumptionLink) => {
   return entity1.assumptionId === entity2.assumptionId

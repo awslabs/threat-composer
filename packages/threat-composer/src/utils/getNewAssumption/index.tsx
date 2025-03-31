@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Assumption } from '@aws/threat-composer-core';
 import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
-import { Assumption } from '../../customTypes';
 
 const getNewAssumption = (content: string = ''): Assumption => {
   return {

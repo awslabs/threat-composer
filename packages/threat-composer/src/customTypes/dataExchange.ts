@@ -13,11 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { ArchitectureInfoSchema, ApplicationInfoSchema, AssumptionSchema, AssumptionLinkSchema, DataflowInfoSchema } from '@aws/threat-composer-core';
 import { z } from 'zod';
-import { ApplicationInfoSchema } from './application';
-import { ArchitectureInfoSchema } from './architecture';
-import { AssumptionSchema, AssumptionLinkSchema } from './assumptions';
-import { DataflowInfoSchema } from './dataflow';
 import { MitigationSchema, MitigationLinkSchema } from './mitigations';
 import { TemplateThreatStatementSchema } from './threats';
 import { WorkspaceSchema, Workspace } from './workspaces';

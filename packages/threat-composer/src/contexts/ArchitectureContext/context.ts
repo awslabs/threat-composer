@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { ArchitectureInfo } from '@aws/threat-composer-core';
 import { useContext, createContext } from 'react';
-import { ArchitectureInfo } from '../../customTypes';
 
 export interface ArchitectureInfoContextApi {
   architectureInfo: ArchitectureInfo;

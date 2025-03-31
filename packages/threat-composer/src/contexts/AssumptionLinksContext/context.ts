@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { AssumptionLink } from '@aws/threat-composer-core';
 import { useContext, createContext } from 'react';
-import { AssumptionLink } from '../../customTypes';
 export type View = 'list' | 'editor';
 
 export interface AssumptionLinksContextApi {

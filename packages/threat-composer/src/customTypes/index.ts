@@ -13,15 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export * from './assumptions';
 export * from './mitigations';
 export * from './threats';
 export * from './threatFieldTypes';
 export * from './workspaces';
 export * from './composerMode';
-export * from './application';
-export * from './architecture';
-export * from './dataflow';
 export * from './dataExchange';
 export * from './events';
 export * from './components';

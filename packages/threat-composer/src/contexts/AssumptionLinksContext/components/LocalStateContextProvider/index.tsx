@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { AssumptionLink } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { AssumptionLink } from '../../../../customTypes';
 import { LocalStateContextProviderBaseProps } from '../../../types';
 import { AssumptionLinksContext } from '../../context';
 import { AssumptionLinksContextProviderProps } from '../../types';
@@ -65,4 +65,3 @@ AssumptionLinksContextProviderProps & LocalStateContextProviderBaseProps<Assumpt
 };
 
 export default AssumptionLinksLocalStorageContextProvider;
-

@@ -13,18 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FREE_TEXT_INPUT_MAX_LENGTH, SINGLE_FIELD_INPUT_MAX_LENGTH } from '@aws/threat-composer-core';
 import { z } from 'zod';
+import { BaseImageInfoSchema } from './entities';
 
-export const ApplicationInfoSchema = z.object({
-  /**
-   * The name of the application.
-  */
-  name: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional(),
-  /**
-   * The description of the architecture diagram
-   */
-  description: z.string().max(FREE_TEXT_INPUT_MAX_LENGTH).optional(),
-}).strict();
+export const DataflowInfoSchema = BaseImageInfoSchema.extend({}).strict();
 
-export type ApplicationInfo = z.infer<typeof ApplicationInfoSchema>;
+export type DataflowInfo = z.infer<typeof DataflowInfoSchema>;

@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { BaseImageInfoSchema } from '@aws/threat-composer-core';
 import { z } from 'zod';
+import { BaseImageInfoSchema } from './entities';
 
-export const DataflowInfoSchema = BaseImageInfoSchema.extend({}).strict();
+export const ArchitectureInfoSchema = BaseImageInfoSchema.extend({}).strict();
 
-export type DataflowInfo = z.infer<typeof DataflowInfoSchema>;
+export type ArchitectureInfo = z.infer<typeof ArchitectureInfoSchema>;

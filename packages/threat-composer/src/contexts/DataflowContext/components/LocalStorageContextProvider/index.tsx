@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { DataflowInfo } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_DATAFLOW_INFO } from '../../../../configs/localStorageKeys';
-import { DataflowInfo } from '../../../../customTypes';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { INFO_DEFAULT_VALUE } from '../../../constants';
 import { DataflowInfoContext, useDataflowInfoContext } from '../../context';

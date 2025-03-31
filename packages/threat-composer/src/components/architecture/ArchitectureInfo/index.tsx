@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { ArchitectureInfoSchema } from '@aws/threat-composer-core';
 import { FC } from 'react';
 import { useArchitectureInfoContext } from '../../../contexts/ArchitectureContext/context';
-import { ArchitectureInfoSchema, EditableComponentBaseProps } from '../../../customTypes';
+import { EditableComponentBaseProps } from '../../../customTypes';
 import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
 
 const ArchitectureInfo: FC<EditableComponentBaseProps> = (props) => {

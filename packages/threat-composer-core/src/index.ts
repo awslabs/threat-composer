@@ -22,3 +22,7 @@ export * from './constants';
 
 // Schema exports
 export * from './schemas/entities';
+export * from './schemas/application';
+export * from './schemas/architecture';
+export * from './schemas/dataflow';
+export * from './schemas/assumptions';

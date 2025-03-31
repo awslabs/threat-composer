@@ -13,11 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Assumption } from '@aws/threat-composer-core';
 import Autosuggest from '@cloudscape-design/components/autosuggest';
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
 import TokenGroup from '@cloudscape-design/components/token-group';
 import React, { FC, useMemo } from 'react';
-import { Assumption } from '../../../customTypes';
 
 export interface AssumptionLinkProps {
   variant?: ExpandableSectionProps['variant'];

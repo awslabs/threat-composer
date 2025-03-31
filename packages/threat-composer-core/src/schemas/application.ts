@@ -13,28 +13,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ContentEntityBaseSchema, EntityLinkBaseSchema } from '@aws/threat-composer-core';
 import { z } from 'zod';
+import { FREE_TEXT_INPUT_MAX_LENGTH, SINGLE_FIELD_INPUT_MAX_LENGTH } from '../constants';
 
-export const AssumptionSchema = ContentEntityBaseSchema.extend({
+export const ApplicationInfoSchema = z.object({
   /**
-   * A flag determining the assumption is still valid or not.
+   * The name of the application.
+  */
+  name: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional(),
+  /**
+   * The description of the architecture diagram
    */
-  valid: z.boolean().optional(),
+  description: z.string().max(FREE_TEXT_INPUT_MAX_LENGTH).optional(),
 }).strict();
 
-export type Assumption = z.infer<typeof AssumptionSchema>;
-
-export const AssumptionLinkSchema = EntityLinkBaseSchema.extend({
-  type: z.union([z.literal('Mitigation'), z.literal('Threat')]),
-  /**
-   * The assumption being linked.
-   */
-  assumptionId: z.string().length(36),
-  /**
-   * The linked entity Id.
-   */
-  linkedId: z.string().length(36),
-}).strict();
-
-export type AssumptionLink = z.infer<typeof AssumptionLinkSchema>;
+export type ApplicationInfo = z.infer<typeof ApplicationInfoSchema>;

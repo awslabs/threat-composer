@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { AssumptionLink } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_ASSUMPTION_LINK_LIST } from '../../../../configs/localStorageKeys';
-import { AssumptionLink } from '../../../../customTypes';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { AssumptionLinksContext } from '../../context';
 import { AssumptionLinksContextProviderProps } from '../../types';
@@ -79,4 +79,3 @@ const AssumptionLinksLocalStorageContextProvider: FC<PropsWithChildren<Assumptio
 };
 
 export default AssumptionLinksLocalStorageContextProvider;
-

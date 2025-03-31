@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { Assumption } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { Assumption } from '../../../../customTypes';
 import { LocalStateContextProviderBaseProps } from '../../../types';
 import { AssumptionsContext } from '../../context';
 import { AssumptionsContextProviderProps } from '../../types';

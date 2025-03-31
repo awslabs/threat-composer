@@ -13,9 +13,28 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { BaseImageInfoSchema } from '@aws/threat-composer-core';
 import { z } from 'zod';
+import { ContentEntityBaseSchema, EntityLinkBaseSchema } from './entities';
 
-export const ArchitectureInfoSchema = BaseImageInfoSchema.extend({}).strict();
+export const AssumptionSchema = ContentEntityBaseSchema.extend({
+  /**
+   * A flag determining the assumption is still valid or not.
+   */
+  valid: z.boolean().optional(),
+}).strict();
 
-export type ArchitectureInfo = z.infer<typeof ArchitectureInfoSchema>;
+export type Assumption = z.infer<typeof AssumptionSchema>;
+
+export const AssumptionLinkSchema = EntityLinkBaseSchema.extend({
+  type: z.union([z.literal('Mitigation'), z.literal('Threat')]),
+  /**
+   * The assumption being linked.
+   */
+  assumptionId: z.string().length(36),
+  /**
+   * The linked entity Id.
+   */
+  linkedId: z.string().length(36),
+}).strict();
+
+export type AssumptionLink = z.infer<typeof AssumptionLinkSchema>;

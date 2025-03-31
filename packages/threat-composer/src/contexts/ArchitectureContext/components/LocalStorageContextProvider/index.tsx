@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { ArchitectureInfo } from '@aws/threat-composer-core';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_ARCHIECTURE_INFO } from '../../../../configs/localStorageKeys';
-import { ArchitectureInfo } from '../../../../customTypes';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { INFO_DEFAULT_VALUE } from '../../../constants';
 import { ArchitectureInfoContext } from '../../context';
@@ -60,4 +60,3 @@ const ArchitectureLocalStorageContextProvider: FC<PropsWithChildren<Architecture
 };
 
 export default ArchitectureLocalStorageContextProvider;
-

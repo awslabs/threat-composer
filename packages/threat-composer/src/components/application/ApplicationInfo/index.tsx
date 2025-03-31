@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { ApplicationInfoSchema } from '@aws/threat-composer-core';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import FormField from '@cloudscape-design/components/form-field';
@@ -20,7 +21,7 @@ import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useState, useCallback, useMemo, useEffect } from 'react';
 import { useApplicationInfoContext } from '../../../contexts/ApplicationContext/context';
-import { ApplicationInfoSchema, EditableComponentBaseProps } from '../../../customTypes';
+import { EditableComponentBaseProps } from '../../../customTypes';
 import ContentLayout from '../../generic/ContentLayout';
 import Input from '../../generic/Input';
 import MarkdownEditor from '../../generic/MarkdownEditor';

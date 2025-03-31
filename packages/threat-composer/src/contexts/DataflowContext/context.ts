@@ -13,12 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { DataflowInfo } from '@aws/threat-composer-core';
 import { useContext, createContext } from 'react';
-import { ArchitectureInfo } from '../../customTypes';
 
 export interface DataflowInfoContextApi {
-  dataflowInfo: ArchitectureInfo;
-  setDataflowInfo: React.Dispatch<React.SetStateAction<ArchitectureInfo>>;
+  dataflowInfo: DataflowInfo;
+  setDataflowInfo: React.Dispatch<React.SetStateAction<DataflowInfo>>;
   removeDataflowInfo: () => Promise<void>;
   onDeleteWorkspace: (workspaceId: string) => Promise<void>;
 }

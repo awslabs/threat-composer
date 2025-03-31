@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { DataflowInfoSchema } from '@aws/threat-composer-core';
 import { FC } from 'react';
 import { useDataflowInfoContext } from '../../../contexts/DataflowContext/context';
-import { DataflowInfoSchema, EditableComponentBaseProps } from '../../../customTypes';
+import { EditableComponentBaseProps } from '../../../customTypes';
 import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
 
 const DataflowInfo: FC<EditableComponentBaseProps> = (props) => {
