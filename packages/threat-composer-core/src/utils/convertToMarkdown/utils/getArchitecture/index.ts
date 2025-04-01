@@ -13,25 +13,26 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import rehypeStringify from 'rehype-stringify';
-import remarkGfm from 'remark-gfm';
-import remarkParse from 'remark-parse';
-import remarkRehype from 'remark-rehype';
-import { unified } from 'unified';
+import { DataExchangeFormat } from '../../../../index';
 
-const parseTableCellContent = async (str: string) => {
-  if (str) {
-    const htmlOutput = await unified()
-      .use(remarkParse)
-      .use(remarkGfm)
-      .use(remarkRehype)
-      .use(rehypeStringify)
-      .process(str);
-    const output = String(htmlOutput).replace(/(\r\n|\n|\r)/gm, '');
-    return output;
+export const getArchitectureContent = async (
+  data: DataExchangeFormat,
+) => {
+  const rows: string[] = [];
+  rows.push('## Architecture');
+  if (data.architecture) {
+    if (data.architecture.description) {
+      rows.push('### Introduction');
+      rows.push(data.architecture.description);
+    }
+
+    if (data.architecture.image) {
+      rows.push('### Architecture Diagram');
+      rows.push(`![Architecture Diagram](${data.architecture.image})`);
+    }
   }
 
-  return str;
-};
+  rows.push('\n');
 
-export default parseTableCellContent;
+  return rows.join('\n');
+};

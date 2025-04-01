@@ -13,36 +13,28 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import sanitizeHtml from '.';
+import sanitizeHtmlString from 'sanitize-html';
 
-const testObj = {
-  num: 1,
-  str1: 'hello',
-  str2: "world<script>alert('hello')</script>",
+const sanitizeHtml: any = (data: any) => {
+  if (data) {
+    if (Array.isArray(data)) {
+      return data.map(d => sanitizeHtml(d));
+    } else if (typeof data === 'string') {
+      return sanitizeHtmlString(data, {
+        allowedTags: [],
+      });
+    } else if (typeof data === 'object') {
+      return Object.keys(data).reduce(
+        (attrs, key) => ({
+          ...attrs,
+          [key]: sanitizeHtml(data[key]),
+        }),
+        {},
+      );
+    }
+  }
+
+  return data;
 };
 
-const result = {
-  num: 1,
-  str1: 'hello',
-  str2: 'world',
-};
-
-describe('sanitizeHtml', () => {
-  test('parses an object to saniztise html string if there is any', () => {
-    expect(sanitizeHtml(testObj)).toEqual(result);
-  });
-
-  test('parses an array of object to saniztise html string if there is any', () => {
-    expect(sanitizeHtml([testObj, testObj])).toEqual([result, result]);
-  });
-
-  test('parses nested object to saniztise html string if there is any', () => {
-    expect(sanitizeHtml({
-      ...testObj,
-      nestedObj: testObj,
-    })).toEqual({
-      ...result,
-      nestedObj: result,
-    });
-  });
-});
+export default sanitizeHtml;

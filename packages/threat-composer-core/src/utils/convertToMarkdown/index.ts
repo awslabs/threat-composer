@@ -14,7 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { DataExchangeFormat } from '@aws/threat-composer-core';
+import { DataExchangeFormat } from '../../index';
+import hasContent from '../hasContent';
+import sanitizeHtml from '../sanitizeHtml';
 import { getApplicationInfoContent } from './utils/getApplicationInfo';
 import { getApplicationName } from './utils/getApplicationName';
 import { getArchitectureContent } from './utils/getArchitecture';
@@ -23,8 +25,6 @@ import { getAssumptionsContent } from './utils/getAssumptions';
 import { getDataflowContent } from './utils/getDataFlow';
 import { getMitigationsContent } from './utils/getMitigations';
 import { getThreatsContent } from './utils/getThreats';
-import hasContent from '../hasContent';
-import sanitizeHtml from '../sanitizeHtml';
 
 const convertToMarkdown = async (data: DataExchangeFormat, composerMode = 'Full') => {
   const sanitizedData = sanitizeHtml(data);

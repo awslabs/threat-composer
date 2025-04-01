@@ -13,28 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import sanitizeHtmlString from 'sanitize-html';
+import { DataExchangeFormat, escapeMarkdown } from '../../../../index';
 
-const sanitizeHtml: any = (data: any) => {
-  if (data) {
-    if (Array.isArray(data)) {
-      return data.map(d => sanitizeHtml(d));
-    } else if (typeof data === 'string') {
-      return sanitizeHtmlString(data, {
-        allowedTags: [],
-      });
-    } else if (typeof data === 'object') {
-      return Object.keys(data).reduce(
-        (attrs, key) => ({
-          ...attrs,
-          [key]: sanitizeHtml(data[key]),
-        }),
-        {},
-      );
-    }
-  }
-
-  return data;
+export const getApplicationName = async (
+  data: DataExchangeFormat,
+) => {
+  return data.applicationInfo?.name ? `# ${escapeMarkdown(data.applicationInfo?.name)}` : '';
 };
-
-export default sanitizeHtml;

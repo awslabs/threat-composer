@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { hasContent } from '@aws/threat-composer-core';
 import { FC } from 'react';
 import useImportExport from '../../../hooks/useExportImport';
-import hasContent from '../../../utils/hasContent';
 import LandingPage, { LandingPageProps } from '../LandingPage';
 import WorkspaceInsight, { WorkspaceInsightsProps } from '../WorkspaceInsights';
 

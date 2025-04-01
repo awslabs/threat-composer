@@ -13,26 +13,25 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat, escapeMarkdown, mitigationStatus, standardizeNumericId, STATUS_NOT_SET } from '@aws/threat-composer-core';
-import parseTableCellContent from '../../../../utils/parseTableCellContent';
+import { DataExchangeFormat, escapeMarkdown, standardizeNumericId, parseTableCellContent } from '../../../../index';
 
-export const getMitigationsContent = async (
+export const getAssumptionsContent = async (
   data: DataExchangeFormat,
 ) => {
   const rows: string[] = [];
-  rows.push('## Mitigations');
+  rows.push('## Assumptions');
 
   rows.push('\n');
 
-  rows.push('| Mitigation Number | Mitigation | Threats Mitigating | Assumptions | Status | Comments |');
-  rows.push('| --- | --- | --- | --- | --- | --- |');
+  rows.push('| Assumption Number | Assumption | Linked Threats | Linked Mitigations | Comments |');
+  rows.push('| --- | --- | --- | --- | --- |');
 
-  if (data.mitigations) {
-    const promises = data.mitigations.map(async (x) => {
-      const threats = data.mitigationLinks?.filter(ml => ml.mitigationId === x.id) || [];
-      const assumpptionLinks = data.assumptionLinks?.filter(al => al.linkedId === x.id) || [];
+  if (data.assumptions) {
+    const promises = data.assumptions?.map(async (x) => {
+      const threatLinks = data.assumptionLinks?.filter(al => al.assumptionId === x.id && al.type === 'Threat') || [];
+      const mitigationLinks = data.assumptionLinks?.filter(al => al.assumptionId === x.id && al.type === 'Mitigation') || [];
 
-      const threatsContent = threats.map(tl => {
+      const threatsContent = threatLinks.map(tl => {
         const threat = data.threats?.find(s => s.id === tl.linkedId);
         if (threat) {
           const threatId = `T-${standardizeNumericId(threat.numericId)}`;
@@ -41,21 +40,18 @@ export const getMitigationsContent = async (
         return null;
       }).filter(t => !!t).join('<br/>');
 
-      const assumptionsContent = assumpptionLinks.map(al => {
-        const assumption = data.assumptions?.find(a => a.id === al.assumptionId);
-        if (assumption) {
-          const assumptionId = `A-${standardizeNumericId(assumption.numericId)}`;
-          return `[**${assumptionId}**](#${assumptionId}): ${escapeMarkdown(assumption.content)}`;
+      const mitigationsContent = mitigationLinks.map(tl => {
+        const mitigation = data.mitigations?.find(m => m.id === tl.linkedId);
+        if (mitigation) {
+          const mitigationId = `M-${standardizeNumericId(mitigation.numericId)}`;
+          return `[**${mitigationId}**](#${mitigationId}): ${escapeMarkdown(mitigation.content)}`;
         }
         return null;
-      }).filter(a => !!a).join('<br/>');
+      }).filter(t => !!t).join('<br/>');
 
-      const status = (x.status && mitigationStatus.find(ms => ms.value === x.status)?.label) || STATUS_NOT_SET;
-
+      const assumptionId = `A-${standardizeNumericId(x.numericId)}`;
       const comments = await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || '');
-
-      const mitigationId = `M-${standardizeNumericId(x.numericId)}`;
-      return `| <a name="${mitigationId}"></a>${mitigationId} | ${escapeMarkdown(x.content)} | ${threatsContent} | ${assumptionsContent} | ${status} | ${comments} |`;
+      return `| <a name="${assumptionId}"></a>${assumptionId} | ${escapeMarkdown(x.content)} | ${threatsContent} | ${mitigationsContent} | ${comments} |`;
     });
 
     rows.push(...(await Promise.all(promises)));

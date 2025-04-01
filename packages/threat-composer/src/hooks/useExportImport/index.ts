@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat, TemplateThreatStatement, validateData } from '@aws/threat-composer-core';
+import { DataExchangeFormat, sanitizeHtml, TemplateThreatStatement, validateData } from '@aws/threat-composer-core';
 import { useCallback } from 'react';
 import { useWorkspacesContext } from '../../contexts';
 import { useApplicationInfoContext } from '../../contexts/ApplicationContext/context';
@@ -29,7 +29,6 @@ import cleanupThreatData from '../../utils/cleanupThreatData';
 import { downloadObjectAsJson } from '../../utils/downloadContent';
 import getExportFileName from '../../utils/getExportFileName';
 import recalculateThreatData from '../../utils/recalculateThreatData';
-import sanitizeHtml from '../../utils/sanitizeHtml';
 
 const SCHEMA_VERSION = 1.0;
 

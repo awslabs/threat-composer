@@ -11,6 +11,12 @@ class ThreatComposerCoreProject extends TypeScriptProject {
       sampleCode: false,
       deps: [
         "zod@3.22.4", // Required for schema validation
+        "rehype-stringify@^9.0.3", // Required for parseTableCellContent
+        "remark-gfm@^3.0.1", // Required for parseTableCellContent
+        "remark-parse@^10.0.2", // Required for parseTableCellContent
+        "remark-rehype@^10.1.0", // Required for parseTableCellContent
+        "unified@^10.1.2", // Required for parseTableCellContent
+        "sanitize-html@^2.13.0", // Required for sanitizeHtml
       ],
       devDeps: [],
       peerDeps: [],

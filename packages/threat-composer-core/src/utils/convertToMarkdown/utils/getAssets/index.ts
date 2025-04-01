@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat, escapeMarkdown, standardizeNumericId, TemplateThreatStatement } from '@aws/threat-composer-core';
+import { DataExchangeFormat, escapeMarkdown, standardizeNumericId, TemplateThreatStatement } from '../../../../index';
 
 export const getAssetsContent = async (
   data: DataExchangeFormat,

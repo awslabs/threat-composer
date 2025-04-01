@@ -13,23 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat } from '@aws/threat-composer-core';
+import { DataExchangeFormat } from '../../../../index';
 
-export const getArchitectureContent = async (
+export const getApplicationInfoContent = async (
   data: DataExchangeFormat,
 ) => {
   const rows: string[] = [];
-  rows.push('## Architecture');
-  if (data.architecture) {
-    if (data.architecture.description) {
-      rows.push('### Introduction');
-      rows.push(data.architecture.description);
-    }
-
-    if (data.architecture.image) {
-      rows.push('### Architecture Diagram');
-      rows.push(`![Architecture Diagram](${data.architecture.image})`);
-    }
+  rows.push('## Application Info');
+  if (data.applicationInfo?.description) {
+    rows.push(data.applicationInfo.description);
   }
 
   rows.push('\n');

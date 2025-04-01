@@ -35,3 +35,8 @@ export * from './schemas/dataExchange';
 export { default as validateData } from './utils/validateData';
 export { default as standardizeNumericId } from './utils/standardizeNumericId';
 export { default as escapeMarkdown } from './utils/escapeMarkdown';
+export { default as parseTableCellContent } from './utils/parseTableCellContent';
+export { default as sanitizeHtml } from './utils/sanitizeHtml';
+export { default as hasContent } from './utils/hasContent';
+export * from './utils/hasContent';
+export { default as convertToMarkdown } from './utils/convertToMarkdown';

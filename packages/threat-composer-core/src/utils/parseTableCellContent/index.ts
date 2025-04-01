@@ -13,10 +13,25 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat, escapeMarkdown } from '@aws/threat-composer-core';
+import rehypeStringify from 'rehype-stringify';
+import remarkGfm from 'remark-gfm';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
+import { unified } from 'unified';
 
-export const getApplicationName = async (
-  data: DataExchangeFormat,
-) => {
-  return data.applicationInfo?.name ? `# ${escapeMarkdown(data.applicationInfo?.name)}` : '';
+const parseTableCellContent = async (str: string) => {
+  if (str) {
+    const htmlOutput = await unified()
+      .use(remarkParse)
+      .use(remarkGfm)
+      .use(remarkRehype)
+      .use(rehypeStringify)
+      .process(str);
+    const output = String(htmlOutput).replace(/(\r\n|\n|\r)/gm, '');
+    return output;
+  }
+
+  return str;
 };
+
+export default parseTableCellContent;

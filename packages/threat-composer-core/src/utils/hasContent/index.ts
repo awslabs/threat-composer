@@ -13,16 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import {
-  ApplicationInfo,
-  ArchitectureInfo,
-  DataflowInfo,
-  DataExchangeFormat,
-  HasContentDetails,
-  Assumption,
-  Mitigation,
-  TemplateThreatStatement,
-} from '@aws/threat-composer-core';
+import { ApplicationInfo } from '../../schemas/application';
+import { ArchitectureInfo } from '../../schemas/architecture';
+import { Assumption } from '../../schemas/assumptions';
+import { DataExchangeFormat, HasContentDetails } from '../../schemas/dataExchange';
+import { DataflowInfo } from '../../schemas/dataflow';
+import { Mitigation } from '../../schemas/mitigations';
+import { TemplateThreatStatement } from '../../schemas/threats';
 
 export const hasApplicationName = (applicationInfo?: ApplicationInfo) => {
   return !!(applicationInfo && applicationInfo.name);

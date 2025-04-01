@@ -13,11 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { convertToMarkdown } from '@aws/threat-composer-core';
 import { useCallback, FC, PropsWithChildren, useEffect } from 'react';
 import { useWorkspacesContext } from '../../../contexts';
 import useExportImport, { PLACEHOLDER_EXCHANGE_DATA } from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
-import convertToMarkdown from '../../../utils/convertToMarkdown';
 
 /**
  * Export threat-composer functionalities via window object.

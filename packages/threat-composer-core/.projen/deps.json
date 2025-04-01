@@ -60,6 +60,36 @@
       "type": "build"
     },
     {
+      "name": "rehype-stringify",
+      "version": "^9.0.3",
+      "type": "runtime"
+    },
+    {
+      "name": "remark-gfm",
+      "version": "^3.0.1",
+      "type": "runtime"
+    },
+    {
+      "name": "remark-parse",
+      "version": "^10.0.2",
+      "type": "runtime"
+    },
+    {
+      "name": "remark-rehype",
+      "version": "^10.1.0",
+      "type": "runtime"
+    },
+    {
+      "name": "sanitize-html",
+      "version": "^2.13.0",
+      "type": "runtime"
+    },
+    {
+      "name": "unified",
+      "version": "^10.1.2",
+      "type": "runtime"
+    },
+    {
       "name": "zod",
       "version": "3.22.4",
       "type": "runtime"

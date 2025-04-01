@@ -237,34 +237,17 @@
     },
     {
       "name": "rehype-raw",
-      "type": "runtime"
-    },
-    {
-      "name": "rehype-stringify",
+      "version": "^6.1.1",
       "type": "runtime"
     },
     {
       "name": "remark-frontmatter",
+      "version": "^4.0.1",
       "type": "runtime"
     },
     {
       "name": "remark-gfm",
-      "type": "runtime"
-    },
-    {
-      "name": "remark-parse",
-      "type": "runtime"
-    },
-    {
-      "name": "remark-rehype",
-      "type": "runtime"
-    },
-    {
-      "name": "sanitize-html",
-      "type": "runtime"
-    },
-    {
-      "name": "unified",
+      "version": "^3.0.1",
       "type": "runtime"
     },
     {

@@ -13,11 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { sanitizeHtml } from '@aws/threat-composer-core';
 import { BaseChangeDetail } from '@cloudscape-design/components/input/interfaces';
 import { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import { useCallback, useEffect, useState } from 'react';
 import { z } from 'zod';
-import sanitizeHtml from '../../utils/sanitizeHtml';
 
 const useContentValidation = (
   value: string,

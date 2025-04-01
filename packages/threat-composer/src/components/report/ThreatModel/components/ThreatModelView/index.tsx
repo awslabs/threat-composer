@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { DataExchangeFormat, HasContentDetails } from '@aws/threat-composer-core';
+import { convertToMarkdown, DataExchangeFormat, HasContentDetails } from '@aws/threat-composer-core';
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
@@ -30,7 +30,6 @@ import { css } from '@emotion/react';
 import { FC, useEffect, useCallback, useState, ReactNode, PropsWithChildren, useMemo } from 'react';
 import { ViewNavigationEvent } from '../../../../../customTypes';
 import printStyles from '../../../../../styles/print';
-import convertToMarkdown from '../../../../../utils/convertToMarkdown';
 import convertToYaml from '../../../../../utils/convertToYaml';
 import {
   downloadContentAsMarkdown,
