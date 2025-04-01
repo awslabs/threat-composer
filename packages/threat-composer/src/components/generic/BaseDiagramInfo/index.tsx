@@ -78,8 +78,8 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
   >
     <Container>
       {editMode ? (<SpaceBetween direction='vertical' size='s'>
-        <Header variant='h3'>Introduction</Header>
         <MarkdownEditorComponentType
+          label='Introduction'
           value={content}
           onChange={setContent}
           validateData={validateData}
