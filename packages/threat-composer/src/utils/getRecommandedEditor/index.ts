@@ -13,8 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement, ThreatFieldTypes, threatFieldTypeMapping } from '@aws/threat-composer-core';
-import calculateFieldCombination from '../calculateFieldCombination';
+import { calculateFieldCombination, TemplateThreatStatement, ThreatFieldTypes, threatFieldTypeMapping } from '@aws/threat-composer-core';
 
 const allFields = Object.keys(threatFieldTypeMapping);
 

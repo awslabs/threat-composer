@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement, ThreatFieldTypes, threatFieldTypeMapping } from '@aws/threat-composer-core';
 import a from 'indefinite';
+import { TemplateThreatStatement, ThreatFieldTypes, threatFieldTypeMapping } from '../../schemas/threats';
 import correctIndefiniteArticle from '../correctIndefiniteArticle';
 import getFieldContentByToken from '../getFieldContentByToken';
 

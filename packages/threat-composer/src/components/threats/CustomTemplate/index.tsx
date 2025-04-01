@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement, TemplateThreatStatementSchema } from '@aws/threat-composer-core';
+import { renderThreatStatement, TemplateThreatStatement, TemplateThreatStatementSchema } from '@aws/threat-composer-core';
 import Alert from '@cloudscape-design/components/alert';
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
@@ -21,7 +21,6 @@ import Header from '@cloudscape-design/components/header';
 import Modal from '@cloudscape-design/components/modal';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import React, { FC, useMemo, useState } from 'react';
-import renderThreatStatement from '../../../utils/renderThreatStatement';
 import Textarea from '../../generic/Textarea';
 
 export interface CustomTemplateProps {

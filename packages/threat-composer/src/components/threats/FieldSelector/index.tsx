@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { TemplateThreatStatement, ThreatFieldTypes } from '@aws/threat-composer-core';
+import { parseThreatStatement, TemplateThreatStatement, ThreatFieldTypes, threatFieldData, threatStatementFormat } from '@aws/threat-composer-core';
 import Button from '@cloudscape-design/components/button';
 import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
 import Container from '@cloudscape-design/components/container';
@@ -28,11 +28,7 @@ import ExpandableToken from './components/ExpandableToken';
 import Token from './components/Token';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { ComposerMode } from '../../../customTypes';
-import threatFieldData from '../../../data/threatFieldData';
-import threatStatementFormat from '../../../data/threatStatementFormat';
-
 import getRecommendedEditor from '../../../utils/getRecommandedEditor';
-import parseThreatStatement from '../../../utils/parseThreatStatement';
 import Suggestions from '../Suggestions';
 
 const defaultThreatStatementFormat = threatStatementFormat[63];

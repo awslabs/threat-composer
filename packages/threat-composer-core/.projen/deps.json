@@ -60,6 +60,10 @@
       "type": "build"
     },
     {
+      "name": "indefinite",
+      "type": "runtime"
+    },
+    {
       "name": "rehype-stringify",
       "version": "^9.0.3",
       "type": "runtime"

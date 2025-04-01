@@ -6,7 +6,7 @@ import {
 import { TypeScriptProject } from "projen/lib/typescript";
 import browsersList from "./config/browsersList";
 
-const uiESModules = ["unified", "@aws-northstar/ui"].join("|");
+const uiESModules = ["@aws-northstar/ui"].join("|");
 
 class ThreatComposerUIComponentsProject extends TypeScriptProject {
   constructor(parent: Project) {
@@ -25,7 +25,6 @@ class ThreatComposerUIComponentsProject extends TypeScriptProject {
         "@cloudscape-design/board-components",
         "lodash.isequal",
         "use-local-storage-state",
-        "indefinite",
         "uuid",
         "react-simply-carousel",
         "browser-image-compression",
@@ -115,9 +114,6 @@ class ThreatComposerUIComponentsProject extends TypeScriptProject {
     });
 
     this.package.addField("browserslist", browsersList);
-
-    // Need to fix this.
-    this.tasks.tryFind("test")?.reset('echo "Tests disabled"');
   }
 }
 

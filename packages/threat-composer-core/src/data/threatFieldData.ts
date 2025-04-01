@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThreatFieldData } from '@aws/threat-composer-core';
+import { ThreatFieldData } from '../schemas/threats';
 
-const threatFieldData: {
+export const threatFieldData: {
   [fieldName: string]: ThreatFieldData;
 } = {
   threat_source: {
@@ -75,5 +75,3 @@ const threatFieldData: {
     tokens: [],
   },
 };
-
-export default threatFieldData;

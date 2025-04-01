@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { Mitigation, TemplateThreatStatement, ThreatFieldTypes } from '@aws/threat-composer-core';
+import { Mitigation, TemplateThreatStatement, ThreatFieldTypes, threatFieldData, threatStatementFormat, renderThreatStatement } from '@aws/threat-composer-core';
 import ContentLayoutComponent from '@cloudscape-design/components/content-layout';
 import Grid from '@cloudscape-design/components/grid';
 import SpaceBetween from '@cloudscape-design/components/space-between';
@@ -33,16 +33,13 @@ import { useMitigationsContext } from '../../../contexts/MitigationsContext/cont
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
 import { ViewNavigationEvent } from '../../../customTypes';
-import threatFieldData from '../../../data/threatFieldData';
 import threatStatementExamples from '../../../data/threatStatementExamples.json';
-import threatStatementFormat from '../../../data/threatStatementFormat';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import getMetadata from '../../../utils/getMetadata';
 import getNewMitigation from '../../../utils/getNewMitigation';
 import getNewThreatStatement from '../../../utils/getNewThreatStatement';
 import getRecommendedEditor from '../../../utils/getRecommandedEditor';
 import matchThreatPackMitigationCandidate from '../../../utils/matchThreatPackMitigationCandidate';
-import renderThreatStatement from '../../../utils/renderThreatStatement';
 import scrollToTop from '../../../utils/scrollToTop';
 import AssumptionLinkComponent from '../../assumptions/AssumptionLinkView';
 import Tooltip from '../../generic/Tooltip';

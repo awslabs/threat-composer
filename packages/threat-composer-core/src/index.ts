@@ -16,6 +16,8 @@
 
 // Data exports
 export { default as STRIDE, StrideItem } from './data/stride';
+export { threatFieldData } from './data/threatFieldData';
+export { default as threatStatementFormat } from './data/threatStatementFormat';
 
 // Constants exports
 export * from './constants';
@@ -40,3 +42,8 @@ export { default as sanitizeHtml } from './utils/sanitizeHtml';
 export { default as hasContent } from './utils/hasContent';
 export * from './utils/hasContent';
 export { default as convertToMarkdown } from './utils/convertToMarkdown';
+export { default as calculateFieldCombination } from './utils/calculateFieldCombination';
+export { default as renderArrayField } from './utils/renderArrayField';
+export { default as renderThreatStatement } from './utils/renderThreatStatement';
+export { default as recalculateThreatData } from './utils/recalculateThreatData';
+export { default as parseThreatStatement } from './utils/parseThreatStatement';

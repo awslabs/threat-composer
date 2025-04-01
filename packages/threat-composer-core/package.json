@@ -30,6 +30,7 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "indefinite": "^2.5.1",
     "rehype-stringify": "^9.0.3",
     "remark-gfm": "^3.0.1",
     "remark-parse": "^10.0.2",

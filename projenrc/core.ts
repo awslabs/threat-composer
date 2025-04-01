@@ -17,6 +17,7 @@ class ThreatComposerCoreProject extends TypeScriptProject {
         "remark-rehype@^10.1.0", // Required for parseTableCellContent
         "unified@^10.1.2", // Required for parseTableCellContent
         "sanitize-html@^2.13.0", // Required for sanitizeHtml
+        "indefinite",
       ],
       devDeps: [],
       peerDeps: [],

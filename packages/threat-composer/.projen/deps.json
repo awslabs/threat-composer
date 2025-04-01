@@ -220,10 +220,6 @@
       "type": "runtime"
     },
     {
-      "name": "indefinite",
-      "type": "runtime"
-    },
-    {
       "name": "lodash.isequal",
       "type": "runtime"
     },

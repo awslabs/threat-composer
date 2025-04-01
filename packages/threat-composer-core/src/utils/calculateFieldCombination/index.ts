@@ -13,19 +13,29 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement } from '@aws/threat-composer-core';
-import renderThreatStatement from '../renderThreatStatement';
+import { threatFieldData } from '../../data/threatFieldData';
+import { TemplateThreatStatement, ThreatFieldTypes, threatFieldTypeMapping } from '../../schemas/threats';
 
-const recalculateThreatData = (threats: TemplateThreatStatement[]) => {
-  return threats.map(t => {
-    const { displayedStatement } = renderThreatStatement(t);
-    const nt: TemplateThreatStatement = {
-      ...t,
-      displayedStatement,
-    };
-
-    return nt;
+const calculateFieldCombination = (statement: TemplateThreatStatement) => {
+  let fieldCombination = 0;
+  const filledField: string[] = [];
+  Object.keys(threatFieldTypeMapping).forEach((key) => {
+    const value = statement[threatFieldTypeMapping[key as ThreatFieldTypes]];
+    if (value) {
+      if (typeof value === 'string') {
+        fieldCombination += threatFieldData[key].fieldId;
+        filledField.push(key);
+      } else if (Array.isArray(value) && value.length > 0) {
+        fieldCombination += threatFieldData[key].fieldId;
+        filledField.push(key);
+      }
+    }
   });
+
+  return {
+    fieldCombination,
+    filledField,
+  };
 };
 
-export default recalculateThreatData;
+export default calculateFieldCombination;

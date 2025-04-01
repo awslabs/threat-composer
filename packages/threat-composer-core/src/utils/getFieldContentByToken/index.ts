@@ -13,18 +13,26 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement } from '@aws/threat-composer-core';
-import calculateFieldCombination from '.';
+import { threatFieldData } from '../../data/threatFieldData';
+import { TemplateThreatStatement, threatFieldTypeMapping, ThreatFieldTypes } from '../../schemas/threats';
+import renderArrayField from '../renderArrayField';
 
-describe('calculateFieldCombination', () => {
-  test('should return the field combination score', async () => {
-    const statement: TemplateThreatStatement = {
-      id: 'TEST_01',
-      numericId: -1,
-      threatSource: 'threat actor',
-      threatAction: 'perform a threat action',
-    };
+const getFieldContentByToken = (token: ThreatFieldTypes, statement: TemplateThreatStatement): string => {
+  const fieldKey = threatFieldTypeMapping[token];
+  if (fieldKey) {
+    const value = statement[fieldKey as keyof TemplateThreatStatement];
+    if (value) {
+      if (typeof value === 'string') {
+        return value;
+      }
 
-    expect(calculateFieldCombination(statement).fieldCombination).toBe(5);
-  });
-});
+      if (Array.isArray(value) && value.length > 0) {
+        return renderArrayField(value as string[], token === 'impacted_goal');
+      }
+    }
+  }
+
+  return threatFieldData[token]?.displayField || '';
+};
+
+export default getFieldContentByToken;
