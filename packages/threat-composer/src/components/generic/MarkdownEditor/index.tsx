@@ -28,16 +28,16 @@ import '@mdxeditor/editor/style.css';
 
 const styles = {
   default: css({
-    borderWidth: '2px',
-    borderStyle: 'solid',
-    borderRadius: ` ${borderRadiusInput}`,
-    borderColor: colorBorderInputDefault,
+    'borderWidth': '2px',
+    'borderStyle': 'solid',
+    'borderRadius': ` ${borderRadiusInput}`,
+    'borderColor': colorBorderInputDefault,
+    '&:focus-within': {
+      borderColor: colorBorderInputFocused,
+    },
   }),
   error: css({
     '&&': { // Double ampersand for higher specificity
-      borderWidth: '2px',
-      borderStyle: 'solid',
-      borderRadius: ` ${borderRadiusInput}`,
       color: colorTextStatusError,
       borderColor: colorTextStatusError,
     },
@@ -72,13 +72,7 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
     errorText={errorText}
   >
     <div css={[
-      styles.default,
-      {
-        '&:focus-within': {
-          borderColor: colorBorderInputFocused,
-        },
-      },
-      errorText && styles.error, // Put error last so it overrides previous styles
+      styles.default, errorText && styles.error, // Put error last so it overrides previous styles
     ]}>
 
       <MDXEditor
