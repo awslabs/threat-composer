@@ -39,7 +39,7 @@ const useContentValidation = <T extends NonCancelableEventHandler<BaseChangeDeta
 
     //Work around for https://github.com/mdx-editor/editor/issues/574
     // and https://github.com/mdx-editor/editor/issues/103 and
-    newValue = newValue.endsWith('&#x20;') ? newValue.slice(0, -6) : newValue;
+    newValue = newValue.split('\n').map(line => line.endsWith('&#x20;') ? line.slice(0, -6) : line).join('\n');
 
     setTempValue(newValue);
     const cleanValue = sanitizeHtml(newValue);
