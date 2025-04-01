@@ -37,6 +37,10 @@ const useContentValidation = <T extends NonCancelableEventHandler<BaseChangeDeta
   const handleChange = useCallback((eventData: NonCancelableCustomEvent<BaseChangeDetail> | string) => {
     let newValue = typeof eventData === 'string' ? eventData : eventData.detail.value;
 
+    //Work around for https://github.com/mdx-editor/editor/issues/574
+    // and https://github.com/mdx-editor/editor/issues/103 and
+    newValue = newValue.endsWith('&#x20;') ? newValue.slice(0, -6) : newValue;
+
     setTempValue(newValue);
     const cleanValue = sanitizeHtml(newValue);
 
