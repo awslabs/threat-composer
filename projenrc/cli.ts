@@ -12,7 +12,6 @@ class ThreatComposerCliProject extends TypeScriptProject {
       deps: [
         "@aws/threat-composer-core", // Required for core functionality
         "yargs", // Required for CLI argument parsing
-        "yargs/helpers", // Required for CLI argument parsing
       ],
       devDeps: [
         "@types/yargs", // Required for TypeScript type definitions

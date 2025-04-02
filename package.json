@@ -86,7 +86,8 @@
       "packages/threat-composer",
       "packages/threat-composer-app",
       "packages/threat-composer-app-browser-extension",
-      "packages/threat-composer-infra"
+      "packages/threat-composer-infra",
+      "packages/threat-composer-cli"
     ],
     "nohoist": [
       "**/wxt"

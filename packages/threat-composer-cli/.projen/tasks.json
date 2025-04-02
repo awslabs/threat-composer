@@ -121,13 +121,13 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@types/jest,@types/yargs,eslint-import-resolver-typescript,eslint-plugin-import,jest,ts-jest,typescript,@aws/threat-composer-core,yargs,yargs/helpers"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@types/jest,@types/yargs,eslint-import-resolver-typescript,eslint-plugin-import,jest,ts-jest,typescript,@aws/threat-composer-core,yargs"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @types/jest @types/node @types/yargs @typescript-eslint/eslint-plugin @typescript-eslint/parser constructs eslint-import-resolver-typescript eslint-plugin-import eslint jest jest-junit projen ts-jest typescript @aws/threat-composer-core yargs yargs/helpers"
+          "exec": "yarn upgrade @types/jest @types/node @types/yargs @typescript-eslint/eslint-plugin @typescript-eslint/parser constructs eslint-import-resolver-typescript eslint-plugin-import eslint jest jest-junit projen ts-jest typescript @aws/threat-composer-core yargs"
         },
         {
           "exec": "npx projen"
