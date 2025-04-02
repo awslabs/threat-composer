@@ -1,5 +1,6 @@
 import ThreatComposerReactAppProject from "./projenrc/app";
 import ThreatComposerBrowserExtensionProject from "./projenrc/browser-extension";
+import ThreatComposerCliProject from "./projenrc/cli";
 import ThreatComposerCoreProject from "./projenrc/core";
 import ThreatComposerInfraProject from "./projenrc/infra";
 import ThreatComposerMonorepoProject from "./projenrc/monorepo";
@@ -13,10 +14,12 @@ const infraProject = new ThreatComposerInfraProject(monorepo);
 const browserExtensionProject = new ThreatComposerBrowserExtensionProject(
   monorepo
 );
+const cliProject = new ThreatComposerCliProject(monorepo);
 
 monorepo.addImplicitDependency(uiProject, coreProject);
 monorepo.addImplicitDependency(appProject, uiProject);
 monorepo.addImplicitDependency(infraProject, appProject);
 monorepo.addImplicitDependency(browserExtensionProject, appProject);
+monorepo.addImplicitDependency(cliProject, coreProject);
 
 monorepo.synth();

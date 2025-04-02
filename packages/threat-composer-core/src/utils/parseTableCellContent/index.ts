@@ -13,22 +13,51 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import rehypeStringify from 'rehype-stringify';
-import remarkGfm from 'remark-gfm';
-import remarkParse from 'remark-parse';
-import remarkRehype from 'remark-rehype';
-import { unified } from 'unified';
+
+// Helper function to dynamically import ESM modules in a CommonJS environment
+const dynamicImport = async (moduleName: string) => {
+  // Use a more compatible approach for dynamic imports
+  return new Function('moduleName', 'return import(moduleName)')(moduleName);
+};
 
 const parseTableCellContent = async (str: string) => {
   if (str) {
-    const htmlOutput = await unified()
-      .use(remarkParse)
-      .use(remarkGfm)
-      .use(remarkRehype)
-      .use(rehypeStringify)
-      .process(str);
-    const output = String(htmlOutput).replace(/(\r\n|\n|\r)/gm, '');
-    return output;
+    try {
+      // Dynamically import ESM modules using our helper function
+      const [
+        unifiedModule,
+        remarkParseModule,
+        remarkGfmModule,
+        remarkRehypeModule,
+        rehypeStringifyModule,
+      ] = await Promise.all([
+        dynamicImport('unified'),
+        dynamicImport('remark-parse'),
+        dynamicImport('remark-gfm'),
+        dynamicImport('remark-rehype'),
+        dynamicImport('rehype-stringify'),
+      ]);
+
+      const unified = unifiedModule.unified || unifiedModule.default;
+      const remarkParse = remarkParseModule.default;
+      const remarkGfm = remarkGfmModule.default;
+      const remarkRehype = remarkRehypeModule.default;
+      const rehypeStringify = rehypeStringifyModule.default;
+
+      const htmlOutput = await unified()
+        .use(remarkParse)
+        .use(remarkGfm)
+        .use(remarkRehype)
+        .use(rehypeStringify)
+        .process(str);
+
+      const output = String(htmlOutput).replace(/(\r\n|\n|\r)/gm, '');
+      return output;
+    } catch (error) {
+      // If there's an error with the dynamic imports, return the original string
+      console.error('Error processing table cell content:', error);
+      return str;
+    }
   }
 
   return str;
