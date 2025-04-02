@@ -112,7 +112,7 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
           markdownShortcutPlugin(),
           listsPlugin(),
           headingsPlugin({ allowedHeadingLevels }),
-          linkPlugin(),
+          linkPlugin( { disableAutoLink: true }),
           linkDialogPlugin(),
           imagePlugin({ disableImageResize: true }),
         ]
