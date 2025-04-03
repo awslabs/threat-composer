@@ -34,7 +34,15 @@ const useContentValidation = <T extends NonCancelableEventHandler<BaseChangeDeta
     }
   }, [value]);
 
-  const handleChange = useCallback((eventData: NonCancelableCustomEvent<BaseChangeDetail> | string) => {
+  const handleChange = useCallback((
+    eventData: NonCancelableCustomEvent<BaseChangeDetail> | string,
+    initialMarkdownNormalize?: boolean,
+  ) => {
+    // Skip processing if this is an initial markdown normalization
+    if (initialMarkdownNormalize === true) {
+      return;
+    }
+
     let newValue = typeof eventData === 'string' ? eventData : eventData.detail.value;
 
     //Work around for https://github.com/mdx-editor/editor/issues/574
