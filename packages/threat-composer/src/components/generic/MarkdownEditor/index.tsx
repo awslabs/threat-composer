@@ -42,6 +42,15 @@ const styles = {
       borderColor: colorTextStatusError,
     },
   }),
+  hideAutocomplete: css({
+    // Workaround to hide the HTML tag auto-complete tooltip from MDXEditor
+    '&&& .cm-tooltip-autocomplete, html body .cm-tooltip.cm-tooltip-autocomplete': {
+      display: 'none !important',
+      opacity: 0,
+      visibility: 'hidden',
+      pointerEvents: 'none',
+    },
+  }),
 };
 
 export interface MarkdownEditorProps extends FormFieldProps {
@@ -79,6 +88,7 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
         ref={mdxEditorRef}
         markdown={errorText ? value : tempValue}
         className={theme == Mode.Dark ? 'dark-theme dark-editor' : 'light-theme light-editor'}
+        css={styles.hideAutocomplete}
         autoFocus={focus}
         onChange={handleChange}
         toMarkdownOptions={{
