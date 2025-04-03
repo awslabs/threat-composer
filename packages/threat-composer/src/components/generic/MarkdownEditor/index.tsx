@@ -90,6 +90,7 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
         className={theme == Mode.Dark ? 'dark-theme dark-editor' : 'light-theme light-editor'}
         css={styles.hideAutocomplete}
         autoFocus={focus}
+        suppressHtmlProcessing={true}
         onChange={handleChange}
         toMarkdownOptions={{
           emphasis: '_',
