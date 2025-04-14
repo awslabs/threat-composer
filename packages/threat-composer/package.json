@@ -63,6 +63,7 @@
   },
   "dependencies": {
     "@aws-northstar/ui": "^1.1.1",
+    "@aws-sdk/client-bedrock-runtime": "^3.787.0",
     "@cloudscape-design/board-components": "^3.0.52",
     "@cloudscape-design/collection-hooks": "^1.0.36",
     "@cloudscape-design/components": "^3.0.517",
@@ -71,6 +72,7 @@
     "@emotion/react": "^11.11.0",
     "browser-image-compression": "^2.0.2",
     "d3": "^7",
+    "dotenv": "^16.5.0",
     "indefinite": "^2.4.3",
     "lodash.isequal": "^4.5.0",
     "react-markdown": "^8.0.7",
