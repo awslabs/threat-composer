@@ -42,15 +42,15 @@
     "husky": "^8.0.3",
     "license-checker": "^25.0.1",
     "npm-check-updates": "^17.1.2",
-    "nx": "16.0.0",
+    "nx": "19.0.0",
     "prettier": "^2.8.3",
-    "projen": "^0.79.24",
+    "projen": "^0.82.8",
     "syncpack": "^12",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5"
   },
   "peerDependencies": {
-    "nx": "^16"
+    "nx": "^19"
   },
   "dependencies": {
     "@aws-cdk/aws-cognito-identitypool-alpha": "latest",
@@ -60,7 +60,6 @@
   "resolutions": {
     "@types/babel__traverse": "7.18.2",
     "@zkochan/js-yaml": "npm:js-yaml@4.1.0",
-    "**/": "typescript-eslint/parser@5.49.0",
     "wrap-ansi": "^7.0.0",
     "@types/react": "^18.0.27",
     "react": "^18.2.0",
