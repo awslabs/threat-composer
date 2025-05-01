@@ -13,30 +13,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { useMemo } from 'react';
-import { EntityBase, MetadataCommentSchema } from '../../../customTypes';
-import MarkdownEditor from '../MarkdownEditor';
+/** @jsxImportSource @emotion/react */
+import Spinner from '@cloudscape-design/components/spinner';
+import { css } from '@emotion/react';
 
-export interface CommentsEditProps<T> {
-  entity: T;
-  onEditEntity: (entity: T, key: string, value: string | string[] | undefined) => void;
-}
-
-const CommentsEdit = <T extends EntityBase>({
-  entity,
-  onEditEntity,
-}: CommentsEditProps<T>) => {
-  const comments = useMemo(() => {
-    return (entity.metadata?.find(m => m.key === 'Comments')?.value as string) || '';
-  }, [entity.metadata]);
-
-  return (<MarkdownEditor
-    label='Comments'
-    value={comments}
-    onChange={(value) => onEditEntity(entity, 'Comments', value)}
-    allowedHeadingLevels={[4, 5]}
-    validateData={MetadataCommentSchema.safeParse}
-  />);
+const styles = {
+  container: css({
+    width: '100%',
+    height: '100px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }),
 };
 
-export default CommentsEdit;
+const Loading = () => {
+  return (<div css={styles.container}>
+    <Spinner size="large"/>
+  </div>);
+};
+
+export default Loading;

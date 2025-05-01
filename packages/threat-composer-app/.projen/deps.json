@@ -79,6 +79,10 @@
       "type": "build"
     },
     {
+      "name": "react-app-rewired",
+      "type": "build"
+    },
+    {
       "name": "typescript",
       "version": "^4.0.3",
       "type": "build"
@@ -115,6 +119,11 @@
     },
     {
       "name": "@emotion/react",
+      "type": "runtime"
+    },
+    {
+      "name": "@mdxeditor/editor",
+      "version": "^3.27",
       "type": "runtime"
     },
     {

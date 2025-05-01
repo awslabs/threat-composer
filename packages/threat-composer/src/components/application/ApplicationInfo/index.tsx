@@ -81,7 +81,6 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
           value={content}
           onChange={setContent}
           label='Description'
-          parentHeaderLevel='h2'
           validateData={ApplicationInfoSchema.shape.description.safeParse}
         />
       </SpaceBetween>) :

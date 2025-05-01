@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useState } from 'react';
+import { Loading } from '@aws/threat-composer';
+import { FC, Suspense, useState } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { routerOpts, createRouter, routes } from '../../../../routes';
 
@@ -24,7 +25,9 @@ const Full: FC = () => {
   });
 
   return (
-    <RouterProvider router={router} />
+    <Suspense fallback={<Loading />}>
+      <RouterProvider router={router} />
+    </Suspense>
   );
 };
 

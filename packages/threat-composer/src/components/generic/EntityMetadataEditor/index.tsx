@@ -16,6 +16,7 @@
 /** @jsxImportSource @emotion/react */
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
 import Grid from '@cloudscape-design/components/grid';
+import { useState } from 'react';
 import { EntityBase } from '../../../customTypes';
 import expandablePanelHeaderStyles from '../../../styles/expandablePanelHeader';
 import CommentsEdit from '../CommentsEdit';
@@ -33,22 +34,24 @@ const MetadataEditor = <T extends EntityBase>({
   onEditEntity,
   defaultExpanded,
 }: MetadataEditorProps<T>) => {
+  const [expanded, setExpanded] = useState(defaultExpanded);
   return (
     <ExpandableSection
       headerText={<span css={expandablePanelHeaderStyles}>Metadata</span>}
       headingTagOverride='h3'
       variant={variant}
-      defaultExpanded={defaultExpanded}
+      expanded={expanded}
+      onChange={({ detail }) => setExpanded(detail.expanded)}
     >
       <Grid
         gridDefinition={[
           { colspan: { default: 12, xs: 12 } },
         ]}
       >
-        <CommentsEdit
+        {expanded && <CommentsEdit
           entity={entity}
           onEditEntity={onEditEntity}
-        />
+        />}
       </Grid>
     </ExpandableSection>
   );

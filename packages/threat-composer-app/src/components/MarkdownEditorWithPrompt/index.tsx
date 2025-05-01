@@ -13,12 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { MarkdownEditor, MarkdownEditorProps } from '@aws/threat-composer';
+/** @jsxImportSource @emotion/react */
+import { MarkdownEditorProps, MarkdownEditor } from '@aws/threat-composer';
 import { FC, useState } from 'react';
 import { unstable_usePrompt } from 'react-router-dom';
 
 const MarkdownEditorWithPrompt: FC<MarkdownEditorProps> = ({
-  value, ...props
+  value,
+  ...props
 }) => {
   const [previousValue] = useState(value);
 
@@ -29,7 +31,7 @@ const MarkdownEditorWithPrompt: FC<MarkdownEditorProps> = ({
       currentLocation.pathname !== nextLocation.pathname,
   });
 
-  return <MarkdownEditor value={value} {...props} />;
+  return <MarkdownEditor value={value} allowedHeadingLevels={[3, 4, 5, 6]} {...props} />;
 };
 
 export default MarkdownEditorWithPrompt;

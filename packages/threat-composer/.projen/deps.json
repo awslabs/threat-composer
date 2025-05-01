@@ -208,6 +208,11 @@
       "type": "runtime"
     },
     {
+      "name": "@mdxeditor/editor",
+      "version": "^3.27",
+      "type": "runtime"
+    },
+    {
       "name": "browser-image-compression",
       "type": "runtime"
     },

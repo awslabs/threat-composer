@@ -82,8 +82,8 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
           label='Introduction'
           value={content}
           onChange={setContent}
-          parentHeaderLevel='h3'
           validateData={validateData}
+          focus={true}
         />
         <Header variant='h3'>{headerTitle} Diagram</Header>
         <ImageEdit value={image} onChange={setImage} />
