@@ -17,7 +17,7 @@
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
 import Grid from '@cloudscape-design/components/grid';
 import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { TemplateThreatStatement } from '../../../customTypes';
 import threatStatus from '../../../data/status/threatStatus.json';
 import expandablePanelHeaderStyles from '../../../styles/expandablePanelHeader';
@@ -40,12 +40,19 @@ const MetadataEditor: FC<MetadataEditorProps> = ({
   onEditStatementStatus,
   onEditMetadata,
 }) => {
+  const [expanded, setExpanded] = useState(false);
   const stride = useMemo(() => {
     return (editingStatement.metadata?.find(m => m.key === 'STRIDE')?.value as string[]) || undefined;
   }, [editingStatement.metadata]);
 
   return (
-    <ExpandableSection headerText={<span css={variant === 'default' ? expandablePanelHeaderStyles : undefined}>Metadata</span>} headingTagOverride='h3' variant={variant}>
+    <ExpandableSection
+      headerText={<span css={variant === 'default' ? expandablePanelHeaderStyles : undefined}>Metadata</span>}
+      headingTagOverride='h3'
+      variant={variant}
+      expanded={expanded}
+      onChange={({ detail }) => setExpanded(detail.expanded)}
+    >
       <Grid
         gridDefinition={[
           { colspan: { default: 12, xs: 3 } },
@@ -68,10 +75,10 @@ const MetadataEditor: FC<MetadataEditorProps> = ({
           selected={stride}
           setSelected={(selected) => onEditMetadata(editingStatement, 'STRIDE', selected)}
         />
-        <CommentsEdit
+        {expanded && <CommentsEdit
           entity={editingStatement}
           onEditEntity={onEditMetadata}
-        />
+        />}
       </Grid>
     </ExpandableSection>
   );
