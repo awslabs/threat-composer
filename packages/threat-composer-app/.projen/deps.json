@@ -69,12 +69,12 @@
       "type": "build"
     },
     {
-      "name": "react-scripts",
-      "version": "^5",
+      "name": "react-app-rewired",
       "type": "build"
     },
     {
-      "name": "react-app-rewired",
+      "name": "react-scripts",
+      "version": "^5",
       "type": "build"
     },
     {
@@ -114,11 +114,6 @@
     },
     {
       "name": "@emotion/react",
-      "type": "runtime"
-    },
-    {
-      "name": "@mdxeditor/editor",
-      "version": "^3.27",
       "type": "runtime"
     },
     {

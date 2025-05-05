@@ -5,7 +5,13 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
     super({
       defaultReleaseBranch: "main",
       name: "@aws/threat-composer-monorepo",
-      devDeps: ["@aws/pdk", "eslint-plugin-header", "license-checker", "husky"],
+      devDeps: [
+        "@aws/pdk",
+        "eslint-plugin-header",
+        "license-checker",
+        "husky",
+        "@babel/helper-split-export-declaration",
+      ],
     });
 
     this.tryFindObjectFile("package.json")?.addOverride(

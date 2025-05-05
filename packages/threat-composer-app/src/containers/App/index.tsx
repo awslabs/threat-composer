@@ -28,7 +28,7 @@ const App: FC = () => {
   console.log('App-ComposerMode', composerMode);
 
   useEffect(() => {
-    //Fix the issue related to ResizeObserver loop completed with undelivered notifications: 
+    //Fix the issue related to ResizeObserver loop completed with undelivered notifications:
     //Source: https://github.com/vuejs/vue-cli/issues/7431
     const debounce = (callback: (...args: any[]) => void, delay: number) => {
       let tid: any;

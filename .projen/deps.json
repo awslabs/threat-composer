@@ -5,6 +5,10 @@
       "type": "build"
     },
     {
+      "name": "@babel/helper-split-export-declaration",
+      "type": "build"
+    },
+    {
       "name": "@types/node",
       "version": "^18",
       "type": "build"

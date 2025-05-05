@@ -26,20 +26,20 @@
     "@typescript-eslint/eslint-plugin": "^7",
     "@typescript-eslint/parser": "^7",
     "aws-cdk": "^2.128.0",
-    "esbuild": "0.25.1",
+    "esbuild": "0.25.3",
     "eslint": "^8",
-    "eslint-import-resolver-typescript": "3.9.1",
+    "eslint-import-resolver-typescript": "3.10.1",
     "eslint-plugin-import": "2.31.0",
     "jest": "29.7.0",
     "jest-junit": "^15",
-    "ts-jest": "29.3.0",
+    "ts-jest": "29.3.2",
     "ts-node": "10.9.2",
-    "typescript": "5.8.2"
+    "typescript": "5.8.3"
   },
   "dependencies": {
-    "@aws/pdk": "0.26.2",
+    "@aws/pdk": "0.26.6",
     "aws-cdk-lib": "^2.128.0",
-    "cdk-nag": "2.35.55",
+    "cdk-nag": "2.35.88",
     "constructs": "^10.0.5"
   },
   "license": "Apache-2.0",
