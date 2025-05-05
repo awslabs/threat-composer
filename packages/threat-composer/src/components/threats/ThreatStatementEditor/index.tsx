@@ -114,6 +114,7 @@ const ContentLayout: FC<PropsWithChildren<{
 
   return (<ContentLayoutComponent
     disableOverlap
+    headerVariant="high-contrast"
     header={<Header
       composerMode={composerMode}
       statement={editingStatement}
