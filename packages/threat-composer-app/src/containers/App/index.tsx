@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import Full from './components/Full';
 import Standalone from './components/Standalone';
 import getComposerMode from '../../utils/getComposerMode';
@@ -26,29 +26,6 @@ const App: FC = () => {
   const composerMode = getComposerMode();
 
   console.log('App-ComposerMode', composerMode);
-
-  useEffect(() => {
-    //Fix the issue related to ResizeObserver loop completed with undelivered notifications:
-    //Source: https://github.com/vuejs/vue-cli/issues/7431
-    const debounce = (callback: (...args: any[]) => void, delay: number) => {
-      let tid: any;
-      return function (...args: any[]) {
-        const ctx = self;
-        tid && clearTimeout(tid);
-        tid = setTimeout(() => {
-          callback.apply(ctx, args);
-        }, delay);
-      };
-    };
-
-    const _ = (window as any).ResizeObserver;
-    (window as any).ResizeObserver = class ResizeObserver extends _ {
-      constructor(callback: (...args: any[]) => void) {
-        callback = debounce(callback, 20);
-        super(callback);
-      }
-    };
-  }, []);
 
   return (composerMode === 'ThreatsOnly' || composerMode === 'EditorOnly') ? (
     <Standalone composeMode={composerMode} />
