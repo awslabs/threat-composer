@@ -116,6 +116,7 @@ const AppLayout: FC<PropsWithChildren<{}>> = ({
     navigationItems={navigationItems}
     breadcrumbGroup={<WorkspaceSelector />}
     notifications={notifications}
+    headerVariant='high-contrast'
   >
     {children}
   </AppLayoutComponent>);
