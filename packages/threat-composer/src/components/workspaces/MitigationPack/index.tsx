@@ -110,13 +110,15 @@ const MitigationPack: FC<MitigationPackProp> = ({
     return null;
   }
 
-  return (<ContentLayout header={
-    <Header
-      variant="h2"
-    >
+  return (<ContentLayout
+    headerVariant="high-contrast"
+    header={
+      <Header
+        variant="h2"
+      >
       Mitigation Pack - {mitigationPack.name}
-    </Header>
-  }><SpaceBetween direction='vertical' size='s'>
+      </Header>
+    }><SpaceBetween direction='vertical' size='s'>
       <GeneralInfo mitigationPack={mitigationPack} />
       <Table
         columnDefinitions={colDef}

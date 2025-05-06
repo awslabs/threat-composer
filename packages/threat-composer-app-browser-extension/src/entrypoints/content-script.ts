@@ -14,8 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { getExtensionConfig, TCConfig } from './popup/config';
 import { logDebugMessage } from '../debugLogger';
+import { getExtensionConfig, TCConfig } from './popup/config';
 interface TCJSONSimplifiedSchema {
   schema?: string;
 }

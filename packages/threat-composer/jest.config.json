@@ -1,10 +1,11 @@
 {
+  "coverageProvider": "v8",
   "transformIgnorePatterns": [
     "[/\\\\]node_modules[/\\\\](?!unified|@aws-northstar/ui).+\\.(js|jsx|mjs|cjs|ts|tsx)$"
   ],
   "testMatch": [
     "<rootDir>/src/**/__tests__/**/*.ts?(x)",
-    "<rootDir>/(test|src)/**/*(*.)@(spec|test).ts?(x)"
+    "<rootDir>/@(test|src)/**/*(*.)@(spec|test).ts?(x)"
   ],
   "clearMocks": true,
   "collectCoverage": true,

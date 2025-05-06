@@ -37,6 +37,7 @@ const LandingPage: FC<LandingPageProps> = ({
   const { setFileImportModalVisible } = useGlobalSetupContext();
   return (
     <ContentLayout
+      headerVariant="high-contrast"
       header={
         <Header
           variant="h1"

@@ -34,6 +34,7 @@ const ContentLayout: FC<PropsWithChildren<ContentLayoutProps>> = ({
   const { applicationInfo } = useApplicationInfoContext();
 
   return (<ContentLayoutComponent
+    headerVariant="high-contrast"
     header={<Header
       variant="h1"
       {...props}
