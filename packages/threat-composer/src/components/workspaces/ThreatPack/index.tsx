@@ -141,6 +141,7 @@ const ThreatPack: FC<ThreatPackProp> = ({
   }
 
   return (<ContentLayout
+    headerVariant="high-contrast"
     header={
       <Header
         variant="h2"

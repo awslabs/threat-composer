@@ -69,6 +69,7 @@ const ContentLayout: FC<PropsWithChildren<HeaderProps & {
 
   return (<ContentLayoutComponent
     disableOverlap
+    headerVariant="high-contrast"
     header={
       <Header {...props} />
     }

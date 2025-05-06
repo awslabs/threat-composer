@@ -70,13 +70,15 @@ const MitigationPacks: FC<MitigationPacksProps> = ({
     },
   ], [mitigationPackUsage, onMitigationPackLinkClicked]);
 
-  return (<ContentLayout header={<Header
-    variant="h2"
-    description="Allow you to quickly find and add bulk or selected mitigation candidates to your current workspace"
-    counter={`(${mitigationPacks.length})`}
-  >
+  return (<ContentLayout
+    headerVariant="high-contrast"
+    header={<Header
+      variant="h2"
+      description="Allow you to quickly find and add bulk or selected mitigation candidates to your current workspace"
+      counter={`(${mitigationPacks.length})`}
+    >
     Mitigation Packs
-  </Header>}>
+    </Header>}>
     <SpaceBetween direction='vertical' size='s'>
       <Table
         columnDefinitions={colDef}

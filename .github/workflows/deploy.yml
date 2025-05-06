@@ -14,7 +14,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
       - run: pushd /tmp && git clone --depth 1 https://github.com/awslabs/git-secrets.git && cd ./git-secrets && PREFIX=/tmp/git-secrets make install && popd
       - run: npm install -g typescript
       - run: npm install -g yarn
@@ -55,7 +55,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
       - name: Release to GitHub Release
         id: release
         env:

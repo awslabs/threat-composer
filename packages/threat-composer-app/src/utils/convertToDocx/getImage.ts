@@ -13,11 +13,40 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ExternalHyperlink, ImageRun, Paragraph } from 'docx';
+import { ExternalHyperlink, IImageOptions, ImageRun, Paragraph } from 'docx';
+import { FALLBACK_IMAGE } from './fallbackImage';
 import fetchImage from './fetchImage';
+
+export const getImageRun = (image: IImageOptions['data'], type: IImageOptions['type'], width: number, height: number) => {
+  if (type !== 'svg') {
+    return new ImageRun({
+      data: image,
+      transformation: {
+        width,
+        height,
+      },
+      type,
+    });
+  }
+
+  return new ImageRun({
+    data: image,
+    transformation: {
+      width,
+      height,
+    },
+    type: 'svg',
+    fallback: {
+      type: 'png',
+      data: Buffer.from(FALLBACK_IMAGE, 'base64'),
+    },
+  });
+};
 
 const getImage = async (imageUrl: string) => {
   const image = await fetchImage(imageUrl);
+
+  const imageRun = getImageRun(image.image, image.type, image.width, image.height);
 
   if (imageUrl.startsWith('https://') || imageUrl.startsWith('http://')) {
     return new Paragraph({
@@ -25,13 +54,7 @@ const getImage = async (imageUrl: string) => {
         new ExternalHyperlink({
           link: imageUrl,
           children: [
-            new ImageRun({
-              data: image.image,
-              transformation: {
-                width: image.width,
-                height: image.height,
-              },
-            }),
+            imageRun,
           ],
         }),
       ],
@@ -40,13 +63,7 @@ const getImage = async (imageUrl: string) => {
 
   return new Paragraph({
     children: [
-      new ImageRun({
-        data: image.image,
-        transformation: {
-          width: image.width,
-          height: image.height,
-        },
-      }),
+      imageRun,
     ],
   });
 };

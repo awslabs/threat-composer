@@ -68,6 +68,7 @@ const ThreatPacks: FC<ThreatPacksProps> = ({
   ], [threatPackUsage, onThreatPackLinkClicked]);
 
   return (<ContentLayout
+    headerVariant="high-contrast"
     header={<Header
       variant="h2"
       description="Allow you to quickly find and add bulk or selected threat statements to your current workspace"
