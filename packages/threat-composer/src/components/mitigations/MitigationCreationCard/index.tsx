@@ -30,65 +30,65 @@ export interface MitigationCreationCardProps {
 }
 
 const MitigationCreationCard = forwardRef<
-import('../../generic/GenericEntityCreationCard').GenericEntityCreationCardRefProps,
+GenericEntityCreationCardRefProps,
 MitigationCreationCardProps
 >(({ onSave }, ref) => {
-    const [editingEntity, setEditingEntity] = useState<Mitigation>(getNewMitigation());
-    const [linkedAssumptionIds, setLinkedAssumptionIds] = useState<string[]>([]);
-    const [linkedThreatIds, setLinkedThreatIds] = useState<string[]>([]);
+  const [editingEntity, setEditingEntity] = useState<Mitigation>(getNewMitigation());
+  const [linkedAssumptionIds, setLinkedAssumptionIds] = useState<string[]>([]);
+  const [linkedThreatIds, setLinkedThreatIds] = useState<string[]>([]);
 
-    const { assumptionList, saveAssumption } = useAssumptionsContext();
-    const { statementList } = useThreatsContext();
+  const { assumptionList, saveAssumption } = useAssumptionsContext();
+  const { statementList } = useThreatsContext();
 
-    const handleSave = useCallback(() => {
-      onSave?.(editingEntity, linkedAssumptionIds, linkedThreatIds);
-      setEditingEntity(getNewMitigation());
-      setLinkedAssumptionIds([]);
-      setLinkedThreatIds([]);
-    }, [editingEntity, linkedAssumptionIds, linkedThreatIds]);
+  const handleSave = useCallback(() => {
+    onSave?.(editingEntity, linkedAssumptionIds, linkedThreatIds);
+    setEditingEntity(getNewMitigation());
+    setLinkedAssumptionIds([]);
+    setLinkedThreatIds([]);
+  }, [editingEntity, linkedAssumptionIds, linkedThreatIds]);
 
-    const handleReset = useCallback(() => {
-      setEditingEntity(getNewMitigation());
-      setLinkedAssumptionIds([]);
-      setLinkedThreatIds([]);
-    }, []);
+  const handleReset = useCallback(() => {
+    setEditingEntity(getNewMitigation());
+    setLinkedAssumptionIds([]);
+    setLinkedThreatIds([]);
+  }, []);
 
-    const handleAddAssumptionLink = useCallback((assumptionIdOrNewAssumption: string) => {
-      if (assumptionList.find(a => a.id === assumptionIdOrNewAssumption)) {
-        setLinkedAssumptionIds(prev => [...prev, assumptionIdOrNewAssumption]);
-      } else {
-        const newAssumption = saveAssumption({
-          numericId: -1,
-          content: assumptionIdOrNewAssumption,
-          id: DEFAULT_NEW_ENTITY_ID,
-        });
-        setLinkedAssumptionIds(prev => [...prev, newAssumption.id]);
-      }
-    }, [assumptionList, saveAssumption, setLinkedAssumptionIds]);
+  const handleAddAssumptionLink = useCallback((assumptionIdOrNewAssumption: string) => {
+    if (assumptionList.find(a => a.id === assumptionIdOrNewAssumption)) {
+      setLinkedAssumptionIds(prev => [...prev, assumptionIdOrNewAssumption]);
+    } else {
+      const newAssumption = saveAssumption({
+        numericId: -1,
+        content: assumptionIdOrNewAssumption,
+        id: DEFAULT_NEW_ENTITY_ID,
+      });
+      setLinkedAssumptionIds(prev => [...prev, newAssumption.id]);
+    }
+  }, [assumptionList, saveAssumption, setLinkedAssumptionIds]);
 
-    return (<GenericEntityCreationCard
-      ref={ref}
-      editingEntity={editingEntity}
-      setEditingEntity={setEditingEntity}
-      header='Add new mitigation'
-      onSave={handleSave}
-      onReset={handleReset}
-      validateData={MitigationSchema.shape.content.safeParse}
-      customEditors={<SpaceBetween direction='vertical' size='s'>
-        <ThreatLinkView
-          linkedThreatIds={linkedThreatIds}
-          threatList={statementList}
-          onAddThreatLink={(id) => setLinkedThreatIds(prev => [...prev, id])}
-          onRemoveThreatLink={(id) => setLinkedThreatIds(prev => prev.filter(p => p !== id))}
-        />
-        <AssumptionLinkView
-          linkedAssumptionIds={linkedAssumptionIds}
-          assumptionList={assumptionList}
-          onAddAssumptionLink={handleAddAssumptionLink}
-          onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
-        />
-      </SpaceBetween>}
-    />);
-  });
+  return (<GenericEntityCreationCard
+    ref={ref}
+    editingEntity={editingEntity}
+    setEditingEntity={setEditingEntity}
+    header='Add new mitigation'
+    onSave={handleSave}
+    onReset={handleReset}
+    validateData={MitigationSchema.shape.content.safeParse}
+    customEditors={<SpaceBetween direction='vertical' size='s'>
+      <ThreatLinkView
+        linkedThreatIds={linkedThreatIds}
+        threatList={statementList}
+        onAddThreatLink={(id) => setLinkedThreatIds(prev => [...prev, id])}
+        onRemoveThreatLink={(id) => setLinkedThreatIds(prev => prev.filter(p => p !== id))}
+      />
+      <AssumptionLinkView
+        linkedAssumptionIds={linkedAssumptionIds}
+        assumptionList={assumptionList}
+        onAddAssumptionLink={handleAddAssumptionLink}
+        onRemoveAssumptionLink={(id) => setLinkedAssumptionIds(prev => prev.filter(p => p !== id))}
+      />
+    </SpaceBetween>}
+  />);
+});
 
 export default MitigationCreationCard;
