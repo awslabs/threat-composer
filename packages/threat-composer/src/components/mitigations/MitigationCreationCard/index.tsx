@@ -14,21 +14,25 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { FC, useState, useCallback } from 'react';
+import { useState, useCallback, forwardRef } from 'react';
 import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { Mitigation, MitigationSchema } from '../../../customTypes';
 import getNewMitigation from '../../../utils/getNewMitigation';
 import AssumptionLinkView from '../../assumptions/AssumptionLinkView';
-import GenericEntityCreationCard from '../../generic/GenericEntityCreationCard';
+import GenericEntityCreationCard, { GenericEntityCreationCardRefProps } from '../../generic/GenericEntityCreationCard';
 import ThreatLinkView from '../../threats/ThreatLinkView';
 
 export interface MitigationCreationCardProps {
+  ref?: React.Ref<GenericEntityCreationCardRefProps>;
   onSave?: (entity: Mitigation, linkedAssumptionIds: string[], linkedThreatIds: string[]) => void;
 }
 
-const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => {
+const MitigationCreationCard = forwardRef<
+GenericEntityCreationCardRefProps,
+MitigationCreationCardProps
+>(({ onSave }, ref) => {
   const [editingEntity, setEditingEntity] = useState<Mitigation>(getNewMitigation());
   const [linkedAssumptionIds, setLinkedAssumptionIds] = useState<string[]>([]);
   const [linkedThreatIds, setLinkedThreatIds] = useState<string[]>([]);
@@ -63,6 +67,7 @@ const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => 
   }, [assumptionList, saveAssumption, setLinkedAssumptionIds]);
 
   return (<GenericEntityCreationCard
+    ref={ref}
     editingEntity={editingEntity}
     setEditingEntity={setEditingEntity}
     header='Add new mitigation'
@@ -84,6 +89,6 @@ const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => 
       />
     </SpaceBetween>}
   />);
-};
+});
 
 export default MitigationCreationCard;

@@ -14,21 +14,25 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { FC, useState, useCallback } from 'react';
+import { useState, useCallback, forwardRef } from 'react';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { Assumption, AssumptionSchema } from '../../../customTypes';
 import getNewAssumption from '../../../utils/getNewAssumption';
 import getNewMitigation from '../../../utils/getNewMitigation';
-import GenericEntityCreationCard from '../../generic/GenericEntityCreationCard';
+import GenericEntityCreationCard, { GenericEntityCreationCardRefProps } from '../../generic/GenericEntityCreationCard';
 import MitigationLinkView from '../../mitigations/MitigationLinkView';
 import ThreatLinkView from '../../threats/ThreatLinkView';
 
 export interface AssumptionCreationCardProps {
+  ref?: React.Ref<GenericEntityCreationCardRefProps>;
   onSave?: (entity: Assumption, linkedMitigationIds: string[], linkedThreatIds: string[]) => void;
 }
 
-const AssumptionCreationCard: FC<AssumptionCreationCardProps> = ({ onSave }) => {
+const AssumptionCreationCard = forwardRef<
+GenericEntityCreationCardRefProps,
+AssumptionCreationCardProps
+>(({ onSave }, ref) => {
   const [editingEntity, setEditingEntity] = useState<Assumption>(getNewAssumption());
   const [linkedMitigationIds, setLinkedMitigationIds] = useState<string[]>([]);
   const [linkedThreatIds, setLinkedThreatIds] = useState<string[]>([]);
@@ -59,6 +63,7 @@ const AssumptionCreationCard: FC<AssumptionCreationCardProps> = ({ onSave }) => 
   }, [mitigationList, saveMitigation]);
 
   return (<GenericEntityCreationCard
+    ref={ref}
     editingEntity={editingEntity}
     setEditingEntity={setEditingEntity}
     header='Add new assumption'
@@ -80,6 +85,6 @@ const AssumptionCreationCard: FC<AssumptionCreationCardProps> = ({ onSave }) => 
       />
     </SpaceBetween>}
   />);
-};
+});
 
 export default AssumptionCreationCard;

@@ -18,12 +18,13 @@ import Container from '@cloudscape-design/components/container';
 import Grid from '@cloudscape-design/components/grid';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState, useRef } from 'react';
 import { useAssumptionLinksContext } from '../../../contexts';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
 import { Assumption, AssumptionLink } from '../../../customTypes';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import ContentLayout from '../../generic/ContentLayout';
+import { GenericEntityCreationCardRefProps } from '../../generic/GenericEntityCreationCard';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
 import TagSelector from '../../generic/TagSelector';
 import AssumptionCard from '../AssumptionCard';
@@ -158,7 +159,26 @@ const AssumptionList: FC = () => {
 
   }, [saveAssumption, addAssumptionLinks]);
 
-  return (<ContentLayout title='Assumptions' counter={`(${filteredList.length})`}>
+  const assumptionCreationCardRef = useRef<GenericEntityCreationCardRefProps>(null);
+
+  const handleAddNewAssumption = useCallback(() => {
+    assumptionCreationCardRef.current?.scrollIntoView();
+    assumptionCreationCardRef.current?.focusTextarea();
+  }, []);
+
+  const actions = useMemo(() => {
+    return (
+      <Button variant="primary" onClick={handleAddNewAssumption}>
+        Add new assumption
+      </Button>
+    );
+  }, [handleAddNewAssumption]);
+
+  return (<ContentLayout
+    title='Assumptions'
+    counter={`(${filteredList.length})`}
+    actions={actions}
+  >
     <SpaceBetween direction='vertical' size='s'>
       <Container>
         <SpaceBetween direction='vertical' size='s'>
@@ -220,6 +240,7 @@ const AssumptionList: FC = () => {
         onRemoveTagFromAssumption={handleRemoveTagFromEntity}
       />))}
       <AssumptionCreationCard
+        ref={assumptionCreationCardRef}
         onSave={handleSaveNew}
       />
     </SpaceBetween>

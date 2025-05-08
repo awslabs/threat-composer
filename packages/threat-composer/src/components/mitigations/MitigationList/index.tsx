@@ -19,13 +19,14 @@ import Grid from '@cloudscape-design/components/grid';
 import Multiselect from '@cloudscape-design/components/multiselect';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState, useRef } from 'react';
 import { STATUS_NOT_SET } from '../../../configs';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { AssumptionLink, Mitigation, MitigationLink, MitigationListFilter } from '../../../customTypes';
 import mitigationStatus from '../../../data/status/mitigationStatus.json';
 import ContentLayout from '../../generic/ContentLayout';
+import { GenericEntityCreationCardRefProps } from '../../generic/GenericEntityCreationCard';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
 import TagSelector from '../../generic/TagSelector';
 import MitigationCard from '../MitigationCard';
@@ -207,7 +208,26 @@ const MitigationList: FC<MitigationListProps> = ({
 
   }, [saveMitigation, addMitigationLinks, addAssumptionLinks]);
 
-  return (<ContentLayout title='Mitigations' counter={`(${filteredList.length})`}>
+  const mitigationCreationCardRef = useRef<GenericEntityCreationCardRefProps>(null);
+
+  const handleAddNewMitigation = useCallback(() => {
+    mitigationCreationCardRef.current?.scrollIntoView();
+    mitigationCreationCardRef.current?.focusTextarea();
+  }, []);
+
+  const actions = useMemo(() => {
+    return (
+      <Button variant="primary" onClick={handleAddNewMitigation}>
+        Add new mitigation
+      </Button>
+    );
+  }, [handleAddNewMitigation]);
+
+  return (<ContentLayout
+    title='Mitigations'
+    counter={`(${filteredList.length})`}
+    actions={actions}
+  >
     <SpaceBetween direction='vertical' size='s'>
       <Container>
         <SpaceBetween direction='vertical' size='s'>
@@ -273,6 +293,7 @@ const MitigationList: FC<MitigationListProps> = ({
         onRemoveTagFromEntity={handleRemoveTagFromEntity}
       />))}
       <MitigationCreationCard
+        ref={mitigationCreationCardRef}
         onSave={handleSaveNew}
       />
     </SpaceBetween>
