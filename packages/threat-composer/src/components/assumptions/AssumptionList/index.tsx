@@ -24,7 +24,7 @@ import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/cont
 import { Assumption, AssumptionLink } from '../../../customTypes';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import ContentLayout from '../../generic/ContentLayout';
-import { GenericEntityCreationCardRef } from '../../generic/GenericEntityCreationCard';
+import { GenericEntityCreationCardRefProps } from '../../generic/GenericEntityCreationCard';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
 import TagSelector from '../../generic/TagSelector';
 import AssumptionCard from '../AssumptionCard';
@@ -159,7 +159,7 @@ const AssumptionList: FC = () => {
 
   }, [saveAssumption, addAssumptionLinks]);
 
-  const assumptionCreationCardRef = useRef<GenericEntityCreationCardRef>(null);
+  const assumptionCreationCardRef = useRef<GenericEntityCreationCardRefProps>(null);
 
   const handleAddNewAssumption = useCallback(() => {
     assumptionCreationCardRef.current?.scrollIntoView();

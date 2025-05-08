@@ -21,16 +21,16 @@ import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { Mitigation, MitigationSchema } from '../../../customTypes';
 import getNewMitigation from '../../../utils/getNewMitigation';
 import AssumptionLinkView from '../../assumptions/AssumptionLinkView';
-import GenericEntityCreationCard from '../../generic/GenericEntityCreationCard';
+import GenericEntityCreationCard, { GenericEntityCreationCardRefProps } from '../../generic/GenericEntityCreationCard';
 import ThreatLinkView from '../../threats/ThreatLinkView';
 
 export interface MitigationCreationCardProps {
-  ref?: React.Ref<import('../../generic/GenericEntityCreationCard').GenericEntityCreationCardRef>;
+  ref?: React.Ref<GenericEntityCreationCardRefProps>;
   onSave?: (entity: Mitigation, linkedAssumptionIds: string[], linkedThreatIds: string[]) => void;
 }
 
 const MitigationCreationCard = forwardRef<
-import('../../generic/GenericEntityCreationCard').GenericEntityCreationCardRef,
+import('../../generic/GenericEntityCreationCard').GenericEntityCreationCardRefProps,
 MitigationCreationCardProps
 >(({ onSave }, ref) => {
     const [editingEntity, setEditingEntity] = useState<Mitigation>(getNewMitigation());

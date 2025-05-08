@@ -25,7 +25,7 @@ import Textarea, { TextAreaProps } from '../../generic/Textarea';
 import MetadataEditor from '../EntityMetadataEditor';
 import GenericCard from '../GenericCard';
 
-export interface GenericEntityCreationCardRef {
+export interface GenericEntityCreationCardRefProps {
   scrollIntoView: () => void;
   focusTextarea: () => void;
 }
@@ -40,7 +40,7 @@ export interface GenericEntityCreationCardProps {
   validateData?: TextAreaProps['validateData'];
 }
 
-const GenericEntityCreationCard = forwardRef<GenericEntityCreationCardRef, GenericEntityCreationCardProps>(({
+const GenericEntityCreationCard = forwardRef<GenericEntityCreationCardRefProps, GenericEntityCreationCardProps>(({
   editingEntity,
   setEditingEntity,
   header,

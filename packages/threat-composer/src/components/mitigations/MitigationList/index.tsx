@@ -26,7 +26,7 @@ import { useMitigationsContext } from '../../../contexts/MitigationsContext/cont
 import { AssumptionLink, Mitigation, MitigationLink, MitigationListFilter } from '../../../customTypes';
 import mitigationStatus from '../../../data/status/mitigationStatus.json';
 import ContentLayout from '../../generic/ContentLayout';
-import { GenericEntityCreationCardRef } from '../../generic/GenericEntityCreationCard';
+import { GenericEntityCreationCardRefProps } from '../../generic/GenericEntityCreationCard';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
 import TagSelector from '../../generic/TagSelector';
 import MitigationCard from '../MitigationCard';
@@ -208,7 +208,7 @@ const MitigationList: FC<MitigationListProps> = ({
 
   }, [saveMitigation, addMitigationLinks, addAssumptionLinks]);
 
-  const mitigationCreationCardRef = useRef<GenericEntityCreationCardRef>(null);
+  const mitigationCreationCardRef = useRef<GenericEntityCreationCardRefProps>(null);
 
   const handleAddNewMitigation = useCallback(() => {
     mitigationCreationCardRef.current?.scrollIntoView();
