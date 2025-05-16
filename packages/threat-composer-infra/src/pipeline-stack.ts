@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { PDKPipeline } from '@aws/pdk/pipeline';
+import { PDKPipeline, PDKPipelineWithCodeConnection } from '@aws/pdk/pipeline';
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
@@ -23,14 +23,31 @@ export class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps) {
     super(scope, id, props);
 
-    this.pipeline = new PDKPipeline(this, 'ApplicationPipeline', {
+    const useCodeCommit = (this.node.tryGetContext('useCodeCommit') as boolean) ?? true;
+    const repositoryName = this.node.tryGetContext('repositoryName') || 'threat_composer_monorepo';
+    const repositoryOwnerAndName = this.node.tryGetContext('repositoryOwnerAndName');
+    const codeConnectionArn = this.node.tryGetContext('codeConnectionArn');
+
+    const pipelineProps = {
       primarySynthDirectory: 'packages/threat-composer-infra/cdk.out',
-      repositoryName: this.node.tryGetContext('repositoryName') || 'monorepo',
       defaultBranchName: 'main',
       publishAssetsInParallel: false,
       crossAccountKeys: true,
       synth: {},
       sonarCodeScannerConfig: this.node.tryGetContext('sonarqubeScannerConfig'),
-    });
+    };
+
+    if (useCodeCommit) {
+      this.pipeline = new PDKPipeline(this, 'ApplicationPipeline', {
+        ...pipelineProps,
+        repositoryName: repositoryName,
+      });
+    } else {
+      this.pipeline = new PDKPipelineWithCodeConnection(this, 'ApplicationPipeline', {
+        ...pipelineProps,
+        repositoryOwnerAndName: repositoryOwnerAndName,
+        codeConnectionArn: codeConnectionArn,
+      });
+    }
   }
 }

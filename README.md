@@ -208,7 +208,6 @@ Note that all the configurations are **OPTIONAL**.
 
 | Configuration Property | Description                                                                                                                                                                                                                                |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| repositoryName         | (Optional) The CodeCommit repository name if Deployment with CI/CD option is used                                                                                                                                                          |
 | accountPipeline        | (Optional) The AWS account for deploying CodeCommit repository and CI/CD pipeline if Deployment with CI/CD option is used. Default value: current account                                                                                  |
 | accountDev             | (Optional) The AWS account for deploying dev instance of application stack. Default value: current account                                                                                                                                 |
 | accountProd            | (Optional) The AWS account for deploying prod instance of application stack if Deployment with CI/CD option is used.                                                                                                                       |
@@ -223,7 +222,13 @@ Note that all the configurations are **OPTIONAL**.
 | hostZoneNameDev        | (Optional) The Route 53 host zone for the custom domain name of prod deployment if host zone record creation is required                                                                                                                   |
 | hostZoneNameProd       | (Optional) The Route 53 host zone for the custom domain name of prod deployment if host zone record creation is required                                                                                                                   |
 | lambdaEdgeDev          | (Optional) The lambda edge function ARN attached to CloudFront VIEWER_REQUEST event for CloudFront dev instance or the AWS Systems Manbager(SSM) parameter name (in us-east-1) storing the Lambda edge function ARN                        |
-| lambdaEdgeProd         | (Optional) The lambda edge function ARN attached to CloudFront VIEWER_REQUEST event for CloudFront prod instance or the AWS Systems Manbager(SSM) parameter name (in us-east-1) storing the Lambda edge function ARN                       |
+| lambdaEdgeProd         | (Optional) The lambda edge function ARN attached to CloudFront VIEWER_REQUEST event for CloudFront prod instance or the AWS Systems Manbager(SSM) parameter name (in us-east-1) storing the Lambda edge function ARN      |
+| cacheControlNoCache    | (Optional) If true, Set CloudFront response headers *pragma* to *no-cache*, and *cache-control* to *no-store, no-cache*   |
+| useCodeCommit          | (Optional, defaults to true) Set to false to use an external repository instead of CodeCommit |
+| repositoryName         | (Optional) Name of the CodeCommit repository (Required only when useCodeCommit is true)   |
+| repositoryOwnerAndName | (Optional) The owner and name of the external repository (Required when useCodeCommit is false) |
+| codeConnectionArn      | (Optional) The ARN of the CodeStar Connection for the external repository (Required when useCodeCommit is false)   |
+
 
 ### Deployment - Static Website Only
 
@@ -274,6 +279,17 @@ This deployment option does create resources beyond what is created in the ‘St
 You may need to include the `--trust` option when bootstrapping the dev or production accounts if they are different from the pipeline AWS account shown below. This command is run from the AWS account that has been configured in the property `accountDev` or `accountProd` in _packages/threat-composer -infra/cdk.context.json_. See below for an example.
 
 `cdk bootstrap aws://<dev-or-prod-aws-account-id>/us-west-2 --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess --trust <pipeline-aws-account-id>`
+
+#### Use CodeConnections to connect to an external git repository
+
+Alternatively, you can also connect the CodePipeline to an external git repository  (like GitHub, Bitbucket, or GitLab) using [CodeConnections](https://docs.aws.amazon.com/dtconsole/latest/userguide/welcome-connections.html) with the configuration settings below:
+
+
+```
+"useCodeCommit": false,
+"repositoryOwnerAndName": "<The Owner and Repository name. For instance, user testUser with git repository testRepo becomes "testUser/testRepo",
+"codeConnectionArn": "<The ARN of the code connection>"
+```
 
 #### Deployment Instructions
 
