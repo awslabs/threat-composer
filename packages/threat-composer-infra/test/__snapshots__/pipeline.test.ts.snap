@@ -1269,7 +1269,7 @@ exports[`Snapshot 1`] = `
     "ApplicationPipelineCodeRepositoryA734F3FA": {
       "DeletionPolicy": "Retain",
       "Properties": {
-        "RepositoryName": "monorepo",
+        "RepositoryName": "threat_composer_monorepo",
       },
       "Type": "AWS::CodeCommit::Repository",
       "UpdateReplacePolicy": "Retain",
