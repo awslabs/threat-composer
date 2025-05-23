@@ -15,21 +15,26 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
+import ColumnLayout from '@cloudscape-design/components/column-layout';
 import { TextareaProps } from '@cloudscape-design/components/textarea';
 import { FC, useCallback, forwardRef, useRef, RefObject, useImperativeHandle } from 'react';
+import { useBrainstormContext } from '../../../contexts/BrainstormContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { TemplateThreatStatementSchema } from '../../../customTypes';
 import Textarea from '../../generic/Textarea';
+import BrainstormList from '../BrainstormList';
 import EditorLayout from '../EditorLayout';
 import styles from '../EditorLayout/styles';
 import ExampleList from '../ExampleList';
+import PreviousInputList from '../PreviousInputList';
 import { EditorProps } from '../ThreatStatementEditor/types';
 
 const EditorPrerequisites: FC<EditorProps> = forwardRef<TextareaProps.Ref, EditorProps>(({
   statement, setStatement, fieldData,
 }, ref) => {
   const inputRef = useRef<TextareaProps.Ref>();
-  const { perFieldExamples } = useThreatsContext();
+  const { perFieldExamples, previousInputs } = useThreatsContext();
+  const { brainstormData } = useBrainstormContext();
 
   useImperativeHandle(ref, () => {
     return {
@@ -74,8 +79,26 @@ const EditorPrerequisites: FC<EditorProps> = forwardRef<TextareaProps.Ref, Edito
         <Button variant='icon' iconName='close' onClick={() => handleChange('')} />
       </div>}
     </div>
-    {perFieldExamples.prerequisites.length > 0 &&
-      <ExampleList examples={perFieldExamples.prerequisites} onSelect={handleSelect}></ExampleList>}
+    <ColumnLayout columns={
+      (perFieldExamples.prerequisites.length > 0 ? 1 : 0) +
+      (previousInputs.prerequisites.length > 0 ? 1 : 0) +
+      (brainstormData.threatPrerequisites.length > 0 ? 1 : 0)
+    }>
+      {perFieldExamples.prerequisites.length > 0 &&
+        <ExampleList examples={perFieldExamples.prerequisites} onSelect={handleSelect}></ExampleList>}
+      {previousInputs.prerequisites.length > 0 &&
+        <PreviousInputList
+          items={previousInputs.prerequisites}
+          onSelect={(content) => handleSelect(content)}
+        />
+      }
+      {brainstormData.threatPrerequisites.length > 0 &&
+        <BrainstormList
+          items={brainstormData.threatPrerequisites}
+          onSelect={handleSelect}
+        />
+      }
+    </ColumnLayout>
   </EditorLayout>);
 });
 

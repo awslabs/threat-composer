@@ -45,3 +45,5 @@ export const ROUTE_MITIGATION_PACK = `/${ROUTE_WORKSPACE_PATH}/${ROUTE_MITIGATIO
 export const ROUTE_PREVIEW_PATH = 'preview/:dataKey';
 export const ROUTE_PREVIEW = `/${ROUTE_PREVIEW_PATH}`;
 export const ROUTE_WORKSPACE_DEFAULT = 'workspaces/default';
+export const ROUTE_BRAINSTORM_PATH = 'brainstorm';
+export const ROUTE_BRAINSTORM = `/${ROUTE_WORKSPACE_PATH}/${ROUTE_BRAINSTORM_PATH}`;

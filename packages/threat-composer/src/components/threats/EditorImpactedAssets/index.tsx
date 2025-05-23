@@ -15,12 +15,15 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 import { AutosuggestProps } from '@cloudscape-design/components/autosuggest';
+import ColumnLayout from '@cloudscape-design/components/column-layout';
 import { BaseKeyDetail, CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import TokenGroup, { TokenGroupProps } from '@cloudscape-design/components/token-group';
 import { FC, useCallback, useState, forwardRef } from 'react';
+import { useBrainstormContext } from '../../../contexts/BrainstormContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { ThreatStatementImpactedAssetItem } from '../../../customTypes';
 import Autosuggest from '../../generic/Autosuggest';
+import BrainstormList from '../BrainstormList';
 import EditorLayout from '../EditorLayout';
 import ExampleList from '../ExampleList';
 import { EditorProps } from '../ThreatStatementEditor/types';
@@ -29,6 +32,7 @@ const EditorImpactedAssets: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, E
   statement, setStatement, fieldData,
 }, _ref) => {
   const { perFieldExamples, previousInputs } = useThreatsContext();
+  const { brainstormData } = useBrainstormContext();
   const [value, setValue] = useState<string>('');
   const handleAddAsset = useCallback((asset: string) => {
     setStatement(prevStatement => prevStatement && ({
@@ -70,9 +74,14 @@ const EditorImpactedAssets: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, E
       onChange={({ detail }) => setValue(detail.value)}
       onSelect={handleSelect}
       value={value}
-      options={previousInputs.impacted_assets.map(asset => ({
-        value: asset,
-      }))}
+      options={[
+        ...previousInputs.impacted_assets.map(asset => ({
+          value: asset,
+        })),
+        ...brainstormData.assets.map(asset => ({
+          value: asset.content,
+        })),
+      ]}
       enteredTextLabel={enteredValue => `Use: "${enteredValue}"`}
       ariaLabel="Autosuggest for impacted assets"
       placeholder="Select an existing asset or enter new asset"
@@ -87,8 +96,19 @@ const EditorImpactedAssets: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, E
         dismissLabel: `Remove ${asset}`,
       }))}
     />
-    {perFieldExamples.impacted_assets.length > 0 &&
-      <ExampleList examples={perFieldExamples.impacted_assets} onSelect={handleAddAsset} showSearch={false}></ExampleList>}
+    <ColumnLayout columns={
+      (perFieldExamples.impacted_assets.length > 0 ? 1 : 0) +
+      (brainstormData.assets.length > 0 ? 1 : 0)
+    }>
+      {perFieldExamples.impacted_assets.length > 0 &&
+        <ExampleList examples={perFieldExamples.impacted_assets} onSelect={handleAddAsset} showSearch={false}></ExampleList>}
+      {brainstormData.assets.length > 0 &&
+        <BrainstormList
+          items={brainstormData.assets}
+          onSelect={handleAddAsset}
+        />
+      }
+    </ColumnLayout>
   </EditorLayout>);
 });
 
