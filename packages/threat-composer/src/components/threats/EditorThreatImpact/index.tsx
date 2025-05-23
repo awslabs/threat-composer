@@ -15,21 +15,26 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
+import ColumnLayout from '@cloudscape-design/components/column-layout';
 import { TextareaProps } from '@cloudscape-design/components/textarea';
 import { FC, forwardRef, useCallback, useRef, RefObject, useImperativeHandle } from 'react';
-import { useThreatsContext } from '../../../contexts/ThreatsContext';
+import { useBrainstormContext } from '../../../contexts/BrainstormContext/context';
+import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { TemplateThreatStatementSchema } from '../../../customTypes';
 import Textarea from '../../generic/Textarea';
+import BrainstormList from '../BrainstormList';
 import EditorLayout from '../EditorLayout';
 import styles from '../EditorLayout/styles';
 import ExampleList from '../ExampleList';
+import PreviousInputList from '../PreviousInputList';
 import { EditorProps } from '../ThreatStatementEditor/types';
 
 const EditorThreatImpact: FC<EditorProps> = forwardRef<TextareaProps.Ref, EditorProps>(({
   statement, setStatement, fieldData,
 }, ref) => {
   const inputRef = useRef<TextareaProps.Ref>();
-  const { perFieldExamples } = useThreatsContext();
+  const { perFieldExamples, previousInputs } = useThreatsContext();
+  const { brainstormData } = useBrainstormContext();
 
   useImperativeHandle(ref, () => {
     return {
@@ -73,8 +78,26 @@ const EditorThreatImpact: FC<EditorProps> = forwardRef<TextareaProps.Ref, Editor
         <Button variant='icon' iconName='close' onClick={() => handleChange('')} />
       </div>}
     </div>
-    {perFieldExamples.threat_impact.length > 0 &&
-      <ExampleList examples={perFieldExamples.threat_impact} onSelect={handleSelect}></ExampleList>}
+    <ColumnLayout columns={
+      (perFieldExamples.threat_impact.length > 0 ? 1 : 0) +
+      (previousInputs.threat_impact.length > 0 ? 1 : 0) +
+      (brainstormData.threatImpacts.length > 0 ? 1 : 0)
+    }>
+      {perFieldExamples.threat_impact.length > 0 &&
+        <ExampleList examples={perFieldExamples.threat_impact} onSelect={handleSelect}></ExampleList>}
+      {previousInputs.threat_impact.length > 0 &&
+        <PreviousInputList
+          items={previousInputs.threat_impact}
+          onSelect={(content) => handleSelect(content)}
+        />
+      }
+      {brainstormData.threatImpacts.length > 0 &&
+        <BrainstormList
+          items={brainstormData.threatImpacts}
+          onSelect={handleSelect}
+        />
+      }
+    </ColumnLayout>
   </EditorLayout>);
 });
 
