@@ -673,7 +673,7 @@ exports[`Snapshot 1`] = `
                   "Version": "1",
                 },
                 "Configuration": {
-                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"ba5fa86bda17ca0f6517a90196bad28d866023b641e24b26c2ef3967e7489f8d"}]",
+                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"c55664b4d6b4761290ce83fbc020e68862081c6e348282c01070cb2e197951e4"}]",
                   "ProjectName": {
                     "Ref": "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectEE7ED66A",
                   },
@@ -713,7 +713,7 @@ exports[`Snapshot 1`] = `
                   "Version": "1",
                 },
                 "Configuration": {
-                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"2e87b731dabe73c91f47945422a06b2bfbf4c11cec23cf88abef52b7087e26cb"}]",
+                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"5e31e24fdbb994d05b38e6db7b18077e050642f59a5eebbd8a6ac7ab159a0ca8"}]",
                   "ProjectName": {
                     "Ref": "ApplicationPipelineUpdatePipelineSelfMutation66D95DA8",
                   },
@@ -755,7 +755,7 @@ exports[`Snapshot 1`] = `
           ],
         },
         "Environment": {
-          "ComputeType": "BUILD_GENERAL1_SMALL",
+          "ComputeType": "BUILD_GENERAL1_LARGE",
           "Image": "aws/codebuild/standard:7.0",
           "ImagePullCredentialsType": "CODEBUILD",
           "PrivilegedMode": false,
@@ -769,9 +769,11 @@ exports[`Snapshot 1`] = `
         },
         "Source": {
           "BuildSpec": "{
-  "version": "0.2",
   "phases": {
     "install": {
+      "runtime-versions": {
+        "nodejs": "20.x"
+      },
       "commands": [
         "npm install -g aws-cdk pnpm",
         "npx projen install"
@@ -783,15 +785,20 @@ exports[`Snapshot 1`] = `
       ]
     }
   },
+  "version": "0.2",
   "artifacts": {
     "secondary-artifacts": {
       "Synth_Output": {
         "base-directory": "packages/threat-composer-infra/cdk.out",
-        "files": "**/*"
+        "files": [
+          "**/*"
+        ]
       },
       "Synth__": {
         "base-directory": ".",
-        "files": "**/*"
+        "files": [
+          "**/*"
+        ]
       }
     }
   }
@@ -1355,7 +1362,7 @@ exports[`Snapshot 1`] = `
           ],
         },
         "Environment": {
-          "ComputeType": "BUILD_GENERAL1_SMALL",
+          "ComputeType": "BUILD_GENERAL1_LARGE",
           "Image": "aws/codebuild/standard:7.0",
           "ImagePullCredentialsType": "CODEBUILD",
           "PrivilegedMode": false,
@@ -1369,9 +1376,11 @@ exports[`Snapshot 1`] = `
         },
         "Source": {
           "BuildSpec": "{
-  "version": "0.2",
   "phases": {
     "install": {
+      "runtime-versions": {
+        "nodejs": "20.x"
+      },
       "commands": [
         "npm install -g aws-cdk@2"
       ]
@@ -1381,7 +1390,8 @@ exports[`Snapshot 1`] = `
         "cdk -a . deploy pipeline-test --require-approval=never --verbose"
       ]
     }
-  }
+  },
+  "version": "0.2"
 }",
           "Type": "CODEPIPELINE",
         },

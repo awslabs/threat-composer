@@ -224,10 +224,10 @@ Note that all the configurations are **OPTIONAL**.
 | lambdaEdgeDev          | (Optional) The lambda edge function ARN attached to CloudFront VIEWER_REQUEST event for CloudFront dev instance or the AWS Systems Manbager(SSM) parameter name (in us-east-1) storing the Lambda edge function ARN                        |
 | lambdaEdgeProd         | (Optional) The lambda edge function ARN attached to CloudFront VIEWER_REQUEST event for CloudFront prod instance or the AWS Systems Manbager(SSM) parameter name (in us-east-1) storing the Lambda edge function ARN      |
 | cacheControlNoCache    | (Optional) If true, Set CloudFront response headers *pragma* to *no-cache*, and *cache-control* to *no-store, no-cache*   |
-| useCodeCommit          | (Optional, defaults to true) Set to false to use an external repository instead of CodeCommit |
-| repositoryName         | (Optional) Name of the CodeCommit repository (Required only when useCodeCommit is true)   |
-| repositoryOwnerAndName | (Optional) The owner and name of the external repository (Required when useCodeCommit is false) |
-| codeConnectionArn      | (Optional) The ARN of the CodeStar Connection for the external repository (Required when useCodeCommit is false)   |
+| useCodeConnection      | (Optional, defaults to false) Set to true to use an external repository instead of CodeCommit |
+| repositoryName         | (Optional) Name of the CodeCommit repository (Required only when useCodeConnection is false)   |
+| repositoryOwnerAndName | (Optional) The owner and name of the external repository (Required when useCodeConnection is false) |
+| codeConnectionArn      | (Optional) The ARN of the CodeStar Connection for the external repository (Required when useCodeConnection is false)   |
 
 
 ### Deployment - Static Website Only
@@ -286,7 +286,7 @@ Alternatively, you can also connect the CodePipeline to an external git reposito
 
 
 ```
-"useCodeCommit": false,
+"useCodeConnection": "true",
 "repositoryOwnerAndName": "<The Owner and Repository name. For instance, user testUser with git repository testRepo becomes "testUser/testRepo",
 "codeConnectionArn": "<The ARN of the code connection>"
 ```

@@ -15,6 +15,7 @@
  ******************************************************************************************************************** */
 import { PDKPipeline, PDKPipelineWithCodeConnection } from '@aws/pdk/pipeline';
 import { Stack, StackProps } from 'aws-cdk-lib';
+import { BuildSpec, ComputeType } from 'aws-cdk-lib/aws-codebuild';
 import { Construct } from 'constructs';
 
 export class PipelineStack extends Stack {
@@ -23,7 +24,7 @@ export class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps) {
     super(scope, id, props);
 
-    const useCodeCommit = (this.node.tryGetContext('useCodeCommit') as boolean) ?? true;
+    const useCodeConnection = String(this.node.tryGetContext('useCodeConnection')) === 'true';
     const repositoryName = this.node.tryGetContext('repositoryName') || 'threat_composer_monorepo';
     const repositoryOwnerAndName = this.node.tryGetContext('repositoryOwnerAndName');
     const codeConnectionArn = this.node.tryGetContext('codeConnectionArn');
@@ -35,18 +36,32 @@ export class PipelineStack extends Stack {
       crossAccountKeys: true,
       synth: {},
       sonarCodeScannerConfig: this.node.tryGetContext('sonarqubeScannerConfig'),
+      codeBuildDefaults: {
+        buildEnvironment: {
+          computeType: ComputeType.LARGE,
+        },
+        partialBuildSpec: BuildSpec.fromObject({
+          phases: {
+            install: {
+              'runtime-versions': {
+                nodejs: '20.x',
+              },
+            },
+          },
+        }),
+      },
     };
 
-    if (useCodeCommit) {
-      this.pipeline = new PDKPipeline(this, 'ApplicationPipeline', {
-        ...pipelineProps,
-        repositoryName: repositoryName,
-      });
-    } else {
+    if (useCodeConnection) {
       this.pipeline = new PDKPipelineWithCodeConnection(this, 'ApplicationPipeline', {
         ...pipelineProps,
         repositoryOwnerAndName: repositoryOwnerAndName,
         codeConnectionArn: codeConnectionArn,
+      });
+    } else {
+      this.pipeline = new PDKPipeline(this, 'ApplicationPipeline', {
+        ...pipelineProps,
+        repositoryName: repositoryName,
       });
     }
   }
