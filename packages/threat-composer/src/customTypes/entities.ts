@@ -32,12 +32,12 @@ import {
 } from '../configs';
 import STRIDE from '../data/stride';
 
-export const TagSchema = z.string().nonempty().max(SINGLE_FIELD_INPUT_TAG_MAX_LENGTH);
+export const TagSchema = z.string().nonempty().max(SINGLE_FIELD_INPUT_TAG_MAX_LENGTH).describe('Tag value');
 
-export const MetadataCommentSchema = z.string().max(FREE_TEXT_INPUT_SMALL_MAX_LENGTH);
+export const MetadataCommentSchema = z.string().max(FREE_TEXT_INPUT_SMALL_MAX_LENGTH).describe('Comment value');
 
 export const MetadataSchema = z.object({
-  key: z.string().max(SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH),
+  key: z.string().max(SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH).describe(`Supported keys are context dependent. '${METADATA_KEY_COMMENTS}' key supported by all contexts which support metadata. '${METADATA_KEY_STRIDE}' and '${METADATA_KEY_PRIORITY}' key supported in threat contexts. `),
   value: z.union([z.string(), z.array(z.string())]),
 }).strict().refine((data) => {
   if (!ALLOW_METADATA_TAGS.includes(data.key) && !data.key.startsWith(METADATA_KEY_PREFIX_CUSTOM)) {
@@ -57,10 +57,9 @@ export const MetadataSchema = z.object({
   }
 
   return true;
-}, (data) => ({
-  message: `Invalid key ${data.key} with value ${JSON.stringify(data.value)}`,
-  path: [data.key],
-}));
+}, {
+  message: 'Invalid metadata key or value',
+});
 
 export type Metadata = z.infer<typeof MetadataSchema>;
 
@@ -72,24 +71,24 @@ export const EntityBaseSchema = z.object({
   /**
    * The unique Id of the entity.
    */
-  id: z.string().max(36),
+  id: z.string().max(36).describe('UUID v4 identifier'),
   /**
    * The numeric id of the entity.
    * The numericId will be displayed for users to easy identify the entity.
    */
-  numericId: z.number(),
+  numericId: z.number().describe('Numeric identifier for display purposes'),
   /**
    * The display order of the entity in the list.
    */
-  displayOrder: z.optional(z.number()),
+  displayOrder: z.optional(z.number()).describe('Order for displaying threats'),
   /**
    * The metadata.
    */
-  metadata: MetadataSchema.array().optional(),
+  metadata: MetadataSchema.array().optional().describe('Additional metadata as key-value pairs'),
   /**
    * The tags.
    */
-  tags: TagSchema.array().optional(),
+  tags: TagSchema.array().optional().describe('Categorization tags'),
 });
 
 export type EntityBase = z.infer<typeof EntityBaseSchema>;

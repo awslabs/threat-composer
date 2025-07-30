@@ -16,6 +16,9 @@
 import { z } from 'zod';
 import { BaseImageInfoSchema } from './entities';
 
-export const ArchitectureInfoSchema = BaseImageInfoSchema.extend({}).strict();
+export const ArchitectureInfoSchema = z.object({
+  description: BaseImageInfoSchema.shape.description.describe('Markdown detailed description of the application architecture. Start your headers from H3 maximum'),
+  image: BaseImageInfoSchema.shape.image.describe('Architecture diagram image (base64 or URL)'),
+}).strict();
 
 export type ArchitectureInfo = z.infer<typeof ArchitectureInfoSchema>;

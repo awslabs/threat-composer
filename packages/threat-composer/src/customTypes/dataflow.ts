@@ -16,6 +16,9 @@
 import { z } from 'zod';
 import { BaseImageInfoSchema } from './entities';
 
-export const DataflowInfoSchema = BaseImageInfoSchema.extend({}).strict();
+export const DataflowInfoSchema = z.object({
+  description: BaseImageInfoSchema.shape.description.describe('Markdown detailed description of the application data flows. Start your headers from H3 maximum'),
+  image: BaseImageInfoSchema.shape.image.describe('Data-flow diagram image (base64 or URL)'),
+}).strict();
 
 export type DataflowInfo = z.infer<typeof DataflowInfoSchema>;

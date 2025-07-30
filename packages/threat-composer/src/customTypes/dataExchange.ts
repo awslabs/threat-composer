@@ -24,17 +24,20 @@ import { WorkspaceSchema, Workspace } from './workspaces';
 import { EventHandler } from '../utils/EventController';
 
 export const DataExchangeFormatSchema = z.object({
-  schema: z.number(),
-  workspace: WorkspaceSchema.optional(),
-  applicationInfo: ApplicationInfoSchema.optional(),
-  architecture: ArchitectureInfoSchema.optional(),
-  dataflow: DataflowInfoSchema.optional(),
-  assumptions: AssumptionSchema.array().optional(),
-  mitigations: MitigationSchema.array().optional(),
-  assumptionLinks: AssumptionLinkSchema.array().optional(),
-  mitigationLinks: MitigationLinkSchema.array().optional(),
-  threats: TemplateThreatStatementSchema.array().optional(),
+  schema: z.number().max(1).describe('Schema version identifier'),
+  workspace: WorkspaceSchema.optional().describe('Workspace configuration and metadata. Reserved for backwards compatibility.'),
+  applicationInfo: ApplicationInfoSchema.optional().describe('Information about the application being threat modeled'),
+  architecture: ArchitectureInfoSchema.optional().describe('System architecture information about the application being threat modeled'),
+  dataflow: DataflowInfoSchema.optional().describe('Data flow information about the application being threat modeled'),
+  assumptions: AssumptionSchema.array().optional().describe('Assumptions about the design, threats and migations of the application being threat modeled'),
+  mitigations: MitigationSchema.array().optional().describe('Mitigations for the application being threat modeled'),
+  assumptionLinks: AssumptionLinkSchema.array().optional().describe('Links between assumptions and threats/mitigations'),
+  mitigationLinks: MitigationLinkSchema.array().optional().describe('Links between mitigations and threats'),
+  threats: TemplateThreatStatementSchema.array().optional().describe('Threats for the application being threat modeled'),
 }).strict();
+
+
+//console.log(JSON.stringify(z.toJSONSchema(DataExchangeFormatSchema), null, 2));
 
 export type DataExchangeFormat = z.infer<typeof DataExchangeFormatSchema>;
 

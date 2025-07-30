@@ -22,15 +22,15 @@ export const ThreatStatementDisplayTokenSchema = z.object({
   /**
    * the html tag type for the content. If not type is specified. <span> will be used.
    */
-  type: z.union([z.literal('b'), z.literal('span')]).optional(),
+  type: z.union([z.literal('b'), z.literal('span')]).optional().describe('HTML element type for rendering'),
   /**
     * The tooltip content of the node.
     */
-  tooltip: z.string().max(30).optional(),
+  tooltip: z.string().max(30).optional().describe('Threat statement element to anchor tool tip'),
   /**
     * The text content of the node.
     */
-  content: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH),
+  content: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).describe('Displayed tooltip text'),
 }).strict();
 
 export type ThreatStatementDisplayToken = z.infer<typeof ThreatStatementDisplayTokenSchema>;
@@ -43,45 +43,45 @@ export const TemplateThreatStatementSchema = EntityBaseSchema.extend({
   /**
     * Source of the threat.
     */
-  threatSource: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional(),
+  threatSource: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional().describe('The entity taking action. For example: An actor (a useful default), An internet-based actor, An internal or external actor.'),
   /**
     * Prerequisites of the threat.
     */
-  prerequisites: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional(),
+  prerequisites: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional().describe('Conditions or requirements that must be met for a threat source\'s action to be viable. For example: -with access to another user\'s token. -who has administrator access -with user permissions - in a mitm position -with a network path to the API. If no prerequistes known return empty string, if know return but first word must be lower case'),
   /**
     * Threat action.
     */
-  threatAction: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional(),
+  threatAction: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional().describe('The action being performed by the threat source. For example: -spoof another user -tamper with data stored in the database -make thousands of concurrent requests. first word must be lower case'),
   /**
     * Impact of the threat.
     */
-  threatImpact: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional(),
+  threatImpact: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional().describe('What impact this has on the system.The direct impact of a successful threat action. For example: - unauthorized access to the user\'s bank account information -modifying the username for the all-time high score. -a web application being unable to handle other user requests.if know return but first word must be lower case'),
   /**
     * Impacted goal of the threat.
     */
-  impactedGoal: ThreatStatementImpactedGoalItem.array().optional(),
+  impactedGoal: ThreatStatementImpactedGoalItem.array().optional().describe('The information security or business objective that is negatively affected.  This is most commonly the CIA triad: -confidentiality, -integrity, -availability. If not known return empty string in array, else strings in array first word must be lower case'),
   /**
     * Impacted assets of the threat.
     */
-  impactedAssets: ThreatStatementImpactedAssetItem.array().optional(),
+  impactedAssets: ThreatStatementImpactedAssetItem.array().optional().describe('List of assets affected by this threat. If not known return empty string in array, else strings in array first word must be lower case'),
   /**
     * The full rendered statement as string.
     */
-  statement: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH * 7).optional(),
+  statement: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH * 7).optional().describe('concatenate the above as follows into a one of the following permutations based on if the default is available or not - trim any repated white space into a single white space: 1/ A/an [threat_source] [prerequisites] can [threat_action], 2/ A/an [threat_source] [prerequisites] can [threat_action], which leads to [threat_impact], 3/ A/an [threat_source] [prerequisites] can [threat_action], resulting in reduced [impacted_goal], 4/ A/An [threat_source] [prerequisites] can [threat_action], which leads to [threat_impact], resulting in reduced [impacted_goal], 5/ A/An [threat_source] [prerequisites] can [threat_action], negatively impacting [impacted_assets], 6/ A/An [threat_source] [prerequisites] can [threat_action], which leads to [threat_impact], negatively impacting [impacted_assets], 7/ A/An [threat_source] [prerequisites] can [threat_action], resulting in reduced [impacted_goal] of [impacted_assets], 8/ A/An [threat_source] [prerequisites] can [threat_action], which leads to [threat_impact], resulting in reduced [impacted_goal] of [impacted_assets]'),
   /**
     * The custom templates applied to the threat statement.
     */
-  customTemplate: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional(),
+  customTemplate: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional().describe('Custom template used for threat statement generation. Example: A [threatSource] [prerequisites] can [threatAction]'),
   /**
     * A list of displayed statement token
     */
-  displayedStatement: z.union([ThreatStatementDisplayTokenSchema, z.string()]).array().optional(),
+  displayedStatement: z.union([ThreatStatementDisplayTokenSchema, z.string()]).array().optional().describe('Parsed threat statement components for display rendering. This uses use of supporting HTML tags'),
   /**
    * The status of the threats.
    */
   status: StatusSchema.refine((schema) => {
     return !schema || threatStatus.map(x => x.value).includes(schema);
-  }, 'Invalid threat status'),
+  }, 'Invalid threat status').describe('Status of the threat'),
 }).strict();
 
 export type TemplateThreatStatement = z.infer<typeof TemplateThreatStatementSchema>;

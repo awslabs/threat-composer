@@ -18,11 +18,13 @@ import { ContentEntityBaseSchema, EntityLinkBaseSchema, StatusSchema } from './e
 import { MITIGATION_STATUS_IDENTIFIED, MITIGATION_STATUS_IN_PROGRESS, MITIGATION_STATUS_RESOLVED, MITIGATION_STATUS_RESOLVED_WILLNOTACTION, STATUS_NOT_SET } from '../configs';
 import mitigationStatus from '../data/status/mitigationStatus.json';
 
+
 export const MitigationSchema = ContentEntityBaseSchema.extend({
+  content: ContentEntityBaseSchema.shape.content.describe('Mitigation. Plain-text'),
   status: StatusSchema.refine((schema) => {
     return !schema || mitigationStatus.map(x => x.value).includes(schema);
-  }, 'Invalid mitigation status'),
-}).strict();;
+  }, 'Invalid mitigation status').describe('Status of the mitigation'),
+}).strict();
 
 export type Mitigation = z.infer<typeof MitigationSchema>;
 
@@ -30,11 +32,11 @@ export const MitigationLinkSchema = EntityLinkBaseSchema.extend({
   /**
    * The mitigation being linked.
    */
-  mitigationId: z.string().length(36),
+  mitigationId: z.string().length(36).describe('UUID for the mitigation'),
   /**
    * The linked entity Id.
    */
-  linkedId: z.string().length(36),
+  linkedId: z.string().length(36).describe('UUID of the linked threat or assumption'),
 }).strict();;
 
 export type MitigationLink = z.infer<typeof MitigationLinkSchema>;

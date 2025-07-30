@@ -20,11 +20,11 @@ export const ApplicationInfoSchema = z.object({
   /**
    * The name of the application.
   */
-  name: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional(),
+  name: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional().describe('Application name. Plain-text'),
   /**
    * The description of the architecture diagram
    */
-  description: z.string().max(FREE_TEXT_INPUT_MAX_LENGTH).optional(),
+  description: z.string().max(FREE_TEXT_INPUT_MAX_LENGTH).optional().describe('Markdown detailed escription of the application. Start your headers from H3 maximum'),
 }).strict();
 
 export type ApplicationInfo = z.infer<typeof ApplicationInfoSchema>;
