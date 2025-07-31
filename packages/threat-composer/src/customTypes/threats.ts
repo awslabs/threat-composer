@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { z } from 'zod';
-import { EntityBaseSchema, StatusSchema } from './entities';
+import { EntityBaseSchema, StatusSchema, MetadataSchemaFull } from './entities';
 import { SINGLE_FIELD_INPUT_MAX_LENGTH, LEVEL_HIGH, LEVEL_MEDIUM, LEVEL_LOW, LEVEL_NOT_SET, STATUS_NOT_SET, THREAT_STATUS_IDENTIFIED, THREAT_STATUS_NOT_USEFUL, THREAT_STATUS_RESOLVED } from '../configs';
 import threatStatus from '../data/status/threatStatus.json';
 
@@ -77,11 +77,13 @@ export const TemplateThreatStatementSchema = EntityBaseSchema.extend({
     */
   displayedStatement: z.union([ThreatStatementDisplayTokenSchema, z.string()]).array().optional().describe('Parsed threat statement components for display rendering. This uses use of supporting HTML tags'),
   /**
+   * The metadata - overridden to support full metadata schema for threats.
+   */
+  metadata: MetadataSchemaFull.array().optional().describe('Additional metadata as key-value pairs for threats'),
+  /**
    * The status of the threats.
    */
-  status: StatusSchema.refine((schema) => {
-    return !schema || threatStatus.map(x => x.value).includes(schema);
-  }, 'Invalid threat status').describe('Status of the threat'),
+  status: StatusSchema.pipe(z.enum(threatStatus.map(x => x.value) as [string, ...string[]])).optional().describe('Status of the threat'),
 }).strict();
 
 export type TemplateThreatStatement = z.infer<typeof TemplateThreatStatementSchema>;

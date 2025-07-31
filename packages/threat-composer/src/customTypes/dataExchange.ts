@@ -37,7 +37,7 @@ export const DataExchangeFormatSchema = z.object({
 }).strict();
 
 
-//console.log(JSON.stringify(z.toJSONSchema(DataExchangeFormatSchema), null, 2));
+console.log(JSON.stringify(z.toJSONSchema(DataExchangeFormatSchema), null, 2));
 
 export type DataExchangeFormat = z.infer<typeof DataExchangeFormatSchema>;
 

@@ -27,7 +27,7 @@ import {
   METADATA_KEY_COMMENTS,
   METADATA_KEY_STRIDE,
   METADATA_KEY_PRIORITY,
-  ALLOW_METADATA_TAGS,
+  //ALLOW_METADATA_TAGS,
   METADATA_KEY_PREFIX_CUSTOM,
 } from '../configs';
 import STRIDE from '../data/stride';
@@ -36,32 +36,41 @@ export const TagSchema = z.string().nonempty().max(SINGLE_FIELD_INPUT_TAG_MAX_LE
 
 export const MetadataCommentSchema = z.string().max(FREE_TEXT_INPUT_SMALL_MAX_LENGTH).describe('Comment value');
 
-export const MetadataSchema = z.object({
-  key: z.string().max(SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH).describe(`Supported keys are context dependent. '${METADATA_KEY_COMMENTS}' key supported by all contexts which support metadata. '${METADATA_KEY_STRIDE}' and '${METADATA_KEY_PRIORITY}' key supported in threat contexts. `),
-  value: z.union([z.string(), z.array(z.string())]),
-}).strict().refine((data) => {
-  if (!ALLOW_METADATA_TAGS.includes(data.key) && !data.key.startsWith(METADATA_KEY_PREFIX_CUSTOM)) {
-    return false;
-  }
+export const MetadataSchemaMinimal = z.union([
+  // Comments: string value
+  z.object({
+    key: z.literal(METADATA_KEY_COMMENTS),
+    value: MetadataCommentSchema,
+  }).strict(),
 
-  if (data.key === METADATA_KEY_COMMENTS) {
-    return MetadataCommentSchema.safeParse(data.value).success;
-  }
+  // Custom keys: any key starting with "custom:" with flexible value
+  z.object({
+    key: z.string().startsWith(METADATA_KEY_PREFIX_CUSTOM).max(SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH),
+    value: z.union([z.string(), z.array(z.string())]),
+  }).strict(),
+]);
 
-  if (data.key === METADATA_KEY_STRIDE) {
-    return Array.isArray(data.value) && data.value.every(v => STRIDE.map(s => s.value).includes(v));
-  }
+export type MetadataMinimal = z.infer<typeof MetadataSchemaMinimal>;
 
-  if (data.key === METADATA_KEY_PRIORITY) {
-    return typeof data.value === 'string' && LEVEL_SELECTOR_OPTIONS.map(o => o.value).includes(data.value);
-  }
+export const MetadataSchemaFull = z.union([
+  ...MetadataSchemaMinimal.options, // Extend from minimal schema
 
-  return true;
-}, {
-  message: 'Invalid metadata key or value',
-});
+  // Stride: array of valid STRIDE values
+  z.object({
+    key: z.literal(METADATA_KEY_STRIDE),
+    value: z.array(z.enum(STRIDE.map(s => s.value) as [string, ...string[]])),
+  }).strict(),
 
-export type Metadata = z.infer<typeof MetadataSchema>;
+  // Priority: single value from level options
+  z.object({
+    key: z.literal(METADATA_KEY_PRIORITY),
+    value: z.enum(LEVEL_SELECTOR_OPTIONS.map(o => o.value) as [string, ...string[]]),
+  }).strict(),
+]);
+
+export type MetadataFull = z.infer<typeof MetadataSchemaFull>;
+
+export type Metadata = z.infer<typeof MetadataSchemaFull>;
 
 export const MetadataNodeSchema = z.object({});
 
@@ -84,7 +93,7 @@ export const EntityBaseSchema = z.object({
   /**
    * The metadata.
    */
-  metadata: MetadataSchema.array().optional().describe('Additional metadata as key-value pairs'),
+  metadata: MetadataSchemaMinimal.array().optional().describe('Additional metadata as key-value pairs'),
   /**
    * The tags.
    */

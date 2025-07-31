@@ -21,9 +21,7 @@ import mitigationStatus from '../data/status/mitigationStatus.json';
 
 export const MitigationSchema = ContentEntityBaseSchema.extend({
   content: ContentEntityBaseSchema.shape.content.describe('Mitigation. Plain-text'),
-  status: StatusSchema.refine((schema) => {
-    return !schema || mitigationStatus.map(x => x.value).includes(schema);
-  }, 'Invalid mitigation status').describe('Status of the mitigation'),
+  status: StatusSchema.pipe(z.enum(mitigationStatus.map(x => x.value) as [string, ...string[]])).optional().describe('Status of the mitigation'),
 }).strict();
 
 export type Mitigation = z.infer<typeof MitigationSchema>;
