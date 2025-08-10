@@ -32,7 +32,7 @@ class ThreatComposerReactAppProject extends ReactTypeScriptProject {
         "@types/react-router-dom",
         "@types/uuid",
         "merge",
-        "react-app-rewired",
+        "@craco/craco",
       ],
       jestOptions: {
         configFilePath: "./jest.config.js",
@@ -44,20 +44,18 @@ class ThreatComposerReactAppProject extends ReactTypeScriptProject {
       "header/header": [2, "../../header.js"],
     });
 
-    this.testTask.reset(
-      "react-app-rewired test --watchAll=false --passWithNoTests"
-    );
+    this.testTask.reset("craco test --watchAll=false --passWithNoTests");
     const compileWebsiteTask = this.addTask("compile:website", {
-      exec: "BUILD_PATH=./build/website/ react-app-rewired build",
+      exec: "BUILD_PATH=./build/website/ craco build",
     });
     const compileBrowserExtensionTask = this.addTask(
       "compile:browser-extension",
       {
-        exec: "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/browser-extension/ REACT_APP_APP_MODE=browser-extension react-app-rewired build",
+        exec: "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/browser-extension/ REACT_APP_APP_MODE=browser-extension craco build",
       }
     );
     const compileIDEExtensionTask = this.addTask("compile:ide-extension", {
-      exec: "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/ide-extension/ REACT_APP_APP_MODE=ide-extension react-app-rewired build",
+      exec: "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/ide-extension/ REACT_APP_APP_MODE=ide-extension craco build",
     });
 
     this.compileTask.reset(
@@ -73,6 +71,8 @@ class ThreatComposerReactAppProject extends ReactTypeScriptProject {
     this.postCompileTask.exec(
       "cp -r ../threat-composer/storybook.out/ ./build/storybook/"
     );
+
+    this.tasks.tryFind("dev")?.reset("craco start");
 
     this.package.addField("browserslist", browsersList);
   }
