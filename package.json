@@ -11,6 +11,7 @@
     "eslint": "npx projen eslint",
     "export:examples": "npx projen export:examples",
     "generate:attribution": "npx projen generate:attribution",
+    "generate:schema": "npx projen generate:schema",
     "graph": "npx projen graph",
     "license:checker": "npx projen license:checker",
     "package": "npx projen package",

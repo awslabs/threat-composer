@@ -75,6 +75,17 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
       ],
     });
 
+    this.addTask("generate:schema", {
+      steps: [
+        {
+          spawn: "build",
+        },
+        {
+          exec: "npx ts-node ./scripts/generateSchema.ts",
+        },
+      ],
+    });
+
     this.addTask("prepare", {
       steps: [
         {

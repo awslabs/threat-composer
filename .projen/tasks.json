@@ -119,6 +119,17 @@
         }
       ]
     },
+    "generate:schema": {
+      "name": "generate:schema",
+      "steps": [
+        {
+          "spawn": "build"
+        },
+        {
+          "exec": "npx ts-node ./scripts/generateSchema.ts"
+        }
+      ]
+    },
     "graph": {
       "name": "graph",
       "description": "Generate dependency graph for monorepo",

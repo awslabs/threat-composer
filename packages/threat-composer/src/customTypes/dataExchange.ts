@@ -36,9 +36,6 @@ export const DataExchangeFormatSchema = z.object({
   threats: TemplateThreatStatementSchema.array().optional().describe('Threats for the application being threat modeled'),
 }).strict();
 
-
-console.log(JSON.stringify(z.toJSONSchema(DataExchangeFormatSchema), null, 2));
-
 export type DataExchangeFormat = z.infer<typeof DataExchangeFormatSchema>;
 
 export const WorkspaceExampleSchema = z.object({
