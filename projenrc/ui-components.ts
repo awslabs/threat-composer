@@ -39,7 +39,7 @@ class ThreatComposerUIComponentsProject extends TypeScriptProject {
         "rehype-raw",
         "@aws-northstar/ui",
         "@emotion/react",
-        "zod@^4",
+        "zod",
         "unified",
         "yaml",
         "@mdxeditor/editor@^3.27",

@@ -60,7 +60,7 @@ const useContentValidation = <T extends NonCancelableEventHandler<BaseChangeDeta
     if (validateData) {
       const validation = validateData(newValue);
       if (!validation.success) {
-        setErrorText(validation.error.issues.map((i: any) => i.message).join('; '));
+        setErrorText(validation.error.issues.map(i => i.message).join('; '));
         return;
       }
     }

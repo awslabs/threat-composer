@@ -272,7 +272,6 @@
     },
     {
       "name": "zod",
-      "version": "^4",
       "type": "runtime"
     }
   ],

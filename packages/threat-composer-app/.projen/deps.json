@@ -5,6 +5,10 @@
       "type": "build"
     },
     {
+      "name": "@craco/craco",
+      "type": "build"
+    },
+    {
       "name": "@testing-library/jest-dom",
       "type": "build"
     },
@@ -66,10 +70,6 @@
     },
     {
       "name": "merge",
-      "type": "build"
-    },
-    {
-      "name": "react-app-rewired",
       "type": "build"
     },
     {
