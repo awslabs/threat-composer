@@ -14,6 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 export * from './assumptions';
+export * from './brainstorm';
 export * from './mitigations';
 export * from './threats';
 export * from './threatFieldTypes';

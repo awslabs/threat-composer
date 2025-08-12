@@ -16,6 +16,7 @@
 import { ThemeProvider, Mode } from '@aws/threat-composer';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BUILD_FAMILY_NAME, BUILD_TIMESTAMP, BUILD_RANDOM_INDEX } from './buildConstants';
 import App from './containers/App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
@@ -27,6 +28,10 @@ const initialThemeString = (document.querySelector('meta[name="dark-mode"]') as 
 let initialTheme = initialThemeString ?
   (initialThemeString === 'true' ? Mode.Dark : Mode.Light) :
   undefined;
+
+// Display build-time selected family name
+console.log(`🏠 Build Family: ${BUILD_FAMILY_NAME} (selected from 950 unique family names at index ${BUILD_RANDOM_INDEX})`);
+console.log(`📅 Build Time: ${BUILD_TIMESTAMP}`);
 
 ReactDOM.render(
   <React.StrictMode>

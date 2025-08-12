@@ -22,9 +22,9 @@ import {
 } from '@aws/threat-composer';
 import Modal from '@aws/threat-composer/lib/components/generic/Modal';
 import BrainstormContextProvider, { useBrainstormContext, BrainstormItem } from '@aws/threat-composer/lib/contexts/BrainstormContext';
-import { Button, Container, ContentLayout, Header, SpaceBetween, TextContent, Input, Toggle } from '@cloudscape-design/components';
+import { Button, Container, ContentLayout, Header, SpaceBetween, TextContent, Input, Toggle, Textarea } from '@cloudscape-design/components';
 import { BaseKeyDetail } from '@cloudscape-design/components/internal/events';
-import { FC, useCallback, useState, CSSProperties } from 'react';
+import { FC, useCallback, useState, CSSProperties, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -37,6 +37,8 @@ interface ItemCardProps {
   isPromotable?: boolean;
   onCreateThreat?: ThreatCreationHandlers;
   canCreateThreat?: boolean;
+  isSelected?: boolean;
+  onSelect?: (item: BrainstormItem) => void;
 }
 
 const ItemCard: FC<ItemCardProps> = ({
@@ -48,48 +50,78 @@ const ItemCard: FC<ItemCardProps> = ({
   onCreateThreat,
   canCreateThreat = false,
 }) => {
-  return (
-    <Container
-      header={
-        <Header
-          actions={
-            <SpaceBetween direction="horizontal" size="xs">
-              {isPromotable && (
-                <Button
-                  iconName={onPromote && onPromote.isPromoted?.(item) ? 'check' : 'add-plus'}
-                  variant="icon"
-                  onClick={() => onPromote && onPromote.promote?.(item)}
-                  disabled={onPromote && onPromote.isPromoted?.(item)}
-                  ariaLabel={onPromote && onPromote.isPromoted?.(item) ? 'Item promoted' : 'Promote item'}
-                />
-              )}
-              {canCreateThreat && (
-                <Button
-                  iconName="external"
-                  variant="icon"
-                  onClick={() => onCreateThreat && onCreateThreat.createThreat?.(item)}
-                  ariaLabel={`Create threat with ${onCreateThreat?.fieldName}`}
-                />
-              )}
-              <Button
-                iconName="edit"
-                variant="icon"
-                onClick={() => onEdit(item)}
-                disabled={isPromotable && onPromote && onPromote.isPromoted?.(item)}
-                ariaLabel="Edit item"
-              />
-              <Button iconName="remove" variant="icon" onClick={() => onDelete(item.id)} />
-            </SpaceBetween>
-          }
-        >
-          {/* No header title needed */}
-        </Header>
+  const [showButtons, setShowButtons] = useState(false);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = useCallback(() => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    hoverTimeoutRef.current = setTimeout(() => {
+      setShowButtons(true);
+    }, 100); // 100ms delay before showing buttons
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    hoverTimeoutRef.current = setTimeout(() => {
+      setShowButtons(false);
+    }, 100); // 100ms delay before hiding buttons
+  }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
       }
+    };
+  }, []);
+
+  return (
+    <div
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-      <SpaceBetween direction="vertical" size="s">
-        <TextContent>{item.content}</TextContent>
-      </SpaceBetween>
-    </Container>
+      <Container>
+        <SpaceBetween direction="vertical" size="s">
+          <TextContent>{item.content}</TextContent>
+          {showButtons && (
+            <div style={{ marginTop: '8px' }}>
+              <SpaceBetween direction="horizontal" size="xs">
+                {isPromotable && (
+                  <Button
+                    iconName={onPromote && onPromote.isPromoted?.(item) ? 'check' : 'add-plus'}
+                    variant="icon"
+                    onClick={() => onPromote && onPromote.promote?.(item)}
+                    disabled={onPromote && onPromote.isPromoted?.(item)}
+                    ariaLabel={onPromote && onPromote.isPromoted?.(item) ? 'Item promoted' : 'Promote item'}
+                  />
+                )}
+                {canCreateThreat && (
+                  <Button
+                    iconName="external"
+                    variant="icon"
+                    onClick={() => onCreateThreat && onCreateThreat.createThreat?.(item)}
+                    ariaLabel={`Create threat with ${onCreateThreat?.fieldName}`}
+                  />
+                )}
+                <Button
+                  iconName="edit"
+                  variant="icon"
+                  onClick={() => onEdit(item)}
+                  disabled={isPromotable && onPromote && onPromote.isPromoted?.(item)}
+                  ariaLabel="Edit item"
+                />
+                <Button iconName="remove" variant="icon" onClick={() => onDelete(item.id)} />
+              </SpaceBetween>
+            </div>
+          )}
+        </SpaceBetween>
+      </Container>
+    </div>
   );
 };
 
@@ -120,16 +152,16 @@ const SimplifiedEntityCreationCard: FC<{
     }
   }, [content, onSave, disabled]);
 
-  // For edit mode, show both Cancel and Save buttons
+  // For edit mode, show both Cancel and Save buttons with no header
   if (buttonText === 'Save') {
     return (
-      <Container header={<Header>{header}</Header>}>
+      <Container>
         <SpaceBetween direction="vertical" size="s">
-          <Input
+          <Textarea
             placeholder={placeholder || 'Enter content...'}
             value={content}
             onChange={({ detail }) => onContentChange(detail.value)}
-            onKeyDown={handleKeyDown}
+            rows={3}
           />
           <SpaceBetween direction="horizontal" size="s">
             <Button onClick={onReset}>Cancel</Button>
@@ -486,6 +518,9 @@ const BrainstormBoardInner: FC = () => {
     columnConfig.reduce((acc, col) => ({ ...acc, [col.id]: col.defaultVisible }), {}),
   );
 
+  // Create state for threat inputs master toggle
+  const [threatInputsVisible, setThreatInputsVisible] = useState(true);
+
   // Check if an assumption is already promoted
   const isAssumptionPromoted = useCallback((item: BrainstormItem) => {
     return assumptionList.some(assumption => assumption.id === item.id);
@@ -610,17 +645,28 @@ const BrainstormBoardInner: FC = () => {
   const columnVisibilityToggles = (
     <Container>
       <SpaceBetween direction="horizontal" size="xs">
-        {columnConfig.map(column => (
-          <Toggle
-            key={column.id}
-            checked={visibleColumns[column.id]}
-            onChange={({ detail }) =>
-              setVisibleColumns(prev => ({ ...prev, [column.id]: detail.checked }))
-            }
-          >
-            {column.title}
-          </Toggle>
-        ))}
+        <Toggle
+          checked={visibleColumns.assumptions}
+          onChange={({ detail }) =>
+            setVisibleColumns(prev => ({ ...prev, assumptions: detail.checked }))
+          }
+        >
+          Assumptions
+        </Toggle>
+        <Toggle
+          checked={threatInputsVisible}
+          onChange={({ detail }) => setThreatInputsVisible(detail.checked)}
+        >
+          Threat Inputs
+        </Toggle>
+        <Toggle
+          checked={visibleColumns.mitigations}
+          onChange={({ detail }) =>
+            setVisibleColumns(prev => ({ ...prev, mitigations: detail.checked }))
+          }
+        >
+          Mitigations
+        </Toggle>
       </SpaceBetween>
     </Container>
   );
@@ -639,6 +685,7 @@ const BrainstormBoardInner: FC = () => {
               <Button onClick={() => setShowDataflowModal(true)}>Data Flow Diagram</Button>
             </SpaceBetween>
           }
+          description="Quickly capture ideas, then selectively add or use them in to your threat model"
         >
           Brainstorm
         </Header>
@@ -661,7 +708,12 @@ const BrainstormBoardInner: FC = () => {
               <div style={{ width: '300px', flexShrink: 0 }}>
                 <Container header={
                   <div>
-                    <Header variant="h2">Assumptions</Header>
+                    <Header variant="h2">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Button iconName="status-info" variant="icon" disabled />
+                        Assumptions
+                      </div>
+                    </Header>
                     <TextContent>
                       <small><i>{columnConfig.find(c => c.id === 'assumptions')?.description}</i></small>
                     </TextContent>
@@ -677,11 +729,16 @@ const BrainstormBoardInner: FC = () => {
                 </Container>
               </div>
             )}
-            {visibleColumns.threatSources && (
+            {threatInputsVisible && (
               <div style={{ width: '300px', flexShrink: 0 }}>
                 <Container header={
                   <div>
-                    <Header variant="h2">Threat sources</Header>
+                    <Header variant="h2">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Button iconName="user-profile" variant="icon" disabled />
+                        Threat sources
+                      </div>
+                    </Header>
                     <TextContent>
                       <small><i>{columnConfig.find(c => c.id === 'threatSources')?.description}</i></small>
                     </TextContent>
@@ -697,11 +754,16 @@ const BrainstormBoardInner: FC = () => {
                 </Container>
               </div>
             )}
-            {visibleColumns.threatPrerequisites && (
+            {threatInputsVisible && (
               <div style={{ width: '300px', flexShrink: 0 }}>
                 <Container header={
                   <div>
-                    <Header variant="h2">Threat prerequisites</Header>
+                    <Header variant="h2">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Button iconName="settings" variant="icon" disabled />
+                        Threat prerequisites
+                      </div>
+                    </Header>
                     <TextContent>
                       <small><i>{columnConfig.find(c => c.id === 'threatPrerequisites')?.description}</i></small>
                     </TextContent>
@@ -717,11 +779,16 @@ const BrainstormBoardInner: FC = () => {
                 </Container>
               </div>
             )}
-            {visibleColumns.threatActions && (
+            {threatInputsVisible && (
               <div style={{ width: '300px', flexShrink: 0 }}>
                 <Container header={
                   <div>
-                    <Header variant="h2">Threat actions</Header>
+                    <Header variant="h2">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Button iconName="arrow-right" variant="icon" disabled />
+                        Threat actions
+                      </div>
+                    </Header>
                     <TextContent>
                       <small><i>{columnConfig.find(c => c.id === 'threatActions')?.description}</i></small>
                     </TextContent>
@@ -737,11 +804,16 @@ const BrainstormBoardInner: FC = () => {
                 </Container>
               </div>
             )}
-            {visibleColumns.threatImpacts && (
+            {threatInputsVisible && (
               <div style={{ width: '300px', flexShrink: 0 }}>
                 <Container header={
                   <div>
-                    <Header variant="h2">Threat impacts</Header>
+                    <Header variant="h2">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Button iconName="status-negative" variant="icon" disabled />
+                        Threat impacts
+                      </div>
+                    </Header>
                     <TextContent>
                       <small><i>{columnConfig.find(c => c.id === 'threatImpacts')?.description}</i></small>
                     </TextContent>
@@ -757,11 +829,16 @@ const BrainstormBoardInner: FC = () => {
                 </Container>
               </div>
             )}
-            {visibleColumns.assets && (
+            {threatInputsVisible && (
               <div style={{ width: '300px', flexShrink: 0 }}>
                 <Container header={
                   <div>
-                    <Header variant="h2">Assets</Header>
+                    <Header variant="h2">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Button iconName="folder" variant="icon" disabled />
+                        Assets
+                      </div>
+                    </Header>
                     <TextContent>
                       <small><i>{columnConfig.find(c => c.id === 'assets')?.description}</i></small>
                     </TextContent>
@@ -781,7 +858,12 @@ const BrainstormBoardInner: FC = () => {
               <div style={{ width: '300px', flexShrink: 0 }}>
                 <Container header={
                   <div>
-                    <Header variant="h2">Mitigations</Header>
+                    <Header variant="h2">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Button iconName="status-positive" variant="icon" disabled />
+                        Mitigations
+                      </div>
+                    </Header>
                     <TextContent>
                       <small><i>{columnConfig.find(c => c.id === 'mitigations')?.description}</i></small>
                     </TextContent>
@@ -821,7 +903,7 @@ const BrainstormBoard: FC = () => {
   const { currentWorkspace } = useWorkspacesContext();
 
   return (
-    <BrainstormContextProvider workspaceId={currentWorkspace?.id}>
+    <BrainstormContextProvider workspaceId={currentWorkspace?.id || null}>
       <BrainstormBoardInner />
     </BrainstormContextProvider>
   );

@@ -17,11 +17,13 @@ import { z } from 'zod';
 import { ApplicationInfoSchema } from './application';
 import { ArchitectureInfoSchema } from './architecture';
 import { AssumptionSchema, AssumptionLinkSchema } from './assumptions';
+import { BrainstormDataSchema } from './brainstorm';
 import { DataflowInfoSchema } from './dataflow';
 import { MitigationSchema, MitigationLinkSchema } from './mitigations';
 import { TemplateThreatStatementSchema } from './threats';
 import { WorkspaceSchema, Workspace } from './workspaces';
 import { EventHandler } from '../utils/EventController';
+
 
 export const DataExchangeFormatSchema = z.object({
   schema: z.number(),
@@ -34,6 +36,7 @@ export const DataExchangeFormatSchema = z.object({
   assumptionLinks: AssumptionLinkSchema.array().optional(),
   mitigationLinks: MitigationLinkSchema.array().optional(),
   threats: TemplateThreatStatementSchema.array().optional(),
+  brainstormData: BrainstormDataSchema.optional(),
 }).strict();
 
 export type DataExchangeFormat = z.infer<typeof DataExchangeFormatSchema>;

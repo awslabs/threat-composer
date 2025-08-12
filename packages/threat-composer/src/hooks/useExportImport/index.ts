@@ -19,6 +19,7 @@ import { useApplicationInfoContext } from '../../contexts/ApplicationContext/con
 import { useArchitectureInfoContext } from '../../contexts/ArchitectureContext/context';
 import { useAssumptionLinksContext } from '../../contexts/AssumptionLinksContext/context';
 import { useAssumptionsContext } from '../../contexts/AssumptionsContext/context';
+import { useBrainstormContext } from '../../contexts/BrainstormContext/context';
 import { useDataflowInfoContext } from '../../contexts/DataflowContext/context';
 import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext/context';
 import { useMitigationLinksContext } from '../../contexts/MitigationLinksContext/context';
@@ -54,6 +55,7 @@ const useImportExport = () => {
   const { statementList, setStatementList } = useThreatsContext();
   const { assumptionLinkList, setAssumptionLinkList } = useAssumptionLinksContext();
   const { mitigationLinkList, setMitigationLinkList } = useMitigationLinksContext();
+  const { brainstormData, setBrainstormData } = useBrainstormContext();
 
   const getWorkspaceData = useCallback((): DataExchangeFormat => {
 
@@ -69,6 +71,7 @@ const useImportExport = () => {
         assumptionLinks: assumptionLinkList,
         mitigationLinks: mitigationLinkList,
         threats: cleanedThreats,
+        brainstormData: brainstormData,
       };
     }
 
@@ -80,7 +83,7 @@ const useImportExport = () => {
     architectureInfo, dataflowInfo,
     assumptionList, mitigationList,
     assumptionLinkList, mitigationLinkList,
-    statementList]);
+    statementList, brainstormData]);
 
   const exportAll = useCallback(() => {
     const exportFileName = getExportFileName(composerMode, false, currentWorkspace);
@@ -124,6 +127,7 @@ const useImportExport = () => {
   }, []);
 
   const importData = useCallback(async (data: DataExchangeFormat) => {
+
     const calculatedThreats = recalculateThreatData(data.threats || []);
 
     if (data.schema > 0) {
@@ -135,6 +139,7 @@ const useImportExport = () => {
       setStatementList(calculatedThreats);
       setAssumptionLinkList(data.assumptionLinks || []);
       setMitigationLinkList(data.mitigationLinks || []);
+      setBrainstormData(data.brainstormData || {});
     } else {
       // Support ListOnly mode
       setStatementList(data.threats || []);
@@ -148,6 +153,8 @@ const useImportExport = () => {
     setStatementList,
     setAssumptionLinkList,
     setMitigationLinkList,
+    setBrainstormData,
+    currentWorkspace,
   ]);
 
   return {

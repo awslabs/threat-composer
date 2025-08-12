@@ -60,6 +60,14 @@ class ThreatComposerReactAppProject extends ReactTypeScriptProject {
       exec: "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/ide-extension/ REACT_APP_APP_MODE=ide-extension react-app-rewired build",
     });
 
+    // Add pre-compile task to generate build constants
+    const generateBuildConstantsTask = this.addTask("generate-build-constants", {
+      exec: "node scripts/generate-build-constants.js",
+      description: "Generate build-time constants including random family name"
+    });
+
+    this.preCompileTask.spawn(generateBuildConstantsTask);
+
     this.compileTask.reset(
       "echo Building Artifacts for Websites, Browser Extensions and IDE Plugins"
     );

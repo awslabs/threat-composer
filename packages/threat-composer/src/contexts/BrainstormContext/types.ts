@@ -14,14 +14,10 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-// Define the schema for brainstorm items
-export interface BrainstormItem {
-  id: string;
-  content: string;
-}
+import { BrainstormData, BrainstormItem } from '../../customTypes/brainstorm';
 
-// Define the schema for the brainstorm data
-export interface BrainstormData {
+// Define the context-specific brainstorm data with required arrays for internal use
+export interface BrainstormContextData {
   assumptions: BrainstormItem[];
   threatSources: BrainstormItem[];
   threatPrerequisites: BrainstormItem[];
@@ -33,9 +29,18 @@ export interface BrainstormData {
 
 // Define the context API
 export interface BrainstormContextApi {
-  brainstormData: BrainstormData;
-  addItem: (type: keyof BrainstormData, content: string) => void;
-  updateItem: (type: keyof BrainstormData, id: string, content: string) => void;
-  removeItem: (type: keyof BrainstormData, id: string) => void;
+  brainstormData: BrainstormContextData;
+  addItem: (type: keyof BrainstormContextData, content: string) => void;
+  updateItem: (type: keyof BrainstormContextData, id: string, content: string) => void;
+  removeItem: (type: keyof BrainstormContextData, id: string) => void;
+  setBrainstormData: (data: BrainstormData) => void;
   onDeleteWorkspace: (workspaceId: string) => Promise<void>;
 }
+
+// Define the context provider props
+export interface BrainstormContextProviderProps {
+  workspaceId: string | null;
+}
+
+// Export the schema types for external use
+export type { BrainstormData, BrainstormItem };

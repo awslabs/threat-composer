@@ -17,7 +17,7 @@ import { FC, PropsWithChildren, useCallback, useEffect, useState, useRef } from 
 import { LOCAL_STORAGE_KEY_BRAINSTORM_DATA } from '../../../configs/localStorageKeys';
 import removeLocalStorageKey from '../../../utils/removeLocalStorageKey';
 import { BrainstormContext } from '../context';
-import { BrainstormData, BrainstormItem } from '../types';
+import { BrainstormContextProviderProps, BrainstormData, BrainstormItem, BrainstormContextData } from '../types';
 
 // Custom event name for brainstorm data changes
 export const BRAINSTORM_DATA_CHANGE_EVENT = 'brainstorm-data-change';
@@ -38,11 +38,7 @@ export const getLocalStorageKey = (workspaceId: string | null) => {
   return LOCAL_STORAGE_KEY_BRAINSTORM_DATA;
 };
 
-export interface BrainstormContextProviderProps {
-  workspaceId?: string | null;
-}
-
-const initialState: BrainstormData = {
+const initialState: BrainstormContextData = {
   assumptions: [],
   threatSources: [],
   threatPrerequisites: [],
@@ -52,11 +48,26 @@ const initialState: BrainstormData = {
   mitigations: [],
 };
 
+// Helper function to convert external BrainstormData to internal BrainstormContextData
+const convertToContextData = (data: BrainstormData | undefined): BrainstormContextData => {
+  if (!data) return initialState;
+
+  return {
+    assumptions: data.assumptions || [],
+    threatSources: data.threatSources || [],
+    threatPrerequisites: data.threatPrerequisites || [],
+    threatActions: data.threatActions || [],
+    threatImpacts: data.threatImpacts || [],
+    assets: data.assets || [],
+    mitigations: data.mitigations || [],
+  };
+};
+
 const BrainstormLocalStorageContextProvider: FC<PropsWithChildren<BrainstormContextProviderProps>> = ({
   children,
   workspaceId: currentWorkspaceId,
 }) => {
-  const [brainstormData, setBrainstormData] = useState<BrainstormData>(initialState);
+  const [brainstormData, setBrainstormDataInternal] = useState<BrainstormContextData>(initialState);
   // Reference to track if the update is coming from this instance
   const isUpdatingRef = useRef(false);
 
@@ -66,8 +77,8 @@ const BrainstormLocalStorageContextProvider: FC<PropsWithChildren<BrainstormCont
     const storedData = window.localStorage.getItem(storageKey);
     if (storedData) {
       try {
-        const parsedData = JSON.parse(storedData);
-        setBrainstormData(parsedData);
+        const parsedData = JSON.parse(storedData) as BrainstormData;
+        setBrainstormDataInternal(convertToContextData(parsedData));
       } catch (error) {
         console.error('Failed to parse brainstorm data from localStorage', error);
       }
@@ -141,34 +152,40 @@ const BrainstormLocalStorageContextProvider: FC<PropsWithChildren<BrainstormCont
     }, 0);
   }, [brainstormData, currentWorkspaceId]);
 
-  const addItem = useCallback((type: keyof BrainstormData, content: string) => {
-    setBrainstormData((prevData: BrainstormData) => ({
+  const addItem = useCallback((type: keyof BrainstormContextData, content: string) => {
+    setBrainstormDataInternal((prevData: BrainstormContextData) => ({
       ...prevData,
       [type]: [
         ...prevData[type],
         {
           id: crypto.randomUUID(),
           content,
+          createdAt: new Date().toISOString(),
+          createdBy: undefined, // Will be set by the application when known
         },
       ],
     }));
-  }, [setBrainstormData]);
+  }, []);
 
-  const updateItem = useCallback((type: keyof BrainstormData, id: string, content: string) => {
-    setBrainstormData((prevData: BrainstormData) => ({
+  const updateItem = useCallback((type: keyof BrainstormContextData, id: string, content: string) => {
+    setBrainstormDataInternal((prevData: BrainstormContextData) => ({
       ...prevData,
       [type]: prevData[type].map((item: BrainstormItem) =>
         item.id === id ? { ...item, content } : item,
       ),
     }));
-  }, [setBrainstormData]);
+  }, []);
 
-  const handleRemoveItem = useCallback((type: keyof BrainstormData, id: string) => {
-    setBrainstormData((prevData: BrainstormData) => ({
+  const handleRemoveItem = useCallback((type: keyof BrainstormContextData, id: string) => {
+    setBrainstormDataInternal((prevData: BrainstormContextData) => ({
       ...prevData,
       [type]: prevData[type].filter((item: BrainstormItem) => item.id !== id),
     }));
-  }, [setBrainstormData]);
+  }, []);
+
+  const setBrainstormData = useCallback((data: BrainstormData) => {
+    setBrainstormDataInternal(convertToContextData(data));
+  }, []);
 
   const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
     window.setTimeout(() => {
@@ -185,6 +202,7 @@ const BrainstormLocalStorageContextProvider: FC<PropsWithChildren<BrainstormCont
         addItem,
         updateItem,
         removeItem: handleRemoveItem,
+        setBrainstormData,
         onDeleteWorkspace: handleDeleteWorkspace,
       }}
     >
