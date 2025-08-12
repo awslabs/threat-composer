@@ -70,7 +70,7 @@ const EditorThreatSource: FC<EditorProps> = forwardRef<InputProps.Ref, EditorPro
     <ColumnLayout columns={
       (perFieldExamples.threat_source.length > 0 ? 1 : 0) +
       (previousInputs.threat_source.length > 0 ? 1 : 0) +
-      (brainstormData.threatSources.length > 0 ? 1 : 0)
+      ((brainstormData.threatSources?.length || 0) > 0 ? 1 : 0)
     }>
       {perFieldExamples.threat_source.length > 0 &&
         <ExampleList examples={perFieldExamples.threat_source} onSelect={handleChange} showSearch={false}></ExampleList>}
@@ -80,9 +80,9 @@ const EditorThreatSource: FC<EditorProps> = forwardRef<InputProps.Ref, EditorPro
           onSelect={handleChange}
         />
       }
-      {brainstormData.threatSources.length > 0 &&
+      {(brainstormData.threatSources?.length || 0) > 0 &&
         <BrainstormList
-          items={brainstormData.threatSources}
+          items={brainstormData.threatSources || []}
           onSelect={handleChange}
         />
       }

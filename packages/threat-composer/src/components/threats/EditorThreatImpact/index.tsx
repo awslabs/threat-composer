@@ -81,7 +81,7 @@ const EditorThreatImpact: FC<EditorProps> = forwardRef<TextareaProps.Ref, Editor
     <ColumnLayout columns={
       (perFieldExamples.threat_impact.length > 0 ? 1 : 0) +
       (previousInputs.threat_impact.length > 0 ? 1 : 0) +
-      (brainstormData.threatImpacts.length > 0 ? 1 : 0)
+      ((brainstormData.threatImpacts?.length || 0) > 0 ? 1 : 0)
     }>
       {perFieldExamples.threat_impact.length > 0 &&
         <ExampleList examples={perFieldExamples.threat_impact} onSelect={handleSelect}></ExampleList>}
@@ -91,9 +91,9 @@ const EditorThreatImpact: FC<EditorProps> = forwardRef<TextareaProps.Ref, Editor
           onSelect={(content) => handleSelect(content)}
         />
       }
-      {brainstormData.threatImpacts.length > 0 &&
+      {(brainstormData.threatImpacts?.length || 0) > 0 &&
         <BrainstormList
-          items={brainstormData.threatImpacts}
+          items={brainstormData.threatImpacts || []}
           onSelect={handleSelect}
         />
       }

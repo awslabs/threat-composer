@@ -17,6 +17,6 @@
 // This file is auto-generated at build time by scripts/generate-build-constants.js
 // DO NOT EDIT MANUALLY - Changes will be overwritten on next build
 
-export const BUILD_FAMILY_NAME = 'Gomes';
-export const BUILD_TIMESTAMP = '2025-08-12T03:37:51.233Z';
-export const BUILD_RANDOM_INDEX = 169;
+export const BUILD_FAMILY_NAME = 'Guo';
+export const BUILD_TIMESTAMP = '2025-08-12T05:38:24.635Z';
+export const BUILD_RANDOM_INDEX = 195;

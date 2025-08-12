@@ -22,7 +22,7 @@ import TextContent from '@cloudscape-design/components/text-content';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { useMemo, useState } from 'react';
-import { BrainstormItem } from '../../../contexts/BrainstormContext/types';
+import { BrainstormItem } from '../../../customTypes/brainstorm';
 
 export const DEFAULT_NUM_DISPLAY = 5;
 

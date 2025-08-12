@@ -14,9 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useCallback } from 'react';
-import { BrainstormData, BrainstormItem, BrainstormContextData } from './types';
+import { BrainstormData, BrainstormItem } from '../../customTypes/brainstorm';
 
-const initialState: BrainstormContextData = {
+const initialState: BrainstormData = {
   assumptions: [],
   threatSources: [],
   threatPrerequisites: [],
@@ -26,43 +26,15 @@ const initialState: BrainstormContextData = {
   mitigations: [],
 };
 
-// Helper function to convert external BrainstormData to internal BrainstormContextData
-export const convertToContextData = (data: BrainstormData | undefined): BrainstormContextData => {
-  if (!data) return initialState;
-
-  return {
-    assumptions: data.assumptions || [],
-    threatSources: data.threatSources || [],
-    threatPrerequisites: data.threatPrerequisites || [],
-    threatActions: data.threatActions || [],
-    threatImpacts: data.threatImpacts || [],
-    assets: data.assets || [],
-    mitigations: data.mitigations || [],
-  };
-};
-
-// Helper function to convert internal BrainstormContextData to external BrainstormData
-export const convertFromContextData = (data: BrainstormContextData): BrainstormData => {
-  return {
-    assumptions: data.assumptions,
-    threatSources: data.threatSources,
-    threatPrerequisites: data.threatPrerequisites,
-    threatActions: data.threatActions,
-    threatImpacts: data.threatImpacts,
-    assets: data.assets,
-    mitigations: data.mitigations,
-  };
-};
-
 const useBrainstorm = (
-  brainstormData: BrainstormContextData,
-  setBrainstormData: (data: BrainstormContextData) => void,
+  brainstormData: BrainstormData,
+  setBrainstormData: (data: BrainstormData) => void,
 ) => {
-  const addItem = useCallback((type: keyof BrainstormContextData, content: string) => {
+  const addItem = useCallback((type: keyof BrainstormData, content: string) => {
     setBrainstormData({
       ...brainstormData,
       [type]: [
-        ...brainstormData[type],
+        ...(brainstormData[type] || []),
         {
           id: crypto.randomUUID(),
           content,
@@ -73,31 +45,26 @@ const useBrainstorm = (
     });
   }, [brainstormData, setBrainstormData]);
 
-  const updateItem = useCallback((type: keyof BrainstormContextData, id: string, content: string) => {
+  const updateItem = useCallback((type: keyof BrainstormData, id: string, content: string) => {
     setBrainstormData({
       ...brainstormData,
-      [type]: brainstormData[type].map((item: BrainstormItem) =>
+      [type]: (brainstormData[type] || []).map((item: BrainstormItem) =>
         item.id === id ? { ...item, content } : item,
       ),
     });
   }, [brainstormData, setBrainstormData]);
 
-  const removeItem = useCallback((type: keyof BrainstormContextData, id: string) => {
+  const removeItem = useCallback((type: keyof BrainstormData, id: string) => {
     setBrainstormData({
       ...brainstormData,
-      [type]: brainstormData[type].filter((item: BrainstormItem) => item.id !== id),
+      [type]: (brainstormData[type] || []).filter((item: BrainstormItem) => item.id !== id),
     });
   }, [brainstormData, setBrainstormData]);
-
-  const setBrainstormDataFromExternal = useCallback((data: BrainstormData) => {
-    setBrainstormData(convertToContextData(data));
-  }, [setBrainstormData]);
 
   return {
     addItem,
     updateItem,
     removeItem,
-    setBrainstormData: setBrainstormDataFromExternal,
   };
 };
 

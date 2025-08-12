@@ -78,7 +78,7 @@ const EditorImpactedAssets: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, E
         ...previousInputs.impacted_assets.map(asset => ({
           value: asset,
         })),
-        ...brainstormData.assets.map(asset => ({
+        ...(brainstormData.assets || []).map(asset => ({
           value: asset.content,
         })),
       ]}
@@ -98,13 +98,13 @@ const EditorImpactedAssets: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, E
     />
     <ColumnLayout columns={
       (perFieldExamples.impacted_assets.length > 0 ? 1 : 0) +
-      (brainstormData.assets.length > 0 ? 1 : 0)
+      ((brainstormData.assets?.length || 0) > 0 ? 1 : 0)
     }>
       {perFieldExamples.impacted_assets.length > 0 &&
         <ExampleList examples={perFieldExamples.impacted_assets} onSelect={handleAddAsset} showSearch={false}></ExampleList>}
-      {brainstormData.assets.length > 0 &&
+      {(brainstormData.assets?.length || 0) > 0 &&
         <BrainstormList
-          items={brainstormData.assets}
+          items={brainstormData.assets || []}
           onSelect={handleAddAsset}
         />
       }

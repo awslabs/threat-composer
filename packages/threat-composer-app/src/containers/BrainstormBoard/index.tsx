@@ -272,7 +272,7 @@ const ItemColumn: FC<ItemColumnProps> = ({
         placeholder={placeholder}
         disabled={!content.trim()}
       />
-      {brainstormData[itemType].map((item: BrainstormItem) => (
+      {(brainstormData[itemType] || []).map((item: BrainstormItem) => (
         editingItem && editingItem.id === item.id ? (
           <SimplifiedEntityCreationCard
             key={item.id}

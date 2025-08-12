@@ -17,11 +17,15 @@ import { FC, PropsWithChildren } from 'react';
 import BrainstormLocalStateContextProvider from './components/LocalStateContextProvider';
 import BrainstormLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useBrainstormContext } from './context';
-export * from './context';
-export * from './types';
-import { BrainstormContextProviderProps } from './types';
 import { STORAGE_LOCAL_STATE } from '../../configs';
 import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
+
+export * from './context';
+export { BrainstormItem, BrainstormData } from '../../customTypes/brainstorm';
+
+export interface BrainstormContextProviderProps {
+  workspaceId: string | null;
+}
 
 const BrainstormContextProvider: FC<PropsWithChildren<BrainstormContextProviderProps>> = (props) => {
   const { storageType, value } = useWorkspaceStorage(props.workspaceId);
