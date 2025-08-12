@@ -16,8 +16,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-const fs = require('fs');
-const path = require('path');
 
 // Define family names directly in the script (950 unique family names)
 const FAMILY_NAMES = [
@@ -67,35 +65,12 @@ const FAMILY_NAMES = [
 const randomIndex = Math.floor(Math.random() * FAMILY_NAMES.length);
 const selectedFamilyName = FAMILY_NAMES[randomIndex];
 
-// Generate the build constants file
-const buildConstantsContent = `/** *******************************************************************************************************************
-  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-
-  Licensed under the Apache License, Version 2.0 (the "License").
-  You may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
- ******************************************************************************************************************** */
-
-// This file is auto-generated at build time by scripts/generate-build-constants.js
-// DO NOT EDIT MANUALLY - Changes will be overwritten on next build
-
-export const BUILD_FAMILY_NAME = '${selectedFamilyName}';
-export const BUILD_TIMESTAMP = '${new Date().toISOString()}';
-export const BUILD_RANDOM_INDEX = ${randomIndex};
-`;
-
-// Write the build constants file
-const outputPath = path.join(__dirname, '../src/buildConstants.ts');
-fs.writeFileSync(outputPath, buildConstantsContent);
+// Set environment variables for webpack DefinePlugin
+process.env.REACT_APP_BUILD_FAMILY_NAME = selectedFamilyName;
+process.env.REACT_APP_BUILD_TIMESTAMP = new Date().toISOString();
+process.env.REACT_APP_BUILD_RANDOM_INDEX = randomIndex.toString();
 
 console.log(`✅ Build constants generated successfully!`);
 console.log(`🏠 Selected family name: ${selectedFamilyName} (index: ${randomIndex})`);
-console.log(`📝 Build constants written to: ${outputPath}`);
+console.log(`📅 Build timestamp: ${process.env.REACT_APP_BUILD_TIMESTAMP}`);
+console.log(`🔢 Random index: ${randomIndex}`);
