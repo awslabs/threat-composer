@@ -14,7 +14,16 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { BrainstormContextApi } from './types';
+import { BrainstormData } from '../../customTypes/brainstorm';
+
+export interface BrainstormContextApi {
+  brainstormData: BrainstormData;
+  setBrainstormData: (data: BrainstormData) => void;
+  addItem: (type: keyof BrainstormData, content: string) => void;
+  updateItem: (type: keyof BrainstormData, id: string, content: string) => void;
+  removeItem: (type: keyof BrainstormData, id: string) => void;
+  onDeleteWorkspace: (workspaceId: string) => Promise<void>;
+}
 
 const initialState: BrainstormContextApi = {
   brainstormData: {
@@ -26,10 +35,10 @@ const initialState: BrainstormContextApi = {
     assets: [],
     mitigations: [],
   },
+  setBrainstormData: () => {},
   addItem: () => {},
   updateItem: () => {},
   removeItem: () => {},
-  setBrainstormData: () => {},
   onDeleteWorkspace: () => Promise.resolve(),
 };
 

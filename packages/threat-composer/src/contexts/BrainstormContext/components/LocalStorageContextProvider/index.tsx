@@ -13,13 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback, useState } from 'react';
+import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_BRAINSTORM_DATA } from '../../../../configs/localStorageKeys';
+import { BrainstormData } from '../../../../customTypes/brainstorm';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { BrainstormContext } from '../../context';
-import { BrainstormContextProviderProps, BrainstormData } from '../../types';
-import useBrainstorm, { convertToContextData, convertFromContextData, initialState } from '../../useBrainstorm';
+import useBrainstorm, { initialState } from '../../useBrainstorm';
+
+export interface BrainstormContextProviderProps {
+  workspaceId: string | null;
+}
 
 export const getLocalStorageKey = (workspaceId: string | null) => {
   if (workspaceId) {
@@ -33,31 +37,18 @@ const BrainstormLocalStorageContextProvider: FC<PropsWithChildren<BrainstormCont
   children,
   workspaceId: currentWorkspaceId,
 }) => {
-  const [brainstormDataExternal, setBrainstormDataExternal] = useLocalStorageState<BrainstormData>(
+  const [brainstormData, setBrainstormData] = useLocalStorageState<BrainstormData>(
     getLocalStorageKey(currentWorkspaceId),
     {
-      defaultValue: convertFromContextData(initialState),
+      defaultValue: initialState,
     },
   );
 
-  // Convert external data to internal format for the context
-  const [brainstormData, setBrainstormDataInternal] = useState(() =>
-    convertToContextData(brainstormDataExternal),
-  );
-
-  // Update internal state when external data changes
-  const setBrainstormDataWrapper = useCallback((newData: typeof brainstormData) => {
-    setBrainstormDataInternal(newData);
-    setBrainstormDataExternal(convertFromContextData(newData));
-  }, [setBrainstormDataExternal]);
-
-  // Use the custom hook for business logic
   const {
     addItem,
     updateItem,
     removeItem: removeItemFromHook,
-    setBrainstormData,
-  } = useBrainstorm(brainstormData, setBrainstormDataWrapper);
+  } = useBrainstorm(brainstormData, setBrainstormData);
 
   const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
     window.setTimeout(() => {
@@ -70,10 +61,10 @@ const BrainstormLocalStorageContextProvider: FC<PropsWithChildren<BrainstormCont
     <BrainstormContext.Provider
       value={{
         brainstormData,
+        setBrainstormData,
         addItem,
         updateItem,
         removeItem: removeItemFromHook,
-        setBrainstormData,
         onDeleteWorkspace: handleDeleteWorkspace,
       }}
     >

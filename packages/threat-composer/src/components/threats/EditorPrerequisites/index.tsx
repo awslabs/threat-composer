@@ -82,7 +82,7 @@ const EditorPrerequisites: FC<EditorProps> = forwardRef<TextareaProps.Ref, Edito
     <ColumnLayout columns={
       (perFieldExamples.prerequisites.length > 0 ? 1 : 0) +
       (previousInputs.prerequisites.length > 0 ? 1 : 0) +
-      (brainstormData.threatPrerequisites.length > 0 ? 1 : 0)
+      ((brainstormData.threatPrerequisites?.length || 0) > 0 ? 1 : 0)
     }>
       {perFieldExamples.prerequisites.length > 0 &&
         <ExampleList examples={perFieldExamples.prerequisites} onSelect={handleSelect}></ExampleList>}
@@ -92,9 +92,9 @@ const EditorPrerequisites: FC<EditorProps> = forwardRef<TextareaProps.Ref, Edito
           onSelect={(content) => handleSelect(content)}
         />
       }
-      {brainstormData.threatPrerequisites.length > 0 &&
+      {(brainstormData.threatPrerequisites?.length || 0) > 0 &&
         <BrainstormList
-          items={brainstormData.threatPrerequisites}
+          items={brainstormData.threatPrerequisites || []}
           onSelect={handleSelect}
         />
       }

@@ -14,18 +14,22 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
+import { BrainstormData } from '../../../../customTypes/brainstorm';
 import { LocalStateContextProviderBaseProps } from '../../../types';
 import { BrainstormContext } from '../../context';
-import { BrainstormContextProviderProps, BrainstormData, BrainstormContextData } from '../../types';
-import useBrainstorm, { convertToContextData, initialState } from '../../useBrainstorm';
+import useBrainstorm, { initialState } from '../../useBrainstorm';
+
+export interface BrainstormContextProviderProps {
+  workspaceId: string | null;
+}
 
 const BrainstormLocalStateContextProvider: FC<
 PropsWithChildren<BrainstormContextProviderProps & LocalStateContextProviderBaseProps<BrainstormData>>> = ({
   children,
   initialValue,
 }) => {
-  const [brainstormData, setBrainstormDataInternal] = useState<BrainstormContextData>(
-    convertToContextData(initialValue),
+  const [brainstormData, setBrainstormData] = useState<BrainstormData>(
+    initialValue || initialState,
   );
 
   // Use the custom hook for business logic
@@ -33,21 +37,20 @@ PropsWithChildren<BrainstormContextProviderProps & LocalStateContextProviderBase
     addItem,
     updateItem,
     removeItem: removeItemFromHook,
-    setBrainstormData,
-  } = useBrainstorm(brainstormData, setBrainstormDataInternal);
+  } = useBrainstorm(brainstormData, setBrainstormData);
 
   const handleDeleteWorkspace = useCallback(async (_workspaceId: string) => {
-    setBrainstormDataInternal(initialState);
+    setBrainstormData(initialState);
   }, []);
 
   return (
     <BrainstormContext.Provider
       value={{
         brainstormData,
+        setBrainstormData,
         addItem,
         updateItem,
         removeItem: removeItemFromHook,
-        setBrainstormData,
         onDeleteWorkspace: handleDeleteWorkspace,
       }}
     >

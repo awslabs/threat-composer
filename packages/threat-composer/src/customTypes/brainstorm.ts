@@ -31,38 +31,38 @@ const createBrainstormItemSchema = (contentDescription: string) => z.object({
 export const BrainstormDataSchema = z.object({
   assumptions: createBrainstormItemSchema(
     'Brainstorm item for assumption. Assumption about the design, threats and migations of the application being threat modeled. Plain-text',
-  ).array().optional()
-    .describe('Assumptions about the design, threats and migations of the application being threat modeled'),
+  ).array()
+    .describe('Assumptions about the design, threats and migations of the application being threat modeled').optional(),
 
   threatSources: createBrainstormItemSchema(
     'Brainstorm item for threat source. The entity taking action. For example: An actor (a useful default), An internet-based actor, An internal or external actor. Plain-text',
-  ).array().optional()
-    .describe('Brainstormed threat sources for the application being threat modeled'),
+  ).array()
+    .describe('Brainstormed threat sources for the application being threat modeled').optional(),
 
   threatPrerequisites: createBrainstormItemSchema(
     'Brainstorm item for threat prerequisite. Conditions or requirements that must be met for a threat source\'s action to be viable. For example: -with access to another user\'s token. -who has administrator access -with user permissions - in a mitm position -with a network path to the API. If no prerequistes known return empty string, if know return but first word must be lower case. Plain-text',
-  ).array().optional()
-    .describe('Brainstormed prerequisites for threats against the application being threat modeled'),
+  ).array()
+    .describe('Brainstormed prerequisites for threats against the application being threat modeled').optional(),
 
   threatActions: createBrainstormItemSchema(
     'Brainstorm item for threat action. The action being performed by the threat source. For example: -spoof another user -tamper with data stored in the database -make thousands of concurrent requests. first word must be lower case. Plain-text',
-  ).array().optional()
-    .describe('Brainstormed threat actions against the application being threat modeled'),
+  ).array()
+    .describe('Brainstormed threat actions against the application being threat modeled').optional(),
 
   threatImpacts: createBrainstormItemSchema(
     'Brainstorm item for threat impact. What impact this has on the system.The direct impact of a successful threat action. For example: - unauthorized access to the user\'s bank account information -modifying the username for the all-time high score. -a web application being unable to handle other user requests.if know return but first word must be lower case. Plain-text',
-  ).array().optional()
-    .describe('Brainstormed threat impacts for the application being threat modeled'),
+  ).array()
+    .describe('Brainstormed threat impacts for the application being threat modeled').optional(),
 
   assets: createBrainstormItemSchema(
     'Brainstorm item for asset. List of assets affected by this threat. If not known return empty string in array, else strings in array first word must be lower case. Plain-text',
-  ).array().optional()
-    .describe('Brainstormed assets for the application being threat modeled'),
+  ).array()
+    .describe('Brainstormed assets for the application being threat modeled').optional(),
 
   mitigations: createBrainstormItemSchema(
     'Brainstorm item for mitigation. Mitigation for the application being threat modeled. Plain-text',
-  ).array().optional()
-    .describe('Mitigations for the application being threat modeled'),
+  ).array()
+    .describe('Mitigations for the application being threat modeled').optional(),
 }).strict();
 
 export const BrainstormItemSchema = createBrainstormItemSchema('Brainstorm content. Plain-text');

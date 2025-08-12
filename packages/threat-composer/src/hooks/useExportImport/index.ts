@@ -57,11 +57,24 @@ const useImportExport = () => {
   const { mitigationLinkList, setMitigationLinkList } = useMitigationLinksContext();
   const { brainstormData, setBrainstormData } = useBrainstormContext();
 
+  // Helper function to check if brainstorm data is empty
+  const isBrainstormDataEmpty = useCallback((data: typeof brainstormData) => {
+    return (
+      (data.assumptions?.length || 0) === 0 &&
+      (data.threatSources?.length || 0) === 0 &&
+      (data.threatPrerequisites?.length || 0) === 0 &&
+      (data.threatActions?.length || 0) === 0 &&
+      (data.threatImpacts?.length || 0) === 0 &&
+      (data.assets?.length || 0) === 0 &&
+      (data.mitigations?.length || 0) === 0
+    );
+  }, []);
+
   const getWorkspaceData = useCallback((): DataExchangeFormat => {
 
     const cleanedThreats = cleanupThreatData(statementList);
     if (composerMode === 'Full') {
-      return {
+      const baseData = {
         schema: SCHEMA_VERSION,
         applicationInfo,
         architecture: architectureInfo,
@@ -71,8 +84,17 @@ const useImportExport = () => {
         assumptionLinks: assumptionLinkList,
         mitigationLinks: mitigationLinkList,
         threats: cleanedThreats,
-        brainstormData: brainstormData,
       };
+
+      // Only include brainstormData if it's not empty
+      if (!isBrainstormDataEmpty(brainstormData)) {
+        return {
+          ...baseData,
+          brainstormData: brainstormData,
+        };
+      }
+
+      return baseData;
     }
 
     return {
@@ -83,7 +105,7 @@ const useImportExport = () => {
     architectureInfo, dataflowInfo,
     assumptionList, mitigationList,
     assumptionLinkList, mitigationLinkList,
-    statementList, brainstormData]);
+    statementList, brainstormData, isBrainstormDataEmpty]);
 
   const exportAll = useCallback(() => {
     const exportFileName = getExportFileName(composerMode, false, currentWorkspace);
@@ -139,7 +161,15 @@ const useImportExport = () => {
       setStatementList(calculatedThreats);
       setAssumptionLinkList(data.assumptionLinks || []);
       setMitigationLinkList(data.mitigationLinks || []);
-      setBrainstormData(data.brainstormData || {});
+      setBrainstormData(data.brainstormData || {
+        assumptions: [],
+        threatSources: [],
+        threatPrerequisites: [],
+        threatActions: [],
+        threatImpacts: [],
+        assets: [],
+        mitigations: [],
+      });
     } else {
       // Support ListOnly mode
       setStatementList(data.threats || []);
