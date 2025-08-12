@@ -14,9 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-// This file is auto-generated at build time by scripts/generate-build-constants.js
-// DO NOT EDIT MANUALLY - Changes will be overwritten on next build
+// Build constants injected at build time via webpack DefinePlugin
+// These values are set by scripts/generate-build-constants.js and injected during compilation
 
-export const BUILD_FAMILY_NAME = 'Guo';
-export const BUILD_TIMESTAMP = '2025-08-12T05:38:24.635Z';
-export const BUILD_RANDOM_INDEX = 195;
+export const BUILD_FAMILY_NAME = process.env.REACT_APP_BUILD_FAMILY_NAME || 'Unknown';
+export const BUILD_TIMESTAMP = process.env.REACT_APP_BUILD_TIMESTAMP || new Date().toISOString();
+export const BUILD_RANDOM_INDEX = parseInt(process.env.REACT_APP_BUILD_RANDOM_INDEX || '0', 10);
