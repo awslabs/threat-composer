@@ -13,26 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { useContext, createContext } from 'react';
-import { BrainstormContextApi } from './types';
 
-const initialState: BrainstormContextApi = {
-  brainstormData: {
-    assumptions: [],
-    threatSources: [],
-    threatPrerequisites: [],
-    threatActions: [],
-    threatImpacts: [],
-    assets: [],
-    mitigations: [],
-  },
-  addItem: () => {},
-  updateItem: () => {},
-  removeItem: () => {},
-  setBrainstormData: () => {},
-  onDeleteWorkspace: () => Promise.resolve(),
-};
+// This file is auto-generated at build time by scripts/generate-build-constants.js
+// DO NOT EDIT MANUALLY - Changes will be overwritten on next build
 
-export const BrainstormContext = createContext<BrainstormContextApi>(initialState);
-
-export const useBrainstormContext = () => useContext(BrainstormContext);
+export const BUILD_FAMILY_NAME = 'Chandra';
+export const BUILD_TIMESTAMP = '2025-08-12T03:08:43.955Z';
+export const BUILD_RANDOM_INDEX = 257;

@@ -106,6 +106,13 @@
         "command": "yarn projen compile:ide-extension",
         "cwd": "packages/threat-composer-app"
       }
+    },
+    "generate-build-constants": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn projen generate-build-constants",
+        "cwd": "packages/threat-composer-app"
+      }
     }
   },
   "implicitDependencies": [

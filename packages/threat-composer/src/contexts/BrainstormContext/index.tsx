@@ -14,24 +14,28 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { FC, PropsWithChildren } from 'react';
+import BrainstormLocalStateContextProvider from './components/LocalStateContextProvider';
 import BrainstormLocalStorageContextProvider from './components/LocalStorageContextProvider';
-import { DEFAULT_WORKSPACE_ID } from '../../configs/constants';
-
+import { useBrainstormContext } from './context';
 export * from './context';
 export * from './types';
-
-export interface BrainstormContextProviderProps {
-  workspaceId?: string;
-}
+import { BrainstormContextProviderProps } from './types';
+import { STORAGE_LOCAL_STATE } from '../../configs';
+import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
 
 const BrainstormContextProvider: FC<PropsWithChildren<BrainstormContextProviderProps>> = (props) => {
-  // If using in a React Router context, you would get the workspaceId from useParams
-  // For the core package, we'll just use the provided workspaceId or default
-  const actualWorkspaceId = props.workspaceId || DEFAULT_WORKSPACE_ID;
+  const { storageType, value } = useWorkspaceStorage(props.workspaceId);
 
-  return (
-    <BrainstormLocalStorageContextProvider key={actualWorkspaceId} workspaceId={actualWorkspaceId} {...props} />
-  );
+  return storageType === STORAGE_LOCAL_STATE ?
+    (<BrainstormLocalStateContextProvider
+      key={props.workspaceId}
+      initialValue={value?.brainstormData}
+      {...props} />) :
+    (<BrainstormLocalStorageContextProvider key={props.workspaceId} {...props} />);
 };
 
 export default BrainstormContextProvider;
+
+export {
+  useBrainstormContext,
+};

@@ -86,6 +86,15 @@
         }
       ]
     },
+    "generate-build-constants": {
+      "name": "generate-build-constants",
+      "description": "Generate build-time constants including random family name",
+      "steps": [
+        {
+          "exec": "node scripts/generate-build-constants.js"
+        }
+      ]
+    },
     "install": {
       "name": "install",
       "description": "Install project dependencies and update lockfile (non-frozen)",
@@ -126,7 +135,12 @@
     },
     "pre-compile": {
       "name": "pre-compile",
-      "description": "Prepare the project for compilation"
+      "description": "Prepare the project for compilation",
+      "steps": [
+        {
+          "spawn": "generate-build-constants"
+        }
+      ]
     },
     "test": {
       "name": "test",

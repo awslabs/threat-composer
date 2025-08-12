@@ -56,7 +56,7 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
                   <DataflowInfoContextProvider workspaceId={workspaceId}>
                     <ThreatPacksContextProvider workspaceId={workspaceId}>
                       <MitigationPacksContextProvider workspaceId={workspaceId}>
-                        <BrainstormContextProvider workspaceId={workspaceId || undefined}>
+                        <BrainstormContextProvider workspaceId={workspaceId}>
                           <CrossWorkspaceContextProvider>
                             <WindowExporter>
                               {children}
