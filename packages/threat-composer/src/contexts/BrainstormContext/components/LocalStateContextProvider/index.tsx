@@ -16,32 +16,8 @@
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
 import { LocalStateContextProviderBaseProps } from '../../../types';
 import { BrainstormContext } from '../../context';
-import { BrainstormContextProviderProps, BrainstormData, BrainstormItem, BrainstormContextData } from '../../types';
-
-const initialState: BrainstormContextData = {
-  assumptions: [],
-  threatSources: [],
-  threatPrerequisites: [],
-  threatActions: [],
-  threatImpacts: [],
-  assets: [],
-  mitigations: [],
-};
-
-// Helper function to convert external BrainstormData to internal BrainstormContextData
-const convertToContextData = (data: BrainstormData | undefined): BrainstormContextData => {
-  if (!data) return initialState;
-
-  return {
-    assumptions: data.assumptions || [],
-    threatSources: data.threatSources || [],
-    threatPrerequisites: data.threatPrerequisites || [],
-    threatActions: data.threatActions || [],
-    threatImpacts: data.threatImpacts || [],
-    assets: data.assets || [],
-    mitigations: data.mitigations || [],
-  };
-};
+import { BrainstormContextProviderProps, BrainstormData, BrainstormContextData } from '../../types';
+import useBrainstorm, { convertToContextData, initialState } from '../../useBrainstorm';
 
 const BrainstormLocalStateContextProvider: FC<
 PropsWithChildren<BrainstormContextProviderProps & LocalStateContextProviderBaseProps<BrainstormData>>> = ({
@@ -52,40 +28,13 @@ PropsWithChildren<BrainstormContextProviderProps & LocalStateContextProviderBase
     convertToContextData(initialValue),
   );
 
-  const addItem = useCallback((type: keyof BrainstormContextData, content: string) => {
-    setBrainstormDataInternal((prevData: BrainstormContextData) => ({
-      ...prevData,
-      [type]: [
-        ...prevData[type],
-        {
-          id: crypto.randomUUID(),
-          content,
-          createdAt: new Date().toISOString(),
-          createdBy: undefined, // Will be set by the application when known
-        },
-      ],
-    }));
-  }, []);
-
-  const updateItem = useCallback((type: keyof BrainstormContextData, id: string, content: string) => {
-    setBrainstormDataInternal((prevData: BrainstormContextData) => ({
-      ...prevData,
-      [type]: prevData[type].map((item: BrainstormItem) =>
-        item.id === id ? { ...item, content } : item,
-      ),
-    }));
-  }, []);
-
-  const handleRemoveItem = useCallback((type: keyof BrainstormContextData, id: string) => {
-    setBrainstormDataInternal((prevData: BrainstormContextData) => ({
-      ...prevData,
-      [type]: prevData[type].filter((item: BrainstormItem) => item.id !== id),
-    }));
-  }, []);
-
-  const setBrainstormData = useCallback((data: BrainstormData) => {
-    setBrainstormDataInternal(convertToContextData(data));
-  }, []);
+  // Use the custom hook for business logic
+  const {
+    addItem,
+    updateItem,
+    removeItem: removeItemFromHook,
+    setBrainstormData,
+  } = useBrainstorm(brainstormData, setBrainstormDataInternal);
 
   const handleDeleteWorkspace = useCallback(async (_workspaceId: string) => {
     setBrainstormDataInternal(initialState);
@@ -97,7 +46,7 @@ PropsWithChildren<BrainstormContextProviderProps & LocalStateContextProviderBase
         brainstormData,
         addItem,
         updateItem,
-        removeItem: handleRemoveItem,
+        removeItem: removeItemFromHook,
         setBrainstormData,
         onDeleteWorkspace: handleDeleteWorkspace,
       }}
