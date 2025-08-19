@@ -27,8 +27,15 @@ import {
   METADATA_KEY_COMMENTS,
   METADATA_KEY_STRIDE,
   METADATA_KEY_PRIORITY,
-  //ALLOW_METADATA_TAGS,
   METADATA_KEY_PREFIX_CUSTOM,
+  METADATA_KEY_SOURCE,
+  METADATA_KEY_SOURCE_THREAT_PACK,
+  METADATA_KEY_SOURCE_THREAT_PACK_THREAT,
+  METADATA_KEY_SOURCE_THREAT_PACK_MITIGATION_CANDIDATE,
+  METADATA_KEY_SOURCE_MITIGATION_PACK,
+  METADATA_KEY_SOURCE_MITIGATION_PACK_MITIGATION,
+  METADATA_SOURCE_THREAT_PACK,
+  METADATA_SOURCE_MITIGATION_PACK,
 } from '../configs';
 import STRIDE from '../data/stride';
 
@@ -52,8 +59,38 @@ export const MetadataSchemaMinimal = z.union([
 
 export type MetadataMinimal = z.infer<typeof MetadataSchemaMinimal>;
 
-export const MetadataSchemaFull = z.union([
-  ...MetadataSchemaMinimal.options, // Extend from minimal schema
+export const MetadataSchemaMitigation = z.union([
+  ...MetadataSchemaMinimal.options, // Comments + custom keys
+
+  // Source metadata
+  z.object({
+    key: z.literal(METADATA_KEY_SOURCE),
+    value: z.enum([METADATA_SOURCE_MITIGATION_PACK]).describe('Source type indicating type of pack'),
+  }).strict(),
+
+  // Mitigation pack ID
+  z.object({
+    key: z.literal(METADATA_KEY_SOURCE_MITIGATION_PACK),
+    value: z.string().min(1).max(SINGLE_FIELD_INPUT_TAG_MAX_LENGTH).describe('Identifier for the mitigation pack'),
+  }).strict(),
+
+  // Mitigation pack mitigation ID
+  z.object({
+    key: z.literal(METADATA_KEY_SOURCE_MITIGATION_PACK_MITIGATION),
+    value: z.string().max(36).describe('UUID v4 identifier for the specific mitigation within the pack'),
+  }).strict(),
+]);
+
+export type MetadataMitigation = z.infer<typeof MetadataSchemaMitigation>;
+
+export const MetadataSchemaThreats = z.union([
+  ...MetadataSchemaMinimal.options, // Comments + custom keys
+
+  // Source metadata
+  z.object({
+    key: z.literal(METADATA_KEY_SOURCE),
+    value: z.enum([METADATA_SOURCE_THREAT_PACK]).describe('Source type indicating type of pack'),
+  }).strict(),
 
   // Stride: array of valid STRIDE values
   z.object({
@@ -66,11 +103,29 @@ export const MetadataSchemaFull = z.union([
     key: z.literal(METADATA_KEY_PRIORITY),
     value: z.enum(LEVEL_SELECTOR_OPTIONS.map(o => o.value) as [string, ...string[]]),
   }).strict(),
+
+  // Threat pack ID
+  z.object({
+    key: z.literal(METADATA_KEY_SOURCE_THREAT_PACK),
+    value: z.string().min(1).max(SINGLE_FIELD_INPUT_TAG_MAX_LENGTH).describe('Identifier for the threat pack'),
+  }).strict(),
+
+  // Threat pack threat ID
+  z.object({
+    key: z.literal(METADATA_KEY_SOURCE_THREAT_PACK_THREAT),
+    value: z.string().max(36).describe('UUID v4 identifier for the specific threat within the pack'),
+  }).strict(),
+
+  // Threat pack mitigation candidate ID
+  z.object({
+    key: z.literal(METADATA_KEY_SOURCE_THREAT_PACK_MITIGATION_CANDIDATE),
+    value: z.string().max(36).describe('UUID v4 identifier for the mitigation candidate from the threat pack'),
+  }).strict(),
 ]);
 
-export type MetadataFull = z.infer<typeof MetadataSchemaFull>;
+export type MetadataThreats = z.infer<typeof MetadataSchemaThreats>;
 
-export type Metadata = z.infer<typeof MetadataSchemaFull>;
+export type Metadata = z.infer<typeof MetadataSchemaThreats>;
 
 export const MetadataNodeSchema = z.object({});
 

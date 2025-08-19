@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { z } from 'zod';
-import { EntityBaseSchema, StatusSchema, MetadataSchemaFull } from './entities';
+import { EntityBaseSchema, StatusSchema, MetadataSchemaThreats } from './entities';
 import { SINGLE_FIELD_INPUT_MAX_LENGTH, LEVEL_HIGH, LEVEL_MEDIUM, LEVEL_LOW, LEVEL_NOT_SET, STATUS_NOT_SET, THREAT_STATUS_IDENTIFIED, THREAT_STATUS_NOT_USEFUL, THREAT_STATUS_RESOLVED } from '../configs';
 import threatStatus from '../data/status/threatStatus.json';
 
@@ -75,11 +75,11 @@ export const TemplateThreatStatementSchema = EntityBaseSchema.extend({
   /**
     * A list of displayed statement token
     */
-  displayedStatement: z.union([ThreatStatementDisplayTokenSchema, z.string()]).array().optional().describe('Parsed threat statement components for display rendering. This uses use of supporting HTML tags'),
+  displayedStatement: z.union([ThreatStatementDisplayTokenSchema, z.string()]).array().optional().meta({ internal: true }).describe('Parsed threat statement components for display rendering. This uses use of supporting HTML tags'),
   /**
    * The metadata - overridden to support full metadata schema for threats.
    */
-  metadata: MetadataSchemaFull.array().optional().describe('Additional metadata as key-value pairs for threats'),
+  metadata: MetadataSchemaThreats.array().optional().describe('Additional metadata as key-value pairs for threats'),
   /**
    * The status of the threats.
    */

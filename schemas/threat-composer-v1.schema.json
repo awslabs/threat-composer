@@ -211,7 +211,7 @@
             "type": "number"
           },
           "metadata": {
-            "description": "Additional metadata as key-value pairs",
+            "description": "Additional metadata as key-value pairs for mitigations",
             "type": "array",
             "items": {
               "anyOf": [
@@ -254,6 +254,67 @@
                           }
                         }
                       ]
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "const": "source"
+                    },
+                    "value": {
+                      "description": "Source type indicating origin of the mitigation",
+                      "type": "string",
+                      "enum": [
+                        "mitigationPack",
+                        "threatPack"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "const": "mitigationPackId"
+                    },
+                    "value": {
+                      "description": "Identifier for the mitigation pack",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 30
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "const": "mitigationPackMitigationId"
+                    },
+                    "value": {
+                      "description": "UUID v4 identifier for the specific mitigation within the pack",
+                      "type": "string",
+                      "maxLength": 36
                     }
                   },
                   "required": [
@@ -440,6 +501,28 @@
                   "properties": {
                     "key": {
                       "type": "string",
+                      "const": "source"
+                    },
+                    "value": {
+                      "description": "Source type indicating origin of the threat",
+                      "type": "string",
+                      "enum": [
+                        "mitigationPack",
+                        "threatPack"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
                       "const": "STRIDE"
                     },
                     "value": {
@@ -477,6 +560,64 @@
                         "Medium",
                         "Low"
                       ]
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "const": "threatPackId"
+                    },
+                    "value": {
+                      "description": "Identifier for the threat pack",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 30
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "const": "threatPackThreatId"
+                    },
+                    "value": {
+                      "description": "UUID v4 identifier for the specific threat within the pack",
+                      "type": "string",
+                      "maxLength": 36
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "const": "threatPackMitigationCandidateId"
+                    },
+                    "value": {
+                      "description": "UUID v4 identifier for the mitigation candidate from the threat pack",
+                      "type": "string",
+                      "maxLength": 36
                     }
                   },
                   "required": [
@@ -543,49 +684,6 @@
             "description": "Custom template used for threat statement generation. Example: A [threatSource] [prerequisites] can [threatAction]",
             "type": "string",
             "maxLength": 200
-          },
-          "displayedStatement": {
-            "description": "Parsed threat statement components for display rendering. This uses use of supporting HTML tags",
-            "type": "array",
-            "items": {
-              "anyOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "description": "HTML element type for rendering",
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "const": "b"
-                        },
-                        {
-                          "type": "string",
-                          "const": "span"
-                        }
-                      ]
-                    },
-                    "tooltip": {
-                      "description": "Threat statement element to anchor tool tip",
-                      "type": "string",
-                      "maxLength": 30
-                    },
-                    "content": {
-                      "description": "Displayed tooltip text",
-                      "type": "string",
-                      "maxLength": 200
-                    }
-                  },
-                  "required": [
-                    "content"
-                  ],
-                  "additionalProperties": false
-                },
-                {
-                  "type": "string"
-                }
-              ]
-            }
           },
           "status": {
             "description": "Status of the threat",
