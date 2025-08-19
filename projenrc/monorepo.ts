@@ -75,17 +75,6 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
       ],
     });
 
-    this.addTask("generate:schema", {
-      steps: [
-        {
-          spawn: "build",
-        },
-        {
-          exec: "npx ts-node ./scripts/generateSchema.ts",
-        },
-      ],
-    });
-
     this.addTask("prepare", {
       steps: [
         {
@@ -114,11 +103,16 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
       exec: "npx ts-node ./scripts/data/buildPacks.ts ThreatPack && npx ts-node ./scripts/data/buildPacks.ts MitigationPack",
     });
 
+    this.addTask("build:schema", {
+      exec: 'npx ts-node --compiler-options \'{"lib":["es2019","dom"]}\' ./scripts/generateSchema.ts',
+    });
+
     this.buildTask.reset();
     this.buildTask.spawn(this.tasks.tryFind("build:packs")!);
     this.buildTask.exec(
       "yarn nx run-many --target=build --output-style=stream --nx-bail"
     );
+    this.buildTask.spawn(this.tasks.tryFind("build:schema")!);
 
     this.compileTask.reset(
       "npx nx run-many --target=build --all --skip-nx-cache --nx-bail"

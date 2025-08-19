@@ -71,7 +71,7 @@
           "maxLength": 100000
         },
         "image": {
-          "description": "Architecture diagram image (base64 or URL)",
+          "description": "Architecture diagram image. Image URL or base64 encoded image data. Supports image/* MIME types, though browser rendering compatibility varies by format. For URLs: maximum 2048 characters. For base64: maximum 1000000 characters (approximately 750KB for typical images due to base64 encoding overhead). Common formats (PNG/JPG/GIF) are automatically compressed, making original file size limits difficult to specify precisely. The constraint applies to the resulting base64 string length rather than the original file size.",
           "type": "string"
         }
       },
@@ -87,7 +87,7 @@
           "maxLength": 100000
         },
         "image": {
-          "description": "Data-flow diagram image (base64 or URL)",
+          "description": "Data-flow diagram image. Image URL or base64 encoded image data. Supports image/* MIME types, though browser rendering compatibility varies by format. For URLs: maximum 2048 characters. For base64: maximum 1000000 characters (approximately 750KB for typical images due to base64 encoding overhead). Common formats (PNG/JPG/GIF) are automatically compressed, making original file size limits difficult to specify precisely. The constraint applies to the resulting base64 string length rather than the original file size.",
           "type": "string"
         }
       },
@@ -270,11 +270,10 @@
                       "const": "source"
                     },
                     "value": {
-                      "description": "Source type indicating origin of the mitigation",
+                      "description": "Source type indicating type of pack",
                       "type": "string",
                       "enum": [
-                        "mitigationPack",
-                        "threatPack"
+                        "mitigationPack"
                       ]
                     }
                   },
@@ -504,10 +503,9 @@
                       "const": "source"
                     },
                     "value": {
-                      "description": "Source type indicating origin of the threat",
+                      "description": "Source type indicating type of pack",
                       "type": "string",
                       "enum": [
-                        "mitigationPack",
                         "threatPack"
                       ]
                     }

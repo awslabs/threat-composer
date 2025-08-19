@@ -18,7 +18,7 @@ import { BaseImageInfoSchema } from './entities';
 
 export const DataflowInfoSchema = z.object({
   description: BaseImageInfoSchema.shape.description.describe('Markdown detailed description of the application data flows. Start your headers from H3 maximum'),
-  image: BaseImageInfoSchema.shape.image.describe('Data-flow diagram image (base64 or URL)'),
+  image: BaseImageInfoSchema.shape.image.describe('Data-flow diagram image. ' + BaseImageInfoSchema.shape.image.description),
 }).strict();
 
 export type DataflowInfo = z.infer<typeof DataflowInfoSchema>;

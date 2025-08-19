@@ -9,6 +9,9 @@
         },
         {
           "exec": "yarn nx run-many --target=build --output-style=stream --nx-bail"
+        },
+        {
+          "spawn": "build:schema"
         }
       ]
     },
@@ -17,6 +20,14 @@
       "steps": [
         {
           "exec": "npx ts-node ./scripts/data/buildPacks.ts ThreatPack && npx ts-node ./scripts/data/buildPacks.ts MitigationPack"
+        }
+      ]
+    },
+    "build:schema": {
+      "name": "build:schema",
+      "steps": [
+        {
+          "exec": "npx ts-node --compiler-options '{\"lib\":[\"es2019\",\"dom\"]}' ./scripts/generateSchema.ts"
         }
       ]
     },
@@ -116,17 +127,6 @@
       "steps": [
         {
           "exec": "git secrets --scan && generate-attribution && mv oss-attribution/attribution.txt LICENSE-THIRD-PARTY"
-        }
-      ]
-    },
-    "generate:schema": {
-      "name": "generate:schema",
-      "steps": [
-        {
-          "spawn": "build"
-        },
-        {
-          "exec": "npx ts-node ./scripts/generateSchema.ts"
         }
       ]
     },
