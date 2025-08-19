@@ -185,7 +185,7 @@ export const BaseImageInfoSchema = z.object({
   }, {
     message: 'Invalid image format',
     path: [],
-  }),
+  }).describe(`Image URL or base64 encoded image data. Supports image/* MIME types, though browser rendering compatibility varies by format. For URLs: maximum ${IMAGE_URL_MAX_LENGTH} characters. For base64: maximum ${IMAGE_BASE64_MAX_LENGTH} characters (approximately 750KB for typical images due to base64 encoding overhead). Common formats (PNG/JPG/GIF) are automatically compressed, making original file size limits difficult to specify precisely. The constraint applies to the resulting base64 string length rather than the original file size.`),
   /**
    * The description of the architecture diagram
    */
