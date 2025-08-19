@@ -1,48 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Threat Composer data exchange format schema for importing/exporting threat modeling data. This schema defines the complete structure for threat modeling sessions including application info, architecture diagrams, data flows, threats, mitigations, and assumptions. Files conforming to this schema should use the .tc.json file extension and can be imported/exported through the Threat Composer application. When generating or validating threat model data, ensure all optional fields are included when available (and additive) to provide comprehensive threat modeling coverage. For more information about Threat Composer and threat modeling best practices, visit: https://github.com/awslabs/threat-composer",
   "type": "object",
   "properties": {
     "schema": {
       "description": "Schema version identifier",
       "type": "number",
       "maximum": 1
-    },
-    "workspace": {
-      "description": "Workspace configuration and metadata. Reserved for backwards compatibility.",
-      "type": "object",
-      "properties": {
-        "id": {
-          "description": "UUID v4 identifier for the workspace",
-          "type": "string",
-          "minLength": 36,
-          "maxLength": 36
-        },
-        "name": {
-          "description": "Human-readable workspace name",
-          "type": "string",
-          "maxLength": 50,
-          "pattern": "^[A-Za-z0-9-_# ]*$"
-        },
-        "storageType": {
-          "description": "Storage mechanism for the workspace",
-          "type": "string",
-          "enum": [
-            "LocalState",
-            "LocalStorage"
-          ]
-        },
-        "metadata": {
-          "description": "Additional workspace metadata",
-          "type": "object",
-          "properties": {},
-          "additionalProperties": false
-        }
-      },
-      "required": [
-        "id",
-        "name"
-      ],
-      "additionalProperties": false
     },
     "applicationInfo": {
       "description": "Information about the application being threat modeled",
