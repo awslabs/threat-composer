@@ -43,7 +43,7 @@
       "name": "compile:browser-extension",
       "steps": [
         {
-          "exec": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/browser-extension/ REACT_APP_APP_MODE=browser-extension react-app-rewired build"
+          "exec": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/browser-extension/ REACT_APP_APP_MODE=browser-extension craco build"
         }
       ]
     },
@@ -51,7 +51,7 @@
       "name": "compile:ide-extension",
       "steps": [
         {
-          "exec": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/ide-extension/ REACT_APP_APP_MODE=ide-extension react-app-rewired build"
+          "exec": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/ide-extension/ REACT_APP_APP_MODE=ide-extension craco build"
         }
       ]
     },
@@ -59,7 +59,7 @@
       "name": "compile:website",
       "steps": [
         {
-          "exec": "BUILD_PATH=./build/website/ react-app-rewired build"
+          "exec": "BUILD_PATH=./build/website/ craco build"
         }
       ]
     },
@@ -72,7 +72,7 @@
       "description": "Starts the react application",
       "steps": [
         {
-          "exec": "react-scripts start"
+          "exec": "craco start"
         }
       ]
     },
@@ -83,15 +83,6 @@
         {
           "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ src test build-tools",
           "receiveArgs": true
-        }
-      ]
-    },
-    "generate-build-constants": {
-      "name": "generate-build-constants",
-      "description": "Generate build-time constants including random family name",
-      "steps": [
-        {
-          "exec": "node scripts/generate-build-constants.js"
         }
       ]
     },
@@ -135,19 +126,14 @@
     },
     "pre-compile": {
       "name": "pre-compile",
-      "description": "Prepare the project for compilation",
-      "steps": [
-        {
-          "spawn": "generate-build-constants"
-        }
-      ]
+      "description": "Prepare the project for compilation"
     },
     "test": {
       "name": "test",
       "description": "Run tests",
       "steps": [
         {
-          "exec": "react-app-rewired test --watchAll=false --passWithNoTests"
+          "exec": "craco test --watchAll=false --passWithNoTests"
         }
       ]
     },
@@ -159,13 +145,13 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@cloudscape-design/jest-preset,@testing-library/jest-dom,@testing-library/react,@testing-library/user-event,@types/jest,@types/react,@types/react-dom,@types/react-router-dom,@types/uuid,eslint-import-resolver-typescript,eslint-plugin-import,merge,react-app-rewired,@aws-northstar/ui,@aws/threat-composer,@cloudscape-design/components,@cloudscape-design/design-tokens,@cloudscape-design/global-styles,@emotion/react,@uidotdev/usehooks,docx,react,react-dom,react-router-dom,unist-util-visit,uuid,web-vitals"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@cloudscape-design/jest-preset,@craco/craco,@testing-library/jest-dom,@testing-library/react,@testing-library/user-event,@types/jest,@types/react,@types/react-dom,@types/react-router-dom,@types/uuid,eslint-import-resolver-typescript,eslint-plugin-import,merge,@aws-northstar/ui,@aws/threat-composer,@cloudscape-design/components,@cloudscape-design/design-tokens,@cloudscape-design/global-styles,@emotion/react,@uidotdev/usehooks,docx,react,react-dom,react-router-dom,unist-util-visit,uuid,web-vitals"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @cloudscape-design/jest-preset @testing-library/jest-dom @testing-library/react @testing-library/user-event @types/jest @types/node @types/react @types/react-dom @types/react-router-dom @types/uuid @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-import-resolver-typescript eslint-plugin-import eslint merge react-app-rewired react-scripts typescript @aws-northstar/ui @aws/threat-composer @cloudscape-design/components @cloudscape-design/design-tokens @cloudscape-design/global-styles @emotion/react @uidotdev/usehooks docx react react-dom react-router-dom remark-frontmatter remark-gfm remark-parse unified unist-util-visit uuid web-vitals"
+          "exec": "yarn upgrade @cloudscape-design/jest-preset @craco/craco @testing-library/jest-dom @testing-library/react @testing-library/user-event @types/jest @types/node @types/react @types/react-dom @types/react-router-dom @types/uuid @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-import-resolver-typescript eslint-plugin-import eslint merge react-scripts typescript @aws-northstar/ui @aws/threat-composer @cloudscape-design/components @cloudscape-design/design-tokens @cloudscape-design/global-styles @emotion/react @uidotdev/usehooks docx react react-dom react-router-dom remark-frontmatter remark-gfm remark-parse unified unist-util-visit uuid web-vitals"
         },
         {
           "exec": "npx projen"

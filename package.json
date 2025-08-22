@@ -3,6 +3,7 @@
   "scripts": {
     "build": "npx projen build",
     "build:packs": "npx projen build:packs",
+    "build:schema": "npx projen build:schema",
     "clobber": "npx projen clobber",
     "compile": "npx projen compile",
     "default": "npx projen default",
@@ -70,7 +71,8 @@
     "semver": "^7.5.3",
     "@babel/traverse": "^7.25.0",
     "postcss": "^8.4.31",
-    "web-ext-run": "^0.2.1"
+    "web-ext-run": "^0.2.1",
+    "esbuild": "^0.25.4"
   },
   "engines": {
     "node": ">=16",

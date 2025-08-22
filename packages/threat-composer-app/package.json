@@ -9,7 +9,6 @@
     "default": "npx projen default",
     "dev": "npx projen dev",
     "eslint": "npx projen eslint",
-    "generate-build-constants": "npx projen generate-build-constants",
     "package": "npx projen package",
     "post-compile": "npx projen post-compile",
     "post-upgrade": "npx projen post-upgrade",
@@ -20,6 +19,7 @@
   },
   "devDependencies": {
     "@cloudscape-design/jest-preset": "2.0.45",
+    "@craco/craco": "^7.1.0",
     "@testing-library/jest-dom": "5.17.0",
     "@testing-library/react": "14.3.1",
     "@testing-library/user-event": "14.6.1",
@@ -35,7 +35,6 @@
     "eslint-import-resolver-typescript": "3.10.1",
     "eslint-plugin-import": "2.31.0",
     "merge": "2.1.1",
-    "react-app-rewired": "2.2.1",
     "react-scripts": "^5",
     "typescript": "^4.0.3"
   },

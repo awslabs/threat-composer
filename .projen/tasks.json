@@ -20,6 +20,14 @@
         }
       ]
     },
+    "build:schema": {
+      "name": "build:schema",
+      "steps": [
+        {
+          "exec": "npx ts-node --compiler-options '{\"lib\":[\"es2019\",\"dom\"]}' ./scripts/generateSchema.ts"
+        }
+      ]
+    },
     "clobber": {
       "name": "clobber",
       "description": "hard resets to HEAD of origin and cleans the local repo",

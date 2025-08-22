@@ -6,10 +6,7 @@ class ThreatComposerInfraProject extends AwsCdkTypeScriptApp {
     super({
       cdkVersion: "2.128.0",
       defaultReleaseBranch: "main",
-      deps: [
-        "@aws/pdk",
-        "cdk-nag",
-      ],
+      deps: ["@aws/pdk", "cdk-nag"],
       name: "@aws/threat-composer-infra",
       parent: parent,
       outdir: "packages/threat-composer-infra",
@@ -18,18 +15,16 @@ class ThreatComposerInfraProject extends AwsCdkTypeScriptApp {
       requireApproval: ApprovalLevel.NEVER,
       tsconfig: {
         compilerOptions: {
-          lib: ['es2019', 'es2020', 'dom'],
+          lib: ["es2019", "es2020", "dom"],
           skipLibCheck: true,
         },
-      }
+      },
     });
 
-    this.eslint?.addPlugins('header');
+    this.eslint?.addPlugins("header");
     this.eslint?.addRules({
       "header/header": [2, "../../header.js"],
     });
-
-
   }
 }
 

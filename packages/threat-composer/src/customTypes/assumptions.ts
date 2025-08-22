@@ -17,10 +17,7 @@ import { z } from 'zod';
 import { ContentEntityBaseSchema, EntityLinkBaseSchema } from './entities';
 
 export const AssumptionSchema = ContentEntityBaseSchema.extend({
-  /**
-   * A flag determining the assumption is still valid or not.
-   */
-  valid: z.boolean().optional(),
+  content: ContentEntityBaseSchema.shape.content.describe('Assumption. Plain-text'),
 }).strict();
 
 export type Assumption = z.infer<typeof AssumptionSchema>;
@@ -30,11 +27,11 @@ export const AssumptionLinkSchema = EntityLinkBaseSchema.extend({
   /**
    * The assumption being linked.
    */
-  assumptionId: z.string().length(36),
+  assumptionId: z.string().length(36).describe('UUID for the assumption'),
   /**
    * The linked entity Id.
    */
-  linkedId: z.string().length(36),
+  linkedId: z.string().length(36).describe('UUID of the linked threat or mitigation'),
 }).strict();
 
 export type AssumptionLink = z.infer<typeof AssumptionLinkSchema>;
