@@ -13,20 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export * from './assumptions';
-export * from './brainstorm';
-export * from './mitigations';
-export * from './threats';
-export * from './threatFieldTypes';
-export * from './workspaces';
-export * from './entities';
-export * from './composerMode';
-export * from './application';
-export * from './architecture';
-export * from './dataflow';
-export * from './dataExchange';
-export * from './events';
-export * from './components';
-export * from './referencePacks';
-export * from './windowAPI';
-export * from './appMode';
+import BrainstormContextProvider, { BrainstormData, BrainstormItem } from '@aws/threat-composer/lib/contexts/BrainstormContext';
+import { BrainstormContext, useBrainstormContext, BrainstormContextApi } from '@aws/threat-composer/lib/contexts/BrainstormContext/context';
+
+// Re-export everything from the core package
+export { BrainstormContext, BrainstormContextProvider, useBrainstormContext };
+export type { BrainstormContextApi, BrainstormData, BrainstormItem };
+
+export default BrainstormContextProvider;
