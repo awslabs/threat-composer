@@ -103,11 +103,17 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
       exec: "npx ts-node ./scripts/data/buildPacks.ts ThreatPack && npx ts-node ./scripts/data/buildPacks.ts MitigationPack",
     });
 
+    this.addTask("build:schema", {
+      exec: 'npx ts-node --compiler-options \'{"lib":["es2019","dom"]}\' ./scripts/generateSchema.ts',
+    });
+
     this.buildTask.reset();
     this.buildTask.spawn(this.tasks.tryFind("build:packs")!);
     this.buildTask.exec(
       "yarn nx run-many --target=build --output-style=stream --nx-bail"
     );
+    //Will enable this once ready to produce schema file for consumption
+    //this.buildTask.spawn(this.tasks.tryFind("build:schema")!);
 
     this.compileTask.reset(
       "npx nx run-many --target=build --all --skip-nx-cache --nx-bail"

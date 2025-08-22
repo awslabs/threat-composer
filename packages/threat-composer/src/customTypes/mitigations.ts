@@ -14,15 +14,19 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { z } from 'zod';
-import { ContentEntityBaseSchema, EntityLinkBaseSchema, StatusSchema } from './entities';
+import { ContentEntityBaseSchema, EntityLinkBaseSchema, StatusSchema, MetadataSchemaMitigation } from './entities';
 import { MITIGATION_STATUS_IDENTIFIED, MITIGATION_STATUS_IN_PROGRESS, MITIGATION_STATUS_RESOLVED, MITIGATION_STATUS_RESOLVED_WILLNOTACTION, STATUS_NOT_SET } from '../configs';
 import mitigationStatus from '../data/status/mitigationStatus.json';
 
+
 export const MitigationSchema = ContentEntityBaseSchema.extend({
-  status: StatusSchema.refine((schema) => {
-    return !schema || mitigationStatus.map(x => x.value).includes(schema);
-  }, 'Invalid mitigation status'),
-}).strict();;
+  content: ContentEntityBaseSchema.shape.content.describe('Mitigation. Plain-text'),
+  /**
+   * The metadata - overridden to support mitigation-specific metadata schema.
+   */
+  metadata: MetadataSchemaMitigation.array().optional().describe('Additional metadata as key-value pairs for mitigations'),
+  status: StatusSchema.pipe(z.enum(mitigationStatus.map(x => x.value) as [string, ...string[]])).optional().describe('Status of the mitigation'),
+}).strict();
 
 export type Mitigation = z.infer<typeof MitigationSchema>;
 
@@ -30,11 +34,11 @@ export const MitigationLinkSchema = EntityLinkBaseSchema.extend({
   /**
    * The mitigation being linked.
    */
-  mitigationId: z.string().length(36),
+  mitigationId: z.string().length(36).describe('UUID for the mitigation'),
   /**
    * The linked entity Id.
    */
-  linkedId: z.string().length(36),
+  linkedId: z.string().length(36).describe('UUID of the linked threat or assumption'),
 }).strict();;
 
 export type MitigationLink = z.infer<typeof MitigationLinkSchema>;

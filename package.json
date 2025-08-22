@@ -3,6 +3,7 @@
   "scripts": {
     "build": "npx projen build",
     "build:packs": "npx projen build:packs",
+    "build:schema": "npx projen build:schema",
     "clobber": "npx projen clobber",
     "compile": "npx projen compile",
     "default": "npx projen default",
