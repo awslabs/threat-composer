@@ -9,7 +9,6 @@
     "default": "npx projen default",
     "dev": "npx projen dev",
     "eslint": "npx projen eslint",
-    "generate-build-constants": "npx projen generate-build-constants",
     "package": "npx projen package",
     "post-compile": "npx projen post-compile",
     "post-upgrade": "npx projen post-upgrade",
