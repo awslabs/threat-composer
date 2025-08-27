@@ -20,9 +20,13 @@ import {
   useMitigationsContext,
   useWorkspacesContext,
   GroupableItemCard,
+  BrainstormContextProvider,
+  useBrainstormContext,
+  BrainstormItem,
+  PromotionHandlers,
+  ThreatCreationHandlers,
   Modal,
 } from '@aws/threat-composer';
-import BrainstormContextProvider, { useBrainstormContext, BrainstormItem, PromotionHandlers, ThreatCreationHandlers } from '@aws/threat-composer/lib/contexts/BrainstormContext';
 import { Button, Container, ContentLayout, Header, SpaceBetween, TextContent, Input, Toggle, Textarea } from '@cloudscape-design/components';
 import { BaseKeyDetail } from '@cloudscape-design/components/internal/events';
 import { FC, useCallback, useState, CSSProperties, useMemo } from 'react';
