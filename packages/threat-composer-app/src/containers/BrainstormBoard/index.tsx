@@ -173,7 +173,7 @@ const ItemColumn: FC<ItemColumnProps> = ({
     ungroupItem(itemType, id);
   }, [ungroupItem, itemType]);
 
-  // Group items by groupId and filter out non-first items
+  // Group items by groupId and maintain proper ordering
   const displayItems = useMemo(() => {
     const items = brainstormData[itemType] || [];
     const groupMap = new Map<string, BrainstormItem[]>();
@@ -191,22 +191,39 @@ const ItemColumn: FC<ItemColumnProps> = ({
       }
     });
 
-    // Create display items - show individual items and first item from each group
-    const result: Array<{ item: BrainstormItem; groupedItems: BrainstormItem[] }> = [];
-
-    // Add individual items
-    individualItems.forEach(item => {
-      result.push({ item, groupedItems: [] });
+    // Sort items within each group by creation time
+    groupMap.forEach(itemsInGroup => {
+      itemsInGroup.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
     });
 
-    // Add first item from each group with all grouped items
+    // Create display items with proper ordering
+    const result: Array<{ item: BrainstormItem; groupedItems: BrainstormItem[]; earliestCreatedAt: Date }> = [];
+
+    // Add individual items with their creation time
+    individualItems.forEach(item => {
+      result.push({ 
+        item, 
+        groupedItems: [], 
+        earliestCreatedAt: new Date(item.createdAt) 
+      });
+    });
+
+    // Add groups represented by their earliest item
     groupMap.forEach(itemsInGroup => {
       if (itemsInGroup.length > 0) {
-        result.push({ item: itemsInGroup[0], groupedItems: itemsInGroup });
+        const earliestItem = itemsInGroup[0]; // Already sorted by creation time
+        result.push({ 
+          item: earliestItem, 
+          groupedItems: itemsInGroup,
+          earliestCreatedAt: new Date(earliestItem.createdAt)
+        });
       }
     });
 
-    return result;
+    // Sort all display items by their earliest creation time to maintain original order
+    result.sort((a, b) => a.earliestCreatedAt.getTime() - b.earliestCreatedAt.getTime());
+
+    return result.map(({ item, groupedItems }) => ({ item, groupedItems }));
   }, [brainstormData, itemType]);
 
   return (
