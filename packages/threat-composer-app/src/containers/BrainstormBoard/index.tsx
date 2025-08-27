@@ -20,9 +20,9 @@ import {
   useMitigationsContext,
   useWorkspacesContext,
   GroupableItemCard,
+  Modal,
 } from '@aws/threat-composer';
-import Modal from '@aws/threat-composer/lib/components/generic/Modal';
-import BrainstormContextProvider, { useBrainstormContext, BrainstormItem } from '@aws/threat-composer/lib/contexts/BrainstormContext';
+import BrainstormContextProvider, { useBrainstormContext, BrainstormItem, PromotionHandlers, ThreatCreationHandlers } from '@aws/threat-composer/lib/contexts/BrainstormContext';
 import { Button, Container, ContentLayout, Header, SpaceBetween, TextContent, Input, Toggle, Textarea } from '@cloudscape-design/components';
 import { BaseKeyDetail } from '@cloudscape-design/components/internal/events';
 import { FC, useCallback, useState, CSSProperties, useMemo } from 'react';
@@ -94,19 +94,6 @@ const SimplifiedEntityCreationCard: FC<{
   );
 };
 
-// Promotion handlers interface
-interface PromotionHandlers {
-  promote: (item: BrainstormItem) => void;
-  isPromoted: (item: BrainstormItem) => boolean;
-}
-
-// Threat creation handlers interface
-interface ThreatCreationHandlers {
-  createThreat: (item: BrainstormItem) => void;
-  fieldName: string;
-  fieldKey: string;
-}
-
 // Generic Column Component
 interface ItemColumnProps {
   title: string;
@@ -152,7 +139,7 @@ const ItemColumn: FC<ItemColumnProps> = ({
     ungroupItem(itemType, id);
   }, [ungroupItem, itemType]);
 
-  // Group items by groupId and maintain proper ordering
+  // Simplified display items logic - just get items and group them
   const displayItems = useMemo(() => {
     const items = brainstormData[itemType] || [];
     const groupMap = new Map<string, BrainstormItem[]>();
@@ -175,34 +162,25 @@ const ItemColumn: FC<ItemColumnProps> = ({
       itemsInGroup.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
     });
 
-    // Create display items with proper ordering
-    const result: Array<{ item: BrainstormItem; groupedItems: BrainstormItem[]; earliestCreatedAt: Date }> = [];
+    // Create display items
+    const result: Array<{ item: BrainstormItem; groupedItems: BrainstormItem[] }> = [];
 
-    // Add individual items with their creation time
+    // Add individual items
     individualItems.forEach(item => {
-      result.push({
-        item,
-        groupedItems: [],
-        earliestCreatedAt: new Date(item.createdAt),
-      });
+      result.push({ item, groupedItems: [] });
     });
 
     // Add groups represented by their earliest item
     groupMap.forEach(itemsInGroup => {
       if (itemsInGroup.length > 0) {
-        const earliestItem = itemsInGroup[0]; // Already sorted by creation time
-        result.push({
-          item: earliestItem,
-          groupedItems: itemsInGroup,
-          earliestCreatedAt: new Date(earliestItem.createdAt),
-        });
+        result.push({ item: itemsInGroup[0], groupedItems: itemsInGroup });
       }
     });
 
-    // Sort all display items by their earliest creation time to maintain original order
-    result.sort((a, b) => a.earliestCreatedAt.getTime() - b.earliestCreatedAt.getTime());
+    // Sort by creation time
+    result.sort((a, b) => new Date(a.item.createdAt).getTime() - new Date(b.item.createdAt).getTime());
 
-    return result.map(({ item, groupedItems }) => ({ item, groupedItems }));
+    return result;
   }, [brainstormData, itemType]);
 
   return (

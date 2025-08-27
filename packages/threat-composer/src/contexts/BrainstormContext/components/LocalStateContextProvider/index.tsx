@@ -40,6 +40,7 @@ PropsWithChildren<BrainstormContextProviderProps & LocalStateContextProviderBase
     groupItems,
     ungroupItem,
     getGroupedItems,
+    getDisplayItems,
     mergeGroups,
   } = useBrainstorm(brainstormData, setBrainstormData);
 
@@ -58,6 +59,7 @@ PropsWithChildren<BrainstormContextProviderProps & LocalStateContextProviderBase
         groupItems,
         ungroupItem,
         getGroupedItems,
+        getDisplayItems,
         mergeGroups,
         onDeleteWorkspace: handleDeleteWorkspace,
       }}

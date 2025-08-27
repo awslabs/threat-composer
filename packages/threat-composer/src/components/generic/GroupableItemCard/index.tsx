@@ -20,6 +20,7 @@ import TextContent from '@cloudscape-design/components/text-content';
 import Textarea from '@cloudscape-design/components/textarea';
 import { colorBorderDividerDefault, colorBackgroundButtonPrimaryActive } from '@cloudscape-design/design-tokens';
 import { FC, useCallback, useState, useRef, useEffect, DragEvent } from 'react';
+import { PromotionHandlers, ThreatCreationHandlers } from '../../../contexts/BrainstormContext/types';
 import { BrainstormItem, BrainstormData } from '../../../customTypes/brainstorm';
 
 // Item Card Component
@@ -37,19 +38,6 @@ interface GroupableItemCardProps {
   onUngroup?: (id: string) => void;
   isSelected?: boolean;
   onSelect?: (item: BrainstormItem) => void;
-}
-
-// Promotion handlers interface
-interface PromotionHandlers {
-  promote: (item: BrainstormItem) => void;
-  isPromoted: (item: BrainstormItem) => boolean;
-}
-
-// Threat creation handlers interface
-interface ThreatCreationHandlers {
-  createThreat: (item: BrainstormItem) => void;
-  fieldName: string;
-  fieldKey: string;
 }
 
 // Module-level variable to store current drag data
@@ -163,32 +151,13 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
   }) => {
     const [itemShowButtons, setItemShowButtons] = useState(false);
     const [localEditContent, setLocalEditContent] = useState('');
-    const itemHoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleItemMouseEnter = useCallback(() => {
-      if (itemHoverTimeoutRef.current) {
-        clearTimeout(itemHoverTimeoutRef.current);
-      }
-      itemHoverTimeoutRef.current = setTimeout(() => {
-        setItemShowButtons(true);
-      }, 50);
+      setItemShowButtons(true);
     }, []);
 
     const handleItemMouseLeave = useCallback(() => {
-      if (itemHoverTimeoutRef.current) {
-        clearTimeout(itemHoverTimeoutRef.current);
-      }
-      itemHoverTimeoutRef.current = setTimeout(() => {
-        setItemShowButtons(false);
-      }, 100);
-    }, []);
-
-    useEffect(() => {
-      return () => {
-        if (itemHoverTimeoutRef.current) {
-          clearTimeout(itemHoverTimeoutRef.current);
-        }
-      };
+      setItemShowButtons(false);
     }, []);
 
     // Check if this specific item is being edited

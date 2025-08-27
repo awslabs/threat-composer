@@ -21,6 +21,7 @@ import { STORAGE_LOCAL_STATE } from '../../configs';
 import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
 
 export * from './context';
+export * from './types';
 export { BrainstormItem, BrainstormData } from '../../customTypes/brainstorm';
 
 export interface BrainstormContextProviderProps {

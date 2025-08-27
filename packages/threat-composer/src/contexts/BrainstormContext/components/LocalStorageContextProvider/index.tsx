@@ -51,6 +51,7 @@ const BrainstormLocalStorageContextProvider: FC<PropsWithChildren<BrainstormCont
     groupItems,
     ungroupItem,
     getGroupedItems,
+    getDisplayItems,
     mergeGroups,
   } = useBrainstorm(brainstormData, setBrainstormData);
 
@@ -72,6 +73,7 @@ const BrainstormLocalStorageContextProvider: FC<PropsWithChildren<BrainstormCont
         groupItems,
         ungroupItem,
         getGroupedItems,
+        getDisplayItems,
         mergeGroups,
         onDeleteWorkspace: handleDeleteWorkspace,
       }}

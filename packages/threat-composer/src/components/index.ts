@@ -32,4 +32,5 @@ export { default as ThemeProvider } from './generic/ThemeProvider';
 export { default as MarkdownEditor, MarkdownEditorProps } from './generic/MarkdownEditor';
 export { default as Loading } from './generic/Loading';
 export { default as GroupableItemCard } from './generic/GroupableItemCard';
+export { default as Modal } from './generic/Modal';
 export * from './generic/ThemeProvider';

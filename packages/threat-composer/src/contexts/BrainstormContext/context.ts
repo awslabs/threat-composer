@@ -25,6 +25,7 @@ export interface BrainstormContextApi {
   groupItems: (type: keyof BrainstormData, sourceId: string, targetId: string) => void;
   ungroupItem: (type: keyof BrainstormData, id: string) => void;
   getGroupedItems: (type: keyof BrainstormData, groupId: string) => BrainstormItem[];
+  getDisplayItems: (type: keyof BrainstormData) => Array<{ item: BrainstormItem; groupedItems: BrainstormItem[] }>;
   mergeGroups: (type: keyof BrainstormData, sourceId: string, targetId: string) => void;
   onDeleteWorkspace: (workspaceId: string) => Promise<void>;
 }
@@ -46,6 +47,7 @@ const initialState: BrainstormContextApi = {
   groupItems: () => {},
   ungroupItem: () => {},
   getGroupedItems: () => [],
+  getDisplayItems: () => [],
   mergeGroups: () => {},
   onDeleteWorkspace: () => Promise.resolve(),
 };

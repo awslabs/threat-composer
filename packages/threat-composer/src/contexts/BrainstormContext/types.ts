@@ -13,11 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import BrainstormContextProvider, { BrainstormData, BrainstormItem } from '@aws/threat-composer/lib/contexts/BrainstormContext';
-import { BrainstormContext, useBrainstormContext, BrainstormContextApi } from '@aws/threat-composer/lib/contexts/BrainstormContext/context';
+import { BrainstormItem } from '../../customTypes/brainstorm';
 
-// Re-export everything from the core package
-export { BrainstormContext, BrainstormContextProvider, useBrainstormContext };
-export type { BrainstormContextApi, BrainstormData, BrainstormItem };
+// Promotion handlers interface
+export interface PromotionHandlers {
+  promote: (item: BrainstormItem) => void;
+  isPromoted: (item: BrainstormItem) => boolean;
+}
 
-export default BrainstormContextProvider;
+// Threat creation handlers interface
+export interface ThreatCreationHandlers {
+  createThreat: (item: BrainstormItem) => void;
+  fieldName: string;
+  fieldKey: string;
+}

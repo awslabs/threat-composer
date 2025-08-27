@@ -70,65 +70,6 @@ const useBrainstorm = (
       return;
     }
 
-    // Generate a new group ID if target item is not already grouped
-    const groupId = targetItem.groupId || crypto.randomUUID();
-
-    setBrainstormData({
-      ...brainstormData,
-      [type]: items.map((currentItem: BrainstormItem) => {
-        if (currentItem.id === sourceId) {
-          // Add source item to the group
-          return {
-            ...currentItem,
-            groupId,
-          };
-        } else if (currentItem.id === targetId && !currentItem.groupId) {
-          // Add target item to the group if it wasn't already grouped
-          return {
-            ...currentItem,
-            groupId,
-          };
-        }
-        return currentItem;
-      }),
-    });
-  }, [brainstormData, setBrainstormData]);
-
-  const ungroupItem = useCallback((type: keyof BrainstormData, id: string) => {
-    const items = brainstormData[type] || [];
-    const targetItem = items.find(item => item.id === id);
-
-    if (!targetItem || !targetItem.groupId) {
-      return;
-    }
-
-    setBrainstormData({
-      ...brainstormData,
-      [type]: items.map((currentItem: BrainstormItem) => {
-        if (currentItem.id === id) {
-          // Remove grouping info from this item
-          const { groupId, ...ungroupedItem } = currentItem;
-          return ungroupedItem;
-        }
-        return currentItem;
-      }),
-    });
-  }, [brainstormData, setBrainstormData]);
-
-  const getGroupedItems = useCallback((type: keyof BrainstormData, groupId: string) => {
-    const items = brainstormData[type] || [];
-    return items.filter(item => item.groupId === groupId);
-  }, [brainstormData]);
-
-  const mergeGroups = useCallback((type: keyof BrainstormData, sourceId: string, targetId: string) => {
-    const items = brainstormData[type] || [];
-    const sourceItem = items.find(item => item.id === sourceId);
-    const targetItem = items.find(item => item.id === targetId);
-
-    if (!sourceItem || !targetItem || sourceId === targetId) {
-      return;
-    }
-
     // Determine the target group ID
     let targetGroupId: string;
 
@@ -170,6 +111,88 @@ const useBrainstorm = (
     });
   }, [brainstormData, setBrainstormData]);
 
+  const ungroupItem = useCallback((type: keyof BrainstormData, id: string) => {
+    const items = brainstormData[type] || [];
+    const targetItem = items.find(item => item.id === id);
+
+    if (!targetItem || !targetItem.groupId) {
+      return;
+    }
+
+    setBrainstormData({
+      ...brainstormData,
+      [type]: items.map((currentItem: BrainstormItem) => {
+        if (currentItem.id === id) {
+          // Remove grouping info from this item
+          const { groupId, ...ungroupedItem } = currentItem;
+          return ungroupedItem;
+        }
+        return currentItem;
+      }),
+    });
+  }, [brainstormData, setBrainstormData]);
+
+  const getGroupedItems = useCallback((type: keyof BrainstormData, groupId: string) => {
+    const items = brainstormData[type] || [];
+    return items.filter(item => item.groupId === groupId);
+  }, [brainstormData]);
+
+  // Get display items with proper grouping and ordering
+  const getDisplayItems = useCallback((type: keyof BrainstormData) => {
+    const items = brainstormData[type] || [];
+    const groupMap = new Map<string, BrainstormItem[]>();
+    const individualItems: BrainstormItem[] = [];
+
+    // Group items by groupId
+    items.forEach(item => {
+      if (item.groupId) {
+        if (!groupMap.has(item.groupId)) {
+          groupMap.set(item.groupId, []);
+        }
+        groupMap.get(item.groupId)!.push(item);
+      } else {
+        individualItems.push(item);
+      }
+    });
+
+    // Sort items within each group by creation time
+    groupMap.forEach(itemsInGroup => {
+      itemsInGroup.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    });
+
+    // Create display items with proper ordering
+    const result: Array<{ item: BrainstormItem; groupedItems: BrainstormItem[]; earliestCreatedAt: Date }> = [];
+
+    // Add individual items with their creation time
+    individualItems.forEach(item => {
+      result.push({
+        item,
+        groupedItems: [],
+        earliestCreatedAt: new Date(item.createdAt),
+      });
+    });
+
+    // Add groups represented by their earliest item
+    groupMap.forEach(itemsInGroup => {
+      if (itemsInGroup.length > 0) {
+        const earliestItem = itemsInGroup[0]; // Already sorted by creation time
+        result.push({
+          item: earliestItem,
+          groupedItems: itemsInGroup,
+          earliestCreatedAt: new Date(earliestItem.createdAt),
+        });
+      }
+    });
+
+    // Sort all display items by their earliest creation time to maintain original order
+    result.sort((a, b) => a.earliestCreatedAt.getTime() - b.earliestCreatedAt.getTime());
+
+    return result.map(({ item, groupedItems }) => ({ item, groupedItems }));
+  }, [brainstormData]);
+
+  // Alias for backward compatibility
+  const mergeGroups = groupItems;
+
   return {
     addItem,
     updateItem,
@@ -177,6 +200,7 @@ const useBrainstorm = (
     groupItems,
     ungroupItem,
     getGroupedItems,
+    getDisplayItems,
     mergeGroups,
   };
 };
