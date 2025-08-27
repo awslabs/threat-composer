@@ -26,6 +26,8 @@ const createBrainstormItemSchema = (contentDescription: string) => z.object({
     .describe('ISO 8601 UTC timestamp when the item was created (e.g., "2024-01-15T14:30:45.123Z")'),
   createdBy: z.string().max(SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH).optional()
     .describe('Identifier of who created this item (user email, ID, display name, or "ai-agent"). AI agents should use "ai-agent" as the default value.'),
+  groupId: z.string().max(36).optional()
+    .describe('UUID v4 identifier of the group this item belongs to. If not provided, item is not grouped.'),
 }).strict();
 
 export const BrainstormDataSchema = z.object({

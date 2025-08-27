@@ -48,6 +48,10 @@ const BrainstormLocalStorageContextProvider: FC<PropsWithChildren<BrainstormCont
     addItem,
     updateItem,
     removeItem: removeItemFromHook,
+    groupItems,
+    ungroupItem,
+    getGroupedItems,
+    mergeGroups,
   } = useBrainstorm(brainstormData, setBrainstormData);
 
   const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
@@ -65,6 +69,10 @@ const BrainstormLocalStorageContextProvider: FC<PropsWithChildren<BrainstormCont
         addItem,
         updateItem,
         removeItem: removeItemFromHook,
+        groupItems,
+        ungroupItem,
+        getGroupedItems,
+        mergeGroups,
         onDeleteWorkspace: handleDeleteWorkspace,
       }}
     >

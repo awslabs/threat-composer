@@ -37,6 +37,10 @@ PropsWithChildren<BrainstormContextProviderProps & LocalStateContextProviderBase
     addItem,
     updateItem,
     removeItem: removeItemFromHook,
+    groupItems,
+    ungroupItem,
+    getGroupedItems,
+    mergeGroups,
   } = useBrainstorm(brainstormData, setBrainstormData);
 
   const handleDeleteWorkspace = useCallback(async (_workspaceId: string) => {
@@ -51,6 +55,10 @@ PropsWithChildren<BrainstormContextProviderProps & LocalStateContextProviderBase
         addItem,
         updateItem,
         removeItem: removeItemFromHook,
+        groupItems,
+        ungroupItem,
+        getGroupedItems,
+        mergeGroups,
         onDeleteWorkspace: handleDeleteWorkspace,
       }}
     >

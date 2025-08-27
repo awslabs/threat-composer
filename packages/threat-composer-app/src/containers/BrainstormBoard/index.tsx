@@ -19,111 +19,15 @@ import {
   useAssumptionsContext,
   useMitigationsContext,
   useWorkspacesContext,
+  GroupableItemCard,
 } from '@aws/threat-composer';
 import Modal from '@aws/threat-composer/lib/components/generic/Modal';
 import BrainstormContextProvider, { useBrainstormContext, BrainstormItem } from '@aws/threat-composer/lib/contexts/BrainstormContext';
 import { Button, Container, ContentLayout, Header, SpaceBetween, TextContent, Input, Toggle, Textarea } from '@cloudscape-design/components';
 import { BaseKeyDetail } from '@cloudscape-design/components/internal/events';
-import { FC, useCallback, useState, CSSProperties, useRef, useEffect } from 'react';
+import { FC, useCallback, useState, CSSProperties, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
-// Item Card Component
-interface ItemCardProps {
-  item: BrainstormItem;
-  onDelete: (id: string) => void;
-  onEdit: (item: BrainstormItem) => void;
-  onPromote?: PromotionHandlers;
-  isPromotable?: boolean;
-  onCreateThreat?: ThreatCreationHandlers;
-  canCreateThreat?: boolean;
-  isSelected?: boolean;
-  onSelect?: (item: BrainstormItem) => void;
-}
-
-const ItemCard: FC<ItemCardProps> = ({
-  item,
-  onDelete,
-  onEdit,
-  onPromote,
-  isPromotable = false,
-  onCreateThreat,
-  canCreateThreat = false,
-}) => {
-  const [showButtons, setShowButtons] = useState(false);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const handleMouseEnter = useCallback(() => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
-    hoverTimeoutRef.current = setTimeout(() => {
-      setShowButtons(true);
-    }, 100); // 100ms delay before showing buttons
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
-    hoverTimeoutRef.current = setTimeout(() => {
-      setShowButtons(false);
-    }, 100); // 100ms delay before hiding buttons
-  }, []);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  return (
-    <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <Container>
-        <SpaceBetween direction="vertical" size="s">
-          <TextContent>{item.content}</TextContent>
-          {showButtons && (
-            <div style={{ marginTop: '8px' }}>
-              <SpaceBetween direction="horizontal" size="xs">
-                {isPromotable && (
-                  <Button
-                    iconName={onPromote && onPromote.isPromoted?.(item) ? 'check' : 'add-plus'}
-                    variant="icon"
-                    onClick={() => onPromote && onPromote.promote?.(item)}
-                    disabled={onPromote && onPromote.isPromoted?.(item)}
-                    ariaLabel={onPromote && onPromote.isPromoted?.(item) ? 'Item promoted' : 'Promote item'}
-                  />
-                )}
-                {canCreateThreat && (
-                  <Button
-                    iconName="external"
-                    variant="icon"
-                    onClick={() => onCreateThreat && onCreateThreat.createThreat?.(item)}
-                    ariaLabel={`Create threat with ${onCreateThreat?.fieldName}`}
-                  />
-                )}
-                <Button
-                  iconName="edit"
-                  variant="icon"
-                  onClick={() => onEdit(item)}
-                  disabled={isPromotable && onPromote && onPromote.isPromoted?.(item)}
-                  ariaLabel="Edit item"
-                />
-                <Button iconName="remove" variant="icon" onClick={() => onDelete(item.id)} />
-              </SpaceBetween>
-            </div>
-          )}
-        </SpaceBetween>
-      </Container>
-    </div>
-  );
-};
 
 // Entity Creation Card Component
 const SimplifiedEntityCreationCard: FC<{
@@ -215,10 +119,10 @@ interface ItemColumnProps {
 }
 
 const ItemColumn: FC<ItemColumnProps> = ({
-  title, itemType, placeholder, isPromotable = false,
+  itemType, placeholder, isPromotable = false,
   onPromote, canCreateThreat = false, onCreateThreat,
 }) => {
-  const { brainstormData, addItem, updateItem, removeItem } = useBrainstormContext();
+  const { brainstormData, addItem, updateItem, removeItem, ungroupItem, mergeGroups } = useBrainstormContext();
   const [content, setContent] = useState('');
   const [editingItem, setEditingItem] = useState<BrainstormItem | null>(null);
 
@@ -261,6 +165,50 @@ const ItemColumn: FC<ItemColumnProps> = ({
     setEditingItem(null);
   }, []);
 
+  const handleGroup = useCallback((sourceId: string, targetId: string) => {
+    mergeGroups(itemType, sourceId, targetId);
+  }, [mergeGroups, itemType]);
+
+  const handleUngroup = useCallback((id: string) => {
+    ungroupItem(itemType, id);
+  }, [ungroupItem, itemType]);
+
+  // Group items by groupId and filter out non-first items
+  const displayItems = useMemo(() => {
+    const items = brainstormData[itemType] || [];
+    const groupMap = new Map<string, BrainstormItem[]>();
+    const individualItems: BrainstormItem[] = [];
+
+    // Group items by groupId
+    items.forEach(item => {
+      if (item.groupId) {
+        if (!groupMap.has(item.groupId)) {
+          groupMap.set(item.groupId, []);
+        }
+        groupMap.get(item.groupId)!.push(item);
+      } else {
+        individualItems.push(item);
+      }
+    });
+
+    // Create display items - show individual items and first item from each group
+    const result: Array<{ item: BrainstormItem; groupedItems: BrainstormItem[] }> = [];
+
+    // Add individual items
+    individualItems.forEach(item => {
+      result.push({ item, groupedItems: [] });
+    });
+
+    // Add first item from each group with all grouped items
+    groupMap.forEach(itemsInGroup => {
+      if (itemsInGroup.length > 0) {
+        result.push({ item: itemsInGroup[0], groupedItems: itemsInGroup });
+      }
+    });
+
+    return result;
+  }, [brainstormData, itemType]);
+
   return (
     <SpaceBetween direction="vertical" size="s">
       <SimplifiedEntityCreationCard
@@ -272,31 +220,25 @@ const ItemColumn: FC<ItemColumnProps> = ({
         placeholder={placeholder}
         disabled={!content.trim()}
       />
-      {(brainstormData[itemType] || []).map((item: BrainstormItem) => (
-        editingItem && editingItem.id === item.id ? (
-          <SimplifiedEntityCreationCard
-            key={item.id}
-            header={`Edit ${title}`}
-            content={editingItem.content}
-            onContentChange={handleEditContentChange}
-            onSave={handleSaveEdit}
-            onReset={handleCancelEdit}
-            placeholder={`Edit ${placeholder}`}
-            disabled={!editingItem.content.trim()}
-            buttonText="Save"
-          />
-        ) : (
-          <ItemCard
-            key={item.id}
-            item={item}
-            onDelete={(id) => removeItem(itemType, id)}
-            onEdit={handleEdit}
-            isPromotable={isPromotable}
-            onPromote={onPromote}
-            canCreateThreat={canCreateThreat}
-            onCreateThreat={onCreateThreat}
-          />
-        )
+      {displayItems.map(({ item, groupedItems }) => (
+        <GroupableItemCard
+          key={item.id}
+          item={item}
+          itemType={itemType}
+          onDelete={(id: string) => removeItem(itemType, id)}
+          onEdit={handleEdit}
+          isPromotable={isPromotable}
+          onPromote={onPromote}
+          canCreateThreat={canCreateThreat}
+          onCreateThreat={onCreateThreat}
+          groupedItems={groupedItems}
+          onGroup={handleGroup}
+          onUngroup={handleUngroup}
+          editingItem={editingItem}
+          onEditContentChange={handleEditContentChange}
+          onSaveEdit={handleSaveEdit}
+          onCancelEdit={handleCancelEdit}
+        />
       ))}
     </SpaceBetween>
   );
