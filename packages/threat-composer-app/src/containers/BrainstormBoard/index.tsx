@@ -124,20 +124,10 @@ const ItemColumn: FC<ItemColumnProps> = ({
 }) => {
   const { brainstormData, addItem, updateItem, removeItem, ungroupItem, mergeGroups } = useBrainstormContext();
   const [content, setContent] = useState('');
-  const [editingItem, setEditingItem] = useState<BrainstormItem | null>(null);
 
   const handleContentChange = useCallback((newContent: string) => {
     setContent(newContent);
   }, []);
-
-  const handleEditContentChange = useCallback((newContent: string) => {
-    if (editingItem) {
-      setEditingItem({
-        ...editingItem,
-        content: newContent,
-      });
-    }
-  }, [editingItem]);
 
   const handleSave = useCallback(() => {
     if (content.trim()) {
@@ -150,20 +140,9 @@ const ItemColumn: FC<ItemColumnProps> = ({
     setContent('');
   }, []);
 
-  const handleEdit = useCallback((item: BrainstormItem) => {
-    setEditingItem(item);
-  }, []);
-
-  const handleSaveEdit = useCallback(() => {
-    if (editingItem && editingItem.content.trim()) {
-      updateItem(itemType, editingItem.id, editingItem.content);
-      setEditingItem(null);
-    }
-  }, [editingItem, itemType, updateItem]);
-
-  const handleCancelEdit = useCallback(() => {
-    setEditingItem(null);
-  }, []);
+  const handleUpdate = useCallback((updatedItem: BrainstormItem) => {
+    updateItem(itemType, updatedItem.id, updatedItem.content);
+  }, [itemType, updateItem]);
 
   const handleGroup = useCallback((sourceId: string, targetId: string) => {
     mergeGroups(itemType, sourceId, targetId);
@@ -201,10 +180,10 @@ const ItemColumn: FC<ItemColumnProps> = ({
 
     // Add individual items with their creation time
     individualItems.forEach(item => {
-      result.push({ 
-        item, 
-        groupedItems: [], 
-        earliestCreatedAt: new Date(item.createdAt) 
+      result.push({
+        item,
+        groupedItems: [],
+        earliestCreatedAt: new Date(item.createdAt),
       });
     });
 
@@ -212,10 +191,10 @@ const ItemColumn: FC<ItemColumnProps> = ({
     groupMap.forEach(itemsInGroup => {
       if (itemsInGroup.length > 0) {
         const earliestItem = itemsInGroup[0]; // Already sorted by creation time
-        result.push({ 
-          item: earliestItem, 
+        result.push({
+          item: earliestItem,
           groupedItems: itemsInGroup,
-          earliestCreatedAt: new Date(earliestItem.createdAt)
+          earliestCreatedAt: new Date(earliestItem.createdAt),
         });
       }
     });
@@ -243,7 +222,7 @@ const ItemColumn: FC<ItemColumnProps> = ({
           item={item}
           itemType={itemType}
           onDelete={(id: string) => removeItem(itemType, id)}
-          onEdit={handleEdit}
+          onUpdate={handleUpdate}
           isPromotable={isPromotable}
           onPromote={onPromote}
           canCreateThreat={canCreateThreat}
@@ -251,10 +230,6 @@ const ItemColumn: FC<ItemColumnProps> = ({
           groupedItems={groupedItems}
           onGroup={handleGroup}
           onUngroup={handleUngroup}
-          editingItem={editingItem}
-          onEditContentChange={handleEditContentChange}
-          onSaveEdit={handleSaveEdit}
-          onCancelEdit={handleCancelEdit}
         />
       ))}
     </SpaceBetween>
@@ -391,7 +366,7 @@ const DiagramModal: FC<{
               onClick={resetZoomAndPan}
               ariaLabel="Reset Zoom"
             >
-              Reset
+                Reset
             </Button>
           </div>
         )}

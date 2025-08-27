@@ -18,7 +18,7 @@ import Container from '@cloudscape-design/components/container';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import Textarea from '@cloudscape-design/components/textarea';
-import { colorBorderDividerDefault } from '@cloudscape-design/design-tokens';
+import { colorBorderDividerDefault, colorBackgroundButtonPrimaryActive } from '@cloudscape-design/design-tokens';
 import { FC, useCallback, useState, useRef, useEffect, DragEvent } from 'react';
 import { BrainstormItem, BrainstormData } from '../../../customTypes/brainstorm';
 
@@ -27,7 +27,7 @@ interface GroupableItemCardProps {
   item: BrainstormItem;
   itemType: keyof BrainstormData;
   onDelete: (id: string) => void;
-  onEdit: (item: BrainstormItem) => void;
+  onUpdate: (item: BrainstormItem) => void;
   onPromote?: PromotionHandlers;
   isPromotable?: boolean;
   onCreateThreat?: ThreatCreationHandlers;
@@ -37,11 +37,6 @@ interface GroupableItemCardProps {
   onUngroup?: (id: string) => void;
   isSelected?: boolean;
   onSelect?: (item: BrainstormItem) => void;
-  // Inline editing props
-  editingItem?: BrainstormItem | null;
-  onEditContentChange?: (content: string) => void;
-  onSaveEdit?: () => void;
-  onCancelEdit?: () => void;
 }
 
 // Promotion handlers interface
@@ -64,7 +59,7 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
   item,
   itemType,
   onDelete,
-  onEdit,
+  onUpdate,
   onPromote,
   isPromotable = false,
   onCreateThreat,
@@ -72,17 +67,17 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
   groupedItems = [],
   onGroup,
   onUngroup,
-  editingItem,
-  onEditContentChange,
-  onSaveEdit,
-  onCancelEdit,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isDropTarget, setIsDropTarget] = useState(false);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const isGrouped = groupedItems.length > 1;
+
+  // Check if any item in this card is being edited
+  const isAnyItemBeingEdited = editingItemId !== null;
 
   const handleMouseEnter = useCallback(() => {
     // Mouse enter handling for drag/drop container
@@ -167,6 +162,7 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
     showUngroupButton = false,
   }) => {
     const [itemShowButtons, setItemShowButtons] = useState(false);
+    const [localEditContent, setLocalEditContent] = useState('');
     const itemHoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleItemMouseEnter = useCallback(() => {
@@ -175,7 +171,7 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
       }
       itemHoverTimeoutRef.current = setTimeout(() => {
         setItemShowButtons(true);
-      }, 100);
+      }, 50);
     }, []);
 
     const handleItemMouseLeave = useCallback(() => {
@@ -196,7 +192,35 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
     }, []);
 
     // Check if this specific item is being edited
-    const isThisItemBeingEdited = editingItem && editingItem.id === brainstormItem.id;
+    const isThisItemBeingEdited = editingItemId === brainstormItem.id;
+
+    // Initialize content when editing starts
+    useEffect(() => {
+      if (isThisItemBeingEdited) {
+        setLocalEditContent(brainstormItem.content || '');
+      }
+    }, [isThisItemBeingEdited, brainstormItem.content]);
+
+    const handleStartEdit = useCallback(() => {
+      setEditingItemId(brainstormItem.id);
+      setLocalEditContent(brainstormItem.content || '');
+    }, [brainstormItem.id, brainstormItem.content]);
+
+    const handleSaveEdit = useCallback(() => {
+      if (localEditContent.trim()) {
+        onUpdate({
+          ...brainstormItem,
+          content: localEditContent.trim(),
+        });
+      }
+      setEditingItemId(null);
+      setLocalEditContent('');
+    }, [brainstormItem, localEditContent, onUpdate]);
+
+    const handleCancelEdit = useCallback(() => {
+      setEditingItemId(null);
+      setLocalEditContent('');
+    }, []);
 
     // If this item is being edited, show the edit UI
     if (isThisItemBeingEdited) {
@@ -204,16 +228,17 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
         <SpaceBetween direction="vertical" size="s">
           <Textarea
             placeholder="Edit content..."
-            value={editingItem.content}
-            onChange={({ detail }) => onEditContentChange?.(detail.value)}
+            value={localEditContent}
+            onChange={({ detail }) => setLocalEditContent(detail.value)}
             rows={3}
+            autoFocus
           />
           <SpaceBetween direction="horizontal" size="s">
-            <Button onClick={onCancelEdit}>Cancel</Button>
+            <Button onClick={handleCancelEdit}>Cancel</Button>
             <Button
               variant="primary"
-              disabled={!editingItem.content.trim()}
-              onClick={onSaveEdit}
+              disabled={!localEditContent.trim()}
+              onClick={handleSaveEdit}
             >
               Save
             </Button>
@@ -261,7 +286,7 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
                 <Button
                   iconName="edit"
                   variant="icon"
-                  onClick={() => onEdit(brainstormItem)}
+                  onClick={handleStartEdit}
                   disabled={isPromotable && onPromote && onPromote.isPromoted?.(brainstormItem)}
                   ariaLabel="Edit item"
                 />
@@ -290,13 +315,13 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
     return (
       <div
         ref={cardRef}
-        draggable
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        onDragOver={handleDragOver}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
+        draggable={!isAnyItemBeingEdited}
+        onDragStart={!isAnyItemBeingEdited ? handleDragStart : undefined}
+        onDragEnd={!isAnyItemBeingEdited ? handleDragEnd : undefined}
+        onDragOver={!isAnyItemBeingEdited ? handleDragOver : undefined}
+        onDragEnter={!isAnyItemBeingEdited ? handleDragEnter : undefined}
+        onDragLeave={!isAnyItemBeingEdited ? handleDragLeave : undefined}
+        onDrop={!isAnyItemBeingEdited ? handleDrop : undefined}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         style={containerStyle}
@@ -326,7 +351,7 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            backgroundColor: 'rgba(9, 114, 211, 0.9)',
+            backgroundColor: colorBackgroundButtonPrimaryActive,
             color: 'white',
             padding: '6px 12px',
             borderRadius: '6px',
@@ -348,13 +373,13 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
   return (
     <div
       ref={cardRef}
-      draggable
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-      onDragOver={handleDragOver}
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
+      draggable={!isAnyItemBeingEdited}
+      onDragStart={!isAnyItemBeingEdited ? handleDragStart : undefined}
+      onDragEnd={!isAnyItemBeingEdited ? handleDragEnd : undefined}
+      onDragOver={!isAnyItemBeingEdited ? handleDragOver : undefined}
+      onDragEnter={!isAnyItemBeingEdited ? handleDragEnter : undefined}
+      onDragLeave={!isAnyItemBeingEdited ? handleDragLeave : undefined}
+      onDrop={!isAnyItemBeingEdited ? handleDrop : undefined}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={containerStyle}
@@ -369,7 +394,7 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          backgroundColor: 'rgba(9, 114, 211, 0.9)',
+          backgroundColor: colorBackgroundButtonPrimaryActive,
           color: 'white',
           padding: '4px 8px',
           borderRadius: '4px',
