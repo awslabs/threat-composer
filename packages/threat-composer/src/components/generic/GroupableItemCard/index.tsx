@@ -18,6 +18,7 @@ import Container from '@cloudscape-design/components/container';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import Textarea from '@cloudscape-design/components/textarea';
+import { colorBorderDividerDefault } from '@cloudscape-design/design-tokens';
 import { FC, useCallback, useState, useRef, useEffect, DragEvent } from 'react';
 import { BrainstormItem, BrainstormData } from '../../../customTypes/brainstorm';
 
@@ -55,6 +56,9 @@ interface ThreatCreationHandlers {
   fieldName: string;
   fieldKey: string;
 }
+
+// Module-level variable to store current drag data
+let currentDragData: { itemId: string; itemType: keyof BrainstormData } | null = null;
 
 const GroupableItemCard: FC<GroupableItemCardProps> = ({
   item,
@@ -96,6 +100,7 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
       itemId: item.id,
       itemType,
     };
+    currentDragData = dragData;
     e.dataTransfer.setData('text/plain', JSON.stringify(dragData));
     e.dataTransfer.effectAllowed = 'move';
   }, [item.id, itemType]);
@@ -103,6 +108,7 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
   const handleDragEnd = useCallback(() => {
     setIsDragging(false);
     setIsDropTarget(false);
+    currentDragData = null;
   }, []);
 
   const handleDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
@@ -112,10 +118,12 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
 
   const handleDragEnter = useCallback((e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    // For now, assume all drags are valid and show the tilt
-    // We'll validate on drop
-    setIsDropTarget(true);
-  }, []);
+
+    // Only show drop target feedback if the dragged item type matches this item's type
+    if (currentDragData && currentDragData.itemType === itemType && currentDragData.itemId !== item.id) {
+      setIsDropTarget(true);
+    }
+  }, [itemType, item.id]);
 
   const handleDragLeave = useCallback((e: DragEvent<HTMLDivElement>) => {
     // Only hide drop target if we're actually leaving the card
@@ -299,7 +307,7 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
               {index > 0 && (
                 <div style={{
                   height: '1px',
-                  backgroundColor: '#e9ebed',
+                  backgroundColor: colorBorderDividerDefault,
                   margin: '12px 0',
                   width: '100%',
                 }} />
