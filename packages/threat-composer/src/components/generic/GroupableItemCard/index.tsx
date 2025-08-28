@@ -308,7 +308,7 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
               )}
               <ItemContent
                 brainstormItem={groupedItem}
-                showUngroupButton={index > 0} // Don't show ungroup button on first item
+                showUngroupButton={true} // Show ungroup button on all items in a group
               />
             </div>
           ))}

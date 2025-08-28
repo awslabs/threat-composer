@@ -119,12 +119,19 @@ const useBrainstorm = (
       return;
     }
 
+    const groupId = targetItem.groupId;
+    const itemsInGroup = items.filter(item => item.groupId === groupId);
+
     setBrainstormData({
       ...brainstormData,
       [type]: items.map((currentItem: BrainstormItem) => {
         if (currentItem.id === id) {
           // Remove grouping info from this item
-          const { groupId, ...ungroupedItem } = currentItem;
+          const { groupId: _, ...ungroupedItem } = currentItem;
+          return ungroupedItem;
+        } else if (currentItem.groupId === groupId && itemsInGroup.length === 2) {
+          // If removing this item leaves only one item in the group, ungroup the remaining item too
+          const { groupId: __, ...ungroupedItem } = currentItem;
           return ungroupedItem;
         }
         return currentItem;
