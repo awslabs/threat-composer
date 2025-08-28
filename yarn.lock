@@ -630,10 +630,10 @@
   dependencies:
     tslib "^2.3.1"
 
-"@aws/pdk@0.26.6":
-  version "0.26.6"
-  resolved "https://registry.yarnpkg.com/@aws/pdk/-/pdk-0.26.6.tgz#39863886bfaa6970729c3d579c02f78fd86aa9bb"
-  integrity sha512-lXXMnZxegyKHYqtkvFpEOskiyQj/9K5FeEPvvpSp8xZlDXFsDr2MwRnDbFfCLiEQHtb45LZZbXoaqCJmMeEKGQ==
+"@aws/pdk@0.26.7":
+  version "0.26.7"
+  resolved "https://registry.yarnpkg.com/@aws/pdk/-/pdk-0.26.7.tgz#4a08c19b8b8b019e569652d49026e9e67617fbc3"
+  integrity sha512-eLRQ5jGbsMStXbeMGcwDyK4I9eOy/h0wpBGblLL64xOTFEpJDNvQ2+2dAvMjleE7MpDdEe4h2Iq9Y1Evl/kOQg==
   dependencies:
     "@pnpm/reviewing.dependencies-hierarchy" "2.1.11"
     chalk "^4.x"
@@ -22374,15 +22374,15 @@ zip-dir@2.0.0:
     async "^3.2.0"
     jszip "^3.2.2"
 
-zod@4.0.14:
-  version "4.0.14"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-4.0.14.tgz#cc3a0a21981e63e0f99c0f4f1decd92ec3be7e9f"
-  integrity sha512-nGFJTnJN6cM2v9kXL+SOBq3AtjQby3Mv5ySGFof5UGRHrRioSJ5iG680cYNjE/yWk671nROcpPj4hAS8nyLhSw==
-
 zod@^3.22.4:
   version "3.24.4"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.24.4.tgz#e2e2cca5faaa012d76e527d0d36622e0a90c315f"
   integrity sha512-OdqJE9UDRPwWsrHjLN2F8bPxvwJBK22EHLWtanu0LSYr5YqzsaaW3RMgmjwr8Rypg5k+meEJdSPXJZXE/yqOMg==
+
+zod@^4:
+  version "4.1.4"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-4.1.4.tgz#b65b21c825af6f301d36b3d6bdbbd9b0c8a7c831"
+  integrity sha512-2YqJuWkU6IIK9qcE4k1lLLhyZ6zFw7XVRdQGpV97jEIZwTrscUw+DY31Xczd8nwaoksyJUIxCojZXwckJovWxA==
 
 zwitch@^2.0.0, zwitch@^2.0.4:
   version "2.0.4"
