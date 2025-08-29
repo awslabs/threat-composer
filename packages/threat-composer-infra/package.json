@@ -37,7 +37,7 @@
     "typescript": "5.8.3"
   },
   "dependencies": {
-    "@aws/pdk": "0.26.6",
+    "@aws/pdk": "^0.26.7",
     "aws-cdk-lib": "^2.128.0",
     "cdk-nag": "2.35.88",
     "constructs": "^10.0.5"
