@@ -40,3 +40,6 @@ export { useMitigationPacksContext } from './MitigationPacksContext/context';
 export { default as WorkspaceContextAggregator } from './WorkspaceContextAggregator';
 export { default as ContextAggregator } from './ContextAggregator';
 export { default as WorkspaceExamplesContext } from './WorkspaceExamplesContext';
+export { default as BrainstormContextProvider } from './BrainstormContext';
+export { useBrainstormContext } from './BrainstormContext/context';
+export { PromotionHandlers, ThreatCreationHandlers } from './BrainstormContext';

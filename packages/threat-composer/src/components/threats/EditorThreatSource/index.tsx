@@ -17,20 +17,23 @@
 import Button from '@cloudscape-design/components/button';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
 import { InputProps } from '@cloudscape-design/components/input';
-import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useCallback, useEffect, useRef, forwardRef } from 'react';
+import { useBrainstormContext } from '../../../contexts/BrainstormContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { TemplateThreatStatementSchema } from '../../../customTypes';
 import Input from '../../generic/Input';
+import BrainstormList from '../BrainstormList';
 import EditorLayout from '../EditorLayout';
 import styles from '../EditorLayout/styles';
 import ExampleList from '../ExampleList';
+import PreviousInputList from '../PreviousInputList';
 import { EditorProps } from '../ThreatStatementEditor/types';
 
 const EditorThreatSource: FC<EditorProps> = forwardRef<InputProps.Ref, EditorProps>(({
   statement, setStatement, fieldData,
 }, ref) => {
   const { perFieldExamples, previousInputs } = useThreatsContext();
+  const { brainstormData } = useBrainstormContext();
 
   const valueRef = useRef<string | undefined>(statement.threatSource);
   useEffect(() => {
@@ -64,15 +67,25 @@ const EditorThreatSource: FC<EditorProps> = forwardRef<InputProps.Ref, EditorPro
         <Button variant='icon' iconName='close' onClick={() => handleChange('')} />
       </div>}
     </div>
-    <ColumnLayout columns={previousInputs.threat_source.length > 0 ? 2 : 1}>
+    <ColumnLayout columns={
+      (perFieldExamples.threat_source.length > 0 ? 1 : 0) +
+      (previousInputs.threat_source.length > 0 ? 1 : 0) +
+      ((brainstormData.threatSources?.length || 0) > 0 ? 1 : 0)
+    }>
       {perFieldExamples.threat_source.length > 0 &&
         <ExampleList examples={perFieldExamples.threat_source} onSelect={handleChange} showSearch={false}></ExampleList>}
-      {previousInputs.threat_source.length > 0 && <TextContent>
-        <span>From previous input</span>
-        <ul>
-          {previousInputs.threat_source.map((threatSource, index) => (<li key={index}><Button variant='link' onClick={() => handleChange(threatSource)}>{threatSource}</Button></li>))}
-        </ul>
-      </TextContent>}
+      {previousInputs.threat_source.length > 0 &&
+        <PreviousInputList
+          items={previousInputs.threat_source}
+          onSelect={handleChange}
+        />
+      }
+      {(brainstormData.threatSources?.length || 0) > 0 &&
+        <BrainstormList
+          items={brainstormData.threatSources || []}
+          onSelect={handleChange}
+        />
+      }
     </ColumnLayout>
   </EditorLayout>);
 });
