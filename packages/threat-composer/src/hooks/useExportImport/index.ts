@@ -90,7 +90,7 @@ const useImportExport = () => {
       if (!isBrainstormDataEmpty(brainstormData)) {
         return {
           ...baseData,
-          brainstormData: brainstormData,
+          brainstorm: brainstormData,
         };
       }
 
@@ -161,7 +161,7 @@ const useImportExport = () => {
       setStatementList(calculatedThreats);
       setAssumptionLinkList(data.assumptionLinks || []);
       setMitigationLinkList(data.mitigationLinks || []);
-      setBrainstormData(data.brainstormData || {
+      setBrainstormData(data.brainstorm || {
         assumptions: [],
         threatSources: [],
         threatPrerequisites: [],

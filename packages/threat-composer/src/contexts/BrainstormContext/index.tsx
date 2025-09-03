@@ -34,7 +34,7 @@ const BrainstormContextProvider: FC<PropsWithChildren<BrainstormContextProviderP
   return storageType === STORAGE_LOCAL_STATE ?
     (<BrainstormLocalStateContextProvider
       key={props.workspaceId}
-      initialValue={value?.brainstormData}
+      initialValue={value?.brainstorm}
       {...props} />) :
     (<BrainstormLocalStorageContextProvider key={props.workspaceId} {...props} />);
 };
