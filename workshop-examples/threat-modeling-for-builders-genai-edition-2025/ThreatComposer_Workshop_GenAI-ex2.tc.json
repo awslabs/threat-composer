@@ -14,100 +14,100 @@
   },
   "assumptions": [
     {
-      "numericId": 13,
-      "content": "LLMs may still produce hallucinations or incorrect outputs despite content filtering and RAG implementation\t",
       "id": "b208c5e3-5b76-4a9a-8bf4-3e9364fa5cbe",
+      "numericId": 13,
       "displayOrder": 13,
       "metadata": [
         {
           "key": "Comments",
           "value": "Fact-grounding and content filtering systems are not perfect. Users should validate critical information from model outputs, as hallucinations remain an inherent limitation.\n"
         }
-      ]
+      ],
+      "content": "LLMs may still produce hallucinations or incorrect outputs despite content filtering and RAG implementation\t"
     },
     {
-      "numericId": 12,
-      "content": "Vector and embedding security are evolving fields with incomplete best practices\t",
       "id": "264413f1-02dd-415e-8ce1-cd8f82858c9c",
+      "numericId": 12,
       "displayOrder": 12,
       "metadata": [
         {
           "key": "Comments",
           "value": "RAG systems introduce unique security challenges, and the field of vector database security is still maturing with limited established best practices."
         }
-      ]
+      ],
+      "content": "Vector and embedding security are evolving fields with incomplete best practices\t"
     },
     {
-      "numericId": 11,
-      "content": "System prompt leakage countermeasures are protective but not guaranteed\t",
       "id": "12c320d8-0436-4827-b47e-00c6efd81a3f",
+      "numericId": 11,
       "displayOrder": 11,
       "metadata": [
         {
           "key": "Comments",
           "value": "Current techniques to prevent system prompt leakage are still evolving and can be circumvented by sophisticated threat actor.\n"
         }
-      ]
+      ],
+      "content": "System prompt leakage countermeasures are protective but not guaranteed\t"
     },
     {
-      "numericId": 10,
-      "content": "Systems with excessive agency and autonomy may develop unexpected behaviors that aren't caught during testing\t",
       "id": "590520c1-c958-47f5-8bc4-5b5962bbde78",
+      "numericId": 10,
       "displayOrder": 10,
       "metadata": [
         {
           "key": "Comments",
           "value": "The more autonomy granted to an LLM system, the more likely it can develop emergent behaviors not anticipated during testing."
         }
-      ]
+      ],
+      "content": "Systems with excessive agency and autonomy may develop unexpected behaviors that aren't caught during testing\t"
     },
     {
-      "numericId": 9,
-      "content": "Third-party model and component security posture cannot be completely verified\t",
       "id": "4fe788b2-edd0-41fe-895a-7e5e0593d202",
+      "numericId": 9,
       "displayOrder": 9,
       "metadata": [
         {
           "key": "Comments",
           "value": "When using third-party models or components, complete verification of their security is often impractical, leaving residual supply chain risks."
         }
-      ]
+      ],
+      "content": "Third-party model and component security posture cannot be completely verified\t"
     },
     {
-      "numericId": 8,
-      "content": "Even with data sanitization processes, models may still memorize and potentially leak sensitive information\t",
       "id": "0401a73f-c50c-4113-a146-ac83d32dcca5",
+      "numericId": 8,
       "displayOrder": 8,
       "metadata": [
         {
           "key": "Comments",
           "value": "The mechanics of large model training make it difficult to guarantee that no sensitive information is memorized, especially when fine-tuning on proprietary data."
         }
-      ]
+      ],
+      "content": "Even with data sanitization processes, models may still memorize and potentially leak sensitive information\t"
     },
     {
-      "numericId": 7,
-      "content": "Multimodal LLMs introduce additional attack surfaces that may not be fully understood or mitigated\t",
       "id": "228f4529-90ac-4a9b-a0c7-6aaf9e3a674b",
+      "numericId": 7,
       "displayOrder": 7,
       "metadata": [
         {
           "key": "Comments",
           "value": "Injection attacks via images, audio, or other non-text modalities are more difficult to detect and filter compared to text-only inputs."
         }
-      ]
+      ],
+      "content": "Multimodal LLMs introduce additional attack surfaces that may not be fully understood or mitigated\t"
     },
     {
-      "numericId": 6,
-      "content": "Current prompt injection defenses represent best efforts but cannot guarantee complete protection against sophisticated attacks\t",
       "id": "cfd8188e-f4b6-4fa6-bf07-e9c8365c4ea4",
+      "numericId": 6,
       "displayOrder": 6,
       "metadata": [
         {
           "key": "Comments",
           "value": "Even state-of-the-art defenses against prompt injection have known limitations. New jailbreaking techniques emerge regularly and adversarial approaches continue to evolve faster than defenses.\n"
         }
-      ]
+      ],
+      "content": "Current prompt injection defenses represent best efforts but cannot guarantee complete protection against sophisticated attacks\t"
     },
     {
       "id": "4f86d8dc-26b9-401a-b0aa-122bcebe88e3",
@@ -172,5 +172,6 @@
   ],
   "mitigations": [],
   "assumptionLinks": [],
+  "mitigationLinks": [],
   "threats": []
 }
