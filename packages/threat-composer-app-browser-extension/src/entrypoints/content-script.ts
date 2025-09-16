@@ -14,8 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { getExtensionConfig, TCConfig, IntegrationTypes } from './popup/config';
 import { logDebugMessage } from '../debugLogger';
+import { getExtensionConfig, TCConfig, IntegrationTypes } from './popup/config';
 
 const tcButtonText = 'View in Threat Composer';
 const tcButtonId = 'threatComposerButton';

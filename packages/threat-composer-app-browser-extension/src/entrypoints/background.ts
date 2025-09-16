@@ -14,8 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { getExtensionConfig } from './popup/config';
 import { logDebugMessage } from '../debugLogger';
+import { getExtensionConfig } from './popup/config';
 
 
 export default defineBackground(() => {
