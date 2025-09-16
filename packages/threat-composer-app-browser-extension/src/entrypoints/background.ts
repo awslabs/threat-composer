@@ -14,10 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-<<<<<<< HEAD
-=======
-import { getExtensionConfig } from './popup/config';
->>>>>>> 5294631b696f8b30f44e6ce947a05904ac2b478d
 import { logDebugMessage } from '../debugLogger';
 import { getExtensionConfig } from './popup/config';
 
@@ -46,11 +42,32 @@ export default defineBackground(() => {
         });
         sendResponse({});
       } else if (request.url) { //This is likely the a request to proxy a Fetch
-        sendResponse(fetch(request.url)
-          .then((response) => response.json())
+        logDebugMessage(config, 'Fetching URL: ' + request.url);
+
+        // Simplified but robust fetch handling
+        fetch(request.url)
+          .then((response) => {
+            const contentType = response.headers.get('content-type') || '';
+
+            // For proper JSON content-type, use response.json()
+            if (contentType.includes('application/json')) {
+              return response.json();
+            }
+
+            // For everything else (including octet-stream), use arrayBuffer + TextDecoder
+            return response.arrayBuffer().then((buffer) => {
+              const decoder = new TextDecoder('utf-8');
+              const decodedText = decoder.decode(buffer);
+              return JSON.parse(decodedText);
+            });
+          })
+          .then((result) => {
+            sendResponse(result);
+          })
           .catch((error) => {
-            logDebugMessage({ debug: true } as any, error);
-          }));
+            logDebugMessage(config, 'Fetch error: ' + error);
+            sendResponse(null);
+          });
       }
     }).catch((error) => {
       logDebugMessage({ debug: true } as any, error);

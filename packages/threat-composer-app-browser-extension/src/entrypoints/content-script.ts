@@ -14,8 +14,12 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { getExtensionConfig, TCConfig, IntegrationTypes } from './popup/config';
 import { logDebugMessage } from '../debugLogger';
+import { getExtensionConfig, TCConfig, IntegrationTypes } from './popup/config';
+
+// WXT framework imports
+declare const defineContentScript: any;
+declare const browser: any;
 
 const tcButtonText = 'View in Threat Composer';
 const tcButtonId = 'threatComposerButton';
@@ -49,7 +53,12 @@ interface TCGitLabState {
 
 function forwardFetchToBackground(message: any): Promise<TCJSONSimplifiedSchema> {
   return browser.runtime.sendMessage(message).then((response: any) => {
-    if (!response) throw browser.runtime.lastError;
+    if (browser.runtime.lastError) {
+      throw new Error(browser.runtime.lastError.message);
+    }
+    if (!response) {
+      throw new Error('No response received from background script');
+    }
     return response;
   });
 }
@@ -57,6 +66,78 @@ function forwardFetchToBackground(message: any): Promise<TCJSONSimplifiedSchema>
 function isLikelyThreatComposerSchema(JSONobj: TCJSONSimplifiedSchema) {
   return JSONobj.schema ? true : false;
 };
+
+async function extractContentDirectly(config: TCConfig): Promise<string | null> {
+  try {
+    // Try multiple strategies to extract content from the DOM
+
+    // Strategy 1: Look for <pre> tag (common in raw file views)
+    const preElement = document.querySelector('pre');
+    if (preElement && preElement.textContent) {
+      logDebugMessage(config, 'Found content in <pre> element');
+      return preElement.textContent.trim();
+    }
+
+    // Strategy 2: Look for code blocks
+    const codeElement = document.querySelector('code');
+    if (codeElement && codeElement.textContent) {
+      logDebugMessage(config, 'Found content in <code> element');
+      return codeElement.textContent.trim();
+    }
+
+    // Strategy 3: Try body text content as fallback
+    const bodyText = document.body.textContent;
+    if (bodyText && bodyText.trim().startsWith('{')) {
+      logDebugMessage(config, 'Found JSON-like content in body');
+      return bodyText.trim();
+    }
+
+    logDebugMessage(config, 'No suitable content found in DOM');
+    return null;
+  } catch (error) {
+    logDebugMessage(config, 'Error during direct content extraction: ' + (error as Error).message);
+    return null;
+  }
+}
+
+async function processTCCandidate(content: string, element: HTMLElement, config: TCConfig) {
+  try {
+    // Try to parse the content as JSON
+    const jsonObj: TCJSONSimplifiedSchema = JSON.parse(content);
+
+    if (isLikelyThreatComposerSchema(jsonObj)) {
+      logDebugMessage(config,
+        'Looks like it could be a Threat Composer file, enabling ' +
+        element.textContent +
+        ' button',
+      );
+
+      element.onclick = function () {
+        logDebugMessage(config,
+          'Sending message with candidate JSON object back to service worker / background script',
+        );
+        browser.runtime.sendMessage(jsonObj);
+      };
+
+      switch (element.tagName) {
+        case 'BUTTON':
+          (element as HTMLInputElement).disabled = false;
+          break;
+        case 'A':
+          element.style.pointerEvents = 'auto';
+          break;
+      }
+    } else {
+      logDebugMessage(config,
+        "Does NOT look like it's a Threat Composer file, NOT enabling " +
+        element.textContent +
+        ' button',
+      );
+    }
+  } catch (error) {
+    logDebugMessage(config, 'Error parsing JSON content: ' + (error as Error).message);
+  }
+}
 
 async function getTCJSONCandidate(url: string, element: HTMLElement, tcConfig: TCConfig) {
   return forwardFetchToBackground({ url: url })
@@ -98,19 +179,44 @@ async function getTCJSONCandidate(url: string, element: HTMLElement, tcConfig: T
     });
 };
 
-async function handleRaw(tcConfig: TCConfig) {
-  const element = document.getElementsByTagName('pre');
+function createTCButton() {
   const tcButton = document.createElement('button');
   tcButton.textContent = tcButtonText;
   tcButton.id = tcButtonId;
   tcButton.disabled = true;
+  return tcButton;
+}
+
+async function handleRawFile(config: TCConfig) {
+  const element = document.getElementsByTagName('pre');
+  const tcButton = createTCButton();
   if (element) {
     document.body.prepend(tcButton);
     window.scrollTo(0, 0); //Scroll to top
   }
-  logDebugMessage(tcConfig, 'Proactively attempting to retrieve candidate');
+
+  logDebugMessage(config, 'Attempting to extract content from raw file');
+
+  // Try direct DOM extraction first (works in sandboxed environments)
+  try {
+    const content = await extractContentDirectly(config);
+    if (content) {
+      logDebugMessage(config, 'Successfully extracted content directly from DOM');
+      await processTCCandidate(content, tcButton, config);
+      return;
+    }
+  } catch (error) {
+    logDebugMessage(config, 'Direct extraction failed: ' + (error as Error).message);
+  }
+
+  // Fallback to background fetch if direct extraction fails
+  logDebugMessage(config, 'Falling back to background fetch');
   const url = window.location.toString();
-  await getTCJSONCandidate(url, tcButton, tcConfig);
+  await getTCJSONCandidate(url, tcButton, config);
+};
+
+async function handleRaw(tcConfig: TCConfig) {
+  await handleRawFile(tcConfig);
 };
 
 function isRawSite(tcConfig: TCConfig) {
@@ -150,6 +256,137 @@ function ViewInThreatComposerButtonExists() {
   return document.getElementById(tcButtonId);
 }
 
+// Multi-strategy GitHub raw button detection
+function findGitHubRawButton(): HTMLElement | null {
+  // Strategy 1: data-testid (most reliable for new GitHub UI)
+  let rawButton = document.querySelector('[data-testid="raw-button"]');
+  if (rawButton) return rawButton as HTMLElement;
+
+  // Strategy 2: href pattern matching
+  rawButton = document.querySelector('a[href*="/raw/"]');
+  if (rawButton) return rawButton as HTMLElement;
+
+  // Strategy 3: text content matching
+  const buttons = document.querySelectorAll('a, button');
+  for (const button of buttons) {
+    if (button.textContent?.trim().toLowerCase() === 'raw') {
+      return button as HTMLElement;
+    }
+  }
+
+  // Strategy 4: aria-label fallback (old GitHub UI)
+  return document.querySelector('[aria-label="Copy raw content"]') as HTMLElement;
+}
+
+// Extract styling from existing GitHub buttons dynamically
+function extractGitHubButtonStyling(rawButton: HTMLElement): { classes: string; attributes: Record<string, string> } {
+  const classes = rawButton.classList.toString();
+  const attributes: Record<string, string> = {};
+
+  // Extract common button attributes that GitHub uses
+  const attributesToCopy = ['data-size', 'data-variant', 'data-loading', 'data-no-visuals'];
+
+  attributesToCopy.forEach(attr => {
+    const value = rawButton.getAttribute(attr);
+    if (value !== null) {
+      attributes[attr] = value;
+    }
+  });
+
+  return { classes, attributes };
+}
+
+// Smart button group detection and insertion
+function insertThreatComposerButton(rawButton: HTMLElement, config: TCConfig): HTMLElement {
+  const tcButton = createTCButton();
+
+  // Extract actual styling from the raw button
+  const { classes, attributes } = extractGitHubButtonStyling(rawButton);
+
+  // Apply the extracted classes and attributes
+  tcButton.setAttribute('type', 'button');
+  tcButton.setAttribute('class', classes);
+
+  Object.entries(attributes).forEach(([key, value]) => {
+    tcButton.setAttribute(key, value);
+  });
+
+  // Find the button group container (new GitHub UI)
+  const buttonGroup = rawButton.closest('.prc-ButtonGroup-ButtonGroup-vcMeG') ||
+                     rawButton.closest('[class*="ButtonGroup"]') ||
+                     rawButton.closest('[class*="BlobHeader"]') ||
+                     rawButton.parentElement;
+
+  if (buttonGroup) {
+    // Insert after the raw button's container for new UI
+    const rawContainer = rawButton.closest('div') || rawButton;
+    const tcContainer = document.createElement('div');
+
+    // Copy container styling if it exists
+    const containerClasses = rawContainer.classList.toString();
+    if (containerClasses) {
+      tcContainer.setAttribute('class', containerClasses);
+    }
+
+    tcContainer.appendChild(tcButton);
+    rawContainer.after(tcContainer);
+
+    logDebugMessage(config, 'Inserted Threat Composer button in GitHub UI button group with extracted styling');
+  } else {
+    // Fallback: insert after raw button directly (old UI)
+    rawButton.after(tcButton);
+
+    logDebugMessage(config, 'Inserted Threat Composer button using fallback method with extracted styling');
+  }
+
+  return tcButton;
+}
+
+// Robust URL extraction
+function getRawUrl(rawButton: HTMLElement): string {
+  // Try to get URL from raw button href
+  const href = rawButton.getAttribute('href');
+  if (href && href.includes('/raw/')) {
+    const fullUrl = new URL(href, window.location.origin).toString();
+    return fullUrl;
+  }
+
+  // Fallback to current approach
+  return window.location + '?raw=1';
+}
+
+async function handleGitHubCodeViewer(gitHubState: TCGitHubState, config: TCConfig) {
+  var regExCheck = new RegExp(config.fileExtension);
+  if (window.location.href.match(regExCheck)) {
+    // Use multi-strategy approach to find raw button
+    let rawButton = findGitHubRawButton();
+
+    if (window.location.href != gitHubState.previousUrl) {
+      //Handle GitHub being a SPA
+      gitHubState.previousUrl = window.location.href;
+      gitHubState.stopProcessing = false;
+    }
+
+    if (rawButton && !gitHubState.stopProcessing) {
+      gitHubState.stopProcessing = true;
+
+      logDebugMessage(config, 'Found GitHub raw button using multi-strategy approach');
+
+      // Smart button insertion with dynamic styling
+      const tcButton = insertThreatComposerButton(rawButton, config);
+
+      // Robust URL construction
+      const url = getRawUrl(rawButton);
+      logDebugMessage(config, 'Using raw URL: ' + url);
+
+      logDebugMessage(config, 'Proactively attempting to retrieve candidate');
+      await getTCJSONCandidate(url, tcButton, config);
+    } else if (!rawButton) {
+      logDebugMessage(config, 'Could not find GitHub raw button with any strategy');
+    }
+  }
+};
+
 async function handleGitHub(gitHubState: TCGitHubState, tcConfig: TCConfig) {
 
   if (ViewInThreatComposerButtonExists()) {return;}
@@ -161,32 +398,7 @@ async function handleGitHub(gitHubState: TCGitHubState, tcConfig: TCConfig) {
     return;
   }
 
-  if (window.location.href != gitHubState.previousUrl) {
-    //Handle GitHub being a SPA
-    gitHubState.previousUrl = window.location.href;
-    gitHubState.stopProcessing = false;
-  }
-
-  if (window.location.href.match(regExCheck)) {
-    let element = document.querySelector('[aria-label="Copy raw content"]');
-
-    if (element && !gitHubState.stopProcessing) {
-      gitHubState.stopProcessing = true;
-      const rawButton = document.querySelector('[aria-label="Copy raw content"]');
-      const tcButton = document.createElement('button');
-      tcButton.textContent = tcButtonText;
-      tcButton.id = tcButtonId;
-      tcButton.disabled = true;
-      tcButton.setAttribute('type', 'button');
-      tcButton.setAttribute('class', rawButton?.classList.toString());
-      tcButton.setAttribute('data-size', 'small');
-      tcButton.style.width = '100%';
-      rawButton?.before(tcButton);
-      logDebugMessage(tcConfig, 'Proactively attempting to retrieve candidate');
-      const url = window.location + '?raw=1';
-      await getTCJSONCandidate(url, tcButton, tcConfig);
-    }
-  }
+  await handleGitHubCodeViewer(gitHubState, tcConfig);
 };
 
 async function handleAmazonCode(codeBrowserState: TCAmazonCodeState, tcConfig: TCConfig) {
@@ -331,13 +543,13 @@ async function handleCodeCatalyst(codeCatalystState: TCCodeCatalystState, tcConf
     const currentAnchor = element.firstChild;
     tcButton.setAttribute(
       'class',
-      currentAnchor?.classList.toString(),
+      (currentAnchor as HTMLElement)?.classList.toString() || '',
     );
 
-    const currentSpan = currentAnchor?.firstChild;
+    const currentSpan = currentAnchor?.firstChild as HTMLElement;
 
     const tcSpan = document.createElement('span');
-    tcSpan.setAttribute('class', currentSpan.classList.toString());
+    tcSpan.setAttribute('class', currentSpan?.classList.toString() || '');
     tcSpan.textContent = tcButtonText;
 
     tcButton.appendChild(tcSpan);
@@ -475,7 +687,7 @@ export default defineContentScript({
         const s = document.createElement('script');
         s.src = browser.runtime.getURL('scriptInjectForCodeCatalyst.js');
         s.onload = function () {
-          this.remove();
+          (this as HTMLScriptElement).remove();
         };
         (document.head || document.documentElement).appendChild(s);
         let observerForCodeCatalyst = new MutationObserver(
