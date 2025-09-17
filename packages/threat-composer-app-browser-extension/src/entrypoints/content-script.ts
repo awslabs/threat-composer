@@ -233,28 +233,54 @@ function isRawSite(tcConfig: TCConfig) {
   return false;
 }
 
+function isActualRawSite(tcConfig: TCConfig, integrationType: string): boolean {
+  // First check if there's a <pre> tag (existing logic)
+  if (!isRawSite(tcConfig)) {
+    return false;
+  }
+
+  // Then check if URL matches any raw patterns for this integration
+  const integration = tcConfig.integrations[integrationType];
+  if (!integration || !integration.rawUrlPatterns || integration.rawUrlPatterns.length === 0) {
+    return false;
+  }
+
+  const currentUrl = window.location.href;
+  const hasRawPattern = integration.rawUrlPatterns.some(pattern =>
+    currentUrl.includes(pattern),
+  );
+
+  if (hasRawPattern) {
+    logDebugMessage(tcConfig, `Confirmed as actual raw site for ${integrationType} - URL contains raw pattern`);
+  } else {
+    logDebugMessage(tcConfig, `Not a raw site for ${integrationType} - URL does not contain any raw patterns`);
+  }
+
+  return hasRawPattern;
+}
+
 function isGitLabSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.GITLAB].urlRegexes)) {return true;}
+  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.GITLAB].urlRegexes)) { return true; }
   return false;
 }
 
 function isGitHubSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.GITHUB].urlRegexes)) {return true;}
+  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.GITHUB].urlRegexes)) { return true; }
   return false;
 }
 
 function isCodeCatalystSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.CODECATALYST].urlRegexes)) {return true;}
+  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.CODECATALYST].urlRegexes)) { return true; }
   return false;
 }
 
 function isAmazonCodeSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.CODEAMAZON].urlRegexes)) {return true;}
+  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.CODEAMAZON].urlRegexes)) { return true; }
   return false;
 }
 
 function isBitbucketSite(tcConfig: TCConfig) {
-  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.BITBUCKET].urlRegexes)) {return true;}
+  if (matchesAnyRegex(window.location.href, tcConfig.integrations[IntegrationTypes.BITBUCKET].urlRegexes)) { return true; }
   return false;
 }
 
@@ -356,8 +382,8 @@ function isFileViewerReady(platformName: string): boolean {
     default:
       // Generic fallback - check if we're not in a loading state
       const isLoading = document.querySelector('.loading') ||
-                       document.querySelector('[aria-label*="loading" i]') ||
-                       document.querySelector('[class*="loading" i]');
+        document.querySelector('[aria-label*="loading" i]') ||
+        document.querySelector('[class*="loading" i]');
       return !isLoading;
   }
 }
@@ -416,14 +442,14 @@ async function retryWithBackoff<T>(
 function isGitHubFileViewerReady(): boolean {
   // Check for key GitHub file viewer elements
   const fileViewer = document.querySelector('[data-testid="repos-file-viewer"]') ||
-                    document.querySelector('.repository-content') ||
-                    document.querySelector('.file-navigation') ||
-                    document.querySelector('.Box-header');
+    document.querySelector('.repository-content') ||
+    document.querySelector('.file-navigation') ||
+    document.querySelector('.Box-header');
 
   // Check if we're not in a loading state
   const isLoading = document.querySelector('[data-testid="page-loader"]') ||
-                   document.querySelector('.loading') ||
-                   document.querySelector('[aria-label="Loading content"]');
+    document.querySelector('.loading') ||
+    document.querySelector('[aria-label="Loading content"]');
 
   return fileViewer !== null && !isLoading;
 }
@@ -432,14 +458,14 @@ function isGitHubFileViewerReady(): boolean {
 function isGitLabFileViewerReady(): boolean {
   // Check for key GitLab file viewer elements
   const fileViewer = document.querySelector('.file-holder') ||
-                    document.querySelector('.blob-viewer') ||
-                    document.querySelector('.file-content') ||
-                    document.querySelector('[data-testid="blob-viewer"]');
+    document.querySelector('.blob-viewer') ||
+    document.querySelector('.file-content') ||
+    document.querySelector('[data-testid="blob-viewer"]');
 
   // Check if we're not in a loading state
   const isLoading = document.querySelector('.gl-spinner') ||
-                   document.querySelector('.loading') ||
-                   document.querySelector('[aria-label*="loading" i]');
+    document.querySelector('.loading') ||
+    document.querySelector('[aria-label*="loading" i]');
 
   return fileViewer !== null && !isLoading;
 }
@@ -448,13 +474,13 @@ function isGitLabFileViewerReady(): boolean {
 function isCodeCatalystFileViewerReady(): boolean {
   // Check for key CodeCatalyst file viewer elements
   const fileViewer = document.querySelector('.cs-Tabs__tab-header-actions') ||
-                    document.querySelector('[class*="file-viewer"]') ||
-                    document.querySelector('[class*="code-viewer"]');
+    document.querySelector('[class*="file-viewer"]') ||
+    document.querySelector('[class*="code-viewer"]');
 
   // Check if we're not in a loading state
   const isLoading = document.querySelector('.cs-spinner') ||
-                   document.querySelector('.loading') ||
-                   document.querySelector('[class*="loading"]');
+    document.querySelector('.loading') ||
+    document.querySelector('[class*="loading"]');
 
   return fileViewer !== null && !isLoading;
 }
@@ -534,9 +560,9 @@ function insertThreatComposerButton(rawButton: HTMLElement, config: TCConfig): H
 
   // Find the button group container (new GitHub UI)
   const buttonGroup = rawButton.closest('.prc-ButtonGroup-ButtonGroup-vcMeG') ||
-                     rawButton.closest('[class*="ButtonGroup"]') ||
-                     rawButton.closest('[class*="BlobHeader"]') ||
-                     rawButton.parentElement;
+    rawButton.closest('[class*="ButtonGroup"]') ||
+    rawButton.closest('[class*="BlobHeader"]') ||
+    rawButton.parentElement;
 
   if (buttonGroup) {
     // Insert after the raw button's container for new UI
@@ -662,9 +688,9 @@ async function handleGitHub(gitHubState: TCGitHubState, tcConfig: TCConfig) {
     gitHubState.isRetrying = false;
   }
 
-  if (shouldSkipProcessing(gitHubState, tcConfig)) {return;}
+  if (shouldSkipProcessing(gitHubState, tcConfig)) { return; }
 
-  if (isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
+  if (isActualRawSite(tcConfig, IntegrationTypes.GITHUB) && window.location.href.match(regExCheck)) {
     await handleRaw(tcConfig);
     return;
   }
@@ -674,35 +700,43 @@ async function handleGitHub(gitHubState: TCGitHubState, tcConfig: TCConfig) {
 
 async function handleAmazonCode(codeBrowserState: TCAmazonCodeState, tcConfig: TCConfig) {
 
-  if (ViewInThreatComposerButtonExists()) {return;}
+  if (ViewInThreatComposerButtonExists()) { return; }
 
   var regExCheck = new RegExp(tcConfig.fileExtension);
 
+  // Early exit if not a .tc.json file - this prevents unnecessary processing
+  if (!window.location.href.match(regExCheck)) {
+    return;
+  }
+
   // Try site-specific logic first - only fall back to raw handling if site-specific fails
   const element = document.getElementsByClassName('file_header');
-  if (element && !codeBrowserState.stopProcessing && window.location.href.match(regExCheck)) {
+  if (element && element.length > 0 && !codeBrowserState.stopProcessing) {
     codeBrowserState.stopProcessing = true;
     const fileActionsDiv = document.getElementById('file_actions');
     if (fileActionsDiv) {
-      const fileActionsButtonGroup = fileActionsDiv.getElementsByClassName('button_group')[0];
-      const tcListItem = document.createElement('li');
-      const tcButton = document.createElement('a');
-      tcButton.textContent = tcButtonText;
-      tcButton.id = tcButtonId;
-      tcButton.setAttribute('class', 'minibutton');
-      tcButton.textContent = tcButtonText;
-      tcButton.style.pointerEvents = 'none';
-      tcListItem.appendChild(tcButton);
-      fileActionsButtonGroup.appendChild(tcListItem);
-      logDebugMessage(tcConfig, 'Proactively attempting to retrieve candidate');
-      const url = window.location + '?raw=1';
-      await getTCJSONCandidate(url, tcButton, tcConfig);
+      const fileActionsButtonGroups = fileActionsDiv.getElementsByClassName('button_group');
+      if (fileActionsButtonGroups.length > 0) {
+        const fileActionsButtonGroup = fileActionsButtonGroups[0];
+        const tcListItem = document.createElement('li');
+        const tcButton = document.createElement('a');
+        tcButton.textContent = tcButtonText;
+        tcButton.id = tcButtonId;
+        tcButton.setAttribute('class', 'minibutton');
+        tcButton.textContent = tcButtonText;
+        tcButton.style.pointerEvents = 'none';
+        tcListItem.appendChild(tcButton);
+        fileActionsButtonGroup.appendChild(tcListItem);
+        logDebugMessage(tcConfig, 'Proactively attempting to retrieve candidate');
+        const url = window.location + '?raw=1';
+        await getTCJSONCandidate(url, tcButton, tcConfig);
+      }
     }
   }
 
-  // Only handle as raw site if site-specific logic didn't process it and we have the file extension
+  // Only handle as raw site if site-specific logic didn't process it
   // This prevents false positives from <pre> tags in normal Amazon Code file viewers
-  if (!codeBrowserState.stopProcessing && isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
+  if (!codeBrowserState.stopProcessing && isActualRawSite(tcConfig, IntegrationTypes.CODEAMAZON)) {
     await handleRaw(tcConfig);
     return;
   }
@@ -724,14 +758,15 @@ function checkNoPresentation(element: HTMLElement) {
 
 async function handleBitbucket(bitBucketState: TCBitbucketState, tcConfig: TCConfig) {
 
-  if (ViewInThreatComposerButtonExists()) {return;}
+  if (ViewInThreatComposerButtonExists()) { return; }
 
   var regExCheck = new RegExp(tcConfig.fileExtension);
 
   // Try site-specific logic first - only fall back to raw handling if site-specific fails
   const element = document.querySelectorAll("[data-testid='file-actions']")[0];
 
-  if (element && element.hasChildNodes() && checkNoPresentation(element as HTMLElement) && !bitBucketState.stopProcessing) {
+  if (element && element.hasChildNodes() && checkNoPresentation(element as HTMLElement) &&
+    !bitBucketState.stopProcessing && window.location.href.match(regExCheck)) {
     bitBucketState.stopProcessing = true;
     const fileMenu = document.querySelectorAll("[data-qa='bk-file__menu']")[0] as HTMLElement | null;
     const editButtonClone = document.querySelectorAll("[data-qa='bk-file__action-button']")[0];
@@ -755,7 +790,7 @@ async function handleBitbucket(bitBucketState: TCBitbucketState, tcConfig: TCCon
 
   // Only handle as raw site if site-specific logic didn't process it and we have the file extension
   // This prevents false positives from <pre> tags in normal Bitbucket file viewers
-  if (!bitBucketState.stopProcessing && isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
+  if (!bitBucketState.stopProcessing && isActualRawSite(tcConfig, IntegrationTypes.BITBUCKET) && window.location.href.match(regExCheck)) {
     await handleRaw(tcConfig);
     return;
   }
@@ -823,16 +858,16 @@ function insertGitLabThreatComposerButton(rawButton: HTMLElement, config: TCConf
 
   // Find the button group container
   const buttonGroup = rawButton.closest('.file-actions') ||
-                     rawButton.closest('.btn-group') ||
-                     rawButton.parentElement;
+    rawButton.closest('.btn-group') ||
+    rawButton.parentElement;
 
-  if (buttonGroup) {
+  if (buttonGroup && rawButton.parentNode) {
     // Insert before the raw button to maintain order
-    rawButton.parentNode?.insertBefore(tcButton, rawButton);
+    rawButton.parentNode.insertBefore(tcButton, rawButton);
     logDebugMessage(config, 'Inserted Threat Composer button in GitLab UI button group with extracted styling');
-  } else {
+  } else if (rawButton.parentNode) {
     // Fallback: insert before raw button directly
-    rawButton.parentNode?.insertBefore(tcButton, rawButton);
+    rawButton.parentNode.insertBefore(tcButton, rawButton);
     logDebugMessage(config, 'Inserted Threat Composer button using fallback method with extracted styling');
   }
 
@@ -925,12 +960,11 @@ async function handleGitLab(gitLabState: TCGitLabState, tcConfig: TCConfig) {
   handleSameFileNavigation(gitLabState, tcConfig, regExCheck);
 
   // Skip processing if appropriate using generic helper
-  if (shouldSkipProcessing(gitLabState, tcConfig)) {return;}
+  if (shouldSkipProcessing(gitLabState, tcConfig)) { return; }
 
   // Only handle as raw site if we're actually on a raw URL AND have the file extension
   // This prevents false positives from <pre> tags in normal GitLab file viewers
-  if (isRawSite(tcConfig) && window.location.href.match(regExCheck) &&
-      (window.location.href.includes('/-/raw/') || window.location.href.includes('/raw/'))) {
+  if (isActualRawSite(tcConfig, IntegrationTypes.GITLAB) && window.location.href.match(regExCheck)) {
     await handleRaw(tcConfig);
     return;
   }
@@ -1097,21 +1131,21 @@ async function handleCodeCatalyst(codeCatalystState: TCCodeCatalystState, tcConf
   handleSameFileNavigation(codeCatalystState, tcConfig, regExCheck);
 
   // Skip processing if appropriate using generic helper
-  if (shouldSkipProcessing(codeCatalystState, tcConfig)) {return;}
+  if (shouldSkipProcessing(codeCatalystState, tcConfig)) { return; }
 
   // Try site-specific logic first - only fall back to raw handling if site-specific fails
   await handleCodeCatalystCodeViewer(codeCatalystState, tcConfig);
 
   // Only handle as raw site if site-specific logic didn't process it and we have the file extension
   // This prevents false positives from <pre> tags in normal CodeCatalyst file viewers
-  if (!codeCatalystState.stopProcessing && isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
+  if (!codeCatalystState.stopProcessing && isActualRawSite(tcConfig, IntegrationTypes.CODECATALYST) && window.location.href.match(regExCheck)) {
     await handleRaw(tcConfig);
     return;
   }
 };
 
 async function ContentScriptInScope(tcConfig: TCConfig) {
-  let inScopeRegexes:string[] = [];
+  let inScopeRegexes: string[] = [];
 
   if (tcConfig.integrations[IntegrationTypes.CODEAMAZON].enabled) {
     tcConfig.integrations[IntegrationTypes.CODEAMAZON].urlRegexes.forEach(entry => {

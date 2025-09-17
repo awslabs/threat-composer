@@ -26,6 +26,7 @@ export interface IntegrationConfig {
   name: string;
   enabled: boolean;
   urlRegexes: string[];
+  rawUrlPatterns: string[];
 }
 
 export const IntegrationTypes = {
@@ -44,26 +45,31 @@ export const DefaultConfig: TCConfig = {
       name: 'Amazon Code Browser',
       enabled: true,
       urlRegexes: ['code.amazon.com'],
+      rawUrlPatterns: ['?raw=1'],
     },
     [IntegrationTypes.CODECATALYST]: {
       name: 'Amazon CodeCatalyst',
       enabled: true,
       urlRegexes: ['codecatalyst.aws'],
+      rawUrlPatterns: [], // No raw support
     },
     [IntegrationTypes.BITBUCKET]: {
       name: 'Bitbucket',
       enabled: true,
       urlRegexes: ['bitbucket.org'],
+      rawUrlPatterns: ['/raw/'],
     },
     [IntegrationTypes.GITHUB]: {
       name: 'GitHub',
       enabled: true,
       urlRegexes: ['github.com', 'raw.githubusercontent.com'],
+      rawUrlPatterns: ['githubusercontent.com'],
     },
     [IntegrationTypes.GITLAB]: {
       name: 'GitLab',
       enabled: true,
       urlRegexes: ['gitlab.com'],
+      rawUrlPatterns: ['/-/raw/'],
     },
   },
 };

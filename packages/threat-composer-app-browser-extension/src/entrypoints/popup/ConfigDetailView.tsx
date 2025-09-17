@@ -20,7 +20,7 @@ import ContentLayout from '@cloudscape-design/components/content-layout';
 import Form from '@cloudscape-design/components/form';
 import { FC, useCallback, useContext, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { IntegrationConfig } from './config';
+import { IntegrationConfig, DefaultConfig } from './config';
 import { ExtensionConfigContext } from './ExtensionConfigProvider';
 import { RegexArrayForm } from './RegexArrayForm';
 
@@ -45,6 +45,16 @@ export const ConfigDetailView: FC<ConfigDetailViewProps> = () => {
       };
     });
   }, [integrationType, setConfig]);
+
+  const resetToDefaults = useCallback(() => {
+    const defaultIntegration = DefaultConfig.integrations[integrationType!];
+    if (defaultIntegration) {
+      setIntegrationConfig({
+        urlRegexes: [...defaultIntegration.urlRegexes],
+        rawUrlPatterns: [...defaultIntegration.rawUrlPatterns],
+      });
+    }
+  }, [integrationType, setIntegrationConfig]);
   return (
     <ContentLayout
       header={
@@ -68,10 +78,34 @@ export const ConfigDetailView: FC<ConfigDetailViewProps> = () => {
                 <Button onClick={() => {
                   navigate('/');
                 }}>Back</Button>
+                <Button onClick={resetToDefaults}>Reset to Defaults</Button>
               </SpaceBetween>
             )}>
-              <RegexArrayForm placeholder="Regex to add" strings={integrationConfig.urlRegexes} setStrings={(newRegexes) => { setIntegrationConfig({ urlRegexes: newRegexes }); }}>
-              </RegexArrayForm>
+              <SpaceBetween size="l">
+                <Container header={<Header variant="h3">URL Matching Patterns</Header>}>
+                  <SpaceBetween size="s">
+                    <p>Regular expressions that determine which URLs this integration should handle.</p>
+                    <RegexArrayForm
+                      placeholder="URL regex to add"
+                      strings={integrationConfig.urlRegexes}
+                      setStrings={(newRegexes) => { setIntegrationConfig({ urlRegexes: newRegexes }); }}
+                    />
+                  </SpaceBetween>
+                </Container>
+
+                <Container header={<Header variant="h3">Raw File Detection Patterns</Header>}>
+                  <SpaceBetween size="s">
+                    <p>URL patterns that identify actual raw file views (not just file viewers with code blocks).
+                       This prevents false positives where normal file viewers contain &lt;pre&gt; tags but aren't actually raw files.</p>
+                    <RegexArrayForm
+                      placeholder="Raw URL pattern to add (e.g., /raw/, githubusercontent.com)"
+                      strings={integrationConfig.rawUrlPatterns}
+                      setStrings={(newPatterns) => { setIntegrationConfig({ rawUrlPatterns: newPatterns }); }}
+                      allowEmpty={true}
+                    />
+                  </SpaceBetween>
+                </Container>
+              </SpaceBetween>
             </Form>
           </SpaceBetween>
         </Container>
