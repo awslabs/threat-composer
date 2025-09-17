@@ -44,6 +44,8 @@ interface TCBitbucketState {
 interface TCGitHubState {
   previousUrl: string;
   stopProcessing: boolean;
+  retryCount: number;
+  isRetrying: boolean;
 }
 
 interface TCGitLabState {
@@ -256,6 +258,119 @@ function ViewInThreatComposerButtonExists() {
   return document.getElementById(tcButtonId);
 }
 
+// Clean up any existing Threat Composer buttons
+function cleanupExistingThreatComposerButtons(config: TCConfig) {
+  const existingButtons = document.querySelectorAll(`#${tcButtonId}`);
+  if (existingButtons.length > 0) {
+    logDebugMessage(config, `Cleaning up ${existingButtons.length} existing Threat Composer button(s)`);
+    existingButtons.forEach(button => {
+      // Remove the button and its container if it exists
+      const container = button.closest('div');
+      if (container && container.children.length === 1 && container.children[0] === button) {
+        container.remove();
+      } else {
+        button.remove();
+      }
+    });
+  }
+}
+
+// Check if we should skip processing (more intelligent than just button existence)
+function shouldSkipProcessing(gitHubState: TCGitHubState, config: TCConfig): boolean {
+  // If we're currently retrying, skip to avoid concurrent attempts
+  if (gitHubState.isRetrying) {
+    return true;
+  }
+
+  // Check if there's a valid, functional button already present
+  const existingButton = document.getElementById(tcButtonId);
+  if (existingButton) {
+    // Check if the button is properly functional (has click handler and is enabled)
+    const isEnabled = existingButton.tagName === 'BUTTON' ?
+      !(existingButton as HTMLButtonElement).disabled :
+      existingButton.style.pointerEvents !== 'none';
+
+    const hasClickHandler = (existingButton as any).onclick !== null;
+
+    if (isEnabled && hasClickHandler) {
+      logDebugMessage(config, 'Functional Threat Composer button already exists, skipping');
+      return true;
+    } else {
+      logDebugMessage(config, 'Found non-functional Threat Composer button, will replace it');
+      cleanupExistingThreatComposerButtons(config);
+      return false;
+    }
+  }
+
+  return false;
+}
+
+// Retry helper function with exponential backoff
+async function retryWithBackoff<T>(
+  operation: () => Promise<T> | T,
+  maxRetries: number = 5,
+  baseDelay: number = 100,
+  config: TCConfig,
+  operationName: string = 'operation',
+): Promise<T | null> {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const result = await operation();
+      if (result) {
+        if (attempt > 0) {
+          logDebugMessage(config, `${operationName} succeeded on attempt ${attempt + 1}`);
+        }
+        return result;
+      }
+    } catch (error) {
+      logDebugMessage(config, `${operationName} failed on attempt ${attempt + 1}: ${(error as Error).message}`);
+    }
+
+    if (attempt < maxRetries - 1) {
+      const delay = baseDelay * Math.pow(2, attempt);
+      logDebugMessage(config, `${operationName} attempt ${attempt + 1} failed, retrying in ${delay}ms`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+
+  logDebugMessage(config, `${operationName} failed after ${maxRetries} attempts`);
+  return null;
+}
+
+// Check if GitHub's file viewer is ready
+function isGitHubFileViewerReady(): boolean {
+  // Check for key GitHub file viewer elements
+  const fileViewer = document.querySelector('[data-testid="repos-file-viewer"]') ||
+                    document.querySelector('.repository-content') ||
+                    document.querySelector('.file-navigation') ||
+                    document.querySelector('.Box-header');
+
+  // Check if we're not in a loading state
+  const isLoading = document.querySelector('[data-testid="page-loader"]') ||
+                   document.querySelector('.loading') ||
+                   document.querySelector('[aria-label="Loading content"]');
+
+  return fileViewer !== null && !isLoading;
+}
+
+// Wait for GitHub's file viewer to be ready
+async function waitForGitHubFileViewer(config: TCConfig, maxWaitTime: number = 3000): Promise<boolean> {
+  const startTime = Date.now();
+
+  while (Date.now() - startTime < maxWaitTime) {
+    if (isGitHubFileViewerReady()) {
+      logDebugMessage(config, 'GitHub file viewer is ready');
+      return true;
+    }
+
+    // Wait 50ms before checking again
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+
+  logDebugMessage(config, `GitHub file viewer not ready after ${maxWaitTime}ms`);
+  return false;
+}
+
 // Multi-strategy GitHub raw button detection
 function findGitHubRawButton(): HTMLElement | null {
   // Strategy 1: data-testid (most reliable for new GitHub UI)
@@ -358,40 +473,90 @@ function getRawUrl(rawButton: HTMLElement): string {
 async function handleGitHubCodeViewer(gitHubState: TCGitHubState, config: TCConfig) {
   var regExCheck = new RegExp(config.fileExtension);
   if (window.location.href.match(regExCheck)) {
-    // Use multi-strategy approach to find raw button
-    let rawButton = findGitHubRawButton();
 
-    if (window.location.href != gitHubState.previousUrl) {
-      //Handle GitHub being a SPA
-      gitHubState.previousUrl = window.location.href;
-      gitHubState.stopProcessing = false;
+    // Skip if already processing or retrying
+    if (gitHubState.stopProcessing || gitHubState.isRetrying) {
+      return;
     }
 
-    if (rawButton && !gitHubState.stopProcessing) {
-      gitHubState.stopProcessing = true;
+    // Wait for GitHub's file viewer to be ready
+    logDebugMessage(config, 'Waiting for GitHub file viewer to be ready...');
+    const isReady = await waitForGitHubFileViewer(config);
+    if (!isReady) {
+      logDebugMessage(config, 'GitHub file viewer not ready, will retry on next mutation');
+      return;
+    }
 
-      logDebugMessage(config, 'Found GitHub raw button using multi-strategy approach');
+    // Set retry flag to prevent concurrent attempts
+    gitHubState.isRetrying = true;
 
-      // Smart button insertion with dynamic styling
-      const tcButton = insertThreatComposerButton(rawButton, config);
+    try {
+      // Use retry mechanism to find raw button
+      const rawButton = await retryWithBackoff(
+        () => findGitHubRawButton(),
+        5, // maxRetries
+        100, // baseDelay (ms)
+        config,
+        'GitHub raw button detection',
+      );
 
-      // Robust URL construction
-      const url = getRawUrl(rawButton);
-      logDebugMessage(config, 'Using raw URL: ' + url);
+      if (rawButton && !gitHubState.stopProcessing) {
+        gitHubState.stopProcessing = true;
+        gitHubState.retryCount = 0;
 
-      logDebugMessage(config, 'Proactively attempting to retrieve candidate');
-      await getTCJSONCandidate(url, tcButton, config);
-    } else if (!rawButton) {
-      logDebugMessage(config, 'Could not find GitHub raw button with any strategy');
+        logDebugMessage(config, 'Successfully found GitHub raw button with retry mechanism');
+
+        // Smart button insertion with dynamic styling
+        const tcButton = insertThreatComposerButton(rawButton, config);
+
+        // Robust URL construction
+        const url = getRawUrl(rawButton);
+        logDebugMessage(config, 'Using raw URL: ' + url);
+
+        logDebugMessage(config, 'Proactively attempting to retrieve candidate');
+        await getTCJSONCandidate(url, tcButton, config);
+      } else if (!rawButton) {
+        gitHubState.retryCount++;
+        logDebugMessage(config, `ThreatComposerExtension: Could not find GitHub raw button with any strategy (attempt ${gitHubState.retryCount})`);
+
+        // If we've failed multiple times, log additional debug info
+        if (gitHubState.retryCount >= 3) {
+          logDebugMessage(config, `GitHub DOM state - File viewer ready: ${isGitHubFileViewerReady()}, URL: ${window.location.href}`);
+          logDebugMessage(config, `Available buttons: ${document.querySelectorAll('a, button').length}, Raw-like elements: ${document.querySelectorAll('[data-testid*="raw"], a[href*="/raw/"], *[aria-label*="raw" i]').length}`);
+        }
+      }
+    } catch (error) {
+      logDebugMessage(config, `Error in GitHub raw button detection: ${(error as Error).message}`);
+    } finally {
+      gitHubState.isRetrying = false;
     }
   }
 };
 
 async function handleGitHub(gitHubState: TCGitHubState, tcConfig: TCConfig) {
-
-  if (ViewInThreatComposerButtonExists()) {return;}
-
   var regExCheck = new RegExp(tcConfig.fileExtension);
+
+  // Handle URL changes first, before any other checks
+  if (window.location.href != gitHubState.previousUrl) {
+    logDebugMessage(tcConfig, `GitHub SPA navigation detected: ${gitHubState.previousUrl} -> ${window.location.href}`);
+    gitHubState.previousUrl = window.location.href;
+    gitHubState.stopProcessing = false;
+    gitHubState.retryCount = 0;
+    gitHubState.isRetrying = false;
+    // Clean up any existing buttons from the previous page
+    cleanupExistingThreatComposerButtons(tcConfig);
+  }
+
+  // Special case: if we're on a .tc.json file but don't have a button, reset state
+  // This handles the case where we navigate away and back to the same file
+  if (window.location.href.match(regExCheck) && !document.getElementById(tcButtonId) && gitHubState.stopProcessing) {
+    logDebugMessage(tcConfig, 'On .tc.json file without button but processing stopped - resetting state for same-file navigation');
+    gitHubState.stopProcessing = false;
+    gitHubState.retryCount = 0;
+    gitHubState.isRetrying = false;
+  }
+
+  if (shouldSkipProcessing(gitHubState, tcConfig)) {return;}
 
   if (isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
     await handleRaw(tcConfig);
@@ -627,6 +792,8 @@ export default defineContentScript({
     const gitHubState: TCGitHubState = {
       previousUrl: '',
       stopProcessing: false,
+      retryCount: 0,
+      isRetrying: false,
     };
 
     const amazonCodeState: TCAmazonCodeState = {
