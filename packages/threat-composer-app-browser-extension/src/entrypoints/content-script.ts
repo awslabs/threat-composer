@@ -35,6 +35,8 @@ interface TCAmazonCodeState {
 interface TCCodeCatalystState {
   previousUrl: string;
   stopProcessing: boolean;
+  retryCount: number;
+  isRetrying: boolean;
 }
 
 interface TCBitbucketState {
@@ -51,6 +53,8 @@ interface TCGitHubState {
 interface TCGitLabState {
   previousUrl: string;
   stopProcessing: boolean;
+  retryCount: number;
+  isRetrying: boolean;
 }
 
 function forwardFetchToBackground(message: any): Promise<TCJSONSimplifiedSchema> {
@@ -275,10 +279,18 @@ function cleanupExistingThreatComposerButtons(config: TCConfig) {
   }
 }
 
-// Check if we should skip processing (more intelligent than just button existence)
-function shouldSkipProcessing(gitHubState: TCGitHubState, config: TCConfig): boolean {
+// Generic SPA state interface for reusable functions
+interface SPAState {
+  previousUrl: string;
+  stopProcessing: boolean;
+  retryCount: number;
+  isRetrying: boolean;
+}
+
+// Check if we should skip processing (generic version for all SPAs)
+function shouldSkipProcessing(state: SPAState, config: TCConfig): boolean {
   // If we're currently retrying, skip to avoid concurrent attempts
-  if (gitHubState.isRetrying) {
+  if (state.isRetrying) {
     return true;
   }
 
@@ -302,6 +314,69 @@ function shouldSkipProcessing(gitHubState: TCGitHubState, config: TCConfig): boo
     }
   }
 
+  return false;
+}
+
+// Generic SPA navigation handler
+function handleSPANavigation(state: SPAState, config: TCConfig, platformName: string): boolean {
+  if (window.location.href != state.previousUrl) {
+    logDebugMessage(config, `${platformName} SPA navigation detected: ${state.previousUrl} -> ${window.location.href}`);
+    state.previousUrl = window.location.href;
+    state.stopProcessing = false;
+    state.retryCount = 0;
+    state.isRetrying = false;
+    // Clean up any existing buttons from the previous page
+    cleanupExistingThreatComposerButtons(config);
+    return true; // Navigation occurred
+  }
+  return false; // No navigation
+}
+
+// Generic same-file navigation reset handler
+function handleSameFileNavigation(state: SPAState, config: TCConfig, fileExtensionRegex: RegExp): void {
+  // Special case: if we're on a .tc.json file but don't have a button, reset state
+  // This handles the case where we navigate away and back to the same file
+  if (window.location.href.match(fileExtensionRegex) && !document.getElementById(tcButtonId) && state.stopProcessing) {
+    logDebugMessage(config, 'On .tc.json file without button but processing stopped - resetting state for same-file navigation');
+    state.stopProcessing = false;
+    state.retryCount = 0;
+    state.isRetrying = false;
+  }
+}
+
+// Generic DOM readiness checker (can be customized per platform)
+function isFileViewerReady(platformName: string): boolean {
+  switch (platformName.toLowerCase()) {
+    case 'github':
+      return isGitHubFileViewerReady();
+    case 'gitlab':
+      return isGitLabFileViewerReady();
+    case 'codecatalyst':
+      return isCodeCatalystFileViewerReady();
+    default:
+      // Generic fallback - check if we're not in a loading state
+      const isLoading = document.querySelector('.loading') ||
+                       document.querySelector('[aria-label*="loading" i]') ||
+                       document.querySelector('[class*="loading" i]');
+      return !isLoading;
+  }
+}
+
+// Generic file viewer wait function
+async function waitForFileViewer(config: TCConfig, platformName: string, maxWaitTime: number = 3000): Promise<boolean> {
+  const startTime = Date.now();
+
+  while (Date.now() - startTime < maxWaitTime) {
+    if (isFileViewerReady(platformName)) {
+      logDebugMessage(config, `${platformName} file viewer is ready`);
+      return true;
+    }
+
+    // Wait 50ms before checking again
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+
+  logDebugMessage(config, `${platformName} file viewer not ready after ${maxWaitTime}ms`);
   return false;
 }
 
@@ -349,6 +424,37 @@ function isGitHubFileViewerReady(): boolean {
   const isLoading = document.querySelector('[data-testid="page-loader"]') ||
                    document.querySelector('.loading') ||
                    document.querySelector('[aria-label="Loading content"]');
+
+  return fileViewer !== null && !isLoading;
+}
+
+// Check if GitLab's file viewer is ready
+function isGitLabFileViewerReady(): boolean {
+  // Check for key GitLab file viewer elements
+  const fileViewer = document.querySelector('.file-holder') ||
+                    document.querySelector('.blob-viewer') ||
+                    document.querySelector('.file-content') ||
+                    document.querySelector('[data-testid="blob-viewer"]');
+
+  // Check if we're not in a loading state
+  const isLoading = document.querySelector('.gl-spinner') ||
+                   document.querySelector('.loading') ||
+                   document.querySelector('[aria-label*="loading" i]');
+
+  return fileViewer !== null && !isLoading;
+}
+
+// Check if CodeCatalyst's file viewer is ready
+function isCodeCatalystFileViewerReady(): boolean {
+  // Check for key CodeCatalyst file viewer elements
+  const fileViewer = document.querySelector('.cs-Tabs__tab-header-actions') ||
+                    document.querySelector('[class*="file-viewer"]') ||
+                    document.querySelector('[class*="code-viewer"]');
+
+  // Check if we're not in a loading state
+  const isLoading = document.querySelector('.cs-spinner') ||
+                   document.querySelector('.loading') ||
+                   document.querySelector('[class*="loading"]');
 
   return fileViewer !== null && !isLoading;
 }
@@ -572,13 +678,9 @@ async function handleAmazonCode(codeBrowserState: TCAmazonCodeState, tcConfig: T
 
   var regExCheck = new RegExp(tcConfig.fileExtension);
 
-  if (isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
-    await handleRaw(tcConfig);
-    return;
-  }
-
+  // Try site-specific logic first - only fall back to raw handling if site-specific fails
   const element = document.getElementsByClassName('file_header');
-  if (element && !codeBrowserState.stopProcessing) {
+  if (element && !codeBrowserState.stopProcessing && window.location.href.match(regExCheck)) {
     codeBrowserState.stopProcessing = true;
     const fileActionsDiv = document.getElementById('file_actions');
     if (fileActionsDiv) {
@@ -596,6 +698,13 @@ async function handleAmazonCode(codeBrowserState: TCAmazonCodeState, tcConfig: T
       const url = window.location + '?raw=1';
       await getTCJSONCandidate(url, tcButton, tcConfig);
     }
+  }
+
+  // Only handle as raw site if site-specific logic didn't process it and we have the file extension
+  // This prevents false positives from <pre> tags in normal Amazon Code file viewers
+  if (!codeBrowserState.stopProcessing && isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
+    await handleRaw(tcConfig);
+    return;
   }
 };
 
@@ -619,123 +728,385 @@ async function handleBitbucket(bitBucketState: TCBitbucketState, tcConfig: TCCon
 
   var regExCheck = new RegExp(tcConfig.fileExtension);
 
-  if (isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
-    await handleRaw(tcConfig);
-    return;
-  }
-
+  // Try site-specific logic first - only fall back to raw handling if site-specific fails
   const element = document.querySelectorAll("[data-testid='file-actions']")[0];
 
   if (element && element.hasChildNodes() && checkNoPresentation(element as HTMLElement) && !bitBucketState.stopProcessing) {
     bitBucketState.stopProcessing = true;
-    const fileMenu = (document.querySelectorAll("[data-qa='bk-file__menu']")[0] as HTMLElement);
-    const editButtonClone = document.querySelectorAll("[data-qa='bk-file__action-button']")[0].cloneNode(true);
-    (editButtonClone.childNodes[0].childNodes[0].childNodes[0].childNodes[0] as HTMLElement).innerText = 'View in Threat Composer';
-    (editButtonClone.childNodes[0].childNodes[0] as HTMLElement).style.pointerEvents = 'none';
-    (editButtonClone.childNodes[0].childNodes[0] as HTMLInputElement).disabled = true;
-    element.insertBefore(editButtonClone, fileMenu);
-    const cleanPath = location.pathname.replace(/^[/]|[/]$/g, '');
-    const match = /^[^/]+[/][^/]+[/]?(.*)$/.exec(cleanPath);
-    if (match && match[1]) {
-      const rawPathSegment = match[1].replace(/^src\//, 'raw/');
-      const currentUrl = window.location.href;
-      const url = currentUrl.replace(match[1], rawPathSegment);
-      logDebugMessage(tcConfig, 'Proactively attempting to retrieve candidate');
-      await getTCJSONCandidate(url, editButtonClone.childNodes[0] as HTMLElement, tcConfig);
+    const fileMenu = document.querySelectorAll("[data-qa='bk-file__menu']")[0] as HTMLElement | null;
+    const editButtonClone = document.querySelectorAll("[data-qa='bk-file__action-button']")[0];
+    if (editButtonClone && fileMenu) {
+      const clonedElement = editButtonClone.cloneNode(true);
+      (clonedElement.childNodes[0].childNodes[0].childNodes[0].childNodes[0] as HTMLElement).innerText = 'View in Threat Composer';
+      (clonedElement.childNodes[0].childNodes[0] as HTMLElement).style.pointerEvents = 'none';
+      (clonedElement.childNodes[0].childNodes[0] as HTMLInputElement).disabled = true;
+      element.insertBefore(clonedElement, fileMenu);
+      const cleanPath = location.pathname.replace(/^[/]|[/]$/g, '');
+      const match = /^[^/]+[/][^/]+[/]?(.*)$/.exec(cleanPath);
+      if (match && match[1]) {
+        const rawPathSegment = match[1].replace(/^src\//, 'raw/');
+        const currentUrl = window.location.href;
+        const url = currentUrl.replace(match[1], rawPathSegment);
+        logDebugMessage(tcConfig, 'Proactively attempting to retrieve candidate');
+        await getTCJSONCandidate(url, clonedElement.childNodes[0] as HTMLElement, tcConfig);
+      }
+    }
+  }
+
+  // Only handle as raw site if site-specific logic didn't process it and we have the file extension
+  // This prevents false positives from <pre> tags in normal Bitbucket file viewers
+  if (!bitBucketState.stopProcessing && isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
+    await handleRaw(tcConfig);
+    return;
+  }
+}
+
+// Multi-strategy GitLab raw button detection
+function findGitLabRawButton(): HTMLElement | null {
+  // Strategy 1: title attribute (most common)
+  let rawButton = document.querySelector("a[title='Open raw']");
+  if (rawButton) return rawButton as HTMLElement;
+
+  // Strategy 2: href pattern matching
+  rawButton = document.querySelector('a[href*="/-/raw/"]');
+  if (rawButton) return rawButton as HTMLElement;
+
+  // Strategy 3: text content matching
+  const buttons = document.querySelectorAll('a, button');
+  for (const button of buttons) {
+    if (button.textContent?.trim().toLowerCase() === 'raw') {
+      return button as HTMLElement;
+    }
+  }
+
+  // Strategy 4: class-based fallback
+  rawButton = document.querySelector('.btn[href*="raw"]');
+  if (rawButton) return rawButton as HTMLElement;
+
+  return null;
+}
+
+// Extract styling from existing GitLab buttons dynamically
+function extractGitLabButtonStyling(rawButton: HTMLElement): { classes: string; attributes: Record<string, string> } {
+  const classes = rawButton.classList.toString();
+  const attributes: Record<string, string> = {};
+
+  // Extract common button attributes that GitLab uses
+  const attributesToCopy = ['data-toggle', 'data-placement', 'rel'];
+
+  attributesToCopy.forEach(attr => {
+    const value = rawButton.getAttribute(attr);
+    if (value !== null) {
+      attributes[attr] = value;
+    }
+  });
+
+  return { classes, attributes };
+}
+
+// Smart button insertion for GitLab
+function insertGitLabThreatComposerButton(rawButton: HTMLElement, config: TCConfig): HTMLElement {
+  const tcButton = document.createElement('a');
+  tcButton.id = tcButtonId;
+
+  // Extract actual styling from the raw button
+  const { classes, attributes } = extractGitLabButtonStyling(rawButton);
+
+  // Apply the extracted classes and attributes
+  tcButton.setAttribute('class', classes);
+  tcButton.innerText = tcButtonText;
+  tcButton.style.pointerEvents = 'none';
+
+  Object.entries(attributes).forEach(([key, value]) => {
+    tcButton.setAttribute(key, value);
+  });
+
+  // Find the button group container
+  const buttonGroup = rawButton.closest('.file-actions') ||
+                     rawButton.closest('.btn-group') ||
+                     rawButton.parentElement;
+
+  if (buttonGroup) {
+    // Insert before the raw button to maintain order
+    rawButton.parentNode?.insertBefore(tcButton, rawButton);
+    logDebugMessage(config, 'Inserted Threat Composer button in GitLab UI button group with extracted styling');
+  } else {
+    // Fallback: insert before raw button directly
+    rawButton.parentNode?.insertBefore(tcButton, rawButton);
+    logDebugMessage(config, 'Inserted Threat Composer button using fallback method with extracted styling');
+  }
+
+  return tcButton;
+}
+
+// Robust GitLab raw URL construction
+function getGitLabRawUrl(rawButton: HTMLElement): string {
+  // Try to get URL from raw button href
+  const href = rawButton.getAttribute('href');
+  if (href && href.includes('/-/raw/')) {
+    const fullUrl = new URL(href, window.location.origin).toString();
+    return fullUrl;
+  }
+
+  // Fallback: construct from current URL
+  return location.href.replace(/\/\-\/blob/, '/-/raw');
+}
+
+async function handleGitLabCodeViewer(gitLabState: TCGitLabState, config: TCConfig) {
+  var regExCheck = new RegExp(config.fileExtension);
+  if (window.location.href.match(regExCheck)) {
+
+    // Skip if already processing or retrying
+    if (gitLabState.stopProcessing || gitLabState.isRetrying) {
+      return;
+    }
+
+    // Wait for GitLab's file viewer to be ready
+    logDebugMessage(config, 'Waiting for GitLab file viewer to be ready...');
+    const isReady = await waitForFileViewer(config, 'GitLab');
+    if (!isReady) {
+      logDebugMessage(config, 'GitLab file viewer not ready, will retry on next mutation');
+      return;
+    }
+
+    // Set retry flag to prevent concurrent attempts
+    gitLabState.isRetrying = true;
+
+    try {
+      // Use retry mechanism to find raw button
+      const rawButton = await retryWithBackoff(
+        () => findGitLabRawButton(),
+        5, // maxRetries
+        100, // baseDelay (ms)
+        config,
+        'GitLab raw button detection',
+      );
+
+      if (rawButton && !gitLabState.stopProcessing) {
+        gitLabState.stopProcessing = true;
+        gitLabState.retryCount = 0;
+
+        logDebugMessage(config, 'Successfully found GitLab raw button with retry mechanism');
+
+        // Smart button insertion with dynamic styling
+        const tcButton = insertGitLabThreatComposerButton(rawButton, config);
+
+        // Robust URL construction
+        const url = getGitLabRawUrl(rawButton);
+        logDebugMessage(config, 'Using raw URL: ' + url);
+
+        logDebugMessage(config, 'Proactively attempting to retrieve candidate');
+        await getTCJSONCandidate(url, tcButton, config);
+      } else if (!rawButton) {
+        gitLabState.retryCount++;
+        logDebugMessage(config, `ThreatComposerExtension: Could not find GitLab raw button with any strategy (attempt ${gitLabState.retryCount})`);
+
+        // If we've failed multiple times, log additional debug info
+        if (gitLabState.retryCount >= 3) {
+          logDebugMessage(config, `GitLab DOM state - File viewer ready: ${isGitLabFileViewerReady()}, URL: ${window.location.href}`);
+          logDebugMessage(config, `Available buttons: ${document.querySelectorAll('a, button').length}, Raw-like elements: ${document.querySelectorAll('a[title*="raw" i], a[href*="raw"], *[class*="raw" i]').length}`);
+        }
+      }
+    } catch (error) {
+      logDebugMessage(config, `Error in GitLab raw button detection: ${(error as Error).message}`);
+    } finally {
+      gitLabState.isRetrying = false;
     }
   }
 }
 
 async function handleGitLab(gitLabState: TCGitLabState, tcConfig: TCConfig) {
-
-  if (ViewInThreatComposerButtonExists()) {return;}
-
   var regExCheck = new RegExp(tcConfig.fileExtension);
 
-  if (isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
+  // Handle SPA navigation using generic helper
+  handleSPANavigation(gitLabState, tcConfig, 'GitLab');
+
+  // Handle same-file navigation using generic helper
+  handleSameFileNavigation(gitLabState, tcConfig, regExCheck);
+
+  // Skip processing if appropriate using generic helper
+  if (shouldSkipProcessing(gitLabState, tcConfig)) {return;}
+
+  // Only handle as raw site if we're actually on a raw URL AND have the file extension
+  // This prevents false positives from <pre> tags in normal GitLab file viewers
+  if (isRawSite(tcConfig) && window.location.href.match(regExCheck) &&
+      (window.location.href.includes('/-/raw/') || window.location.href.includes('/raw/'))) {
     await handleRaw(tcConfig);
     return;
   }
 
-  if (window.location.href != gitLabState.previousUrl) {
-    //Handle GitLab being a SPA
-    gitLabState.previousUrl = window.location.href;
-    gitLabState.stopProcessing = false;
+  await handleGitLabCodeViewer(gitLabState, tcConfig);
+}
+
+// Multi-strategy CodeCatalyst action button detection
+function findCodeCatalystActionElement(): HTMLElement | null {
+  // Strategy 1: Look for the tab header actions container (most reliable)
+  let actionElement = document.getElementsByClassName('cs-Tabs__tab-header-actions')[0];
+  if (actionElement && actionElement.hasChildNodes()) {
+    return actionElement as HTMLElement;
   }
 
-  var regExCheck = new RegExp(tcConfig.fileExtension);
+  // Strategy 2: Look for file action buttons container
+  actionElement = document.querySelector('[class*="file-actions"]');
+  if (actionElement) return actionElement as HTMLElement;
+
+  // Strategy 3: Look for toolbar or header actions
+  actionElement = document.querySelector('[class*="toolbar"]');
+  if (actionElement) return actionElement as HTMLElement;
+
+  return null;
+}
+
+// Extract styling from existing CodeCatalyst buttons dynamically
+function extractCodeCatalystButtonStyling(actionElement: HTMLElement): { classes: string; attributes: Record<string, string> } {
+  const currentAnchor = actionElement.firstChild as HTMLElement | null;
+  const classes = currentAnchor?.classList.toString() || '';
+  const attributes: Record<string, string> = {};
+
+  // Extract common button attributes that CodeCatalyst uses
+  const attributesToCopy = ['data-testid', 'role', 'aria-label'];
+
+  if (currentAnchor) {
+    attributesToCopy.forEach(attr => {
+      const value = currentAnchor.getAttribute(attr);
+      if (value !== null) {
+        attributes[attr] = value;
+      }
+    });
+  }
+
+  return { classes, attributes };
+}
+
+// Smart button insertion for CodeCatalyst
+function insertCodeCatalystThreatComposerButton(actionElement: HTMLElement, config: TCConfig): HTMLElement {
+  const tcButton = document.createElement('a');
+  tcButton.id = tcButtonId;
+
+  // Extract actual styling from existing buttons
+  const { classes, attributes } = extractCodeCatalystButtonStyling(actionElement);
+
+  // Apply the extracted classes and attributes
+  tcButton.setAttribute('class', classes);
+
+  Object.entries(attributes).forEach(([key, value]) => {
+    tcButton.setAttribute(key, value);
+  });
+
+  // Create the span element to match CodeCatalyst's structure
+  const currentAnchor = actionElement.firstChild as HTMLElement | null;
+  const currentSpan = currentAnchor?.firstChild as HTMLElement | null;
+
+  const tcSpan = document.createElement('span');
+  tcSpan.setAttribute('class', currentSpan?.classList.toString() || '');
+  tcSpan.textContent = tcButtonText;
+
+  tcButton.appendChild(tcSpan);
+
+  // Set up the click handler for CodeCatalyst's specific raw content extraction
+  tcButton.onclick = function () {
+    if (document.getElementById('raw-div')) {
+      const rawText = document.getElementById('raw-div')!.textContent;
+      if (rawText) {
+        try {
+          const jsonObj: TCJSONSimplifiedSchema = JSON.parse(rawText);
+          logDebugMessage(config,
+            'Sending message with candidate JSON object back service worker / background script',
+          );
+          browser.runtime.sendMessage(jsonObj);
+        } catch (error) {
+          logDebugMessage(config, 'Error parsing CodeCatalyst raw content: ' + (error as Error).message);
+        }
+      }
+    }
+  };
+
+  // Insert the button into the actions container
+  actionElement.appendChild(tcButton);
+
+  logDebugMessage(config, 'Inserted Threat Composer button in CodeCatalyst UI with extracted styling');
+
+  return tcButton;
+}
+
+async function handleCodeCatalystCodeViewer(codeCatalystState: TCCodeCatalystState, config: TCConfig) {
+  var regExCheck = new RegExp(config.fileExtension);
   if (window.location.href.match(regExCheck)) {
-    const element = (document.querySelectorAll("a[title='Open raw']")[0] as HTMLElement);
-    if (element && !gitLabState.stopProcessing) {
-      gitLabState.stopProcessing = true;
-      const tcButton = document.createElement('a');
-      tcButton.id = tcButtonId;
-      tcButton.setAttribute('class', element.classList.toString());
-      tcButton.innerText = tcButtonText;
-      tcButton.style.pointerEvents = 'none';
-      element.parentNode?.insertBefore(tcButton, element);
-      const rawPath = location.href.replace(/\/\-\/blob/, '/-/raw');
-      logDebugMessage(tcConfig, 'Proactively attempting to retrieve candidate');
-      await getTCJSONCandidate(rawPath, tcButton as HTMLElement, tcConfig);
+
+    // Skip if already processing or retrying
+    if (codeCatalystState.stopProcessing || codeCatalystState.isRetrying) {
+      return;
+    }
+
+    // Wait for CodeCatalyst's file viewer to be ready
+    logDebugMessage(config, 'Waiting for CodeCatalyst file viewer to be ready...');
+    const isReady = await waitForFileViewer(config, 'CodeCatalyst');
+    if (!isReady) {
+      logDebugMessage(config, 'CodeCatalyst file viewer not ready, will retry on next mutation');
+      return;
+    }
+
+    // Set retry flag to prevent concurrent attempts
+    codeCatalystState.isRetrying = true;
+
+    try {
+      // Use retry mechanism to find action element
+      const actionElement = await retryWithBackoff(
+        () => findCodeCatalystActionElement(),
+        5, // maxRetries
+        100, // baseDelay (ms)
+        config,
+        'CodeCatalyst action element detection',
+      );
+
+      if (actionElement && !codeCatalystState.stopProcessing) {
+        codeCatalystState.stopProcessing = true;
+        codeCatalystState.retryCount = 0;
+
+        logDebugMessage(config, 'Successfully found CodeCatalyst action element with retry mechanism');
+
+        // Smart button insertion with dynamic styling
+        const tcButton = insertCodeCatalystThreatComposerButton(actionElement, config);
+
+        logDebugMessage(config, 'CodeCatalyst button inserted and configured');
+      } else if (!actionElement) {
+        codeCatalystState.retryCount++;
+        logDebugMessage(config, `ThreatComposerExtension: Could not find CodeCatalyst action element with any strategy (attempt ${codeCatalystState.retryCount})`);
+
+        // If we've failed multiple times, log additional debug info
+        if (codeCatalystState.retryCount >= 3) {
+          logDebugMessage(config, `CodeCatalyst DOM state - File viewer ready: ${isCodeCatalystFileViewerReady()}, URL: ${window.location.href}`);
+          logDebugMessage(config, `Available action elements: ${document.querySelectorAll('[class*="cs-Tabs"], [class*="file-actions"], [class*="toolbar"]').length}`);
+        }
+      }
+    } catch (error) {
+      logDebugMessage(config, `Error in CodeCatalyst action element detection: ${(error as Error).message}`);
+    } finally {
+      codeCatalystState.isRetrying = false;
     }
   }
 }
 
 async function handleCodeCatalyst(codeCatalystState: TCCodeCatalystState, tcConfig: TCConfig) {
-
-  if (ViewInThreatComposerButtonExists()) {return;}
-
   var regExCheck = new RegExp(tcConfig.fileExtension);
 
-  if (isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
+  // Handle SPA navigation using generic helper
+  handleSPANavigation(codeCatalystState, tcConfig, 'CodeCatalyst');
+
+  // Handle same-file navigation using generic helper
+  handleSameFileNavigation(codeCatalystState, tcConfig, regExCheck);
+
+  // Skip processing if appropriate using generic helper
+  if (shouldSkipProcessing(codeCatalystState, tcConfig)) {return;}
+
+  // Try site-specific logic first - only fall back to raw handling if site-specific fails
+  await handleCodeCatalystCodeViewer(codeCatalystState, tcConfig);
+
+  // Only handle as raw site if site-specific logic didn't process it and we have the file extension
+  // This prevents false positives from <pre> tags in normal CodeCatalyst file viewers
+  if (!codeCatalystState.stopProcessing && isRawSite(tcConfig) && window.location.href.match(regExCheck)) {
     await handleRaw(tcConfig);
     return;
-  }
-
-  if (window.location.href != codeCatalystState.previousUrl) {
-    //Handle CodeCatalyst being a SPA
-    codeCatalystState.previousUrl = window.location.href;
-    codeCatalystState.stopProcessing = false;
-  }
-
-  const element = document.getElementsByClassName(
-    'cs-Tabs__tab-header-actions',
-  )[0];
-  if (element && element.hasChildNodes() && !codeCatalystState.stopProcessing) {
-    codeCatalystState.stopProcessing = true;
-    const tcButton = document.createElement('a');
-    tcButton.id = tcButtonId;
-    const currentAnchor = element.firstChild;
-    tcButton.setAttribute(
-      'class',
-      (currentAnchor as HTMLElement)?.classList.toString() || '',
-    );
-
-    const currentSpan = currentAnchor?.firstChild as HTMLElement;
-
-    const tcSpan = document.createElement('span');
-    tcSpan.setAttribute('class', currentSpan?.classList.toString() || '');
-    tcSpan.textContent = tcButtonText;
-
-    tcButton.appendChild(tcSpan);
-
-    tcButton.onclick = function () {
-      if (document.getElementById('raw-div')) {
-        const rawText = document.getElementById('raw-div')!.textContent;
-        if (rawText) {
-          const jsonObj: TCJSONSimplifiedSchema = JSON.parse(rawText);
-          logDebugMessage(tcConfig,
-            'Sending message with candicate JSON object back service worker / background script',
-          );
-          browser.runtime.sendMessage(jsonObj);
-        }
-      }
-    };
-
-    const actionsDiv = document.getElementsByClassName(
-      'cs-Tabs__tab-header-actions',
-    )[0];
-    actionsDiv.appendChild(tcButton);
   }
 };
 
@@ -803,6 +1174,8 @@ export default defineContentScript({
     const codeCatalystState: TCCodeCatalystState = {
       previousUrl: '',
       stopProcessing: false,
+      retryCount: 0,
+      isRetrying: false,
     };
 
     const bitbucketState: TCBitbucketState = {
@@ -812,6 +1185,8 @@ export default defineContentScript({
     const gitLabState: TCGitLabState = {
       previousUrl: '',
       stopProcessing: false,
+      retryCount: 0,
+      isRetrying: false,
     };
 
     void (async function () {
