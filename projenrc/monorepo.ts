@@ -6,7 +6,7 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
       defaultReleaseBranch: "main",
       name: "@aws/threat-composer-monorepo",
       devDeps: [
-        "@aws/pdk",
+        "@aws/pdk@0.26.7",
         "eslint-plugin-header",
         "license-checker",
         "husky",
