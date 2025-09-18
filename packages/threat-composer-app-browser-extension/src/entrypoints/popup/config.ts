@@ -38,7 +38,7 @@ export const IntegrationTypes = {
 } as const;
 
 export const DefaultConfig: TCConfig = {
-  debug: true,
+  debug: false,
   fileExtension: '.tc.json',
   integrations: {
     [IntegrationTypes.CODEAMAZON]: {
