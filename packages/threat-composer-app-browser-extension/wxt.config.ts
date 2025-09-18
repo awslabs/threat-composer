@@ -18,9 +18,6 @@ function generateManifest(env: ConfigEnv): UserManifest {
       }
     ],
     permissions: ["storage", "tabs"],
-    icons: {
-      128: '/icon-128.png',
-    },
   }
 
   if (env.manifestVersion === 2) {
@@ -44,6 +41,10 @@ function generateManifest(env: ConfigEnv): UserManifest {
 }
 
 export default defineConfig({
+  modules: ['@wxt-dev/auto-icons'],
+  autoIcons: {
+    baseIconPath: '../../threat-composer-app/src/assets/logo-dark.svg'
+  },
   vite: (env) => ({
     build: {
       emptyOutDir: false
