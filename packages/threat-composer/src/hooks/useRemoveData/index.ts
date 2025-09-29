@@ -19,6 +19,7 @@ import { useApplicationInfoContext } from '../../contexts/ApplicationContext';
 import { useArchitectureInfoContext } from '../../contexts/ArchitectureContext';
 import { useAssumptionLinksContext } from '../../contexts/AssumptionLinksContext';
 import { useAssumptionsContext } from '../../contexts/AssumptionsContext';
+import { useBrainstormContext } from '../../contexts/BrainstormContext';
 import { useDataflowInfoContext } from '../../contexts/DataflowContext';
 import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext';
 import { useMitigationLinksContext } from '../../contexts/MitigationLinksContext';
@@ -36,6 +37,7 @@ const useRemoveData = () => {
   const { removeAllStatements, onDeleteWorkspace: threatsDeleteWorkspace } = useThreatsContext();
   const { removeAllAssumptionLinks, onDeleteWorkspace: assumptionLinksDeleteWorkspace } = useAssumptionLinksContext();
   const { removeAllMitigationLinks, onDeleteWorkspace: mitigationLinksDeleteWorkspace } = useMitigationLinksContext();
+  const { onDeleteWorkspace: brainstormDeleteWorkspace } = useBrainstormContext();
 
   const removeData = useCallback(async () => {
     if (composerMode === 'Full') {
@@ -70,6 +72,7 @@ const useRemoveData = () => {
         mitigationsDeleteWorkspace(toDeleteWorkspaceId),
         assumptionLinksDeleteWorkspace(toDeleteWorkspaceId),
         mitigationLinksDeleteWorkspace(toDeleteWorkspaceId),
+        brainstormDeleteWorkspace(toDeleteWorkspaceId),
       ]);
 
       switchWorkspace(null);
@@ -85,6 +88,7 @@ const useRemoveData = () => {
     mitigationsDeleteWorkspace,
     assumptionLinksDeleteWorkspace,
     mitigationLinksDeleteWorkspace,
+    brainstormDeleteWorkspace,
   ]);
 
   return {
