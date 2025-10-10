@@ -6,7 +6,7 @@ class ThreatComposerInfraProject extends AwsCdkTypeScriptApp {
     super({
       cdkVersion: "2.128.0",
       defaultReleaseBranch: "main",
-      deps: ["@aws/pdk@0.26.7", "cdk-nag"],
+      deps: ["@aws/pdk", "cdk-nag"],
       name: "@aws/threat-composer-infra",
       parent: parent,
       outdir: "packages/threat-composer-infra",

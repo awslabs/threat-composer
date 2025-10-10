@@ -244,7 +244,7 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@babel/helper-split-export-declaration,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-header,eslint-plugin-import,eslint-plugin-prettier,husky,license-checker,npm-check-updates,prettier,ts-node,typescript,aws-cdk-lib,cdk-nag"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@aws/pdk,@babel/helper-split-export-declaration,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-header,eslint-plugin-import,eslint-plugin-prettier,husky,license-checker,npm-check-updates,prettier,ts-node,typescript,aws-cdk-lib,cdk-nag"
         },
         {
           "exec": "yarn install --check-files"
