@@ -9,6 +9,9 @@
         },
         {
           "exec": "yarn nx run-many --target=build --output-style=stream --nx-bail"
+        },
+        {
+          "spawn": "build:schema"
         }
       ]
     },

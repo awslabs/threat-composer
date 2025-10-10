@@ -13,20 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export * from './assumptions';
-export * from './brainstorm';
-export * from './mitigations';
-export * from './threats';
-export * from './threatFieldTypes';
-export * from './workspaces';
-export * from './entities';
-export * from './composerMode';
-export * from './application';
-export * from './architecture';
-export * from './dataflow';
-export * from './dataExchange';
-export * from './events';
-export * from './components';
-export * from './referencePacks';
-export * from './windowAPI';
-export * from './appMode';
+import { BrainstormItem } from '../../customTypes/brainstorm';
+
+// Promotion handlers interface
+export interface PromotionHandlers {
+  promote: (item: BrainstormItem) => void;
+  isPromoted: (item: BrainstormItem) => boolean;
+}
+
+// Threat creation handlers interface
+export interface ThreatCreationHandlers {
+  createThreat: (item: BrainstormItem) => void;
+  fieldName: string;
+  fieldKey: string;
+}

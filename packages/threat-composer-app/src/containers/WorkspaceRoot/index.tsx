@@ -64,18 +64,21 @@ const WorkspaceRoot: FC = () => {
         onWorkspaceChanged={handleWorkspaceChanged}
         workspaceName={workspaceId}
       >
-        {(workspaceIdFromContext) => (<WorkspaceContextAggregator
-          workspaceId={workspaceIdFromContext}
-          requiredGlobalSetupContext={false}
-          onThreatEditorView={handleThreatEditorView}
-          onThreatListView={handleThreatListView}
-        >
-          <AppLayout>
-            <Outlet />
-          </AppLayout>
-        </WorkspaceContextAggregator>)}
+        {(workspaceIdFromContext) => (
+          <WorkspaceContextAggregator
+            workspaceId={workspaceIdFromContext}
+            requiredGlobalSetupContext={false}
+            onThreatEditorView={handleThreatEditorView}
+            onThreatListView={handleThreatListView}
+          >
+            <AppLayout>
+              <Outlet />
+            </AppLayout>
+          </WorkspaceContextAggregator>
+        )}
       </WorkspacesContext>
-    </WorkspaceExamplesContext>);
+    </WorkspaceExamplesContext>
+  );
 };
 
 export default WorkspaceRoot;
