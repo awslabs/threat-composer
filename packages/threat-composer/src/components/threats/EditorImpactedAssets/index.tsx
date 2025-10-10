@@ -74,14 +74,12 @@ const EditorImpactedAssets: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, E
       onChange={({ detail }) => setValue(detail.value)}
       onSelect={handleSelect}
       value={value}
-      options={[
-        ...previousInputs.impacted_assets.map(asset => ({
-          value: asset,
-        })),
-        ...(brainstormData.assets || []).map(asset => ({
-          value: asset.content,
-        })),
-      ]}
+      options={Array.from(new Set([
+        ...previousInputs.impacted_assets,
+        ...(brainstormData.assets || []).map(asset => asset.content),
+      ])).map(assetValue => ({
+        value: assetValue,
+      }))}
       enteredTextLabel={enteredValue => `Use: "${enteredValue}"`}
       ariaLabel="Autosuggest for impacted assets"
       placeholder="Select an existing asset or enter new asset"
