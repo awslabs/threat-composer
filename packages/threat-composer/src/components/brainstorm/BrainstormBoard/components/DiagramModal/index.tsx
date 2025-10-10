@@ -13,9 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { Button, Header } from '@cloudscape-design/components';
-import { FC, useState, CSSProperties } from 'react';
-import { Modal } from '../../../..';
+import {
+  Button,
+  Modal,
+  SpaceBetween,
+  Box,
+  StatusIndicator,
+  Grid,
+  SegmentedControl,
+} from '@cloudscape-design/components';
+import { FC, useState, useEffect, useCallback, CSSProperties } from 'react';
 
 /**
  * Props interface for DiagramModal component
@@ -33,7 +40,7 @@ export interface DiagramModalProps {
 
 /**
  * DiagramModal component for displaying architecture and dataflow diagrams
- * with zoom and pan functionality using only React core APIs
+ * with enhanced zoom and pan functionality using Cloudscape components
  */
 export const DiagramModal: FC<DiagramModalProps> = ({
   visible,
@@ -41,165 +48,284 @@ export const DiagramModal: FC<DiagramModalProps> = ({
   title,
   image,
 }) => {
+  // State management
   const [zoomLevel, setZoomLevel] = useState(100);
   const [panPosition, setPanPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [viewMode, setViewMode] = useState<'fit' | 'custom'>('fit');
+  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+  const [containerDimensions, setContainerDimensions] = useState({ width: 800, height: 600 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
 
-  const containerStyles: CSSProperties = {
-    color: 'white',
-    transition: 'all 0.3s ease',
-  };
 
+  // Load image and calculate dimensions
+  useEffect(() => {
+    if (image) {
+      const img = new Image();
+      img.onload = () => {
+        const aspectRatio = img.naturalWidth / img.naturalHeight;
+        setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+
+        // Calculate optimal container size based on viewport
+        const maxWidth = Math.min(window.innerWidth * 0.85, 1200);
+        const maxHeight = Math.min(window.innerHeight * 0.75, 800);
+
+        let containerWidth = maxWidth;
+        let containerHeight = containerWidth / aspectRatio;
+
+        if (containerHeight > maxHeight) {
+          containerHeight = maxHeight;
+          containerWidth = containerHeight * aspectRatio;
+        }
+
+        setContainerDimensions({ width: containerWidth, height: containerHeight });
+
+        // Calculate initial fit-to-window zoom level
+        const scaleX = containerWidth / img.naturalWidth;
+        const scaleY = containerHeight / img.naturalHeight;
+        const fitZoom = Math.min(scaleX, scaleY) * 100;
+
+        setZoomLevel(fitZoom);
+        setPanPosition({ x: 0, y: 0 });
+        setViewMode('fit');
+      };
+      img.src = image;
+    }
+  }, [image]);
+
+  // Handle fit to window - calculate proper zoom to fit image in container
+  const handleFitToWindow = useCallback(() => {
+    if (imageDimensions.width && imageDimensions.height) {
+      const scaleX = containerDimensions.width / imageDimensions.width;
+      const scaleY = containerDimensions.height / imageDimensions.height;
+      const fitZoom = Math.min(scaleX, scaleY) * 100;
+
+      setZoomLevel(fitZoom);
+      setPanPosition({ x: 0, y: 0 });
+      setViewMode('fit');
+    }
+  }, [imageDimensions, containerDimensions]);
+
+  // Handle mouse wheel zoom
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -10 : 10;
+    const newZoom = Math.max(25, Math.min(400, zoomLevel + delta));
+    setZoomLevel(newZoom);
+    setViewMode('custom');
+  }, [zoomLevel]);
+
+  // Handle drag panning (when zoomed in)
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button === 0 && zoomLevel > 100) {
+      setIsPanning(true);
+      setPanStart({ x: e.clientX, y: e.clientY });
+      e.preventDefault();
+    }
+  }, [zoomLevel]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (isPanning) {
+      const deltaX = e.clientX - panStart.x;
+      const deltaY = e.clientY - panStart.y;
+      setPanPosition(prev => ({
+        x: prev.x + deltaX / (zoomLevel / 100),
+        y: prev.y + deltaY / (zoomLevel / 100),
+      }));
+      setPanStart({ x: e.clientX, y: e.clientY });
+    }
+  }, [isPanning, panStart, zoomLevel]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsPanning(false);
+  }, []);
+
+  // Handle zoom preset selection from segmented control
+  const handleZoomPresetChange = useCallback((event: any) => {
+    const zoomValue = parseInt(event.detail.selectedId);
+    setZoomLevel(zoomValue);
+    setViewMode('custom');
+    if (zoomValue === 100) {
+      setPanPosition({ x: 0, y: 0 });
+    }
+  }, []);
+
+  // Get selected zoom preset for segmented control
+  const getSelectedZoomPreset = useCallback(() => {
+    if (viewMode === 'custom') {
+      const presetValues = [25, 50, 100, 150, 200];
+      if (presetValues.includes(zoomLevel)) {
+        return zoomLevel.toString();
+      }
+    }
+    return null;
+  }, [viewMode, zoomLevel]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (!visible) return;
+
+      switch (e.key) {
+        case '=':
+        case '+':
+          setZoomLevel(prev => Math.min(400, prev + 25));
+          setViewMode('custom');
+          break;
+        case '-':
+          setZoomLevel(prev => Math.max(25, prev - 25));
+          setViewMode('custom');
+          break;
+        case '0':
+          handleFitToWindow();
+          break;
+        case '1':
+          // Set to 100% zoom (actual size)
+          setZoomLevel(100);
+          setPanPosition({ x: 0, y: 0 });
+          setViewMode('custom');
+          break;
+        case 'ArrowUp':
+          setPanPosition(prev => ({ ...prev, y: prev.y + 50 }));
+          break;
+        case 'ArrowDown':
+          setPanPosition(prev => ({ ...prev, y: prev.y - 50 }));
+          break;
+        case 'ArrowLeft':
+          setPanPosition(prev => ({ ...prev, x: prev.x + 50 }));
+          break;
+        case 'ArrowRight':
+          setPanPosition(prev => ({ ...prev, x: prev.x - 50 }));
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [visible, handleFitToWindow]);
+
+  // Styles
   const imageContainerStyles: CSSProperties = {
+    width: `${containerDimensions.width}px`,
+    height: `${containerDimensions.height}px`,
+    margin: '0 auto',
     overflow: 'hidden',
     position: 'relative',
-    width: '100%',
-    height: '500px',
-    margin: '0 auto',
+    border: '1px solid #d5dbdb',
+    borderRadius: '4px',
+    cursor: isPanning ? 'move' : (zoomLevel > 100 ? 'grab' : 'default'),
   };
 
   const imageStyles: CSSProperties = {
-    position: 'absolute',
+    maxWidth: 'none',
+    maxHeight: 'none',
+    width: `${imageDimensions.width}px`,
+    height: `${imageDimensions.height}px`,
     transform: `scale(${zoomLevel / 100}) translate(${panPosition.x}px, ${panPosition.y}px)`,
     transformOrigin: 'center center',
-    transition: isDragging ? 'none' : 'transform 0.2s ease',
-    cursor: zoomLevel > 100 ? 'move' : 'default',
-    maxWidth: '100%',
-    maxHeight: '100%',
-    display: 'block',
-    margin: '0 auto',
-  };
-
-  const headerStyles: CSSProperties = {
-    marginBottom: '16px',
-  };
-
-  const controlsStyles: CSSProperties = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: '16px',
-    gap: '10px',
-  };
-
-  const sliderContainerStyles: CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    minWidth: '200px',
-  };
-
-  /**
-   * Reset zoom level to 100% and pan position to center
-   */
-  const resetZoomAndPan = () => {
-    setZoomLevel(100);
-    setPanPosition({ x: 0, y: 0 });
-  };
-
-  /**
-   * Handle zoom level changes from the slider
-   * @param value - New zoom level value
-   */
-  const handleZoomChange = (value: number) => {
-    setZoomLevel(value);
-    // Reset pan position when zooming back to 100%
-    if (value === 100) {
-      setPanPosition({ x: 0, y: 0 });
-    }
-  };
-
-  /**
-   * Handle mouse down event to start dragging
-   * @param e - Mouse event
-   */
-  const handleMouseDown = (e: React.MouseEvent<HTMLImageElement>) => {
-    if (zoomLevel > 100) {
-      setIsDragging(true);
-      setDragStart({ x: e.clientX, y: e.clientY });
-    }
-  };
-
-  /**
-   * Handle mouse move event for panning
-   * @param e - Mouse event
-   */
-  const handleMouseMove = (e: React.MouseEvent<HTMLImageElement>) => {
-    if (isDragging && zoomLevel > 100) {
-      const dx = (e.clientX - dragStart.x) / (zoomLevel / 100);
-      const dy = (e.clientY - dragStart.y) / (zoomLevel / 100);
-      setPanPosition({
-        x: panPosition.x + dx,
-        y: panPosition.y + dy,
-      });
-      setDragStart({ x: e.clientX, y: e.clientY });
-    }
-  };
-
-  /**
-   * Handle mouse up event to stop dragging
-   */
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  /**
-   * Handle mouse leave event to stop dragging
-   */
-  const handleMouseLeave = () => {
-    setIsDragging(false);
+    transition: isPanning ? 'none' : 'transform 0.2s ease',
+    userSelect: 'none',
+    pointerEvents: 'none',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: `${-imageDimensions.height / 2}px`,
+    marginLeft: `${-imageDimensions.width / 2}px`,
   };
 
   return (
     <Modal
       visible={visible}
       onDismiss={onDismiss}
+      size="max"
+      header={title}
+      footer={
+        <SpaceBetween direction="horizontal" size="xs">
+          <span style={{ fontSize: '12px', color: '#5f6b7a' }}>
+            Use mouse wheel to zoom, arrow keys or pan controls to navigate
+          </span>
+        </SpaceBetween>
+      }
     >
-      <div style={containerStyles}>
-        <div style={headerStyles}>
-          <Header variant="h2">{title}</Header>
-        </div>
-        {image && (
-          <div style={controlsStyles}>
-            <div style={sliderContainerStyles}>
-              <span>Zoom:</span>
-              <input
-                type="range"
-                min="100"
-                max="400"
-                step="10"
-                value={zoomLevel}
-                onChange={(e) => handleZoomChange(parseInt(e.target.value, 10))}
-                style={{ width: '100%' }}
-              />
-              <span>{zoomLevel}%</span>
-            </div>
-            <Button
-              iconName="undo"
-              onClick={resetZoomAndPan}
-              ariaLabel="Reset Zoom"
-            >
-              Reset
-            </Button>
-          </div>
-        )}
-        {image ? (
-          <div style={imageContainerStyles}>
-            <img
-              src={image}
-              alt={title}
-              style={imageStyles}
+      {image ? (
+        <SpaceBetween size='s'>
+          <Box>
+            {/* Main Toolbar */}
+            <Grid gridDefinition={[{ colspan: 8 }, { colspan: 4 }]}>
+              <SpaceBetween direction="horizontal" size="s" alignItems="center">
+                <SegmentedControl
+                  selectedId={getSelectedZoomPreset()}
+                  onChange={handleZoomPresetChange}
+                  options={[
+                    { text: '25%', id: '25' },
+                    { text: '50%', id: '50' },
+                    { text: '100%', id: '100' },
+                    { text: '150%', id: '150' },
+                    { text: '200%', id: '200' },
+                  ]}
+                />
+                <Button onClick={handleFitToWindow} variant={viewMode === 'fit' ? 'primary' : 'normal'}>
+                  Fit Window
+                </Button>
+                <StatusIndicator type="info">
+                  {Math.round(zoomLevel)}%
+                </StatusIndicator>
+              </SpaceBetween>
+
+              <SpaceBetween direction="horizontal" size="xs" alignItems="center">
+                <span style={{ fontSize: '12px', fontWeight: 'bold' }}>Pan:</span>
+                <SpaceBetween direction="horizontal" size="xs">
+                  <Button
+                    variant="icon"
+                    iconName="caret-up-filled"
+                    onClick={() => { setPanPosition(prev => ({ ...prev, y: prev.y + 50 })); setViewMode('custom'); }}
+                    ariaLabel="Pan up"
+                  />
+                  <Button
+                    variant="icon"
+                    iconName="caret-down-filled"
+                    onClick={() => { setPanPosition(prev => ({ ...prev, y: prev.y - 50 })); setViewMode('custom'); }}
+                    ariaLabel="Pan down"
+                  />
+                  <Button
+                    variant="icon"
+                    iconName="caret-left-filled"
+                    onClick={() => { setPanPosition(prev => ({ ...prev, x: prev.x + 50 })); setViewMode('custom'); }}
+                    ariaLabel="Pan left"
+                  />
+                  <Button
+                    variant="icon"
+                    iconName="caret-right-filled"
+                    onClick={() => { setPanPosition(prev => ({ ...prev, x: prev.x - 50 })); setViewMode('custom'); }}
+                    ariaLabel="Pan right"
+                  />
+                </SpaceBetween>
+              </SpaceBetween>
+            </Grid>
+          </Box>
+          <Box>
+            <div
+              style={imageContainerStyles}
+              onWheel={handleWheel}
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseLeave}
-            />
-          </div>
-        ) : (
-          <p>No diagram available</p>
-        )}
-      </div>
+              onMouseLeave={handleMouseUp}
+            >
+              <img
+                src={image}
+                alt={title}
+                style={imageStyles}
+                draggable={false}
+              />
+            </div>
+          </Box>
+        </SpaceBetween>
+      ) : (
+        <Box textAlign="center" padding="xxl">
+          <StatusIndicator type="info">No diagram available</StatusIndicator>
+        </Box>
+      )}
     </Modal>
   );
 };
