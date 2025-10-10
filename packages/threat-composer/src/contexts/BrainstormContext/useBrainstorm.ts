@@ -28,13 +28,13 @@ const initialState: BrainstormData = {
 
 const useBrainstorm = (
   brainstormData: BrainstormData,
-  setBrainstormData: (data: BrainstormData) => void,
+  setBrainstormData: React.Dispatch<React.SetStateAction<BrainstormData>>,
 ) => {
   const addItem = useCallback((type: keyof BrainstormData, content: string) => {
-    setBrainstormData({
-      ...brainstormData,
+    setBrainstormData(prev => ({
+      ...prev,
       [type]: [
-        ...(brainstormData[type] || []),
+        ...(prev[type] || []),
         {
           id: crypto.randomUUID(),
           content,
@@ -42,102 +42,106 @@ const useBrainstorm = (
           createdBy: undefined, // Will be set by the application when known
         },
       ],
-    });
-  }, [brainstormData, setBrainstormData]);
+    }));
+  }, [setBrainstormData]);
 
   const updateItem = useCallback((type: keyof BrainstormData, id: string, content: string) => {
-    setBrainstormData({
-      ...brainstormData,
-      [type]: (brainstormData[type] || []).map((item: BrainstormItem) =>
+    setBrainstormData(prev => ({
+      ...prev,
+      [type]: (prev[type] || []).map((item: BrainstormItem) =>
         item.id === id ? { ...item, content } : item,
       ),
-    });
-  }, [brainstormData, setBrainstormData]);
+    }));
+  }, [setBrainstormData]);
 
   const removeItem = useCallback((type: keyof BrainstormData, id: string) => {
-    setBrainstormData({
-      ...brainstormData,
-      [type]: (brainstormData[type] || []).filter((item: BrainstormItem) => item.id !== id),
-    });
-  }, [brainstormData, setBrainstormData]);
+    setBrainstormData(prev => ({
+      ...prev,
+      [type]: (prev[type] || []).filter((item: BrainstormItem) => item.id !== id),
+    }));
+  }, [setBrainstormData]);
 
   const groupItems = useCallback((type: keyof BrainstormData, sourceId: string, targetId: string) => {
-    const items = brainstormData[type] || [];
-    const sourceItem = items.find(item => item.id === sourceId);
-    const targetItem = items.find(item => item.id === targetId);
+    setBrainstormData(prev => {
+      const items = prev[type] || [];
+      const sourceItem = items.find(item => item.id === sourceId);
+      const targetItem = items.find(item => item.id === targetId);
 
-    if (!sourceItem || !targetItem || sourceId === targetId) {
-      return;
-    }
+      if (!sourceItem || !targetItem || sourceId === targetId) {
+        return prev;
+      }
 
-    // Determine the target group ID
-    let targetGroupId: string;
+      // Determine the target group ID
+      let targetGroupId: string;
 
-    if (targetItem.groupId) {
-      // Target is part of a group, use its group ID
-      targetGroupId = targetItem.groupId;
-    } else if (sourceItem.groupId) {
-      // Source is part of a group, target is individual - use source's group ID
-      targetGroupId = sourceItem.groupId;
-    } else {
-      // Both are individual items, create new group
-      targetGroupId = crypto.randomUUID();
-    }
+      if (targetItem.groupId) {
+        // Target is part of a group, use its group ID
+        targetGroupId = targetItem.groupId;
+      } else if (sourceItem.groupId) {
+        // Source is part of a group, target is individual - use source's group ID
+        targetGroupId = sourceItem.groupId;
+      } else {
+        // Both are individual items, create new group
+        targetGroupId = crypto.randomUUID();
+      }
 
-    setBrainstormData({
-      ...brainstormData,
-      [type]: items.map((currentItem: BrainstormItem) => {
-        // If source item is part of a group, merge all items from source group into target group
-        if (sourceItem.groupId && currentItem.groupId === sourceItem.groupId) {
-          return {
-            ...currentItem,
-            groupId: targetGroupId,
-          };
-        } else if (currentItem.id === targetId && !currentItem.groupId) {
-          // If target item is individual, add it to the group
-          return {
-            ...currentItem,
-            groupId: targetGroupId,
-          };
-        } else if (currentItem.id === sourceId && !currentItem.groupId) {
-          // If source item is individual, add it to the target group
-          return {
-            ...currentItem,
-            groupId: targetGroupId,
-          };
-        }
-        return currentItem;
-      }),
+      return {
+        ...prev,
+        [type]: items.map((currentItem: BrainstormItem) => {
+          // If source item is part of a group, merge all items from source group into target group
+          if (sourceItem.groupId && currentItem.groupId === sourceItem.groupId) {
+            return {
+              ...currentItem,
+              groupId: targetGroupId,
+            };
+          } else if (currentItem.id === targetId && !currentItem.groupId) {
+            // If target item is individual, add it to the group
+            return {
+              ...currentItem,
+              groupId: targetGroupId,
+            };
+          } else if (currentItem.id === sourceId && !currentItem.groupId) {
+            // If source item is individual, add it to the target group
+            return {
+              ...currentItem,
+              groupId: targetGroupId,
+            };
+          }
+          return currentItem;
+        }),
+      };
     });
-  }, [brainstormData, setBrainstormData]);
+  }, [setBrainstormData]);
 
   const ungroupItem = useCallback((type: keyof BrainstormData, id: string) => {
-    const items = brainstormData[type] || [];
-    const targetItem = items.find(item => item.id === id);
+    setBrainstormData(prev => {
+      const items = prev[type] || [];
+      const targetItem = items.find(item => item.id === id);
 
-    if (!targetItem || !targetItem.groupId) {
-      return;
-    }
+      if (!targetItem || !targetItem.groupId) {
+        return prev;
+      }
 
-    const groupId = targetItem.groupId;
-    const itemsInGroup = items.filter(item => item.groupId === groupId);
+      const groupId = targetItem.groupId;
+      const itemsInGroup = items.filter(item => item.groupId === groupId);
 
-    setBrainstormData({
-      ...brainstormData,
-      [type]: items.map((currentItem: BrainstormItem) => {
-        if (currentItem.id === id) {
-          // Remove grouping info from this item
-          const { groupId: _, ...ungroupedItem } = currentItem;
-          return ungroupedItem;
-        } else if (currentItem.groupId === groupId && itemsInGroup.length === 2) {
-          // If removing this item leaves only one item in the group, ungroup the remaining item too
-          const { groupId: __, ...ungroupedItem } = currentItem;
-          return ungroupedItem;
-        }
-        return currentItem;
-      }),
+      return {
+        ...prev,
+        [type]: items.map((currentItem: BrainstormItem) => {
+          if (currentItem.id === id) {
+            // Remove grouping info from this item
+            const { groupId: _, ...ungroupedItem } = currentItem;
+            return ungroupedItem;
+          } else if (currentItem.groupId === groupId && itemsInGroup.length === 2) {
+            // If removing this item leaves only one item in the group, ungroup the remaining item too
+            const { groupId: __, ...ungroupedItem } = currentItem;
+            return ungroupedItem;
+          }
+          return currentItem;
+        }),
+      };
     });
-  }, [brainstormData, setBrainstormData]);
+  }, [setBrainstormData]);
 
   const getGroupedItems = useCallback((type: keyof BrainstormData, groupId: string) => {
     const items = brainstormData[type] || [];
