@@ -18,7 +18,7 @@ import { FormField, FormFieldProps } from '@cloudscape-design/components';
 import { colorTextStatusError, borderRadiusInput, colorBorderInputDefault, colorBorderInputFocused } from '@cloudscape-design/design-tokens';
 import { Mode } from '@cloudscape-design/global-styles';
 import { css } from '@emotion/react';
-import { MDXEditor, MDXEditorMethods, DiffSourceToggleWrapper, ListsToggle, toolbarPlugin, diffSourcePlugin, linkPlugin, linkDialogPlugin, UndoRedo, headingsPlugin, codeBlockPlugin, codeMirrorPlugin, markdownShortcutPlugin, BoldItalicUnderlineToggles, BlockTypeSelect, CodeToggle, CreateLink, InsertCodeBlock, InsertImage, imagePlugin, InsertTable, tablePlugin, listsPlugin, HEADING_LEVEL } from '@mdxeditor/editor';
+import { MDXEditor, MDXEditorMethods, DiffSourceToggleWrapper, ListsToggle, toolbarPlugin, diffSourcePlugin, linkPlugin, thematicBreakPlugin, linkDialogPlugin, UndoRedo, headingsPlugin, codeBlockPlugin, codeMirrorPlugin, markdownShortcutPlugin, BoldItalicUnderlineToggles, BlockTypeSelect, CodeToggle, CreateLink, InsertCodeBlock, InsertImage, imagePlugin, InsertTable, tablePlugin, listsPlugin, HEADING_LEVEL } from '@mdxeditor/editor';
 import { FC, useState, useRef } from 'react';
 import { useContentValidation } from '../../../hooks';
 import { TextAreaProps } from '../Textarea';
@@ -95,6 +95,7 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
         toMarkdownOptions={{
           emphasis: '_',
           bullet: '-',
+          rule: '_',
         }}
         plugins={[
           toolbarPlugin({
@@ -126,6 +127,7 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
           linkPlugin( { disableAutoLink: true }),
           linkDialogPlugin(),
           imagePlugin({ disableImageResize: true }),
+          thematicBreakPlugin(),
         ]
         } />
     </div>
