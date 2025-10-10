@@ -183,8 +183,6 @@ const useImportExport = () => {
     setStatementList,
     setAssumptionLinkList,
     setMitigationLinkList,
-    setBrainstormData,
-    currentWorkspace,
   ]);
 
   return {
