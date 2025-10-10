@@ -43,6 +43,159 @@ interface GroupableItemCardProps {
 // Module-level variable to store current drag data
 let currentDragData: { itemId: string; itemType: keyof BrainstormData } | null = null;
 
+// ItemContent Component Props
+interface ItemContentProps {
+  brainstormItem: BrainstormItem;
+  showUngroupButton?: boolean;
+  editingItemId: string | null;
+  setEditingItemId: (id: string | null) => void;
+  onUpdate: (item: BrainstormItem) => void;
+  onDelete: (id: string) => void;
+  onPromote?: PromotionHandlers;
+  isPromotable?: boolean;
+  onCreateThreat?: ThreatCreationHandlers;
+  canCreateThreat?: boolean;
+  handleUngroupItem: (id: string) => void;
+}
+
+// Individual item component with its own state
+const ItemContent: FC<ItemContentProps> = ({
+  brainstormItem,
+  showUngroupButton = false,
+  editingItemId,
+  setEditingItemId,
+  onUpdate,
+  onDelete,
+  onPromote,
+  isPromotable = false,
+  onCreateThreat,
+  canCreateThreat = false,
+  handleUngroupItem,
+}) => {
+  const [itemShowButtons, setItemShowButtons] = useState(false);
+  const [localEditContent, setLocalEditContent] = useState('');
+
+  const handleItemMouseEnter = useCallback(() => {
+    setItemShowButtons(true);
+  }, []);
+
+  const handleItemMouseLeave = useCallback(() => {
+    setItemShowButtons(false);
+  }, []);
+
+  // Check if this specific item is being edited
+  const isThisItemBeingEdited = editingItemId === brainstormItem.id;
+
+  // Initialize content when editing starts
+  useEffect(() => {
+    if (isThisItemBeingEdited) {
+      setLocalEditContent(brainstormItem.content || '');
+    }
+  }, [isThisItemBeingEdited, brainstormItem.content]);
+
+  const handleStartEdit = useCallback(() => {
+    setEditingItemId(brainstormItem.id);
+    setLocalEditContent(brainstormItem.content || '');
+  }, [brainstormItem.id, brainstormItem.content, setEditingItemId]);
+
+  const handleSaveEdit = useCallback(() => {
+    if (localEditContent.trim()) {
+      onUpdate({
+        ...brainstormItem,
+        content: localEditContent.trim(),
+      });
+    }
+    setEditingItemId(null);
+    setLocalEditContent('');
+  }, [brainstormItem, localEditContent, onUpdate, setEditingItemId]);
+
+  const handleCancelEdit = useCallback(() => {
+    setEditingItemId(null);
+    setLocalEditContent('');
+  }, [setEditingItemId]);
+
+  // If this item is being edited, show the edit UI
+  if (isThisItemBeingEdited) {
+    return (
+      <SpaceBetween direction="vertical" size="s">
+        <Textarea
+          placeholder="Edit content..."
+          value={localEditContent}
+          onChange={({ detail }) => setLocalEditContent(detail.value)}
+          rows={3}
+          autoFocus
+        />
+        <SpaceBetween direction="horizontal" size="s">
+          <Button onClick={handleCancelEdit}>Cancel</Button>
+          <Button
+            variant="primary"
+            disabled={!localEditContent.trim()}
+            onClick={handleSaveEdit}
+          >
+            Save
+          </Button>
+        </SpaceBetween>
+      </SpaceBetween>
+    );
+  }
+
+  // Otherwise, show the normal item view
+  return (
+    <div
+      onMouseEnter={handleItemMouseEnter}
+      onMouseLeave={handleItemMouseLeave}
+    >
+      <SpaceBetween direction="vertical" size="s">
+        <TextContent>{brainstormItem.content}</TextContent>
+        {itemShowButtons && (
+          <div style={{ marginTop: '8px' }}>
+            <SpaceBetween direction="horizontal" size="xs">
+              {isPromotable && (
+                <Button
+                  iconName={onPromote && onPromote.isPromoted?.(brainstormItem) ? 'check' : 'add-plus'}
+                  variant="icon"
+                  onClick={() => onPromote && onPromote.promote?.(brainstormItem)}
+                  disabled={onPromote && onPromote.isPromoted?.(brainstormItem)}
+                  ariaLabel={onPromote && onPromote.isPromoted?.(brainstormItem) ? 'Item promoted' : 'Promote item'}
+                />
+              )}
+              {canCreateThreat && (
+                <Button
+                  iconName="external"
+                  variant="icon"
+                  onClick={() => onCreateThreat && onCreateThreat.createThreat?.(brainstormItem)}
+                  ariaLabel={`Create threat with ${onCreateThreat?.fieldName}`}
+                />
+              )}
+              {showUngroupButton && (
+                <Button
+                  iconName="undo"
+                  variant="icon"
+                  onClick={() => handleUngroupItem(brainstormItem.id)}
+                  ariaLabel="Remove from group"
+                />
+              )}
+              <Button
+                iconName="edit"
+                variant="icon"
+                onClick={handleStartEdit}
+                disabled={isPromotable && onPromote && onPromote.isPromoted?.(brainstormItem)}
+                ariaLabel="Edit item"
+              />
+              <Button
+                iconName="remove"
+                variant="icon"
+                onClick={() => onDelete(brainstormItem.id)}
+                ariaLabel="Delete item"
+              />
+            </SpaceBetween>
+          </div>
+        )}
+      </SpaceBetween>
+    </div>
+  );
+};
+
 const GroupableItemCard: FC<GroupableItemCardProps> = ({
   item,
   itemType,
@@ -144,134 +297,6 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
     };
   }, []);
 
-  // Individual item component with its own state
-  const ItemContent: FC<{ brainstormItem: BrainstormItem; showUngroupButton?: boolean }> = ({
-    brainstormItem,
-    showUngroupButton = false,
-  }) => {
-    const [itemShowButtons, setItemShowButtons] = useState(false);
-    const [localEditContent, setLocalEditContent] = useState('');
-
-    const handleItemMouseEnter = useCallback(() => {
-      setItemShowButtons(true);
-    }, []);
-
-    const handleItemMouseLeave = useCallback(() => {
-      setItemShowButtons(false);
-    }, []);
-
-    // Check if this specific item is being edited
-    const isThisItemBeingEdited = editingItemId === brainstormItem.id;
-
-    // Initialize content when editing starts
-    useEffect(() => {
-      if (isThisItemBeingEdited) {
-        setLocalEditContent(brainstormItem.content || '');
-      }
-    }, [isThisItemBeingEdited, brainstormItem.content]);
-
-    const handleStartEdit = useCallback(() => {
-      setEditingItemId(brainstormItem.id);
-      setLocalEditContent(brainstormItem.content || '');
-    }, [brainstormItem.id, brainstormItem.content]);
-
-    const handleSaveEdit = useCallback(() => {
-      if (localEditContent.trim()) {
-        onUpdate({
-          ...brainstormItem,
-          content: localEditContent.trim(),
-        });
-      }
-      setEditingItemId(null);
-      setLocalEditContent('');
-    }, [brainstormItem, localEditContent, onUpdate]);
-
-    const handleCancelEdit = useCallback(() => {
-      setEditingItemId(null);
-      setLocalEditContent('');
-    }, []);
-
-    // If this item is being edited, show the edit UI
-    if (isThisItemBeingEdited) {
-      return (
-        <SpaceBetween direction="vertical" size="s">
-          <Textarea
-            placeholder="Edit content..."
-            value={localEditContent}
-            onChange={({ detail }) => setLocalEditContent(detail.value)}
-            rows={3}
-            autoFocus
-          />
-          <SpaceBetween direction="horizontal" size="s">
-            <Button onClick={handleCancelEdit}>Cancel</Button>
-            <Button
-              variant="primary"
-              disabled={!localEditContent.trim()}
-              onClick={handleSaveEdit}
-            >
-              Save
-            </Button>
-          </SpaceBetween>
-        </SpaceBetween>
-      );
-    }
-
-    // Otherwise, show the normal item view
-    return (
-      <div
-        onMouseEnter={handleItemMouseEnter}
-        onMouseLeave={handleItemMouseLeave}
-      >
-        <SpaceBetween direction="vertical" size="s">
-          <TextContent>{brainstormItem.content}</TextContent>
-          {itemShowButtons && (
-            <div style={{ marginTop: '8px' }}>
-              <SpaceBetween direction="horizontal" size="xs">
-                {isPromotable && (
-                  <Button
-                    iconName={onPromote && onPromote.isPromoted?.(brainstormItem) ? 'check' : 'add-plus'}
-                    variant="icon"
-                    onClick={() => onPromote && onPromote.promote?.(brainstormItem)}
-                    disabled={onPromote && onPromote.isPromoted?.(brainstormItem)}
-                    ariaLabel={onPromote && onPromote.isPromoted?.(brainstormItem) ? 'Item promoted' : 'Promote item'}
-                  />
-                )}
-                {canCreateThreat && (
-                  <Button
-                    iconName="external"
-                    variant="icon"
-                    onClick={() => onCreateThreat && onCreateThreat.createThreat?.(brainstormItem)}
-                    ariaLabel={`Create threat with ${onCreateThreat?.fieldName}`}
-                  />
-                )}
-                {showUngroupButton && (
-                  <Button
-                    iconName="undo"
-                    variant="icon"
-                    onClick={() => handleUngroupItem(brainstormItem.id)}
-                    ariaLabel="Remove from group"
-                  />
-                )}
-                <Button
-                  iconName="edit"
-                  variant="icon"
-                  onClick={handleStartEdit}
-                  disabled={isPromotable && onPromote && onPromote.isPromoted?.(brainstormItem)}
-                  ariaLabel="Edit item"
-                />
-                <Button
-                  iconName="remove"
-                  variant="icon"
-                  onClick={() => onDelete(brainstormItem.id)}
-                  ariaLabel="Delete item"
-                />
-              </SpaceBetween>
-            </div>
-          )}
-        </SpaceBetween>
-      </div>
-    );
-  };
 
   const containerStyle = {
     opacity: isDragging ? 0.6 : 1,
@@ -309,6 +334,15 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
               <ItemContent
                 brainstormItem={groupedItem}
                 showUngroupButton={true} // Show ungroup button on all items in a group
+                editingItemId={editingItemId}
+                setEditingItemId={setEditingItemId}
+                onUpdate={onUpdate}
+                onDelete={onDelete}
+                onPromote={onPromote}
+                isPromotable={isPromotable}
+                onCreateThreat={onCreateThreat}
+                canCreateThreat={canCreateThreat}
+                handleUngroupItem={handleUngroupItem}
               />
             </div>
           ))}
@@ -354,7 +388,19 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
       style={containerStyle}
     >
       <Container>
-        <ItemContent brainstormItem={item} />
+        <ItemContent
+          brainstormItem={item}
+          showUngroupButton={false}
+          editingItemId={editingItemId}
+          setEditingItemId={setEditingItemId}
+          onUpdate={onUpdate}
+          onDelete={onDelete}
+          onPromote={onPromote}
+          isPromotable={isPromotable}
+          onCreateThreat={onCreateThreat}
+          canCreateThreat={canCreateThreat}
+          handleUngroupItem={handleUngroupItem}
+        />
       </Container>
 
       {isDropTarget && (
