@@ -69,11 +69,6 @@ const AppLayout: FC<PropsWithChildren<{}>> = ({
         type: 'link',
       },
       {
-        text: 'Brainstorm',
-        href: generateUrl(ROUTE_BRAINSTORM_PATH, searchParams, workspaceId),
-        type: 'link',
-      },
-      {
         text: 'Assumptions',
         href: generateUrl(ROUTE_ASSUMPTION_LIST_PATH, searchParams, workspaceId),
         type: 'link',
@@ -96,8 +91,14 @@ const AppLayout: FC<PropsWithChildren<{}>> = ({
       },
       { type: 'divider' },
       {
-        type: 'section',
+        text: 'Brainstorming',
+        href: generateUrl(ROUTE_BRAINSTORM_PATH, searchParams, workspaceId),
+        type: 'link',
+      },
+      {
+        type: 'expandable-link-group',
         text: 'Reference packs',
+        href: '#',
         items: [
           {
             text: 'Threat packs',
