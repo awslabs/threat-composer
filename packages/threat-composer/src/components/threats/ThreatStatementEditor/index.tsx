@@ -81,6 +81,7 @@ export interface ThreatStatementEditorProps {
   onThreatListView?: ViewNavigationEvent['onThreatListView'];
   threatPackId?: string;
   threatPackThreatId?: string;
+  initialEditorField?: ThreatFieldTypes;
 }
 
 const editorMapping: { [key in ThreatFieldTypes]: React.ComponentType<EditorProps & { ref?: React.ForwardedRef<any> }> } = {
@@ -136,7 +137,7 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
   const inputRef = useRef<{ focus(): void }>();
   const fullExamplesRef = useRef<{ collapse(): void }>();
   const { currentWorkspace, workspaceList } = useWorkspacesContext();
-  const [editor, setEditor] = useState<ThreatFieldTypes | undefined>(getRecommendedEditor(editingStatement));
+  const [editor, setEditor] = useState<ThreatFieldTypes | undefined>(props.initialEditorField ?? getRecommendedEditor(editingStatement));
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [displayStatement, setDisplayStatement] = useState<ReactNode[] | undefined>([]);
   const [customTemplateEditorVisible, setCustomTemplateEditorVisible] = useState(false);

@@ -58,7 +58,7 @@ const MetadataEditor: FC<MetadataEditorProps> = ({
           { colspan: { default: 12, xs: 3 } },
           { colspan: { default: 12, xs: 3 } },
           { colspan: { default: 12, xs: 6 } },
-          { colspan: { default: 12, xs: 12 } },
+          ...expanded ? [{ colspan: { default: 12, xs: 12 } }] : [],
         ]}
       >
         <StatusSelector

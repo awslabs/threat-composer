@@ -58,10 +58,6 @@ const ItemColumn: FC<ItemColumnProps> = ({
     }
   }, [content, itemType, addItem]);
 
-  const handleReset = useCallback(() => {
-    setContent('');
-  }, []);
-
   const handleUpdate = useCallback((updatedItem: BrainstormItem) => {
     updateItem(itemType, updatedItem.id, updatedItem.content);
   }, [itemType, updateItem]);
@@ -125,10 +121,8 @@ const ItemColumn: FC<ItemColumnProps> = ({
         content={content}
         onContentChange={handleContentChange}
         onSave={handleSave}
-        onReset={handleReset}
         placeholder={placeholder}
         disabled={!content.trim()}
-        mode="create"
       />
       {displayItems.map(({ item, groupedItems }) => (
         <GroupableItemCard

@@ -22,10 +22,10 @@ import {
   ThreatPack,
   getNewThreatStatement,
   ThreatFieldTypes,
+  ThreatStatementEditor as ThreatStatementEditorComponent,
 } from '@aws/threat-composer';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import ThreatStatementEditorWithFieldFocus from '../../components/ThreatStatementEditorWithFieldFocus';
 import { ROUTE_THREAT_LIST } from '../../config/routes';
 import useNavigateView from '../../hooks/useNavigationView';
 import isMemoryRouterUsed from '../../utils/isMemoryRouterUsed';
@@ -116,7 +116,7 @@ const ThreatStatementEditor = () => {
   }, [editingStatement]);
 
   // Pass the field key to focus on the appropriate field
-  const [initialEditorField] = useState(() => {
+  const [initialEditorField] = useState<ThreatFieldTypes | undefined>(() => {
     if (fieldKey) {
       // Map the field key to the editor field type
       switch (fieldKey) {
@@ -128,6 +128,8 @@ const ThreatStatementEditor = () => {
           return 'threat_impact';
         case 'impactedAssets':
           return 'impacted_assets';
+        case 'threatAction':
+          return 'threat_action';
         default:
           return undefined;
       }
@@ -135,11 +137,11 @@ const ThreatStatementEditor = () => {
     return undefined;
   });
 
-  return <ThreatStatementEditorWithFieldFocus
+  return <ThreatStatementEditorComponent
     onThreatListView={() => handleNavigateView(ROUTE_THREAT_LIST)}
     threatPackId={threatPackId}
     threatPackThreatId={threatPackThreatId}
-    initialEditorField={initialEditorField as ThreatFieldTypes}
+    initialEditorField={initialEditorField}
   />;
 };
 

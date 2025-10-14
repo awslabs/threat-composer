@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { Button, Container, Header, SpaceBetween, TextContent, Input, Textarea } from '@cloudscape-design/components';
+import { Container, Header, SpaceBetween, TextContent, Input } from '@cloudscape-design/components';
 import { BaseKeyDetail } from '@cloudscape-design/components/internal/events';
 import { FC, useCallback } from 'react';
 
@@ -29,16 +29,10 @@ export interface EntityCreationCardProps {
   onContentChange: (content: string) => void;
   /** Callback when save/add is triggered */
   onSave: () => void;
-  /** Callback when reset/cancel is triggered */
-  onReset: () => void;
   /** Placeholder text for input */
   placeholder?: string;
   /** Whether the component is disabled */
   disabled?: boolean;
-  /** Text for the action button */
-  buttonText?: string;
-  /** Component mode - create shows header and enter-to-add, edit shows cancel/save buttons */
-  mode: 'create' | 'edit';
 }
 
 /**
@@ -53,11 +47,8 @@ export const EntityCreationCard: FC<EntityCreationCardProps> = ({
   content,
   onContentChange,
   onSave,
-  onReset,
   placeholder,
   disabled,
-  buttonText = 'Add',
-  mode,
 }) => {
   /**
    * Handle keyboard events for create mode
@@ -69,32 +60,6 @@ export const EntityCreationCard: FC<EntityCreationCardProps> = ({
       onSave();
     }
   }, [content, onSave, disabled]);
-
-  // Edit mode: Show textarea with cancel/save buttons, no header
-  if (mode === 'edit') {
-    return (
-      <Container>
-        <SpaceBetween direction="vertical" size="s">
-          <Textarea
-            placeholder={placeholder || 'Enter content...'}
-            value={content}
-            onChange={({ detail }) => onContentChange(detail.value)}
-            rows={3}
-          />
-          <SpaceBetween direction="horizontal" size="s">
-            <Button onClick={onReset}>Cancel</Button>
-            <Button
-              variant="primary"
-              disabled={disabled || !content.trim()}
-              onClick={onSave}
-            >
-              {buttonText === 'Add' ? 'Save' : buttonText}
-            </Button>
-          </SpaceBetween>
-        </SpaceBetween>
-      </Container>
-    );
-  }
 
   // Create mode: Show input with header and enter-to-add helper text
   return (
