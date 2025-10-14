@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import {
-  ThreatStatementEditor as ThreatStatementEditorComponent,
   useThreatsContext,
   getThreatFromThreatPacksThreat,
   TemplateThreatStatement,
@@ -22,6 +21,8 @@ import {
   DEFAULT_NEW_ENTITY_ID,
   ThreatPack,
   getNewThreatStatement,
+  ThreatFieldTypes,
+  ThreatStatementEditor as ThreatStatementEditorComponent,
 } from '@aws/threat-composer';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
@@ -46,11 +47,15 @@ const ThreatStatementEditor = () => {
   const [{
     threatPackId,
     threatPackThreatId,
+    fieldKey,
+    fieldValue,
   }] = useState(() => {
     if (isMemoryRouterUsed()) {
       return {
         threatPackId: location.state?.threatPackId,
         threatPackThreatId: location.state?.threatPackThreatId,
+        fieldKey: location.state?.fieldKey,
+        fieldValue: location.state?.fieldValue,
       };
     }
 
@@ -58,6 +63,8 @@ const ThreatStatementEditor = () => {
     return {
       threatPackId: urlParams.get('threatPackId'),
       threatPackThreatId: urlParams.get('threatPackThreatId'),
+      fieldKey: urlParams.get('fieldKey'),
+      fieldValue: urlParams.get('fieldValue'),
     };
   });
 
@@ -91,6 +98,13 @@ const ThreatStatementEditor = () => {
       const threatStatement = statementList.find((st: TemplateThreatStatement) => st.id === threatId);
       if (threatStatement) {
         statement = threatStatement;
+      } else if (fieldKey && fieldValue) {
+        // Create a new threat with the specified field value
+        statement = {
+          ...statement,
+          id: threatId,
+          [fieldKey]: fieldKey === 'impactedAssets' ? [fieldValue] : fieldValue,
+        };
       }
     }
 
@@ -101,10 +115,33 @@ const ThreatStatementEditor = () => {
     setEditingStatement(editingStatement);
   }, [editingStatement]);
 
+  // Pass the field key to focus on the appropriate field
+  const [initialEditorField] = useState<ThreatFieldTypes | undefined>(() => {
+    if (fieldKey) {
+      // Map the field key to the editor field type
+      switch (fieldKey) {
+        case 'threatSource':
+          return 'threat_source';
+        case 'prerequisites':
+          return 'prerequisites';
+        case 'threatImpact':
+          return 'threat_impact';
+        case 'impactedAssets':
+          return 'impacted_assets';
+        case 'threatAction':
+          return 'threat_action';
+        default:
+          return undefined;
+      }
+    }
+    return undefined;
+  });
+
   return <ThreatStatementEditorComponent
     onThreatListView={() => handleNavigateView(ROUTE_THREAT_LIST)}
     threatPackId={threatPackId}
     threatPackThreatId={threatPackThreatId}
+    initialEditorField={initialEditorField}
   />;
 };
 

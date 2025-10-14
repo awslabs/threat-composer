@@ -19,6 +19,7 @@ import { useApplicationInfoContext } from '../../contexts/ApplicationContext/con
 import { useArchitectureInfoContext } from '../../contexts/ArchitectureContext/context';
 import { useAssumptionLinksContext } from '../../contexts/AssumptionLinksContext/context';
 import { useAssumptionsContext } from '../../contexts/AssumptionsContext/context';
+import { useBrainstormContext } from '../../contexts/BrainstormContext/context';
 import { useDataflowInfoContext } from '../../contexts/DataflowContext/context';
 import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext/context';
 import { useMitigationLinksContext } from '../../contexts/MitigationLinksContext/context';
@@ -54,12 +55,26 @@ const useImportExport = () => {
   const { statementList, setStatementList } = useThreatsContext();
   const { assumptionLinkList, setAssumptionLinkList } = useAssumptionLinksContext();
   const { mitigationLinkList, setMitigationLinkList } = useMitigationLinksContext();
+  const { brainstormData, setBrainstormData } = useBrainstormContext();
+
+  // Helper function to check if brainstorm data is empty
+  const isBrainstormDataEmpty = useCallback((data: typeof brainstormData) => {
+    return (
+      (data.assumptions?.length || 0) === 0 &&
+      (data.threatSources?.length || 0) === 0 &&
+      (data.threatPrerequisites?.length || 0) === 0 &&
+      (data.threatActions?.length || 0) === 0 &&
+      (data.threatImpacts?.length || 0) === 0 &&
+      (data.assets?.length || 0) === 0 &&
+      (data.mitigations?.length || 0) === 0
+    );
+  }, []);
 
   const getWorkspaceData = useCallback((): DataExchangeFormat => {
 
     const cleanedThreats = cleanupThreatData(statementList);
     if (composerMode === 'Full') {
-      return {
+      const baseData = {
         schema: SCHEMA_VERSION,
         applicationInfo,
         architecture: architectureInfo,
@@ -70,6 +85,16 @@ const useImportExport = () => {
         mitigationLinks: mitigationLinkList,
         threats: cleanedThreats,
       };
+
+      // Only include brainstormData if it's not empty
+      if (!isBrainstormDataEmpty(brainstormData)) {
+        return {
+          ...baseData,
+          brainstorm: brainstormData,
+        };
+      }
+
+      return baseData;
     }
 
     return {
@@ -80,7 +105,7 @@ const useImportExport = () => {
     architectureInfo, dataflowInfo,
     assumptionList, mitigationList,
     assumptionLinkList, mitigationLinkList,
-    statementList]);
+    statementList, brainstormData, isBrainstormDataEmpty]);
 
   const exportAll = useCallback(() => {
     const exportFileName = getExportFileName(composerMode, false, currentWorkspace);
@@ -124,6 +149,7 @@ const useImportExport = () => {
   }, []);
 
   const importData = useCallback(async (data: DataExchangeFormat) => {
+
     const calculatedThreats = recalculateThreatData(data.threats || []);
 
     if (data.schema > 0) {
@@ -135,6 +161,15 @@ const useImportExport = () => {
       setStatementList(calculatedThreats);
       setAssumptionLinkList(data.assumptionLinks || []);
       setMitigationLinkList(data.mitigationLinks || []);
+      setBrainstormData(data.brainstorm || {
+        assumptions: [],
+        threatSources: [],
+        threatPrerequisites: [],
+        threatActions: [],
+        threatImpacts: [],
+        assets: [],
+        mitigations: [],
+      });
     } else {
       // Support ListOnly mode
       setStatementList(data.threats || []);

@@ -24,6 +24,7 @@ import {
   ROUTE_APPLICATION_INFO_PATH,
   ROUTE_ARCHITECTURE_INFO_PATH,
   ROUTE_ASSUMPTION_LIST_PATH,
+  ROUTE_BRAINSTORM_PATH,
   ROUTE_DATAFLOW_INFO_PATH,
   ROUTE_THREAT_PACKS_PATH,
   ROUTE_MITIGATION_LIST_PATH,
@@ -90,8 +91,14 @@ const AppLayout: FC<PropsWithChildren<{}>> = ({
       },
       { type: 'divider' },
       {
-        type: 'section',
+        text: 'Brainstorming',
+        href: generateUrl(ROUTE_BRAINSTORM_PATH, searchParams, workspaceId),
+        type: 'link',
+      },
+      {
+        type: 'expandable-link-group',
         text: 'Reference packs',
+        href: '#',
         items: [
           {
             text: 'Threat packs',

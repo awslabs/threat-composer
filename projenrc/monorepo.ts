@@ -112,8 +112,8 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
     this.buildTask.exec(
       "yarn nx run-many --target=build --output-style=stream --nx-bail"
     );
-    //Will enable this once ready to produce schema file for consumption
-    //this.buildTask.spawn(this.tasks.tryFind("build:schema")!);
+
+    this.buildTask.spawn(this.tasks.tryFind("build:schema")!);
 
     this.compileTask.reset(
       "npx nx run-many --target=build --all --skip-nx-cache --nx-bail"
