@@ -1,6 +1,7 @@
 {
   "name": "@aws/threat-composer-monorepo",
   "scripts": {
+    "ai:cli": "npx projen ai:cli",
     "build": "npx projen build",
     "build:packs": "npx projen build:packs",
     "build:schema": "npx projen build:schema",
@@ -17,6 +18,7 @@
     "package": "npx projen package",
     "post-compile": "npx projen post-compile",
     "post-upgrade": "npx projen post-upgrade",
+    "postinstall": "npx projen postinstall",
     "pre-compile": "npx projen pre-compile",
     "prepare": "npx projen prepare",
     "run-many": "npx projen run-many",

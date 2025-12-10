@@ -36,7 +36,7 @@ const Notifications: FC<NotificationsProps> = ({ addPadding }) => {
     if (key !== NOTIFICATIONS_VERSION.toString()) {
       setItems([
         {
-          type: 'success',
+          type: 'info',
           dismissible: true,
           dismissLabel: 'Dismiss message',
           onDismiss: () =>
@@ -45,29 +45,20 @@ const Notifications: FC<NotificationsProps> = ({ addPadding }) => {
             ),
           content: (
             <>
-              You can now create, view and edit Threat Composer files directly
-              within Visual Studio Code using the{' '}
+              Generate starter threat models from your source code with AI using the Threat Composer CLI or MCP server. Explore the broader{' '}
               <Link
                 color="inverted"
-                href="https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-toolkit-vscode"
+                href="https://github.com/awslabs/threat-composer#readme"
                 external={true}
               >
-                AWS Toolkit extension
-              </Link>
-              . See{' '}
-              <Link
-                color="inverted"
-                href="https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/threatcomposer-overview.html"
-                external={true}
-              >
-                user guide
+                Threat Composer ecosystem
               </Link>
             </>
           ),
           id: 'message_1',
         },
         {
-          type: 'info',
+          type: 'warning',
           dismissible: true,
           dismissLabel: 'Dismiss message',
           onDismiss: () =>
@@ -76,7 +67,7 @@ const Notifications: FC<NotificationsProps> = ({ addPadding }) => {
             ),
           content: (
             <>
-              This GitHub Page is provided for demonstration purposes only.
+              This GitHub Page is intended for demonstration purposes only.
               Refer to{' '}
               <Link
                 color="inverted"

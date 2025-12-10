@@ -1,5 +1,14 @@
 {
   "tasks": {
+    "ai:cli": {
+      "name": "ai:cli",
+      "steps": [
+        {
+          "exec": "uv run --project packages/threat-composer-ai threat-composer-ai-cli",
+          "receiveArgs": true
+        }
+      ]
+    },
     "build": {
       "name": "build",
       "description": "Full release build for all affected projects",
@@ -193,6 +202,14 @@
       "name": "post-upgrade",
       "description": "Runs after upgrading dependencies"
     },
+    "postinstall": {
+      "name": "postinstall",
+      "steps": [
+        {
+          "exec": "yarn nx run-many --target=install --output-style=stream --parallel=1 --nx-bail --projects=threat-composer-ai"
+        }
+      ]
+    },
     "pre-compile": {
       "name": "pre-compile",
       "description": "Prepare the project for compilation for all affected projects",
@@ -265,8 +282,16 @@
     },
     "upgrade-deps": {
       "name": "upgrade-deps",
-      "description": "Upgrade dependencies in the monorepo",
+      "description": "Upgrade dependencies in the monorepo for all affected projects",
       "steps": [
+        {
+          "exec": "yarn nx run-many --target=upgrade --output-style=stream --nx-bail --projects=threat-composer-ai",
+          "receiveArgs": true
+        },
+        {
+          "exec": "yarn nx run-many --target=install --output-style=stream --nx-bail --projects=threat-composer-ai",
+          "receiveArgs": true
+        },
         {
           "exec": "yarn npm-check-updates --reject projen --deep --rejectVersion 0.0.0 -u --dep prod,dev,peer,optional,bundle --target=minor"
         },

@@ -63,6 +63,20 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
     this.addGitIgnore("storybook.out/");
     this.addGitIgnore(".DS_Store");
     this.addGitIgnore(".output/");
+    this.addGitIgnore(".threat-composer/");
+
+    // Python-specific patterns
+    this.addGitIgnore("__pycache__/");
+    this.addGitIgnore("*.py[cod]");
+    this.addGitIgnore("*$py.class");
+    this.addGitIgnore("*.so");
+    this.addGitIgnore(".Python");
+    this.addGitIgnore("*.egg-info/");
+    this.addGitIgnore(".pytest_cache/");
+    this.addGitIgnore(".coverage");
+    this.addGitIgnore(".env");
+    this.addGitIgnore(".venv/");
+    this.addGitIgnore("venv/");
 
     this.addTask("export:examples", {
       steps: [
@@ -97,6 +111,11 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
 
     this.addTask("storybook", {
       exec: "GENERATE_SOURCEMAP=false npx nx run @aws/threat-composer:storybook",
+    });
+
+    this.addTask("ai:cli", {
+      exec: "uv run --project packages/threat-composer-ai threat-composer-ai-cli",
+      receiveArgs: true,
     });
 
     this.addTask("build:packs", {
