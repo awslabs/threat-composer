@@ -71,7 +71,7 @@ def create_system_prompt(config: AppConfig):
         "metadata": [
             {
             "key": "Comments"
-            "value": "[Additional supporting information / rationale etc for the mitigation. Markdown supported - do not use tables.]"
+            "value": "[Additional supporting information / rationale etc for the mitigation. Markdown supported - do not use tables. These chars are NOT allowed: < > &]"
             }
             {
             "key": "custom:agent",

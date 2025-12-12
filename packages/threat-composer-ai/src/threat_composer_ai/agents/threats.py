@@ -80,7 +80,7 @@ def create_system_prompt(config: AppConfig):
               },
               {
                 "key": "Comments",
-                "value": "[Additional supporting information / rationale etc for the threat. Markdown supported - do not use tables.]"}
+                "value": "[Additional supporting information / rationale etc for the threat. Markdown supported - do not use tables. These chars are NOT allowed: < > &]"}
               {
                 "key": "Priority",
                 "value": "High" | "Medium" | "Low"
@@ -102,7 +102,7 @@ def create_system_prompt(config: AppConfig):
         + """,
             "metadata": [{
                 "key": "Comments"
-                "value": "assumption detail (from text below header). Markdown. No Tables (≤1000 chars)",
+                "value": "assumption detail (from text below header). Markdown. No Tables (≤1000 chars). These chars are NOT allowed: < > &",
               },
               {
                 "key": "custom:agent",

@@ -45,7 +45,7 @@ def create_system_prompt(config: AppConfig):
         "schema": 1,
         "applicationInfo": {
           "name": "[Name of application - plaintext. single line. - <=200 chars]",
-          "description": "CRITICAL CONSTRAINT: Maximum 10,000 characters total. Be extremely concise. Markdown format. No unicode. Use lists and tables only - no lengthy prose.
+          "description": "CRITICAL CONSTRAINT: Maximum 10,000 characters total. Be extremely concise. Markdown format. No unicode. Use lists and tables only - no lengthy prose. These chars are NOT allowed: < > &
 
           ### Summary
           [2-3 sentences maximum. What the application does. No paragraphs. <=500 chars]

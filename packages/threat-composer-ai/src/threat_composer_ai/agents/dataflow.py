@@ -53,7 +53,7 @@ def create_system_prompt(config: AppConfig):
         "applicationInfo": { #Empty },
         "architecture" : { # Empty },
         "dataflow": {
-          "description": "CRITICAL CONSTRAINT: Maximum 12,000 characters total. Be extremely concise. Markdown format. No unicode. Use tables and lists only - no lengthy prose.
+          "description": "CRITICAL CONSTRAINT: Maximum 12,000 characters total. Be extremely concise. Markdown format. No unicode. Use tables and lists only - no lengthy prose. These chars are NOT allowed: <>&
 
           ### Human actors
           [List only. Max 3-5 items. One line each. Human actors who interact with the system.]
@@ -65,13 +65,13 @@ def create_system_prompt(config: AppConfig):
           [List only. Max 5-7 items. One line each. Components that perform computation.]
 
           ### Data stores
-          [Table format. Columns: Store | Type | High-Value (Y/N). Max 5-7 rows. Where data is stored at rest.]
+          [Table format with header seperator row. Columns: Store | Type | High-Value (Y/N). Max 5-7 rows. Where data is stored at rest.]
 
           ### Trust boundaries
-          [Table format. Columns: Zone | Elements | Trust Level. Max 3-5 rows. Security zones separating elements.]
+          [Table format with header seperator row. Columns: Zone | Elements | Trust Level. Max 3-5 rows. Security zones separating elements.]
 
-          ### Data flows (MOST IMPORTANT - will be used for diagram)
-          [Table format ONLY. Columns: Flow ID | Description | Source | Target | Trust Boundaries Crossed | Assets. Keep descriptions under 50 chars each. This section is critical for the data flow diagram that follows.]
+          ### Data flows
+          [Table format with header seperator row. Columns: Flow ID | Description | Source | Target | Trust Boundaries Crossed | Assets. Keep descriptions under 50 chars each. This section is critical for the data flow diagram that follows.]
 
           STOP HERE. No additional sections."
         },

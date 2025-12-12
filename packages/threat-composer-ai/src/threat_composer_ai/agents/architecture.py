@@ -53,7 +53,7 @@ def create_system_prompt(config: AppConfig):
         "schema": 1,
         "applicationInfo: { #Empty },
         "architecture": {
-          "description": "CRITICAL CONSTRAINT: Maximum 12,000 characters total. Be extremely concise. Markdown format. No unicode. Use lists and tables only - no lengthy prose.
+          "description": "CRITICAL CONSTRAINT: Maximum 12,000 characters total. Be extremely concise. Markdown format. No unicode. Use lists and tables only - no lengthy prose. These chars are NOT allowed: <>&
 
             ### High Level Architecture
 
@@ -73,7 +73,7 @@ def create_system_prompt(config: AppConfig):
             [If evident: List only. Max 3-5 items. One line each. <=300 chars total]
 
             #### APIs
-            [If evident: Table format. Columns: Endpoint | Method | Purpose. Max 5-7 rows. <=400 chars total]
+            [If evident: Table format with header seperator row. Columns: Endpoint | Method | Purpose. Max 5-7 rows. <=400 chars total]
 
             #### Security relevant components
             [List only. Max 3-5 items. One line each. Auth, crypto, data handling. <=400 chars total]
