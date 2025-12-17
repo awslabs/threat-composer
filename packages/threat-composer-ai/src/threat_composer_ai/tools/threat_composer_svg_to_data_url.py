@@ -48,9 +48,10 @@ def threat_composer_svg_to_data_url(svg_string: str) -> str:
             return "❌ Error: svg_string cannot be empty"
 
         # Basic SVG validation - check if it looks like SVG content
+        # SVG files may have XML declaration and DOCTYPE before the <svg> tag
         svg_lower = svg_string.strip().lower()
-        if not (svg_lower.startswith("<svg") and svg_lower.endswith("</svg>")):
-            return "❌ Error: svg_string must be valid SVG markup starting with <svg> and ending with </svg>"
+        if "<svg" not in svg_lower or not svg_lower.endswith("</svg>"):
+            return "❌ Error: svg_string must be valid SVG markup containing <svg> tag and ending with </svg>"
 
         # Encode the SVG string to bytes using UTF-8
         svg_bytes = svg_string.encode("utf-8")

@@ -33,6 +33,10 @@
       "type": "runtime"
     },
     {
+      "name": "diagrams",
+      "type": "runtime"
+    },
+    {
       "name": "fastmcp",
       "type": "runtime"
     },

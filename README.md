@@ -36,6 +36,8 @@ Threat Composer is available in multiple complementary tools to fit your workflo
 ### 🌐 Web Application
 **Hosted or Self-Hosted Static Website**
 
+![Status: Stable](https://img.shields.io/badge/Status-Stable-green)
+
 - **GitHub Pages**: [Try the live demo](https://awslabs.github.io/threat-composer)
 - **Self-Hosted**: Deploy to your AWS account with full customization
 - **Features**: Full threat modeling capabilities, browser-based storage, import/export
@@ -43,7 +45,10 @@ Threat Composer is available in multiple complementary tools to fit your workflo
 📖 [Web App Documentation](./docs/WEB-APP.md)
 
 ### 🤖 AI-Powered CLI & MCP Server
-**Automated Threat Modeling**
+
+**Automated Threat Modeling** 
+
+![Status: Experimental](https://img.shields.io/badge/Status-Experimental-orange)
 
 - **CLI**: Analyze codebases and generate starter threat models automatically
 - **MCP Server**: Workflow management and schema validation for AI assistants
@@ -54,6 +59,8 @@ Threat Composer is available in multiple complementary tools to fit your workflo
 ### 🔌 VS Code Extension
 **Native Threat Modeling in Your IDE**
 
+![Status: Stable](https://img.shields.io/badge/Status-Stable-green)
+
 - Edit Threat Composer `.tc.json` files directly in VS Code
 - Integrated with AWS Toolkit extension
 - Full-featured editor with version control support
@@ -62,6 +69,8 @@ Threat Composer is available in multiple complementary tools to fit your workflo
 
 ### 🧩 Browser Extension
 **View Threat Models on the Web**
+
+![Status: Experimental](https://img.shields.io/badge/Status-Experimental-orange)
 
 - One-click viewing of Threat Composer `.tc.json` files on GitHub and Amazon CodeCatalyst
 - Available for Chrome and Firefox
@@ -177,7 +186,7 @@ This is a monorepo containing multiple packages:
 | [threat-composer-app](./packages/threat-composer-app/) | Web application (SPA) | [README](./packages/threat-composer-app/README.md) |
 | [threat-composer-app-browser-extension](./packages/threat-composer-app-browser-extension/) | Browser extension | [README](./packages/threat-composer-app-browser-extension/README.md) |
 | [threat-composer-infra](./packages/threat-composer-infra/) | AWS CDK infrastructure | [README](./packages/threat-composer-infra/README.md) |
-| [threat-composer-ai](./packages/threat-composer-ai/) | AI CLI & MCP server | [README](./packages/threat-composer-ai/README.md) |
+| [threat-composer-ai](./packages/threat-composer-ai/) | AI CLI & MCP server (Experimental) | [README](./packages/threat-composer-ai/README.md) |
 
 ## Contributing
 

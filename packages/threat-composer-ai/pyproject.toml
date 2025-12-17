@@ -10,6 +10,7 @@ dependencies = [
   "boto3",
   "botocore",
   "click",
+  "diagrams",
   "fastmcp",
   "json-schema-to-pydantic",
   "opentelemetry-api",

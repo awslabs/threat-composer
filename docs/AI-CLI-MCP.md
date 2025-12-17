@@ -2,6 +2,8 @@
 
 An AI-powered threat modeling assistant that helps you get started quickly by analyzing your codebase and generating a starter threat model, so you never face a blank page. Use from your AI coding assistance via the MCP Server, or directly via the CLI.
 
+![Status: Experimental](https://img.shields.io/badge/Status-Experimental-orange)
+
 ## Overview
 
 Threat Composer AI is designed to **help humans, not replace them**. It provides two main interfaces to jumpstart your threat modeling process:
@@ -53,6 +55,35 @@ Without the extension, you can still view and edit the generated JSON files as t
 - Python 3.10 or higher
 - UV package manager
 - AWS credentials configured (for CLI tool and MCP workflow execution - Bedrock access required)
+- Graphviz (for diagram generation)
+
+#### Installing Graphviz
+
+Graphviz is required for generating Architecture and Data Flow Diagrams. Install it using your system's package manager:
+
+```bash
+# macOS (Homebrew)
+brew install graphviz
+
+# Ubuntu/Debian
+sudo apt-get install graphviz
+
+# Fedora/RHEL
+sudo dnf install graphviz
+
+# Windows (Chocolatey)
+choco install graphviz
+
+# Windows (Scoop)
+scoop install graphviz
+```
+
+After installation, verify Graphviz is available:
+```bash
+dot -V
+```
+
+For more information, see: https://graphviz.org/download/
 
 ### Install with uv tool install (Recommended)
 

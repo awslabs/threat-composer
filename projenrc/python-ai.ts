@@ -35,6 +35,7 @@ export default class ThreatComposerPythonAIProject extends UvPythonProject {
         "opentelemetry-propagator-aws-xray",
         "opentelemetry-instrumentation-fastapi",
         "fastmcp",
+        "diagrams",
       ],
 
       // Development dependencies

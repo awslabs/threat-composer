@@ -94,9 +94,7 @@ def threat_composer_assemble_tc_v1_model(
         file_paths = {
             "application_info": application_info_path,
             "architecture_description": architecture_description_path,
-            "architecture_diagram": architecture_description_path,
             "dataflow_description": dataflow_description_path,
-            "dataflow_diagram": dataflow_description_path,
             "threats": threats_path,
             "mitigations": mitigations_path,
         }
@@ -266,21 +264,24 @@ def _load_diagram_image(diagram_path: str) -> str:
     Returns:
         Data URL string for the SVG image, or empty string if loading fails
     """
+    from threat_composer_ai.logging import log_debug, log_warning
+
     try:
         # Resolve relative path to absolute path for file operations
         resolved_diagram_path = resolve_relative_path(diagram_path)
+        log_debug(f"Loading diagram from: {resolved_diagram_path}")
 
         # Validate that the path is within the output directory
         try:
             validate_output_directory_path(resolved_diagram_path, operation="read")
-        except ValueError:
-            # Return empty string for validation errors (graceful fallback)
+        except ValueError as e:
+            log_warning(f"Diagram path validation failed: {e}")
             return ""
 
         diagram_path_obj = Path(resolved_diagram_path)
 
         if not diagram_path_obj.exists():
-            # Return empty string if file doesn't exist (graceful fallback)
+            log_warning(f"Diagram file not found: {resolved_diagram_path}")
             return ""
 
         # Read the SVG file content
@@ -289,18 +290,22 @@ def _load_diagram_image(diagram_path: str) -> str:
 
         # Validate that we have content
         if not svg_content:
+            log_warning(f"Diagram file is empty: {resolved_diagram_path}")
             return ""
+
+        log_debug(f"SVG content length: {len(svg_content)} chars")
 
         # Convert SVG to data URL using the utility function
         data_url = threat_composer_svg_to_data_url(svg_content)
 
         # Check if the conversion was successful (utility returns error messages starting with ❌)
         if data_url.startswith("❌"):
-            # Log the error but return empty string for graceful fallback
+            log_warning(f"SVG to data URL conversion failed: {data_url}")
             return ""
 
+        log_debug(f"Successfully converted diagram to data URL ({len(data_url)} chars)")
         return data_url
 
-    except Exception:
-        # Return empty string for any file reading errors (graceful fallback)
+    except Exception as e:
+        log_warning(f"Error loading diagram '{diagram_path}': {e}")
         return ""

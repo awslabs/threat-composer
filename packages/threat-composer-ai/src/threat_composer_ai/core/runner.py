@@ -10,7 +10,11 @@ from strands.session import FileSessionManager
 from ..config import AppConfig
 from ..config.export import export_run_configuration, update_run_completion_info
 from ..utils.relative_path_helper import make_relative_to_working_dir
-from ..validation import validate_aws_bedrock_access, validate_aws_bedrock_inference
+from ..validation import (
+    validate_aws_bedrock_access,
+    validate_aws_bedrock_inference,
+    validate_graphviz_installation,
+)
 from ..workflows.baseline_threat_modeling import (
     create_baseline_threat_modeling_workflow,
 )
@@ -169,7 +173,11 @@ class WorkflowRunner:
             (success: bool, error_message: str | None)
         """
         try:
-            # 1. AWS credential validation (unless skipped)
+            # 1. Graphviz validation (required for DFD diagram generation)
+            if not skip_validation:
+                validate_graphviz_installation()
+
+            # 2. AWS credential validation (unless skipped)
             if not skip_validation:
                 validate_aws_bedrock_access(self.config)
                 if not validate_aws_bedrock_inference(self.config):
