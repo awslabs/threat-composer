@@ -70,12 +70,6 @@ sudo apt-get install graphviz
 
 # Fedora/RHEL
 sudo dnf install graphviz
-
-# Windows (Chocolatey)
-choco install graphviz
-
-# Windows (Scoop)
-scoop install graphviz
 ```
 
 After installation, verify Graphviz is available:
