@@ -373,8 +373,11 @@ class AppConfig:
         with open(env_file, "w", encoding="utf-8") as f:
             json.dump(safe_env_vars, f, indent=2)
 
-    def update_run_completion(self, end_time: datetime) -> None:
-        """Update run metadata with completion information."""
+    def update_run_completion(
+        self, end_time: datetime, accumulated_usage: dict | None = None
+    ) -> None:
+        """Update run metadata with completion information and token usage."""
+        from ..logging import log_success
         from ..utils import format_utc_timestamp, parse_utc_timestamp
 
         config_dir = self.output_directory / self.config_output_sub_dir
@@ -391,6 +394,23 @@ class AppConfig:
 
             metadata["session"]["end_time"] = format_utc_timestamp(end_time)
             metadata["session"]["duration_seconds"] = duration
+
+            # Add token usage if available
+            if accumulated_usage:
+                input_tokens = accumulated_usage.get("inputTokens", 0)
+                output_tokens = accumulated_usage.get("outputTokens", 0)
+                total_tokens = accumulated_usage.get("totalTokens", 0)
+
+                metadata["token_usage"] = {
+                    "input_tokens": input_tokens,
+                    "output_tokens": output_tokens,
+                    "total_tokens": total_tokens,
+                }
+
+                # Log token usage summary
+                log_success(
+                    f"Token usage: {input_tokens:,} input + {output_tokens:,} output = {total_tokens:,} total"
+                )
 
             # Write the updated metadata back to the file
             with open(metadata_file, "w", encoding="utf-8") as f:

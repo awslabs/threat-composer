@@ -224,9 +224,9 @@ class WorkflowRunner:
 
         return f"Analyze local directory: {relative_working_dir}"
 
-    def _update_completion(self) -> None:
+    def _update_completion(self, accumulated_usage: dict | None = None) -> None:
         """Update run completion information."""
-        update_run_completion_info(self.config)
+        update_run_completion_info(self.config, accumulated_usage)
 
     def execute_sync(self) -> Any:
         """
@@ -237,7 +237,8 @@ class WorkflowRunner:
         """
         workflow_input = self._prepare_workflow_input()
         result = self.workflow(workflow_input)
-        self._update_completion()
+        accumulated_usage = getattr(result, "accumulated_usage", None)
+        self._update_completion(accumulated_usage)
         return result
 
     async def execute_async(self) -> Any:
@@ -249,7 +250,8 @@ class WorkflowRunner:
         """
         workflow_input = self._prepare_workflow_input()
         result = await self.workflow.invoke_async(workflow_input)
-        self._update_completion()
+        accumulated_usage = getattr(result, "accumulated_usage", None)
+        self._update_completion(accumulated_usage)
         return result
 
     def get_relative_working_dir(self) -> str:

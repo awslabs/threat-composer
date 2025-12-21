@@ -20,11 +20,13 @@ def export_run_configuration(
         log_error(f"Failed to export configuration: {str(e)}")
 
 
-def update_run_completion_info(config: AppConfig) -> None:
+def update_run_completion_info(
+    config: AppConfig, accumulated_usage: dict | None = None
+) -> None:
     """Update run metadata with completion information."""
     try:
         end_time = datetime.now(timezone.utc)
-        config.update_run_completion(end_time)
+        config.update_run_completion(end_time, accumulated_usage)
         log_debug("Run completion information updated")
     except Exception as e:
         log_error(f"Failed to update run completion info: {str(e)}")
