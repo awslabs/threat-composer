@@ -6,14 +6,12 @@ An AI-powered threat modeling assistant that helps you get started quickly by an
 
 ## Overview
 
-Threat Composer AI is designed to **help humans, not replace them**. It provides two main interfaces to jumpstart your threat modeling process:
+Threat Composer AI is designed to **help humans, not replace them**. It provides two interfaces to jumpstart your threat modeling process:
 
-1. **CLI Tool** (`threat-composer-ai-cli`) - Analyzes your source code and generates a starter threat model that serves as a foundation for your security analysis
-2. **MCP Server** (`threat-composer-ai-mcp`) - A Model Context Protocol server that provides:
-   - **Workflow Management**: Start, monitor, and manage AI threat modeling workflows
-   - **Session Management**: List and re-run previous workflow sessions
-   - **Schema Validation**: Validate threat models against Threat Composer v1 schema
-   - **Schema Retrieval**: Get the complete Threat Composer schema definition
+1. **CLI Tool** (`threat-composer-ai-cli`) - Run directly from your terminal
+2. **MCP Server** (`threat-composer-ai-mcp`) - Use from AI coding assistants like Kiro, Cline, or Claude Desktop
+
+Both interfaces use the same underlying workflow and produce identical outputs - the MCP server wraps the CLI functionality and exposes it through the Model Context Protocol.
 
 ### The Human-AI Partnership
 
@@ -97,24 +95,21 @@ Use `uvx` to run tools directly without persistent installation:
 ```bash
 # Run the CLI tool directly
 uvx --from "git+https://github.com/awslabs/threat-composer.git#subdirectory=packages/threat-composer-ai" threat-composer-ai-cli /path/to/codebase
-
-# Run the MCP server directly
-uvx --from "git+https://github.com/awslabs/threat-composer.git#subdirectory=packages/threat-composer-ai" threat-composer-ai-mcp
 ```
-
-## CLI Tool Usage
 
 ### Key Capabilities
 
+Both the CLI and MCP server provide the same core capabilities:
+
 - **Automated Code Analysis**: Deep analysis of codebases to understand application architecture and data flows
-- **Multi-Agent Architecture**: Specialized agents working together to perform different aspects of threat modeling
+- **Multi-Agent Architecture**: 8 specialized agents working together to perform different aspects of threat modeling
 - **STRIDE Analysis**: Systematic application of STRIDE methodology for threat identification
 - **Structured Output**: Generates complete Threat Composer JSON schemas with proper validation
 - **Comprehensive Documentation**: Creates detailed markdown documentation alongside structured data
 
 ### Agent-Based System
 
-The CLI uses 8 specialized agents orchestrated through a Strands Graph workflow:
+The workflow uses 8 specialized agents orchestrated through a Strands Graph:
 
 1. **Application Info Agent** - Analyzes codebase to determine application name, description, and key characteristics
 2. **Architecture Agent** - Identifies system components, technologies, deployment patterns, and security-relevant features
@@ -124,6 +119,8 @@ The CLI uses 8 specialized agents orchestrated through a Strands Graph workflow:
 6. **Threats Agent** - Applies STRIDE-per-element analysis to identify security threats
 7. **Mitigations Agent** - Develops comprehensive mitigation strategies from a defender perspective
 8. **Threat Model Agent** - Assembles all components into final Threat Composer schema
+
+## CLI Tool Usage
 
 ### CLI Examples
 
@@ -147,6 +144,71 @@ uvx --from "git+https://github.com/awslabs/threat-composer.git#subdirectory=pack
 
 ## MCP Server Usage
 
+The MCP server wraps the CLI workflow and exposes it through the Model Context Protocol, allowing AI coding assistants to run threat modeling workflows on your behalf.
+
+### MCP Client Configuration
+
+Configure your MCP client to use the threat-composer-ai-mcp server. Below are examples for common clients.
+
+#### Using Local Installation (Recommended)
+
+If you've installed the package with `uv tool install`, use the local executable directly:
+
+```json
+{
+  "mcpServers": {
+    "threat-composer-ai": {
+      "command": "threat-composer-ai-mcp"
+    }
+  }
+}
+```
+
+#### Using uvx (No Installation Required)
+
+Alternatively, use `uvx` to run the server without a persistent installation:
+
+```json
+{
+  "mcpServers": {
+    "threat-composer-ai": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/awslabs/threat-composer.git#subdirectory=packages/threat-composer-ai",
+        "threat-composer-ai-mcp"
+      ]
+    }
+  }
+}
+```
+
+#### Configuration with AWS Profile and Region
+
+Add environment variables to specify your AWS profile and region:
+
+```json
+{
+  "mcpServers": {
+    "threat-composer-ai": {
+      "command": "threat-composer-ai-mcp",
+      "env": {
+        "AWS_PROFILE": "your-profile-name",
+        "AWS_REGION": "us-west-2"
+      }
+    }
+  }
+}
+```
+
+Configuration file locations:
+
+- **Kiro**: `.kiro/settings/mcp.json` (workspace) or `~/.kiro/settings/mcp.json` (global)
+- **Cline**: VS Code settings or `.cline/mcp.json`
+- **Claude Desktop**: `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
+
+### Using the MCP Server
+
 Work with your AI coding assistant with a prompt like _"create a threat model for this code project using tools"_.
 
 ### MCP Tools Reference
@@ -163,10 +225,11 @@ The MCP server provides five tools for workflow management and schema validation
 
 ## Output Structure
 
-The CLI tool and MCP workflows generate structured outputs in JSON format following the Threat Composer v1 schema:
+Both the CLI and MCP workflows generate structured outputs in JSON format following the Threat Composer v1 schema:
 
 ```
 output/
+├── threatmodel.tc.json              # Final assembled threat model
 ├── components/                      # Generated threat model components
 │   ├── applicationInfo.tc.json
 │   ├── architectureDescription.tc.json
@@ -174,8 +237,7 @@ output/
 │   ├── dataflowDescription.tc.json
 │   ├── dataflowDiagram.tc.json
 │   ├── threats.tc.json
-│   ├── mitigations.tc.json
-│   └── threatmodel.tc.json         # Final assembled model
+│   └── mitigations.tc.json
 ├── logs/                            # Workflow execution logs
 │   └── workflow_YYYYMMDD_HHMMSS.log
 ├── config/                          # Runtime configuration

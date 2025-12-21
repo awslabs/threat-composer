@@ -84,7 +84,7 @@ Threat Composer is available in multiple complementary tools to fit your workflo
 
 **Web Application**: Visit the [live demo](https://awslabs.github.io/threat-composer?mode=Full) to start threat modeling immediately in your browser.
 
-**VS Code**: Install the [AWS Toolkit extension](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-toolkit-vscode) and view and edit local `.tc.json` files.
+**VS Code**: Install the [AWS Toolkit extension](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-toolkit-vscode) to view and edit local `.tc.json` files.
 
 ### Use the AI CLI & MCP Server
 
@@ -92,22 +92,40 @@ Generate threat models automatically from your codebase with the CLI, or integra
 
 ```bash
 # Install with uv (provides both CLI and MCP server)
-uv tool install --from "git+ssh://..." threat-composer-ai
+uv tool install --from "git+https://github.com/awslabs/threat-composer.git#subdirectory=packages/threat-composer-ai" threat-composer-ai
 
 # Use the CLI to analyze your codebase
 threat-composer-ai-cli /path/to/your/code
-
-# Or run the MCP server for AI assistant integration
-threat-composer-ai-mcp
 ```
 
-**MCP Server Configuration** (for Cline, Amazon Q CLI, Kiro, etc.):
+**MCP Server Configuration** (for Kiro, Cline, Claude Desktop, etc.):
 
 ```json
 {
   "mcpServers": {
     "threat-composer-ai": {
-      "command": "threat-composer-ai-mcp"
+      "command": "threat-composer-ai-mcp",
+      "env": {
+        "AWS_PROFILE": "your-profile-name",
+        "AWS_REGION": "us-west-2"
+      }
+    }
+  }
+}
+```
+
+Or run directly with uvx (no installation required):
+
+```json
+{
+  "mcpServers": {
+    "threat-composer-ai": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/awslabs/threat-composer.git#subdirectory=packages/threat-composer-ai",
+        "threat-composer-ai-mcp"
+      ]
     }
   }
 }
