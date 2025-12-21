@@ -31,6 +31,8 @@ threat-composer-ai-mcp
 - AWS credentials (for Bedrock access)
 - Graphviz (for diagram generation)
 
+**⚠️ Cost Note**: This tool uses Amazon Bedrock for AI inference, which incurs costs. By default, it uses Claude Sonnet 4 with standard on-demand pricing. See [Bedrock Pricing](https://aws.amazon.com/bedrock/pricing/) for details.
+
 #### Installing Graphviz
 
 Graphviz is required for generating Architecture and Data Flow Diagrams. Install it using your system's package manager:

@@ -55,6 +55,25 @@ Without the extension, you can still view and edit the generated JSON files as t
 - AWS credentials configured (for CLI tool and MCP workflow execution - Bedrock access required)
 - Graphviz (for diagram generation)
 
+### ⚠️ Cost Considerations
+
+Threat Composer AI uses **Amazon Bedrock** for AI inference, which incurs costs based on token usage. By default, the tool uses:
+
+- **Model**: Claude Sonnet 4 (`global.anthropic.claude-sonnet-4-20250514-v1:0`)
+- **Service Tier**: Standard on-demand (default)
+
+**Estimated costs** vary based on codebase size and complexity. A typical threat model generation may use 500,000-1,500,000+ tokens depending on the project.
+
+For current pricing information, see:
+- [Amazon Bedrock Pricing](https://aws.amazon.com/bedrock/pricing/)
+- [Bedrock Service Tiers & Inference Types](https://docs.aws.amazon.com/bedrock/latest/userguide/service-tiers-inference.html)
+
+**Tips to manage costs**:
+- Start with smaller codebases to understand token usage patterns
+- Use `--verbose` to monitor workflow progress
+- Consider using cross-region inference (global model IDs) for better availability
+- Review the `run-metadata.json` in output for session details
+
 #### Installing Graphviz
 
 Graphviz is required for generating Architecture and Data Flow Diagrams. Install it using your system's package manager:

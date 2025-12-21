@@ -53,6 +53,7 @@ Threat Composer is available in multiple complementary tools to fit your workflo
 - **CLI**: Analyze codebases and generate starter threat models automatically
 - **MCP Server**: Workflow management and schema validation for AI assistants
 - Uses AWS Bedrock with multi-agent architecture
+- **Note**: Bedrock inference costs apply - see [pricing](https://aws.amazon.com/bedrock/pricing/)
 
 📖 [AI/CLI/MCP Documentation](./docs/AI-CLI-MCP.md)
 
