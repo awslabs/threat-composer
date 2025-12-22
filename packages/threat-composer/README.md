@@ -84,27 +84,7 @@ yarn build
 yarn test
 
 # Run linter
-yarn lint
-
-# Format code
-yarn format
-
-# Type checking
-yarn type-check
-```
-
-## Using in Other Projects
-
-```bash
-# Install from npm (when published)
-npm install @aws/threat-composer
-
-# Or link locally for development
-cd packages/threat-composer
-yarn link
-
-cd your-project
-yarn link @aws/threat-composer
+yarn eslint
 ```
 
 ## Component Development

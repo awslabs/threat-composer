@@ -29,7 +29,7 @@ pdk run dev
 
 # Or from package directory
 cd packages/threat-composer-app
-yarn start
+yarn run dev
 ```
 
 The app will open at [http://localhost:3000](http://localhost:3000)
@@ -73,10 +73,7 @@ yarn build
 yarn test
 
 # Run linter
-yarn lint
-
-# Format code
-yarn format
+yarn eslint
 ```
 
 ## Contributing

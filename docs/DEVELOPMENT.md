@@ -275,33 +275,13 @@ yarn test --watch
 yarn test --coverage
 ```
 
-### Integration Tests
-
-Integration tests are located in the `test/` directories of each package.
-
-### End-to-End Tests
-
-E2E tests for the web application:
-
-```bash
-cd packages/threat-composer-app
-yarn test:e2e
-```
-
 ## Code Quality
 
 ### Linting
 
 ```bash
 # Lint all packages
-pdk run lint
-
-# Lint specific package
-cd packages/threat-composer
-yarn lint
-
-# Auto-fix linting issues
-yarn lint --fix
+pdk run eslint
 ```
 
 ### Formatting
@@ -311,9 +291,6 @@ The project uses Prettier for code formatting:
 ```bash
 # Format all code
 pdk run format
-
-# Check formatting
-pdk run format:check
 ```
 
 ### Type Checking
@@ -374,15 +351,6 @@ Quick deploy:
 ./scripts/deployAll.sh
 ```
 
-### Publish NPM Packages
-
-The threat-composer UI components package can be published to NPM:
-
-```bash
-cd packages/threat-composer
-npm publish
-```
-
 ## Contributing
 
 ### Contribution Workflow
@@ -431,30 +399,8 @@ Types:
 #### Dependency Installation Failures
 
 ```bash
-# Clear node modules and reinstall
-rm -rf node_modules
-rm yarn.lock
-pdk install
-```
-
-#### Build Failures
-
-```bash
-# Clean build artifacts
-pdk run clean
-
-# Rebuild
-pdk build
-```
-
-#### Storybook Not Starting
-
-```bash
-# Clear Storybook cache
-rm -rf node_modules/.cache
-
-# Restart Storybook
-pdk run storybook
+git clean -fXd
+pdk install --frozen-lockfile
 ```
 
 ### Getting Help
@@ -472,20 +418,6 @@ pdk run storybook
 - [VS Code Extension](./VSCODE-EXTENSION.md)
 - [Browser Extension](./BROWSER-EXTENSION.md)
 - [AI/CLI/MCP](./AI-CLI-MCP.md)
-
-### External Resources
-
-- [React Documentation](https://react.dev/)
-- [CloudScape Design System](https://cloudscape.design/)
-- [AWS CDK Documentation](https://docs.aws.amazon.com/cdk/)
-- [Projen Documentation](https://projen.io/)
-- [AWS Prototyping SDK](https://aws.github.io/aws-pdk/)
-
-### Learning Resources
-
-- [Threat Modeling for Builders - AWS Skill Builder](https://explore.skillbuilder.aws/learn/course/external/view/elearning/13274/threat-modeling-the-right-way-for-builders-workshop)
-- [How to Approach Threat Modeling - AWS Security Blog](https://aws.amazon.com/blogs/security/how-to-approach-threat-modeling/)
-- [Threat Modeling Workshop](https://catalog.workshops.aws/threatmodel/)
 
 ## License
 
