@@ -21,6 +21,10 @@
       "type": "devenv"
     },
     {
+      "name": "bandit",
+      "type": "runtime"
+    },
+    {
       "name": "boto3",
       "type": "runtime"
     },
@@ -41,7 +45,15 @@
       "type": "runtime"
     },
     {
+      "name": "jschema-to-python",
+      "type": "runtime"
+    },
+    {
       "name": "json-schema-to-pydantic",
+      "type": "runtime"
+    },
+    {
+      "name": "jsonpickle",
       "type": "runtime"
     },
     {
@@ -74,6 +86,10 @@
     },
     {
       "name": "rich",
+      "type": "runtime"
+    },
+    {
+      "name": "sarif-om",
       "type": "runtime"
     },
     {

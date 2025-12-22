@@ -8,6 +8,7 @@ import base64
 import hashlib
 import json
 import re
+import signal
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -22,6 +23,10 @@ from strands_tools.utils import console_util
 from threat_composer_ai.config import get_global_config
 from threat_composer_ai.logging import log_debug, log_error, log_success
 from threat_composer_ai.utils import now_utc_timestamp
+from threat_composer_ai.validation import scan_diagram_code
+
+# Default timeout for diagram generation (seconds)
+DIAGRAM_EXECUTION_TIMEOUT = 60
 
 
 def embed_images_as_base64(svg_content: str) -> str:
@@ -164,16 +169,23 @@ def execute_diagram_code(
     diagram_type: str,
     output_path: Path,
     namespace: dict[str, Any],
+    timeout: int = DIAGRAM_EXECUTION_TIMEOUT,
     **kwargs: Any,
 ) -> ToolResult:
     """
     Execute diagram code and generate SVG output.
+
+    Security measures:
+    - Pre-execution code scanning (blocks imports, dangerous functions)
+    - Restricted namespace (limited builtins)
+    - Execution timeout protection
 
     Args:
         tool: The tool use request
         diagram_type: Type of diagram for logging (e.g., "Architecture", "DFD")
         output_path: Path where the SVG should be saved
         namespace: Restricted namespace for code execution
+        timeout: Execution timeout in seconds (default: 60)
 
     Returns:
         ToolResult with success or error status
@@ -186,6 +198,28 @@ def execute_diagram_code(
         code = tool_input.get("code")
         if not code:
             raise ValueError("code parameter is required")
+
+        # Security scan the code before execution
+        scan_result = scan_diagram_code(code)
+        if not scan_result.is_safe:
+            error_msg = (
+                f"Security issues found in diagram code: {scan_result.error_message}"
+            )
+            log_error(error_msg)
+            console.print(
+                Panel(
+                    Text(error_msg, style="bold red"),
+                    title="[bold red]Security Error",
+                    border_style="red",
+                    box=box.HEAVY,
+                    expand=False,
+                )
+            )
+            return {
+                "toolUseId": tool.get("toolUseId", "default-id"),
+                "status": "error",
+                "content": [{"text": error_msg}],
+            }
 
         output_dir = output_path.parent
 
@@ -204,10 +238,35 @@ def execute_diagram_code(
             # Modify code to set output directory and filename
             modified_code = inject_diagram_params(code, diagram_name, str(temp_path))
 
-            log_debug("Executing diagram code in restricted namespace")
+            log_debug("Executing diagram code in restricted namespace with timeout")
 
-            # Execute the code in restricted namespace
-            exec(modified_code, namespace)  # nosec
+            # Set up timeout handler
+            def timeout_handler(signum, frame):
+                raise TimeoutError(
+                    f"Diagram generation timed out after {timeout} seconds"
+                )
+
+            # Register timeout (Unix only - gracefully skip on Windows)
+            old_handler = None
+            try:
+                old_handler = signal.signal(signal.SIGALRM, timeout_handler)
+                signal.alarm(timeout)
+            except (AttributeError, ValueError):
+                # SIGALRM not available on Windows
+                pass
+
+            try:
+                # Execute the code in restricted namespace
+                # nosec B102 - Code is pre-scanned for security issues
+                exec(modified_code, namespace)  # noqa: S102
+            finally:
+                # Cancel the alarm and restore handler
+                try:
+                    signal.alarm(0)
+                    if old_handler is not None:
+                        signal.signal(signal.SIGALRM, old_handler)
+                except (AttributeError, ValueError):
+                    pass
 
             # Find the generated SVG file
             svg_files = list(temp_path.glob("*.svg"))
@@ -250,6 +309,24 @@ def execute_diagram_code(
                     "text": f"{diagram_type} diagram successfully generated and saved to {output_path}"
                 }
             ],
+        }
+
+    except TimeoutError as e:
+        error_msg = str(e)
+        log_error(error_msg)
+        console.print(
+            Panel(
+                Text(error_msg, style="bold red"),
+                title="[bold red]Timeout Error",
+                border_style="red",
+                box=box.HEAVY,
+                expand=False,
+            )
+        )
+        return {
+            "toolUseId": tool.get("toolUseId", "default-id"),
+            "status": "error",
+            "content": [{"text": error_msg}],
         }
 
     except SyntaxError as e:

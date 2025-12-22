@@ -36,6 +36,10 @@ export default class ThreatComposerPythonAIProject extends UvPythonProject {
         "opentelemetry-instrumentation-fastapi",
         "fastmcp",
         "diagrams",
+        "bandit",
+        "sarif-om",
+        "jschema-to-python",
+        "jsonpickle",
       ],
 
       // Development dependencies
