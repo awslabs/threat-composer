@@ -340,6 +340,46 @@ The workflow uses intelligent dependency management to ensure agents execute in 
 - Wait for current workflow to complete
 - Check for stale lock files if workflow was interrupted
 
+## Telemetry
+
+Threat Composer AI supports OpenTelemetry tracing to help you observe and debug workflow execution. When enabled, traces are exported to an OTLP-compatible endpoint (default: `localhost:4318`).
+
+### Enabling Telemetry
+
+Use the `--enable-telemetry` flag or set the environment variable:
+
+```bash
+# CLI flag
+threat-composer-ai-cli /path/to/codebase --enable-telemetry
+
+# Environment variable
+export THREAT_COMPOSER_ENABLE_TELEMETRY=true
+threat-composer-ai-cli /path/to/codebase
+```
+
+For MCP server configuration, add the environment variable:
+
+```json
+{
+  "mcpServers": {
+    "threat-composer-ai": {
+      "command": "threat-composer-ai-mcp",
+      "env": {
+        "THREAT_COMPOSER_ENABLE_TELEMETRY": "true"
+      }
+    }
+  }
+}
+```
+
+### Using Jaeger for Trace Visualization
+
+[Jaeger](https://www.jaegertracing.io/) is an open-source distributed tracing platform that works well with Threat Composer AI. It provides a web UI for visualizing traces, analyzing latency, and debugging workflow execution.
+
+To get started with Jaeger, see the [Jaeger Getting Started guide](https://www.jaegertracing.io/docs/latest/getting-started/). Ensure the OTLP endpoint is available on port 4318 and the UI on port 16686.
+
+Once Jaeger is running, enable telemetry and look for the "threat-composer-ai" service in the Jaeger UI to view workflow traces.
+
 ### Local Development Setup
 
 ```bash
