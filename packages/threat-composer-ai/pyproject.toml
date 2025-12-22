@@ -7,12 +7,15 @@ description = "AI-powered automated threat modeling for codebases"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+  "bandit",
   "boto3",
   "botocore",
   "click",
   "diagrams",
   "fastmcp",
+  "jschema-to-python",
   "json-schema-to-pydantic",
+  "jsonpickle",
   "opentelemetry-api",
   "opentelemetry-exporter-otlp-proto-http",
   "opentelemetry-instrumentation-fastapi",
@@ -21,6 +24,7 @@ dependencies = [
   "pathspec",
   "psutil",
   "rich",
+  "sarif-om",
   "strands-agents",
   "strands-agents-tools"
 ]
