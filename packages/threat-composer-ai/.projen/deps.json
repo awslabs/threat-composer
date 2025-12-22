@@ -1,6 +1,18 @@
 {
   "dependencies": [
     {
+      "name": "bandit",
+      "type": "devenv"
+    },
+    {
+      "name": "jschema-to-python",
+      "type": "devenv"
+    },
+    {
+      "name": "jsonpickle",
+      "type": "devenv"
+    },
+    {
       "name": "pytest",
       "type": "devenv"
     },
@@ -21,8 +33,8 @@
       "type": "devenv"
     },
     {
-      "name": "bandit",
-      "type": "runtime"
+      "name": "sarif-om",
+      "type": "devenv"
     },
     {
       "name": "boto3",
@@ -45,15 +57,7 @@
       "type": "runtime"
     },
     {
-      "name": "jschema-to-python",
-      "type": "runtime"
-    },
-    {
       "name": "json-schema-to-pydantic",
-      "type": "runtime"
-    },
-    {
-      "name": "jsonpickle",
       "type": "runtime"
     },
     {
@@ -86,10 +90,6 @@
     },
     {
       "name": "rich",
-      "type": "runtime"
-    },
-    {
-      "name": "sarif-om",
       "type": "runtime"
     },
     {
