@@ -1,9 +1,9 @@
+import ThreatComposerPythonAIProject from "./projenrc/ai-cli-mcp";
 import ThreatComposerReactAppProject from "./projenrc/app";
 import ThreatComposerBrowserExtensionProject from "./projenrc/browser-extension";
 import ThreatComposerInfraProject from "./projenrc/infra";
 import ThreatComposerMonorepoProject from "./projenrc/monorepo";
 import ThreatComposerUIComponentsProject from "./projenrc/ui-components";
-import ThreatComposerPythonAIProject from "./projenrc/python-ai";
 
 const monorepo = new ThreatComposerMonorepoProject();
 const uiProject = new ThreatComposerUIComponentsProject(monorepo);
