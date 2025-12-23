@@ -13,6 +13,8 @@ from ..tools import (
     threat_composer_generate_uuid4,
     threat_composer_generate_uuid4_with_guidance,
     threat_composer_validate_tc_v1_schema,
+    threat_composer_workdir_file_read,
+    threat_composer_workdir_file_write,
 )
 from ..utils import get_tool_name
 from ..utils.relative_path_helper import create_prompt_path_from_config
@@ -105,8 +107,8 @@ def create_system_prompt(config: AppConfig):
     - Defense-in-depth strategies (multiple mitigations for a given threat)
 
     REQUIRED TOOLS:
-    1. You must use threat_composer_workdir_file_read tool to read required inputs
-    2. You must use threat_composer_workdir_file_write tool to create your outputs.
+    1. You must use {get_tool_name(threat_composer_workdir_file_read)} tool to read required inputs
+    2. You must use {get_tool_name(threat_composer_workdir_file_write)} tool to create your outputs.
     3. You must use {get_tool_name(threat_composer_validate_tc_v1_schema)} to validate your output.
 
     {dynamic_inputs}

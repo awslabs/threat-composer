@@ -14,6 +14,8 @@ from ..tools import (
     threat_composer_generate_uuid4_with_guidance,
     threat_composer_list_workdir_files_gitignore_filtered,
     threat_composer_validate_tc_v1_schema,
+    threat_composer_workdir_file_read,
+    threat_composer_workdir_file_write,
 )
 from ..utils import get_tool_name
 from ..utils.relative_path_helper import (
@@ -128,9 +130,9 @@ def create_system_prompt(config: AppConfig):
    {CODE_ANALYSIS_PROMPT_SNIPPET}
 
     REQUIRED TOOLS:
-    1. You must use threat_composer_workdir_file_read tool to read required inputs
-    2. You must use threat_composer_workdir_file_read tool to read file contents
-    3. You must use threat_composer_workdir_file_write tool to create your outputs.
+    1. You must use {get_tool_name(threat_composer_workdir_file_read)} tool to read required inputs
+    2. You must use {get_tool_name(threat_composer_workdir_file_read)} tool to read file contents
+    3. You must use {get_tool_name(threat_composer_workdir_file_write)} tool to create your outputs.
     4. You must use {get_tool_name(threat_composer_validate_tc_v1_schema)} to validate your output.
 
     You have been provided with a set if pre-generated UUIDs to use for your outputs

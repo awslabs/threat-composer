@@ -14,6 +14,8 @@ from ..tools import (
     threat_composer_generate_uuid4_with_guidance,
     threat_composer_list_workdir_files_gitignore_filtered,
     threat_composer_validate_tc_v1_schema,
+    threat_composer_workdir_file_read,
+    threat_composer_workdir_file_write,
 )
 from ..utils import get_tool_name
 from ..utils.relative_path_helper import create_prompt_path_from_config
@@ -113,7 +115,7 @@ def create_system_prompt(config: AppConfig):
    1. Read required inputs
    2. Perform code analysis using tools if necesseary.
    3. If doing file enumeration you must use {get_tool_name(threat_composer_list_workdir_files_gitignore_filtered)}
-   4. You must use threat_composer_workdir_file_read tool to read file contents
+   4. You must use {get_tool_name(threat_composer_workdir_file_read)} tool to read file contents
    5. Determine elements and dataflow of application to the degree of detail that it could be used by another agent to create a data flow diagram
    6. Document all assumptions you make during analysis
    7. Write structured outputs to markdown files using tools
@@ -121,8 +123,8 @@ def create_system_prompt(config: AppConfig):
    {CODE_ANALYSIS_PROMPT_SNIPPET}
 
     REQUIRED TOOLS:
-    1. You must use threat_composer_workdir_file_read tool to disovery directories, and read files.
-    2. You must use threat_composer_workdir_file_write tool to create your outputs.
+    1. You must use {get_tool_name(threat_composer_workdir_file_read)} tool to discover directories, and read files.
+    2. You must use {get_tool_name(threat_composer_workdir_file_write)} tool to create your outputs.
     3. You must use {get_tool_name(threat_composer_validate_tc_v1_schema)} to validate your output.
 
     You have been provided with a set if pre-generated UUIDs to use for your outputs

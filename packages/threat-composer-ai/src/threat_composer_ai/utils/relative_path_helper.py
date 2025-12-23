@@ -152,16 +152,3 @@ def create_prompt_path_from_config(
 
     except (AttributeError, OSError):
         return filename or ""
-
-
-def get_working_directory_alias(use_aliases: bool = True) -> str:
-    """
-    Get the working directory reference for system prompts.
-
-    Args:
-        use_aliases: Whether to use short aliases (default: True)
-
-    Returns:
-        Working directory reference string
-    """
-    return "." if use_aliases else "."
