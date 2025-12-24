@@ -1,3 +1,4 @@
+import ThreatComposerPythonAIProject from "./projenrc/ai-cli-mcp";
 import ThreatComposerReactAppProject from "./projenrc/app";
 import ThreatComposerBrowserExtensionProject from "./projenrc/browser-extension";
 import ThreatComposerInfraProject from "./projenrc/infra";
@@ -11,9 +12,11 @@ const infraProject = new ThreatComposerInfraProject(monorepo);
 const browserExtensionProject = new ThreatComposerBrowserExtensionProject(
   monorepo
 );
+const aiProject = new ThreatComposerPythonAIProject(monorepo);
 
 monorepo.addImplicitDependency(appProject, uiProject);
 monorepo.addImplicitDependency(infraProject, appProject);
 monorepo.addImplicitDependency(browserExtensionProject, appProject);
 
+aiProject.synth();
 monorepo.synth();
