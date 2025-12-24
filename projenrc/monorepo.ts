@@ -32,7 +32,7 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
     );
     this.tryFindObjectFile("package.json")?.addOverride(
       "resolutions.js-yaml",
-      "^3.13.1"
+      "^3.14.2"
     );
     this.tryFindObjectFile("package.json")?.addOverride(
       "resolutions.semver",
