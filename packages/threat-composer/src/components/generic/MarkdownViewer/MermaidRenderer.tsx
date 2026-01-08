@@ -21,7 +21,7 @@ import { useThemeContext } from '../ThemeProvider';
 export const MermaidRenderer: React.FC<{ code: string }> = ({ code }) => {
   const ref = React.useRef<HTMLDivElement>(null);
   const [error, setError] = React.useState(false);
-  const [diagramId] = React.useState(() => `mermaid-diagram-${Math.random().toString(36).substr(2, 9)}`);
+  const [diagramId] = React.useState(() => `mermaid-diagram-${Math.random().toString(36).slice(2, 11)}`);
   const { theme } = useThemeContext();
 
   React.useEffect(() => {
@@ -30,18 +30,24 @@ export const MermaidRenderer: React.FC<{ code: string }> = ({ code }) => {
   }, [theme]);
 
   React.useEffect(() => {
-    if (ref.current && code.trim()) {
+    if (ref.current && code && code.trim()) {
       setError(false);
-      mermaid
-        .render(diagramId, code)
-        .then(({ svg }: { svg: string }) => {
-          if (ref.current) {
-            ref.current.innerHTML = svg;
-          }
-        })
-        .catch(() => {
-          setError(true);
-        });
+      try {
+        mermaid
+          .render(diagramId, code)
+          .then(({ svg }: { svg: string }) => {
+            if (ref.current) {
+              ref.current.innerHTML = svg;
+            }
+          })
+          .catch((err) => {
+            console.error('Mermaid render error:', err, 'Code:', code);
+            setError(true);
+          });
+      } catch (err) {
+        console.error('Mermaid error:', err, 'Code:', code);
+        setError(true);
+      }
     }
   }, [code, theme, diagramId]);
 

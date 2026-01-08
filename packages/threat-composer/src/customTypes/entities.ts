@@ -175,17 +175,26 @@ export type EntityLinkBase = z.infer<typeof EntityLinkBaseSchema>;
 
 export const ImageUrlSchema = z.string().max(IMAGE_URL_MAX_LENGTH).regex(REGEX_CONTENT_IMAGE_URL).optional();
 export const ImageBase64Schema = z.string().max(IMAGE_BASE64_MAX_LENGTH).regex(REGEX_CONTENT_IMAGE_BASE64).optional();
+export const MermaidDiagramSchema = z.string().regex(/^mermaid:/).max(FREE_TEXT_INPUT_MAX_LENGTH).optional();
 
 export const BaseImageInfoSchema = z.object({
   /**
-   * The base64 encoded image or src of the image
+   * The base64 encoded image, image URL, or mermaid diagram code
    */
   image: z.string().optional().refine((data) => {
-    return !data || ImageUrlSchema.safeParse(data).success || ImageBase64Schema.safeParse(data).success;
+    if (!data) return true;
+    return ImageUrlSchema.safeParse(data).success ||
+           ImageBase64Schema.safeParse(data).success ||
+           MermaidDiagramSchema.safeParse(data).success;
   }, {
-    message: 'Invalid image format',
+    message: 'Invalid image or diagram format',
     path: [],
-  }).describe(`Image URL or base64 encoded image data. Supports image/* MIME types, though browser rendering compatibility varies by format. For URLs: maximum ${IMAGE_URL_MAX_LENGTH} characters. For base64: maximum ${IMAGE_BASE64_MAX_LENGTH} characters (approximately 750KB for typical images due to base64 encoding overhead). Common formats (PNG/JPG/GIF) are automatically compressed, making original file size limits difficult to specify precisely. The constraint applies to the resulting base64 string length rather than the original file size.`),
+  }).describe(
+    'Image URL, base64 image data, or mermaid diagram (prefixed with \'mermaid:\'). ' +
+    `URLs: max ${IMAGE_URL_MAX_LENGTH} chars. ` +
+    `Base64: max ${IMAGE_BASE64_MAX_LENGTH} chars. ` +
+    `Mermaid: max ${FREE_TEXT_INPUT_MAX_LENGTH} chars.`,
+  ),
   /**
    * The description of the architecture diagram
    */

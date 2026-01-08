@@ -35,7 +35,7 @@
           "maxLength": 100000
         },
         "image": {
-          "description": "Architecture diagram image. Image URL or base64 encoded image data. Supports image/* MIME types, though browser rendering compatibility varies by format. For URLs: maximum 2048 characters. For base64: maximum 1000000 characters (approximately 750KB for typical images due to base64 encoding overhead). Common formats (PNG/JPG/GIF) are automatically compressed, making original file size limits difficult to specify precisely. The constraint applies to the resulting base64 string length rather than the original file size.",
+          "description": "Architecture diagram image. Image URL, base64 image data, or mermaid diagram (prefixed with 'mermaid:'). URLs: max 2048 chars. Base64: max 1000000 chars. Mermaid: max 100000 chars.",
           "type": "string"
         }
       },
@@ -51,7 +51,7 @@
           "maxLength": 100000
         },
         "image": {
-          "description": "Data-flow diagram image. Image URL or base64 encoded image data. Supports image/* MIME types, though browser rendering compatibility varies by format. For URLs: maximum 2048 characters. For base64: maximum 1000000 characters (approximately 750KB for typical images due to base64 encoding overhead). Common formats (PNG/JPG/GIF) are automatically compressed, making original file size limits difficult to specify precisely. The constraint applies to the resulting base64 string length rather than the original file size.",
+          "description": "Data-flow diagram image. Image URL, base64 image data, or mermaid diagram (prefixed with 'mermaid:'). URLs: max 2048 chars. Base64: max 1000000 chars. Mermaid: max 100000 chars.",
           "type": "string"
         }
       },

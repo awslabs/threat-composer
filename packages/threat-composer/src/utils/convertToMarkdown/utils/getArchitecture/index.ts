@@ -28,7 +28,14 @@ export const getArchitectureContent = async (
 
     if (data.architecture.image) {
       rows.push('### Architecture Diagram');
-      rows.push(`![Architecture Diagram](${data.architecture.image})`);
+      if (data.architecture.image.startsWith('mermaid:')) {
+        const mermaidCode = data.architecture.image.substring(8);
+        rows.push('```mermaid');
+        rows.push(mermaidCode);
+        rows.push('```');
+      } else {
+        rows.push(`![Architecture Diagram](${data.architecture.image})`);
+      }
     }
   }
 

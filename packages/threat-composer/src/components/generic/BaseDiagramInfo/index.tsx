@@ -22,9 +22,10 @@ import { FC, useCallback, useState, useMemo, useEffect } from 'react';
 import { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
 import imageStyles from '../../../styles/image';
 import ContentLayout from '../../generic/ContentLayout';
-import ImageEdit from '../ImageEdit';
+import DiagramEdit from '../DiagramEdit';
 import MarkdownEditor, { MarkdownEditorProps } from '../MarkdownEditor';
 import MarkdownViewer from '../MarkdownViewer';
+import { MermaidRenderer } from '../MarkdownViewer/MermaidRenderer';
 
 export interface BaseDiagramInfoProps extends EditableComponentBaseProps {
   entity: BaseImageInfo;
@@ -86,7 +87,7 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
           focus={true}
         />
         <Header variant='h3'>{headerTitle} Diagram</Header>
-        <ImageEdit value={image} onChange={setImage} />
+        <DiagramEdit value={image} onChange={setImage} />
       </SpaceBetween>) :
         (<SpaceBetween direction='vertical' size='s'>
           <Header variant='h3' key='diagramInfo'>Introduction</Header>
@@ -94,7 +95,13 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
             {entity.description || ''}
           </MarkdownViewer>
           <Header variant='h3' key='diagram'>{diagramTitle}</Header>
-          {entity.image && <img css={imageStyles} src={entity.image} alt={diagramTitle} />}
+          {entity.image && (
+            entity.image.startsWith('mermaid:') ? (
+              <MermaidRenderer code={entity.image.substring(8)} />
+            ) : (
+              <img css={imageStyles} src={entity.image} alt={diagramTitle} />
+            )
+          )}
         </SpaceBetween>)}
     </Container>
   </ContentLayout>

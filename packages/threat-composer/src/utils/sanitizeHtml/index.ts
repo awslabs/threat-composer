@@ -20,6 +20,10 @@ const sanitizeHtml: any = (data: any) => {
     if (Array.isArray(data)) {
       return data.map(d => sanitizeHtml(d));
     } else if (typeof data === 'string') {
+      // Don't sanitize mermaid diagrams
+      if (data.startsWith('mermaid:')) {
+        return data;
+      }
       return sanitizeHtmlString(data, {
         allowedTags: [],
       });

@@ -50,6 +50,29 @@ const useContentValidation = <T extends NonCancelableEventHandler<BaseChangeDeta
     newValue = newValue.split('\n').map(line => line.endsWith('&#x20;') ? line.slice(0, -6) : line).join('\n');
 
     setTempValue(newValue);
+
+    // Don't sanitize if content contains mermaid code blocks
+    const hasMermaidBlock = newValue.includes('```mermaid') || newValue.includes('```mmd');
+    if (hasMermaidBlock) {
+      // Skip HTML sanitization for content with mermaid blocks
+      if (validateData) {
+        const validation = validateData(newValue);
+        if (!validation.success) {
+          setErrorText(validation.error.issues.map(i => i.message).join('; '));
+          return;
+        }
+      }
+      setErrorText('');
+      if (onChange) {
+        if (typeof eventData === 'string') {
+          (onChange as ((newValue: string) => void))?.(newValue);
+        } else {
+          (onChange as NonCancelableEventHandler<BaseChangeDetail>)?.(eventData);
+        }
+      }
+      return;
+    }
+
     const cleanValue = sanitizeHtml(newValue);
 
     if (cleanValue !== newValue) {

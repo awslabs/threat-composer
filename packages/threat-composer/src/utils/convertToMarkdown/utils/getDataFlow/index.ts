@@ -28,7 +28,14 @@ export const getDataflowContent = async (
 
     if (data.dataflow.image) {
       rows.push('### Dataflow Diagram');
-      rows.push(`![Dataflow Diagram](${data.dataflow.image})`);
+      if (data.dataflow.image.startsWith('mermaid:')) {
+        const mermaidCode = data.dataflow.image.substring(8);
+        rows.push('```mermaid');
+        rows.push(mermaidCode);
+        rows.push('```');
+      } else {
+        rows.push(`![Dataflow Diagram](${data.dataflow.image})`);
+      }
     }
   }
 
