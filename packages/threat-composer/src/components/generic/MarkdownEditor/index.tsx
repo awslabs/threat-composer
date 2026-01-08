@@ -23,6 +23,7 @@ import { FC, useState, useRef } from 'react';
 import { useContentValidation } from '../../../hooks';
 import { TextAreaProps } from '../Textarea';
 import { useThemeContext } from '../ThemeProvider';
+import { MermaidCodeEditorDescriptor } from './MermaidEditor';
 
 import '@mdxeditor/editor/style.css';
 
@@ -113,7 +114,7 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
               </DiffSourceToggleWrapper>
             ),
           }),
-          codeBlockPlugin({ defaultCodeBlockLanguage: '' }),
+          codeBlockPlugin({ codeBlockEditorDescriptors: [MermaidCodeEditorDescriptor], defaultCodeBlockLanguage: '' }),
           codeMirrorPlugin({
             codeBlockLanguages: {
               '': 'text',

@@ -43,6 +43,7 @@ class ThreatComposerUIComponentsProject extends TypeScriptProject {
         "unified",
         "yaml",
         "@mdxeditor/editor@^3.27",
+        "mermaid",
       ],
       devDeps: [
         "@cloudscape-design/jest-preset",

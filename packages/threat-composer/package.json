@@ -72,6 +72,7 @@
     "d3": "7",
     "indefinite": "2.5.1",
     "lodash.isequal": "4.5.0",
+    "mermaid": "^11.12.2",
     "react-markdown": "8.0.7",
     "react-simply-carousel": "9.1.10",
     "rehype-raw": "6.1.1",

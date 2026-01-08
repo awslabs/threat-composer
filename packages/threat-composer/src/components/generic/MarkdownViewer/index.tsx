@@ -23,6 +23,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
+import { MermaidRenderer } from './MermaidRenderer';
 
 const externalPattern = /^((https?):\/\/)/;
 
@@ -102,6 +103,17 @@ const components = {
     }
 
     return <>{props.children}</>;
+  },
+  code: (props: any) => {
+    const { children, className } = props;
+    const language = className?.replace('language-', '');
+
+    if (language === 'mermaid' || language === 'mmd') {
+      const code = String(children).replace(/\n$/, '');
+      return <MermaidRenderer code={code} />;
+    }
+
+    return <code className={className}>{children}</code>;
   },
 };
 

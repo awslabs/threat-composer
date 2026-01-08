@@ -219,6 +219,10 @@
       "type": "runtime"
     },
     {
+      "name": "mermaid",
+      "type": "runtime"
+    },
+    {
       "name": "react-markdown",
       "type": "runtime"
     },
