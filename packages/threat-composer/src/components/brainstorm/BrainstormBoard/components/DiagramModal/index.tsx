@@ -22,7 +22,10 @@ import {
   Grid,
   SegmentedControl,
 } from '@cloudscape-design/components';
+import { Mode } from '@cloudscape-design/global-styles';
+import mermaid from 'mermaid';
 import { FC, useState, useEffect, useCallback, CSSProperties } from 'react';
+import { useThemeContext } from '../../../../generic/ThemeProvider';
 
 /**
  * Props interface for DiagramModal component
@@ -48,6 +51,11 @@ export const DiagramModal: FC<DiagramModalProps> = ({
   title,
   image,
 }) => {
+  // Check if image is a mermaid diagram
+  const isMermaidDiagram = image && image.startsWith('mermaid:');
+  const mermaidCode = isMermaidDiagram ? image.substring(8) : '';
+  const { theme } = useThemeContext();
+
   // State management
   const [zoomLevel, setZoomLevel] = useState(100);
   const [panPosition, setPanPosition] = useState({ x: 0, y: 0 });
@@ -56,11 +64,56 @@ export const DiagramModal: FC<DiagramModalProps> = ({
   const [containerDimensions, setContainerDimensions] = useState({ width: 800, height: 600 });
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+  const [mermaidSvg, setMermaidSvg] = useState<string>('');
 
 
-  // Load image and calculate dimensions
+  // Load image and calculate dimensions or render mermaid
   useEffect(() => {
-    if (image) {
+    if (isMermaidDiagram && mermaidCode) {
+      // Render mermaid diagram
+      const mermaidTheme = theme === Mode.Dark ? 'dark' : 'default';
+      mermaid.initialize({ startOnLoad: true, theme: mermaidTheme });
+
+      mermaid
+        .render('mermaid-modal-diagram', mermaidCode)
+        .then(({ svg }: { svg: string }) => {
+          setMermaidSvg(svg);
+
+          // Parse SVG to get dimensions
+          const parser = new DOMParser();
+          const svgDoc = parser.parseFromString(svg, 'image/svg+xml');
+          const svgElement = svgDoc.documentElement;
+          const width = parseFloat(svgElement.getAttribute('width') || '800');
+          const height = parseFloat(svgElement.getAttribute('height') || '600');
+
+          setImageDimensions({ width, height });
+
+          // Calculate optimal container size
+          const maxWidth = Math.min(window.innerWidth * 0.85, 1200);
+          const maxHeight = Math.min(window.innerHeight * 0.75, 800);
+
+          let containerWidth = maxWidth;
+          let containerHeight = containerWidth * (height / width);
+
+          if (containerHeight > maxHeight) {
+            containerHeight = maxHeight;
+            containerWidth = containerHeight * (width / height);
+          }
+
+          setContainerDimensions({ width: containerWidth, height: containerHeight });
+
+          const scaleX = containerWidth / width;
+          const scaleY = containerHeight / height;
+          const fitZoom = Math.min(scaleX, scaleY) * 100;
+
+          setZoomLevel(fitZoom);
+          setPanPosition({ x: 0, y: 0 });
+          setViewMode('fit');
+        })
+        .catch(err => {
+          console.error('Mermaid render error:', err);
+        });
+    } else if (image && !isMermaidDiagram) {
       const img = new Image();
       img.onload = () => {
         const aspectRatio = img.naturalWidth / img.naturalHeight;
@@ -91,7 +144,7 @@ export const DiagramModal: FC<DiagramModalProps> = ({
       };
       img.src = image;
     }
-  }, [image]);
+  }, [image, isMermaidDiagram, mermaidCode, theme]);
 
   // Handle fit to window - calculate proper zoom to fit image in container
   const handleFitToWindow = useCallback(() => {
@@ -242,7 +295,7 @@ export const DiagramModal: FC<DiagramModalProps> = ({
       footer={
         <SpaceBetween direction="horizontal" size="xs">
           <span style={{ fontSize: '12px', color: '#5f6b7a' }}>
-            Use mouse wheel to zoom, arrow keys or pan controls to navigate
+            {isMermaidDiagram ? 'Mermaid diagram' : 'Use mouse wheel to zoom, arrow keys or pan controls to navigate'}
           </span>
         </SpaceBetween>
       }
@@ -312,12 +365,19 @@ export const DiagramModal: FC<DiagramModalProps> = ({
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
             >
-              <img
-                src={image}
-                alt={title}
-                style={imageStyles}
-                draggable={false}
-              />
+              {isMermaidDiagram && mermaidSvg ? (
+                <div
+                  dangerouslySetInnerHTML={{ __html: mermaidSvg }}
+                  style={imageStyles}
+                />
+              ) : (
+                <img
+                  src={image}
+                  alt={title}
+                  style={imageStyles}
+                  draggable={false}
+                />
+              )}
             </div>
           </Box>
         </SpaceBetween>
