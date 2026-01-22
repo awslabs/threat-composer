@@ -18,15 +18,16 @@ from strands.multiagent.base import Status
 from strands.session.file_session_manager import FileSessionManager
 
 from ..agents import (
-    create_application_info_agent,
-    create_architecture_agent,
     create_architecture_diagram_agent,
     create_dataflow_agent,
     create_dataflow_diagram_agent,
     create_mitigations_agent,
     create_threat_model_agent,
     create_threats_agent,
+    create_custom_documentation_reader_agent,
+    create_custom_deep_discovery_agent,
 )
+from ..agents.custom_dataflow import create_dataflow_agent as create_custom_dataflow_agent
 from ..config import AppConfig
 from ..logging import clear_agent_context, log_debug, log_success
 
@@ -93,6 +94,7 @@ def create_custom_threat_modeling_workflow(
     config: AppConfig | None = None,
     session_manager: FileSessionManager | None = None,
     previous_session_path: str | None = None,
+    skip_architecture_diagram: bool = True,
 ):
     """
     Create a custom threat modeling workflow using Strands Graph architecture.
@@ -108,25 +110,25 @@ def create_custom_threat_modeling_workflow(
     and customizing this workflow to match your specific requirements.
 
     Workflow Architecture:
-        Code Analysis → System Modeling → STRIDE Analysis → Threat Identification →
-        Mitigation Planning → Quality Assessment → Threat Composer Output
+        Documentation Reader → Deep Discovery → Architecture Enriched →
+        Data Flow Analysis → Threat Identification → Mitigation Planning → Threat Composer Output
 
     Graph Node Structure:
-        - application_info: Gathers basic application context and requirements
-        - architecture: Analyzes system architecture and components
+        - documentation_reader: Entry point - reads curated docs, produces application_info + architecture
+        - deep_discovery: Performs comprehensive discovery (components, workflows, flows) → produces architecture-enriched.tc.json
         - architecture_diagram: Generates visual architecture representations
-        - dataflow: Identifies data flows and trust boundaries
+        - dataflow: Identifies data flows using architecture-enriched information
         - dataflow_diagram: Creates data flow diagrams
         - threats: Performs STRIDE analysis and threat identification
         - mitigations: Develops mitigation strategies for identified threats
         - threat_model: Synthesizes results into Threat Composer schema format
 
     Execution Flow:
-        application_info → architecture → dataflow → threats → mitigations
-                     ↓           ↓
-        architecture_diagram  dataflow_diagram
-                     ↓           ↓
-                  threat_model ←←←←
+        documentation_reader → deep_discovery → dataflow → threats → mitigations
+                    ↓              ↓              ↓
+          architecture_diagram  (enriched)  dataflow_diagram
+                    ↓                            ↓
+                 threat_model ←←←←←←←←←←←←←←←←←←←←
 
     Args:
         config (Optional[AppConfig]): Application configuration object containing:
@@ -177,11 +179,8 @@ def create_custom_threat_modeling_workflow(
     log_debug("Creating custom threat modeling workflow graph")
 
     # Create all agents and swarms with shared configuration and incremental execution support
-    application_info = create_application_info_agent(config, previous_session_path)
-    architecture = create_architecture_agent(config, previous_session_path)
-    architecture_diagram = create_architecture_diagram_agent(
-        config, previous_session_path
-    )
+    documentation_reader = create_custom_documentation_reader_agent(config, previous_session_path)
+    deep_discovery = create_custom_deep_discovery_agent(config, previous_session_path)
     dataflow = create_dataflow_agent(config, previous_session_path)
     dataflow_diagram = create_dataflow_diagram_agent(config, previous_session_path)
     threats = create_threats_agent(config, previous_session_path)
@@ -192,41 +191,42 @@ def create_custom_threat_modeling_workflow(
     builder = GraphBuilder()
 
     # Add nodes to the graph
-    builder.add_node(application_info, "application_info")
-    builder.add_node(architecture, "architecture")
-    builder.add_node(architecture_diagram, "architecture_diagram")
+    builder.add_node(documentation_reader, "documentation_reader")
+    builder.add_node(deep_discovery, "deep_discovery")
     builder.add_node(dataflow, "dataflow")
     builder.add_node(dataflow_diagram, "dataflow_diagram")
     builder.add_node(threats, "threats")
     builder.add_node(mitigations, "mitigations")
     builder.add_node(threat_model, "threat_model")
 
-    # Create conditional dependency checker for threat_model
-    # threat_model should only execute when ALL of its dependencies are complete
-    threat_model_condition = create_dependency_condition(
-        ["architecture_diagram", "dataflow_diagram", "mitigations"]
-    )
+    # Conditionally add architecture_diagram
+    threat_model_dependencies = ["dataflow_diagram", "mitigations"]
+    if not skip_architecture_diagram:
+        architecture_diagram = create_architecture_diagram_agent(config, previous_session_path)
+        builder.add_node(architecture_diagram, "architecture_diagram")
+        builder.add_edge("documentation_reader", "architecture_diagram")
+        threat_model_dependencies.append("architecture_diagram")
 
-    # Edges for the graph
-    builder.add_edge("application_info", "architecture")
-    builder.add_edge("architecture", "dataflow")
+    # Create conditional dependency checker for threat_model
+    threat_model_condition = create_dependency_condition(threat_model_dependencies)
+
+    # Edges for the graph - main flow
+    builder.add_edge("documentation_reader", "deep_discovery")
+    builder.add_edge("deep_discovery", "dataflow")
     builder.add_edge("dataflow", "threats")
     builder.add_edge("threats", "mitigations")
 
-    builder.add_edge("architecture", "architecture_diagram")
+    # Parallel diagram generation
     builder.add_edge("dataflow", "dataflow_diagram")
 
-    # Replace direct edges with conditional edges to ensure threat_model waits for all dependencies
-    builder.add_edge(
-        "dataflow_diagram", "threat_model", condition=threat_model_condition
-    )
-    builder.add_edge(
-        "architecture_diagram", "threat_model", condition=threat_model_condition
-    )
+    # Conditional edges to threat_model (waits for all dependencies)
+    builder.add_edge("dataflow_diagram", "threat_model", condition=threat_model_condition)
     builder.add_edge("mitigations", "threat_model", condition=threat_model_condition)
+    if not skip_architecture_diagram:
+        builder.add_edge("architecture_diagram", "threat_model", condition=threat_model_condition)
 
     # Set entry point
-    builder.set_entry_point("application_info")
+    builder.set_entry_point("documentation_reader")
 
     # Session manager
     builder.set_session_manager(session_manager)
