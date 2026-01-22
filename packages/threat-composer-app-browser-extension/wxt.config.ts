@@ -9,23 +9,19 @@ function generateManifest(env: ConfigEnv): UserManifest {
   const manifest: UserManifest = {
     name: 'Threat Composer Viewer',
     description: "View a Threat Composer JSON export in Threat Composer",
-    version_name: "0.0.4-alpha",
+    version_name: "0.0.5-alpha",
     content_scripts: [
       {
-        matches: ["*://*/*.tc.json*", "*://*.github.com/*"],
+        matches: ["<all_urls>"],
         js: ['content-script.js'],
         run_at: "document_end"
       }
     ],
     permissions: ["storage", "tabs"],
-    icons: {
-      128: '/icon-128.png',
-    },
   }
 
   if (env.manifestVersion === 2) {
-    manifest.permissions?.push("*://*.github.com/*")
-    manifest.permissions?.push("*://code.amazon.com/*")
+    manifest.permissions?.push("*://*/*")
   }
 
   const webAccessibleResources = [
@@ -45,6 +41,10 @@ function generateManifest(env: ConfigEnv): UserManifest {
 }
 
 export default defineConfig({
+  modules: ['@wxt-dev/auto-icons'],
+  autoIcons: {
+    baseIconPath: '../../threat-composer-app/src/assets/logo-dark.svg'
+  },
   vite: (env) => ({
     build: {
       emptyOutDir: false

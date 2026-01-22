@@ -32,6 +32,10 @@
       "type": "build"
     },
     {
+      "name": "@wxt-dev/auto-icons",
+      "type": "build"
+    },
+    {
       "name": "eslint-import-resolver-typescript",
       "type": "build"
     },

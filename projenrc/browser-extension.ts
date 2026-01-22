@@ -18,6 +18,7 @@ class ThreatComposerBrowserExtensionProject extends TypeScriptProject {
       ],
       devDeps: [
         "wxt",
+        "@wxt-dev/auto-icons",
         "@vitejs/plugin-react",
         "rollup-plugin-copy",
         "@types/react",
