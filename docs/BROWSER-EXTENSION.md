@@ -8,23 +8,30 @@ The Threat Composer browser extension allows you to view `.tc.json` files hosted
 
 ## Supported Platforms
 
-The extension integrates with the following platforms:
+GitHub, GitLab, Bitbucket and Amazon CodeCatalyst.
 
-- **GitHub Code Browser**: View `.tc.json` files in GitHub repositories
-- **Amazon CodeCatalyst**: View threat models in CodeCatalyst projects
-- **Direct URLs**: Any web-accessible `.tc.json` file (with URL containing `.tc.json`)
+Each integration can be individually enabled/disabled and configured with custom URL patterns for self-hosted instances.
 
-**Note**: On Firefox, the extension does not work on `githubusercontent.com` due to the `sandbox` CSP directive.
+## Features
+
+- Read-only viewing of complete threat models
+- Seamless integration with supported platform UIs
+- Quick access during code review without downloading files
+- Works with public and private repositories (with appropriate access)
+- Per-integration enable/disable toggles
+- Custom URL patterns for self-hosted instances (e.g. GitLab self-managed)
+- Debug mode for troubleshooting
+- Bundled Threat Composer app with no external dependencies
 
 ## Installation
 
 ### Chrome Web Store
 
-*Coming soon - extension will be published to Chrome Web Store*
+*Not yet published*
 
 ### Firefox Add-ons
 
-*Coming soon - extension will be published to Firefox Add-ons*
+*Not yet published*
 
 ### Manual Installation (Development)
 
@@ -48,50 +55,9 @@ The extension integrates with the following platforms:
 
 ## Usage
 
-### Viewing Threat Models on GitHub
-
-1. Navigate to a `.tc.json` file in any GitHub repository
-2. Look for the "View in Threat Composer" button added by the extension
-3. Click the button to open the threat model in the Threat Composer viewer
-4. The threat model will be displayed with full functionality
-
-### Viewing Threat Models on CodeCatalyst
-
-1. Navigate to a `.tc.json` file in your CodeCatalyst project
-2. Click the "View in Threat Composer" button
-3. Review the threat model in the integrated viewer
-
-### Viewing Direct URLs
-
-1. Navigate to any URL containing `.tc.json` (e.g., raw GitHub URLs)
-2. The extension will detect the file and add the viewing button
-3. Click to open in Threat Composer
-
-## Features
-
-### Read-Only Viewing
-
-- View complete threat models including:
-  - Application information
-  - Architecture diagrams
-  - Data flow diagrams
-  - Assumptions
-  - Threats
-  - Mitigations
-  - Insights
-
-### Integrated Experience
-
-- Seamless integration with GitHub and CodeCatalyst UI
-- No need to download files
-- Quick access to threat models during code review
-- Works with public and private repositories (with appropriate access)
-
-### Offline Capability
-
-- The Threat Composer web app is bundled within the extension
-- No external dependencies required after installation
-- Fast loading times
+1. Navigate to a `.tc.json` file on any supported platform
+2. Look for the "View in Threat Composer" button in the file actions
+3. Click to open the threat model in the viewer
 
 ## Building from Source
 
@@ -148,10 +114,7 @@ cd ./packages/threat-composer-app-browser-extension
 yarn run dev
 ```
 
-Then navigate to a supported integration to test:
-- [Example 1](https://github.com/awslabs/threat-composer/blob/main/packages/threat-composer/src/data/workspaceExamples/ThreatComposer.tc.json)
-- [Example 2](https://github.com/awslabs/threat-composer/blob/main/packages/threat-composer/src/data/workspaceExamples/GenAIChatbot.tc.json)
-- [Example 3](https://raw.githubusercontent.com/awslabs/threat-composer/main/packages/threat-composer/src/data/workspaceExamples/GenAIChatbot.tc.json)
+Then navigate to a supported integration to test: [Example 1](https://github.com/awslabs/threat-composer/blob/main/packages/threat-composer/src/data/workspaceExamples/ThreatComposer.tc.json), [Example 2](https://github.com/awslabs/threat-composer/blob/main/packages/threat-composer/src/data/workspaceExamples/GenAIChatbot.tc.json), [Example 3](https://raw.githubusercontent.com/awslabs/threat-composer/main/packages/threat-composer/src/data/workspaceExamples/GenAIChatbot.tc.json)
 
 #### Firefox
 
@@ -160,19 +123,22 @@ cd ./packages/threat-composer-app-browser-extension
 yarn run dev:firefox
 ```
 
-**Note**: On Firefox, the extension does not work on `githubusercontent.com` due to CSP restrictions.
-
 ### Project Structure
 
 ```
 packages/threat-composer-app-browser-extension/
 ├── public/                          # Static assets
-│   ├── scriptInjectForCodeCatalyst.js
-│   └── scriptInjectForThreatComposer.js
 ├── src/
-│   ├── entrypoints/                # Extension entry points
-│   └── debugLogger.ts              # Debug utilities
-├── wxt.config.ts                   # WXT configuration
+│   ├── entrypoints/
+│   │   ├── background.ts            # Service worker
+│   │   ├── content-script.ts        # Main content script
+│   │   ├── content-script/
+│   │   │   ├── handlers/            # Platform-specific handlers
+│   │   │   ├── utils/               # Shared utilities
+│   │   │   └── types.ts
+│   │   └── popup/                   # Extension popup UI
+│   └── debugLogger.ts
+├── wxt.config.ts                    # WXT configuration
 └── package.json
 ```
 
@@ -213,15 +179,9 @@ The extension requires the following permissions:
 3. Ensure the file follows Threat Composer schema
 4. Try reloading the extension
 
-### Firefox-Specific Issues
-
-- The extension does not work on `githubusercontent.com` due to CSP restrictions
-- Use GitHub's code browser view instead of raw file URLs
-
 ## Known Limitations
 
 - Read-only viewing (no editing capability)
-- Firefox: Does not work on `githubusercontent.com`
 - Requires internet access to load files from web
 - Large threat models may take time to load
 

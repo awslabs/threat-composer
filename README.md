@@ -73,7 +73,7 @@ Threat Composer is available in multiple complementary tools to fit your workflo
 
 ![Status: Experimental](https://img.shields.io/badge/Status-Experimental-orange)
 
-- One-click viewing of Threat Composer `.tc.json` files on GitHub and Amazon CodeCatalyst
+- One-click viewing of Threat Composer `.tc.json` files on GitHub, GitLab, Bitbucket and Amazon CodeCatalyst
 - Available for Chrome and Firefox
 
 📖 [Browser Extension Documentation](./docs/BROWSER-EXTENSION.md)
