@@ -7,7 +7,6 @@ declare module "wxt/browser" {
     | "/"
     | "/background.js"
     | "/content-script.js"
-    | "/icon-128.png"
     | "/icons/128.png"
     | "/icons/16.png"
     | "/icons/32.png"
