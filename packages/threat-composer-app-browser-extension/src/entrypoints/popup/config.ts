@@ -16,31 +16,62 @@
 import { useState } from 'react';
 import { logDebugMessage } from '../../debugLogger';
 
-export enum ThreatComposerTarget {
-  BUILT_IN = 'BUILT_IN',
-  GITHUB_PAGES = 'GITHUB_PAGES',
-  CUSTOM_HOST = 'CUSTOM_HOST',
-}
-
 export interface TCConfig {
   debug: boolean;
   fileExtension: string;
-  integrationRaw: boolean;
-  integrationGitHubCodeBrowser: boolean;
-  integrationCodeCatalystCodeBrowser: boolean;
-  integrationAmazonCodeBrowser: boolean;
-  customUrl?: string;
-  target: ThreatComposerTarget;
+  integrations: {[integrationType: string]: IntegrationConfig };
 }
+
+export interface IntegrationConfig {
+  name: string;
+  enabled: boolean;
+  urlRegexes: string[];
+  rawUrlPatterns: string[];
+}
+
+export const IntegrationTypes = {
+  CODEAMAZON: 'codeamazon',
+  CODECATALYST: 'codecatalyst',
+  BITBUCKET: 'bitbucket',
+  GITHUB: 'github',
+  GITLAB: 'gitlab',
+} as const;
 
 export const DefaultConfig: TCConfig = {
   debug: false,
   fileExtension: '.tc.json',
-  integrationRaw: true,
-  integrationGitHubCodeBrowser: true,
-  integrationCodeCatalystCodeBrowser: true,
-  integrationAmazonCodeBrowser: true,
-  target: ThreatComposerTarget.BUILT_IN,
+  integrations: {
+    [IntegrationTypes.CODEAMAZON]: {
+      name: 'Amazon Code Browser',
+      enabled: true,
+      urlRegexes: ['code.amazon.com'],
+      rawUrlPatterns: ['?raw=1'],
+    },
+    [IntegrationTypes.CODECATALYST]: {
+      name: 'Amazon CodeCatalyst',
+      enabled: true,
+      urlRegexes: ['codecatalyst.aws'],
+      rawUrlPatterns: [], // No raw support
+    },
+    [IntegrationTypes.BITBUCKET]: {
+      name: 'Bitbucket',
+      enabled: true,
+      urlRegexes: ['bitbucket.org'],
+      rawUrlPatterns: ['/raw/'],
+    },
+    [IntegrationTypes.GITHUB]: {
+      name: 'GitHub',
+      enabled: true,
+      urlRegexes: ['github.com', 'raw.githubusercontent.com'],
+      rawUrlPatterns: ['githubusercontent.com'],
+    },
+    [IntegrationTypes.GITLAB]: {
+      name: 'GitLab',
+      enabled: true,
+      urlRegexes: ['gitlab.com'],
+      rawUrlPatterns: ['/-/raw/'],
+    },
+  },
 };
 
 export async function getExtensionConfig(): Promise<TCConfig> {
@@ -59,12 +90,12 @@ export function setExtensionConfig(config: TCConfig) {
   });
 }
 
-export const useExtensionConfig = (defaultConfig: TCConfig) => {
-  const [value, setValue] = useState<TCConfig>(defaultConfig);
+export const useExtensionConfig = () => {
+  const [value, setValue] = useState<TCConfig | undefined>();
 
   const handleValueChange = (doSetConfig: (prevConfig: TCConfig) => TCConfig) => {
     setValue((prev) => {
-      const newConfig = doSetConfig(prev);
+      const newConfig = doSetConfig(prev ?? DefaultConfig);
       setExtensionConfig(newConfig);
       return newConfig;
     });
