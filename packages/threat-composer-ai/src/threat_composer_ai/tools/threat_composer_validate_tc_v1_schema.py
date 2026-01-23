@@ -106,33 +106,129 @@ def threat_composer_validate_tc_v1_schema(file_path: str) -> str:
             errors = e.errors()
             error_messages = []
 
-            for i, error in enumerate(errors, 1):
-                # Extract error details
-                field_path = " -> ".join(str(loc) for loc in error.get("loc", []))
-                field_path = field_path if field_path else "root"
-                error_msg = error.get("msg", "Validation error")
-                input_value = error.get("input", "")
+            # Group errors by base path (without union type name) to deduplicate union errors
+            grouped_errors: dict[str, list[dict]] = {}
+            for error in errors:
+                loc = error.get("loc", [])
+                # Find base path by removing union type names (e.g., "CommentsMetadata", "PriorityMetadata")
+                base_path_parts = []
+                for part in loc:
+                    # Skip union type class names (they contain "Metadata" or similar patterns)
+                    if isinstance(part, str) and "Metadata" in part:
+                        continue
+                    base_path_parts.append(str(part))
+                base_path = ".".join(base_path_parts)
+                if base_path not in grouped_errors:
+                    grouped_errors[base_path] = []
+                grouped_errors[base_path].append(error)
 
-                # Format input value for display (truncate if too long)
-                if input_value is not None:
-                    input_str = str(input_value)
-                    if len(input_str) > 100:
-                        input_str = input_str[:97] + "..."
-                    value_info = f" (current value: {input_str})"
-                else:
-                    value_info = ""
+            # For each group, pick the most informative error (prefer value_error over literal_error)
+            for base_path, group in grouped_errors.items():
+                # Prioritize errors: value_error > string_pattern_mismatch > literal_error
+                best_error = None
+                for error in group:
+                    error_type = error.get("type", "")
+                    if "value_error" in error_type:
+                        best_error = error
+                        break
+                    elif "pattern" in error_type and best_error is None:
+                        best_error = error
+                    elif best_error is None:
+                        best_error = error
 
-                # Create formatted error message
-                formatted_error = f"Field '{field_path}' - {error_msg}{value_info}"
-                error_messages.append(f"{i}. {formatted_error}")
+                if best_error:
+                    field_path = base_path if base_path else "root"
+                    error_msg = best_error.get("msg", "Validation error")
+                    input_value = best_error.get("input", "")
 
-            result = f"❌ Validation failed with {len(errors)} error(s):\n"
-            result += "\n".join(error_messages)
+                    # Format input value for display (truncate if too long)
+                    if input_value is not None:
+                        input_str = str(input_value)
+                        if len(input_str) > 100:
+                            input_str = input_str[:97] + "..."
+                        value_info = f" (current value: {input_str})"
+                    else:
+                        value_info = ""
+
+                    formatted_error = f"Field '{field_path}' - {error_msg}{value_info}"
+                    error_messages.append(formatted_error)
+
+            result = f"❌ Validation failed with {len(error_messages)} error(s):\n"
+            result += "\n".join(
+                f"{i}. {msg}" for i, msg in enumerate(error_messages, 1)
+            )
 
             return result
 
     except Exception as e:
         return f"❌ Validation error: {str(e)}"
+
+
+def _format_validation_errors(errors: list[dict]) -> list[str]:
+    """
+    Format Pydantic validation errors, deduplicating union type errors.
+
+    When a union type fails validation, Pydantic reports errors for each union member.
+    This function groups errors by base path and picks the most informative error.
+    """
+    error_messages = []
+
+    # Group errors by base path (without union type name and final field) to deduplicate union errors
+    grouped_errors: dict[str, list[dict]] = {}
+    for error in errors:
+        loc = error.get("loc", [])
+        # Find base path by removing union type class names (e.g., "CommentsMetadata", "PriorityMetadata")
+        # and grouping at the metadata item level (e.g., "threats.2.metadata.1")
+        base_path_parts = []
+        for part in loc:
+            # Skip union type class names (they contain "Metadata" or similar patterns)
+            if isinstance(part, str) and "Metadata" in part:
+                continue
+            base_path_parts.append(str(part))
+
+        # Group at the parent level (metadata item) not the field level (key/value)
+        # This groups "threats.2.metadata.1.key" and "threats.2.metadata.1.value" together
+        if len(base_path_parts) > 1 and base_path_parts[-1] in ("key", "value"):
+            base_path = ".".join(base_path_parts[:-1])
+        else:
+            base_path = ".".join(base_path_parts)
+
+        if base_path not in grouped_errors:
+            grouped_errors[base_path] = []
+        grouped_errors[base_path].append(error)
+
+    # For each group, pick the most informative error (prefer value_error over literal_error)
+    for base_path, group in grouped_errors.items():
+        # Prioritize errors: value_error > string_pattern_mismatch > literal_error
+        best_error = None
+        for error in group:
+            error_type = error.get("type", "")
+            if "value_error" in error_type:
+                best_error = error
+                break
+            elif "pattern" in error_type and best_error is None:
+                best_error = error
+            elif best_error is None:
+                best_error = error
+
+        if best_error:
+            field_path = base_path if base_path else "root"
+            error_msg = best_error.get("msg", "Validation error")
+            input_value = best_error.get("input", "")
+
+            # Format input value for display (truncate if too long)
+            if input_value is not None:
+                input_str = str(input_value)
+                if len(input_str) > 100:
+                    input_str = input_str[:97] + "..."
+                value_info = f" (current value: {input_str})"
+            else:
+                value_info = ""
+
+            formatted_error = f"Field '{field_path}' - {error_msg}{value_info}"
+            error_messages.append(formatted_error)
+
+    return error_messages
 
 
 # Additional utility function for programmatic use
@@ -166,28 +262,12 @@ def validate_tc_data_pydantic(data: dict[str, Any]) -> tuple[bool, str]:
             "",
         )
     except ValidationError as e:
-        errors = e.errors()
-        error_messages = []
+        error_messages = _format_validation_errors(e.errors())
 
-        for i, error in enumerate(errors, 1):
-            field_path = " -> ".join(str(loc) for loc in error.get("loc", []))
-            field_path = field_path if field_path else "root"
-            error_msg = error.get("msg", "Validation error")
-            input_value = error.get("input", "")
-
-            if input_value is not None:
-                input_str = str(input_value)
-                if len(input_str) > 100:
-                    input_str = input_str[:97] + "..."
-                value_info = f" (current value: {input_str})"
-            else:
-                value_info = ""
-
-            formatted_error = f"Field '{field_path}' - {error_msg}{value_info}"
-            error_messages.append(f"{i}. {formatted_error}")
-
-        error_message = f"Validation failed with {len(errors)} error(s):\n"
-        error_message += "\n".join(error_messages)
+        error_message = f"Validation failed with {len(error_messages)} error(s):\n"
+        error_message += "\n".join(
+            f"{i}. {msg}" for i, msg in enumerate(error_messages, 1)
+        )
 
         return False, error_message
     except Exception as e:
