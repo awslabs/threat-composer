@@ -123,8 +123,19 @@ def setup_rich_logging(
         file_handler.setFormatter(PlainTextFormatter(datefmt="%Y-%m-%d %H:%M:%S"))
         root_logger.addHandler(file_handler)
 
-    # Configure strands logger specifically
+    # Configure strands logger specifically with markup=False to prevent
+    # Rich from parsing raw request/response data as markup tags (e.g., [/-])
     strands_logger = logging.getLogger("strands")
+
+    # Create a separate handler for strands with markup disabled
+    strands_rich_handler = RichHandler(
+        console=console,
+        show_time=show_time,
+        show_path=show_path,
+        markup=False,  # Disable markup to prevent parsing errors from raw data
+        rich_tracebacks=True,
+        tracebacks_show_locals=True,
+    )
 
     # Suppress verbose internal Strands library stack traces, we will handle this upstream
     logging.getLogger("strands.multiagent.graph").setLevel(logging.CRITICAL)
@@ -137,10 +148,10 @@ def setup_rich_logging(
     logging.getLogger("urllib3.connectionpool").setLevel(logging.CRITICAL)
 
     strands_logger.setLevel(log_level)
-    strands_logger.addHandler(rich_handler)
+    strands_logger.addHandler(strands_rich_handler)
 
     # Add file handler to strands logger if available
-    if log_file_path:
+    if log_file_path and log_filename:
         strands_logger.addHandler(file_handler)
 
 
