@@ -16,6 +16,7 @@ Usage:
     print(threat_model.applicationInfo.name if threat_model.applicationInfo else None)
 """
 
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -33,7 +34,7 @@ class MetadataItem(BaseModel):
 class CommentsMetadata(MetadataItem):
     """Metadata item for comments."""
 
-    key: str = Field("Comments", description="Comment key")
+    key: Literal["Comments"] = Field(description="Comment key")
     value: str = Field(..., max_length=1000, description="Comment value")
 
 
@@ -49,14 +50,14 @@ class CustomMetadata(MetadataItem):
 class SourceMetadata(MetadataItem):
     """Metadata item for source type."""
 
-    key: str = Field("source", description="Source key")
+    key: Literal["source"] = Field(description="Source key")
     value: str = Field(..., description="Source type")
 
 
 class MitigationPackIdMetadata(MetadataItem):
     """Metadata item for mitigation pack ID."""
 
-    key: str = Field("mitigationPackId", description="Mitigation pack ID key")
+    key: Literal["mitigationPackId"] = Field(description="Mitigation pack ID key")
     value: str = Field(
         ...,
         min_length=1,
@@ -68,8 +69,8 @@ class MitigationPackIdMetadata(MetadataItem):
 class MitigationPackMitigationIdMetadata(MetadataItem):
     """Metadata item for mitigation pack mitigation ID."""
 
-    key: str = Field(
-        "mitigationPackMitigationId", description="Mitigation pack mitigation ID key"
+    key: Literal["mitigationPackMitigationId"] = Field(
+        description="Mitigation pack mitigation ID key"
     )
     value: str = Field(
         ...,
@@ -81,7 +82,7 @@ class MitigationPackMitigationIdMetadata(MetadataItem):
 class StrideMetadata(MetadataItem):
     """Metadata item for STRIDE classification."""
 
-    key: str = Field("STRIDE", description="STRIDE key")
+    key: Literal["STRIDE"] = Field(description="STRIDE key")
     value: list[str] = Field(..., description="STRIDE categories")
 
     @field_validator("value")
@@ -99,7 +100,7 @@ class StrideMetadata(MetadataItem):
 class PriorityMetadata(MetadataItem):
     """Metadata item for priority."""
 
-    key: str = Field("Priority", description="Priority key")
+    key: Literal["Priority"] = Field(description="Priority key")
     value: str = Field(..., description="Priority level")
 
     @field_validator("value")
@@ -116,7 +117,7 @@ class PriorityMetadata(MetadataItem):
 class ThreatPackIdMetadata(MetadataItem):
     """Metadata item for threat pack ID."""
 
-    key: str = Field("threatPackId", description="Threat pack ID key")
+    key: Literal["threatPackId"] = Field(description="Threat pack ID key")
     value: str = Field(
         ..., min_length=1, max_length=30, description="Identifier for the threat pack"
     )
@@ -125,7 +126,7 @@ class ThreatPackIdMetadata(MetadataItem):
 class ThreatPackThreatIdMetadata(MetadataItem):
     """Metadata item for threat pack threat ID."""
 
-    key: str = Field("threatPackThreatId", description="Threat pack threat ID key")
+    key: Literal["threatPackThreatId"] = Field(description="Threat pack threat ID key")
     value: str = Field(
         ...,
         max_length=36,
@@ -136,9 +137,8 @@ class ThreatPackThreatIdMetadata(MetadataItem):
 class ThreatPackMitigationCandidateIdMetadata(MetadataItem):
     """Metadata item for threat pack mitigation candidate ID."""
 
-    key: str = Field(
-        "threatPackMitigationCandidateId",
-        description="Threat pack mitigation candidate ID key",
+    key: Literal["threatPackMitigationCandidateId"] = Field(
+        description="Threat pack mitigation candidate ID key"
     )
     value: str = Field(
         ...,
