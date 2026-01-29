@@ -14,24 +14,18 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { Spinner } from '@cloudscape-design/components';
-import { FC, useState, useEffect } from 'react';
-import { TCConfig, getExtensionConfig } from './config';
+import { FC } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { ConfigDetailView } from './ConfigDetailView';
 import Config from './ConfigView';
-import { logDebugMessage } from '../../debugLogger';
 
 const App: FC = () => {
-  const [config, setConfig] = useState<TCConfig | undefined>();
-
-  useEffect(() => {
-    getExtensionConfig()
-      .then((loadedConfig) => setConfig(loadedConfig))
-      .catch((error) => {
-        logDebugMessage({ debug: true } as any, error);
-      });
-  }, []);
-
-  return config ? <Config initialConfig={config} /> : <Spinner size="large" />;
+  return (
+    <Routes>
+      <Route key='/' path='/' element={<Config />}/>
+      <Route key='/integration/:integrationType' path='/integration/:integrationType' element={<ConfigDetailView />}/>
+    </Routes>
+  );
 };
 
 export default App;
