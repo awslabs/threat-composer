@@ -148,9 +148,16 @@ class SemanticComparator:
         return intersection / union if union > 0 else 0.0
 
     def set_similarity(self, set_a: list | set, set_b: list | set) -> float:
-        """Compute Jaccard similarity between two sets."""
-        set_a = set(set_a) if set_a else set()
-        set_b = set(set_b) if set_b else set()
+        """Compute Jaccard similarity between two sets (case-insensitive for strings)."""
+
+        # Normalize: lowercase strings for case-insensitive comparison
+        def normalize_set(s: list | set) -> set:
+            if not s:
+                return set()
+            return {item.lower() if isinstance(item, str) else item for item in s}
+
+        set_a = normalize_set(set_a)
+        set_b = normalize_set(set_b)
 
         if not set_a and not set_b:
             return 1.0
