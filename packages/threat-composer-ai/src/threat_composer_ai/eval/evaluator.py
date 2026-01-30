@@ -149,18 +149,24 @@ class ThreatModelEvaluator:
         app_b = data_b.get("applicationInfo", {}) or {}
 
         field_scores = {}
+        field_values_a = {}
+        field_values_b = {}
 
         # Compare name
-        name_sim = self.semantic.text_similarity(
-            app_a.get("name", "") or "", app_b.get("name", "") or ""
-        )
+        name_a = app_a.get("name", "") or ""
+        name_b = app_b.get("name", "") or ""
+        name_sim = self.semantic.text_similarity(name_a, name_b)
         field_scores["name"] = name_sim
+        field_values_a["name"] = name_a
+        field_values_b["name"] = name_b
 
         # Compare description (semantic)
-        desc_sim = self.semantic.text_similarity(
-            app_a.get("description", "") or "", app_b.get("description", "") or ""
-        )
+        desc_a = app_a.get("description", "") or ""
+        desc_b = app_b.get("description", "") or ""
+        desc_sim = self.semantic.text_similarity(desc_a, desc_b)
         field_scores["description"] = desc_sim
+        field_values_a["description"] = desc_a
+        field_values_b["description"] = desc_b
 
         # Weight description more heavily
         overall = name_sim * 0.3 + desc_sim * 0.7
@@ -169,6 +175,8 @@ class ThreatModelEvaluator:
             component_name="application_info",
             overall_score=overall,
             field_scores=field_scores,
+            field_values_a=field_values_a,
+            field_values_b=field_values_b,
             item_count_a=1 if app_a else 0,
             item_count_b=1 if app_b else 0,
             matched_count=1 if app_a and app_b else 0,
@@ -183,12 +191,16 @@ class ThreatModelEvaluator:
         arch_b = data_b.get("architecture", {}) or {}
 
         field_scores = {}
+        field_values_a = {}
+        field_values_b = {}
 
         # Compare description
-        desc_sim = self.semantic.text_similarity(
-            arch_a.get("description", "") or "", arch_b.get("description", "") or ""
-        )
+        desc_a = arch_a.get("description", "") or ""
+        desc_b = arch_b.get("description", "") or ""
+        desc_sim = self.semantic.text_similarity(desc_a, desc_b)
         field_scores["description"] = desc_sim
+        field_values_a["description"] = desc_a
+        field_values_b["description"] = desc_b
 
         # Note: We skip image comparison (binary data)
 
@@ -196,6 +208,8 @@ class ThreatModelEvaluator:
             component_name="architecture",
             overall_score=desc_sim,
             field_scores=field_scores,
+            field_values_a=field_values_a,
+            field_values_b=field_values_b,
             item_count_a=1 if arch_a.get("description") else 0,
             item_count_b=1 if arch_b.get("description") else 0,
             matched_count=1
@@ -213,17 +227,23 @@ class ThreatModelEvaluator:
         df_b = data_b.get("dataflow", {}) or {}
 
         field_scores = {}
+        field_values_a = {}
+        field_values_b = {}
 
         # Compare description
-        desc_sim = self.semantic.text_similarity(
-            df_a.get("description", "") or "", df_b.get("description", "") or ""
-        )
+        desc_a = df_a.get("description", "") or ""
+        desc_b = df_b.get("description", "") or ""
+        desc_sim = self.semantic.text_similarity(desc_a, desc_b)
         field_scores["description"] = desc_sim
+        field_values_a["description"] = desc_a
+        field_values_b["description"] = desc_b
 
         return ComponentScore(
             component_name="dataflow",
             overall_score=desc_sim,
             field_scores=field_scores,
+            field_values_a=field_values_a,
+            field_values_b=field_values_b,
             item_count_a=1 if df_a.get("description") else 0,
             item_count_b=1 if df_b.get("description") else 0,
             matched_count=1

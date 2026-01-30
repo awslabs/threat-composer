@@ -134,7 +134,54 @@ Weighted combination of component scores:
 - **50-70%**: Moderate consistency - some variance expected
 - **< 50%**: Low consistency - significant differences between runs
 
+## How It Works
+
+### Semantic Similarity
+
+The eval module uses `sentence-transformers` with the `all-MiniLM-L6-v2` model to compare text semantically rather than by word overlap. Text is converted into 384-dimensional embeddings, then cosine similarity measures how close two pieces of text are in meaning.
+
+This means "unauthorized access to database" and "attacker gains DB access" score high even though they share few words.
+
+### Matching Algorithm
+
+For threats, mitigations, and assumptions:
+
+1. Extract the primary text field (e.g., `statement` for threats, `content` for mitigations)
+2. Build a similarity matrix comparing every item in run A against every item in run B
+3. Use the Hungarian algorithm (`scipy.optimize.linear_sum_assignment`) to find the optimal 1:1 matching that maximizes total similarity
+4. Pairs with similarity below 0.4 are considered unmatched
+
+### Field Comparison Weights
+
+Different fields contribute differently to the overall similarity score:
+
+| Weight | Fields |
+|--------|--------|
+| 1.5x | statement, content (most important) |
+| 1.2x | threatAction |
+| 1.0x | threatSource, threatImpact, prerequisites |
+| 0.8x | impactedGoal, impactedAssets, STRIDE |
+| 0.5x | tags, Priority |
+| 0.3x | status |
+
+### Distribution Metrics
+
+Uses Jensen-Shannon divergence to compare how categories are distributed across runs. This catches shifts like one run being heavy on "Spoofing" threats while another emphasizes "Tampering".
+
+### Overall Score Calculation
+
+Component weights for the final score:
+
+| Component | Weight |
+|-----------|--------|
+| Threats | 35% |
+| Mitigations | 25% |
+| Application Info | 10% |
+| Architecture | 10% |
+| Dataflow | 10% |
+| Assumptions | 10% |
+
 ## Fallback Mode
 
 If `sentence-transformers` is not installed, the module falls back to
-Jaccard token similarity, which is faster but less semantically aware.
+Jaccard token similarity (word overlap), which is faster but less semantically aware.

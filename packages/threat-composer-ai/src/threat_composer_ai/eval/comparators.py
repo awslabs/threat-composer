@@ -316,6 +316,8 @@ class ThreatComparator:
                     match_quality=_get_match_quality(overall_sim),
                     overall_similarity=overall_sim,
                     field_comparisons=field_comparisons,
+                    index_a=idx_a,
+                    index_b=idx_b,
                 )
             )
 
@@ -478,6 +480,8 @@ class MitigationComparator:
                     match_quality=_get_match_quality(overall_sim),
                     overall_similarity=overall_sim,
                     field_comparisons=field_comparisons,
+                    index_a=idx_a,
+                    index_b=idx_b,
                 )
             )
 
@@ -570,6 +574,8 @@ class AssumptionComparator:
                     match_quality=_get_match_quality(overall_sim),
                     overall_similarity=overall_sim,
                     field_comparisons=field_comparisons,
+                    index_a=idx_a,
+                    index_b=idx_b,
                 )
             )
 

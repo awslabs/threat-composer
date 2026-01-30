@@ -43,6 +43,8 @@ class ThreatMatchResult:
     match_quality: MatchQuality
     overall_similarity: float
     field_comparisons: list[FieldComparison] = field(default_factory=list)
+    index_a: int = 0  # Position in run A
+    index_b: int | None = None  # Position in run B (None if unmatched)
 
     @property
     def is_matched(self) -> bool:
@@ -60,6 +62,8 @@ class MitigationMatchResult:
     match_quality: MatchQuality
     overall_similarity: float
     field_comparisons: list[FieldComparison] = field(default_factory=list)
+    index_a: int = 0  # Position in run A
+    index_b: int | None = None  # Position in run B (None if unmatched)
 
     @property
     def is_matched(self) -> bool:
@@ -77,6 +81,8 @@ class AssumptionMatchResult:
     match_quality: MatchQuality
     overall_similarity: float
     field_comparisons: list[FieldComparison] = field(default_factory=list)
+    index_a: int = 0  # Position in run A
+    index_b: int | None = None  # Position in run B (None if unmatched)
 
     @property
     def is_matched(self) -> bool:
@@ -90,6 +96,12 @@ class ComponentScore:
     component_name: str
     overall_score: float  # 0.0 to 1.0
     field_scores: dict[str, float] = field(default_factory=dict)
+    field_values_a: dict[str, Any] = field(
+        default_factory=dict
+    )  # Actual values from run A
+    field_values_b: dict[str, Any] = field(
+        default_factory=dict
+    )  # Actual values from run B
     item_count_a: int = 0
     item_count_b: int = 0
     matched_count: int = 0
