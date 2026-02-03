@@ -15,12 +15,17 @@
  ******************************************************************************************************************** */
 import React from 'react';
 import ReactDOM from 'react-dom';
-//import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import App from './App.tsx';
+import { ExtensionConfigProvider } from './ExtensionConfigProvider.js';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ExtensionConfigProvider>
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    </ExtensionConfigProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );
