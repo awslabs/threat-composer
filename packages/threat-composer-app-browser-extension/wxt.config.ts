@@ -9,7 +9,7 @@ function generateManifest(env: ConfigEnv): UserManifest {
   const manifest: UserManifest = {
     name: 'Threat Composer Viewer',
     description: "View a Threat Composer JSON export in Threat Composer",
-    version_name: "0.0.5-alpha",
+    version_name: "0.0.6",
     content_scripts: [
       {
         matches: ["<all_urls>"],
