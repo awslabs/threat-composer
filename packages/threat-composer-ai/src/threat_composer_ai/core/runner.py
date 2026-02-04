@@ -18,16 +18,25 @@ from ..validation import (
 from ..workflows.baseline_threat_modeling import (
     create_baseline_threat_modeling_workflow,
 )
+from ..workflows.custom_threat_modeling import (
+    create_custom_threat_modeling_workflow,
+)
 
 
 class WorkflowRunner:
     """Manages workflow setup, execution, and cleanup."""
+
+    WORKFLOWS = {
+        "baseline": create_baseline_threat_modeling_workflow,
+        "custom": create_custom_threat_modeling_workflow,
+    }
 
     def __init__(
         self,
         config: AppConfig,
         session_manager: FileSessionManager,
         previous_session_path: str | None = None,
+        workflow_name: str = "baseline",
     ):
         """
         Initialize workflow runner.
@@ -36,10 +45,12 @@ class WorkflowRunner:
             config: Application configuration
             session_manager: File session manager instance
             previous_session_path: Path to previous session for incremental execution
+            workflow_name: Name of workflow to use (default: "baseline")
         """
         self.config = config
         self.session_manager = session_manager
         self.previous_session_path = previous_session_path
+        self.workflow_name = workflow_name
         self.workflow = None
 
     @classmethod
@@ -57,6 +68,7 @@ class WorkflowRunner:
         node_timeout: float | None = None,
         invocation_source: str = "UNKNOWN",
         setup_logging: bool = True,
+        workflow_name: str = "baseline",
     ) -> "WorkflowRunner":
         """
         Create WorkflowRunner with full initialization.
@@ -152,6 +164,7 @@ class WorkflowRunner:
             config=config,
             session_manager=sm,
             previous_session_path=previous_session_path,
+            workflow_name=workflow_name,
         )
 
     def setup(
@@ -192,7 +205,8 @@ class WorkflowRunner:
             export_run_configuration(self.config, invocation_args, start_time)
 
             # 4. Create workflow with previous_session_path support
-            self.workflow = create_baseline_threat_modeling_workflow(
+            workflow_factory = self._get_workflow_factory()
+            self.workflow = workflow_factory(
                 config=self.config,
                 session_manager=self.session_manager,
                 previous_session_path=self.previous_session_path,
@@ -223,6 +237,15 @@ class WorkflowRunner:
         )
 
         return f"Analyze local directory: {relative_working_dir}"
+
+    def _get_workflow_factory(self):
+        """Get workflow factory function based on workflow_name."""
+        if self.workflow_name not in self.WORKFLOWS:
+            raise ValueError(
+                f"Unknown workflow: {self.workflow_name}. "
+                f"Available workflows: {', '.join(self.WORKFLOWS.keys())}"
+            )
+        return self.WORKFLOWS[self.workflow_name]
 
     def _update_completion(self, accumulated_usage: dict | None = None) -> None:
         """Update run completion information."""

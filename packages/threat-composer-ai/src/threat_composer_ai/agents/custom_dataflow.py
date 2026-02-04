@@ -39,11 +39,12 @@ def get_input_files(config: AppConfig) -> list[str]:
     """Get the list of input files this agent depends on."""
     # Check if architecture-enriched exists, otherwise fall back to standard architecture
     enriched_path = f"{config.output_directory}/{config.components_output_sub_dir}/architecture-enriched.tc.json"
-    standard_path = f"{config.output_directory}/{config.components_output_sub_dir}/{config.architecture_description_filename}"
     
     return [
         f"{config.output_directory}/{config.components_output_sub_dir}/{config.application_info_filename}",
         enriched_path,  # Prefer enriched architecture if available
+        f"{config.output_directory}/{config.components_output_sub_dir}/deep-analysis/discovery_structure.md",
+        f"{config.output_directory}/{config.components_output_sub_dir}/deep-analysis/security_files.json",
     ]
 
 
@@ -121,28 +122,28 @@ def create_system_prompt(config: AppConfig):
    
    Use this enriched information to identify data flows more accurately.
 
+   DEEP ANALYSIS INPUTS (read these for comprehensive context):
+   - deep-analysis/discovery_structure.md: Code structure, directories, key files, dependencies
+   - deep-analysis/security_files.json: Security-relevant files with paths and relevance ratings
+   - deep-analysis/components/: Individual component analysis files
+   - deep-analysis/workflows/: Workflow analysis with entry points and processing steps
+   - deep-analysis/infrastructure/: Infrastructure code and configurations
+   - deep-analysis/flows/: Sequence flow documentation with trust boundaries
+
    Your focus is determining the elements and flows of this application.
 
    Your primary responsibilities:
    1. Read required inputs (prioritize architecture-enriched.tc.json if available)
-   2. Use discovered sequence flows from architecture-enriched to inform data flow identification
-   3. For each identified flow, create detailed analysis:
-      a. **Sequence Diagram**: Generate PlantUML sequence diagram showing:
-         - All components, message flows, data transformations
-         - Authentication, authorization, error paths
-         - Security controls
-      b. **Flow-Specific Assets**: Document assets for this flow:
-         - Data assets, security credentials, configuration, infrastructure
-         - Sensitivity, protection requirements, access methods
-      c. **Trust Boundaries**: Identify and analyze trust boundaries crossed:
-         - Source/destination zones, data transferred, security controls
-         - Create trust boundary summary
-   4. Perform code analysis using tools if necessary
-   5. If doing file enumeration you must use {get_tool_name(threat_composer_list_workdir_files_gitignore_filtered)}
-   6. You must use {get_tool_name(threat_composer_workdir_file_read)} tool to read file contents
-   7. Determine elements and dataflow of application to the degree of detail that it could be used by another agent to create a data flow diagram
-   8. Document all assumptions you make during analysis
-   9. Write structured outputs to markdown files using tools
+   2. Read deep-analysis files for comprehensive understanding of components, workflows, and flows
+   3. Use discovered sequence flows from architecture-enriched and deep-analysis/flows/ to inform data flow identification
+   4. Use security_files.json to identify high-value assets and security boundaries
+   5. Use workflow analysis to understand data transformations and processing steps
+   6. Perform additional code analysis using tools if necessary
+   7. If doing file enumeration you must use {get_tool_name(threat_composer_list_workdir_files_gitignore_filtered)}
+   8. You must use {get_tool_name(threat_composer_workdir_file_read)} tool to read file contents
+   9. Determine elements and dataflow of application to the degree of detail that it could be used by another agent to create a data flow diagram
+   10. Document all assumptions you make during analysis
+   11. Write structured outputs to markdown files using tools
 
    {CODE_ANALYSIS_PROMPT_SNIPPET}
 
