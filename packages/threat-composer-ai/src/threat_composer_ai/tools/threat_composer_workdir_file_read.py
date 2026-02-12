@@ -21,6 +21,7 @@ All original file_read functionality is preserved, including:
 - Document block generation for Bedrock compatibility
 """
 
+import os
 from typing import Any
 
 from strands.types.tools import ToolResult, ToolUse
@@ -37,8 +38,33 @@ from threat_composer_ai.utils.relative_path_helper import (
     resolve_relative_path,
 )
 
-TOOL_SPEC = FILE_READ_TOOL_SPEC
+# Create a modified TOOL_SPEC with clearer path description
+TOOL_SPEC = FILE_READ_TOOL_SPEC.copy()
 TOOL_SPEC["name"] = "threat_composer_workdir_file_read"
+
+# Override the path parameter description to be explicit about files only
+if "inputSchema" in TOOL_SPEC and "properties" in TOOL_SPEC["inputSchema"]:
+    TOOL_SPEC["inputSchema"] = TOOL_SPEC["inputSchema"].copy()
+    TOOL_SPEC["inputSchema"]["properties"] = TOOL_SPEC["inputSchema"][
+        "properties"
+    ].copy()
+    TOOL_SPEC["inputSchema"]["properties"]["path"] = {
+        **TOOL_SPEC["inputSchema"]["properties"].get("path", {}),
+        "description": (
+            "Path(s) to specific file(s) - NOT directories. "
+            "For multiple files, use comma-separated list: 'file1.txt,file2.md'. "
+            "Supports glob patterns for matching multiple files: 'src/*.py', 'data/**/*.json'. "
+            "Use relative paths from the working directory (e.g., './src/main.py'). "
+            "IMPORTANT: Do not pass directory paths - if you need to explore a directory's contents, "
+            "use 'find' mode with a glob pattern like 'directory/*.py' or list the directory first."
+        ),
+    }
+
+
+def _is_directory_path(path: str) -> bool:
+    """Check if the given path is a directory."""
+    resolved = resolve_relative_path(path)
+    return os.path.isdir(resolved)
 
 
 def _convert_absolute_paths_to_relative_in_response(result: ToolResult) -> ToolResult:
@@ -107,6 +133,19 @@ def threat_composer_workdir_file_read(tool: ToolUse, **kwargs: Any) -> ToolResul
 
         # Validate path is in working directory OR output directory
         validate_working_or_output_directory_path(resolved_main_path, operation="read")
+
+        # Check if path is a directory and reject it with helpful guidance
+        if _is_directory_path(main_path):
+            mode = tool_input.get("mode", "view")
+            raise ValueError(
+                f"Cannot use '{mode}' mode on a directory path: {main_path}\n\n"
+                f"This tool requires specific file paths, not directories. "
+                f"Please specify the exact file(s) you want to read.\n\n"
+                f"Options:\n"
+                f"  1. Use a glob pattern to match files: '{main_path}/*.py' or '{main_path}/**/*.json'\n"
+                f"  2. Use 'find' mode to list files first: mode='find', path='{main_path}/*'\n"
+                f"  3. Specify the exact file path: '{main_path}/specific_file.py'"
+            )
 
         # Update the tool input with resolved path for the original tool
         resolved_tool_input = tool_input.copy()

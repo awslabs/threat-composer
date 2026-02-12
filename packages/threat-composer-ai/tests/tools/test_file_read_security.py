@@ -315,3 +315,57 @@ class TestFileReadSecurity:
         result = threat_composer_workdir_file_read(tool_use_no_mode)
         assert result["status"] == "error"
         assert "mode parameter is required" in str(result["content"])
+
+    def test_cannot_read_directory_path_directly(self, setup_test_environment):
+        """Test that passing a directory path is rejected with helpful guidance."""
+        env = setup_test_environment
+
+        # Create a subdirectory with some files
+        subdir = env["working_dir"] / "subdir"
+        subdir.mkdir()
+        (subdir / "file1.py").write_text("# Python file 1")
+        (subdir / "file2.py").write_text("# Python file 2")
+
+        # Try to read the directory directly
+        tool_use = {
+            "toolUseId": "test-dir-reject",
+            "input": {"path": str(subdir), "mode": "view"},
+        }
+
+        result = threat_composer_workdir_file_read(tool_use)
+
+        # Verify error with helpful guidance
+        assert result["status"] == "error"
+        content_str = str(result["content"])
+        assert "Cannot use 'view' mode on a directory path" in content_str
+        assert "glob pattern" in content_str.lower()
+        assert "find" in content_str.lower()
+
+    def test_cannot_read_directory_path_with_different_modes(
+        self, setup_test_environment
+    ):
+        """Test that directory paths are rejected for various reading modes."""
+        env = setup_test_environment
+
+        # Create a subdirectory
+        subdir = env["working_dir"] / "test_modes_dir"
+        subdir.mkdir()
+        (subdir / "test.txt").write_text("test content")
+
+        # Test various modes that should reject directory paths
+        modes_to_test = ["view", "lines", "chunk", "search", "stats", "preview"]
+
+        for mode in modes_to_test:
+            tool_use = {
+                "toolUseId": f"test-dir-{mode}",
+                "input": {"path": str(subdir), "mode": mode},
+            }
+
+            result = threat_composer_workdir_file_read(tool_use)
+
+            assert result["status"] == "error", (
+                f"Mode '{mode}' should reject directory paths"
+            )
+            assert f"Cannot use '{mode}' mode on a directory path" in str(
+                result["content"]
+            )
