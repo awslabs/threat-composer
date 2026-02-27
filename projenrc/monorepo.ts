@@ -55,6 +55,24 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
       "^0.25.4"
     );
 
+    // Security: fix transitive dependency vulnerabilities (Dependabot alerts)
+    this.tryFindObjectFile("package.json")?.addOverride(
+      "resolutions.fast-xml-parser",
+      "^5.4.1"
+    );
+    this.tryFindObjectFile("package.json")?.addOverride(
+      "resolutions.tar",
+      "^7.5.9"
+    );
+    this.tryFindObjectFile("package.json")?.addOverride(
+      "resolutions.qs",
+      "^6.15.0"
+    );
+    this.tryFindObjectFile("package.json")?.addOverride(
+      "resolutions.lodash",
+      "^4.17.23"
+    );
+
     this.tryFindObjectFile("package.json")?.addOverride("workspaces.nohoist", [
       "**/wxt",
     ]);

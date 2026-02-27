@@ -74,7 +74,11 @@
     "@babel/traverse": "^7.25.0",
     "postcss": "^8.4.31",
     "web-ext-run": "^0.2.1",
-    "esbuild": "^0.25.4"
+    "esbuild": "^0.25.4",
+    "fast-xml-parser": "^5.4.1",
+    "tar": "^7.5.9",
+    "qs": "^6.15.0",
+    "lodash": "^4.17.23"
   },
   "engines": {
     "node": ">=16",

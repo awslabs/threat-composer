@@ -49,7 +49,7 @@
     "docx": "8.6.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-router-dom": "6.30.0",
+    "react-router-dom": "6.30.3",
     "remark-frontmatter": "^4",
     "remark-gfm": "^3",
     "remark-parse": "^10",
