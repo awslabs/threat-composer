@@ -14,6 +14,12 @@ from threat_composer_ai.eval import (
 )
 
 
+def _write_threatmodel(run_dir, data):
+    """Helper to write a threatmodel.tc.json into a run directory."""
+    run_dir.mkdir(parents=True, exist_ok=True)
+    (run_dir / "threatmodel.tc.json").write_text(json.dumps(data))
+
+
 class TestSemanticComparator:
     """Tests for SemanticComparator."""
 
@@ -114,36 +120,100 @@ class TestRunLoader:
     """Tests for RunLoader."""
 
     def test_load_run(self, tmp_path):
-        """Test loading a run from directory."""
-        # Create mock run structure
+        """Test loading a run from threatmodel.tc.json."""
         run_dir = tmp_path / "20260123-0100"
-        components_dir = run_dir / "components"
-        components_dir.mkdir(parents=True)
+        _write_threatmodel(
+            run_dir,
+            {
+                "schema": 1,
+                "applicationInfo": {
+                    "name": "Test App",
+                    "description": "Test description",
+                },
+                "architecture": {"description": "Microservices architecture"},
+                "dataflow": {"description": "API gateway to backend"},
+                "assumptions": [{"id": "1", "content": "Test assumption"}],
+                "threats": [{"id": "t1", "statement": "Test threat"}],
+                "mitigations": [{"id": "m1", "content": "Test mitigation"}],
+                "mitigationLinks": [{"mitigationId": "m1", "linkedId": "t1"}],
+                "assumptionLinks": [],
+            },
+        )
 
-        # Create mock applicationInfo.tc.json
-        app_info = {
-            "schema": 1,
-            "applicationInfo": {"name": "Test App", "description": "Test description"},
-            "assumptions": [{"id": "1", "content": "Test assumption"}],
-        }
-        (components_dir / "applicationInfo.tc.json").write_text(json.dumps(app_info))
-
-        # Create mock threats.tc.json
-        threats = {
-            "schema": 1,
-            "threats": [{"id": "t1", "statement": "Test threat"}],
-        }
-        (components_dir / "threats.tc.json").write_text(json.dumps(threats))
-
-        # Load and verify
         loader = RunLoader()
         run_data = loader.load_run(run_dir)
 
         assert run_data.timestamp == "20260123-0100"
-        assert run_data.application_info_raw is not None
-        assert run_data.threats_raw is not None
+        assert run_data.application_info["name"] == "Test App"
+        assert run_data.architecture["description"] == "Microservices architecture"
+        assert run_data.dataflow["description"] == "API gateway to backend"
         assert len(run_data.threats) == 1
+        assert len(run_data.mitigations) == 1
         assert len(run_data.assumptions) == 1
+        assert len(run_data.mitigation_links) == 1
+
+    def test_load_run_missing_file(self, tmp_path):
+        """Test error when threatmodel.tc.json is missing."""
+        run_dir = tmp_path / "20260123-0100"
+        run_dir.mkdir(parents=True)
+
+        loader = RunLoader()
+        with pytest.raises(FileNotFoundError, match="Threat model file not found"):
+            loader.load_run(run_dir)
+
+    def test_load_run_direct_file(self, tmp_path):
+        """Test loading by pointing directly to a .tc.json file."""
+        run_dir = tmp_path / "20260123-0100"
+        _write_threatmodel(
+            run_dir,
+            {
+                "schema": 1,
+                "applicationInfo": {"name": "Direct"},
+                "threats": [{"id": "t1", "statement": "Test"}],
+            },
+        )
+
+        loader = RunLoader()
+        run_data = loader.load_run(run_dir / "threatmodel.tc.json")
+
+        assert run_data.application_info["name"] == "Direct"
+        assert len(run_data.threats) == 1
+
+    def test_backward_compat_raw_accessors(self, tmp_path):
+        """Test that *_raw properties work for evaluator compatibility."""
+        run_dir = tmp_path / "20260123-0100"
+        _write_threatmodel(
+            run_dir,
+            {
+                "schema": 1,
+                "applicationInfo": {"name": "Test", "description": "Desc"},
+                "architecture": {"description": "Arch desc"},
+                "dataflow": {"description": "DF desc"},
+            },
+        )
+
+        loader = RunLoader()
+        run_data = loader.load_run(run_dir)
+
+        # These are used by evaluator._compare_application_info etc.
+        assert run_data.application_info_raw["applicationInfo"]["name"] == "Test"
+        assert run_data.architecture_raw["architecture"]["description"] == "Arch desc"
+        assert run_data.dataflow_raw["dataflow"]["description"] == "DF desc"
+
+    def test_find_runs(self, tmp_path):
+        """Test finding run directories with threatmodel.tc.json."""
+        for name in ["20260101-0100", "20260102-0200", "20260103-0300"]:
+            _write_threatmodel(tmp_path / name, {"schema": 1})
+
+        # Also create a dir without threatmodel.tc.json — should be skipped
+        (tmp_path / "no-threatmodel").mkdir()
+
+        loader = RunLoader()
+        runs = loader.find_runs(tmp_path)
+
+        assert len(runs) == 3
+        assert runs[0].name == "20260101-0100"
+        assert runs[2].name == "20260103-0300"
 
 
 class TestThreatModelEvaluator:
@@ -151,117 +221,79 @@ class TestThreatModelEvaluator:
 
     def test_compare_identical_runs(self, tmp_path):
         """Comparing identical runs should give high consistency."""
-        # Create two identical runs
+        tm_data = {
+            "schema": 1,
+            "applicationInfo": {
+                "name": "Test App",
+                "description": "A test application",
+            },
+            "architecture": {"description": "Simple architecture"},
+            "dataflow": {"description": "Simple dataflow"},
+            "assumptions": [{"id": "a1", "content": "Users are authenticated"}],
+            "threats": [
+                {
+                    "id": "t1",
+                    "statement": "An attacker can exploit the login API",
+                    "threatSource": "external attacker",
+                    "threatAction": "exploit the login API",
+                    "impactedGoal": ["confidentiality"],
+                    "metadata": [{"key": "STRIDE", "value": ["S"]}],
+                }
+            ],
+            "mitigations": [{"id": "m1", "content": "Implement rate limiting"}],
+            "mitigationLinks": [],
+            "assumptionLinks": [],
+        }
+
         for run_name in ["run_a", "run_b"]:
-            run_dir = tmp_path / run_name / "components"
-            run_dir.mkdir(parents=True)
+            _write_threatmodel(tmp_path / run_name, tm_data)
 
-            app_info = {
-                "schema": 1,
-                "applicationInfo": {
-                    "name": "Test App",
-                    "description": "A test application",
-                },
-                "assumptions": [{"id": "a1", "content": "Users are authenticated"}],
-            }
-            (run_dir / "applicationInfo.tc.json").write_text(json.dumps(app_info))
-
-            threats = {
-                "schema": 1,
-                "threats": [
-                    {
-                        "id": "t1",
-                        "statement": "An attacker can exploit the login API",
-                        "threatSource": "external attacker",
-                        "threatAction": "exploit the login API",
-                        "impactedGoal": ["confidentiality"],
-                        "metadata": [{"key": "STRIDE", "value": ["S"]}],
-                    }
-                ],
-            }
-            (run_dir / "threats.tc.json").write_text(json.dumps(threats))
-
-            mitigations = {
-                "schema": 1,
-                "mitigations": [{"id": "m1", "content": "Implement rate limiting"}],
-            }
-            (run_dir / "mitigations.tc.json").write_text(json.dumps(mitigations))
-
-        # Compare
         evaluator = ThreatModelEvaluator(use_embeddings=False)
         report = evaluator.compare_runs(tmp_path / "run_a", tmp_path / "run_b")
 
-        # Should have very high consistency
         assert report.overall_consistency_score > 0.9
         assert report.threats_score.matched_count == 1
 
     def test_compare_different_runs(self, tmp_path):
         """Comparing different runs should show lower consistency."""
-        # Run A
-        run_a = tmp_path / "run_a" / "components"
-        run_a.mkdir(parents=True)
-        (run_a / "applicationInfo.tc.json").write_text(
-            json.dumps(
-                {
-                    "schema": 1,
-                    "applicationInfo": {
-                        "name": "App A",
-                        "description": "First application",
-                    },
-                }
-            )
-        )
-        (run_a / "threats.tc.json").write_text(
-            json.dumps(
-                {
-                    "schema": 1,
-                    "threats": [{"id": "t1", "statement": "SQL injection attack"}],
-                }
-            )
+        _write_threatmodel(
+            tmp_path / "run_a",
+            {
+                "schema": 1,
+                "applicationInfo": {
+                    "name": "App A",
+                    "description": "First application",
+                },
+                "threats": [{"id": "t1", "statement": "SQL injection attack"}],
+            },
         )
 
-        # Run B - different content
-        run_b = tmp_path / "run_b" / "components"
-        run_b.mkdir(parents=True)
-        (run_b / "applicationInfo.tc.json").write_text(
-            json.dumps(
-                {
-                    "schema": 1,
-                    "applicationInfo": {
-                        "name": "App B",
-                        "description": "Different application",
-                    },
-                }
-            )
-        )
-        (run_b / "threats.tc.json").write_text(
-            json.dumps(
-                {
-                    "schema": 1,
-                    "threats": [{"id": "t2", "statement": "Denial of service attack"}],
-                }
-            )
+        _write_threatmodel(
+            tmp_path / "run_b",
+            {
+                "schema": 1,
+                "applicationInfo": {
+                    "name": "App B",
+                    "description": "Different application",
+                },
+                "threats": [{"id": "t2", "statement": "Denial of service attack"}],
+            },
         )
 
         evaluator = ThreatModelEvaluator(use_embeddings=False)
         report = evaluator.compare_runs(tmp_path / "run_a", tmp_path / "run_b")
 
-        # Should have lower consistency
         assert report.overall_consistency_score < 0.9
 
     def test_report_to_json(self, tmp_path):
         """Test saving report to JSON."""
-        # Create minimal runs
         for run_name in ["run_a", "run_b"]:
-            run_dir = tmp_path / run_name / "components"
-            run_dir.mkdir(parents=True)
-            (run_dir / "applicationInfo.tc.json").write_text(
-                json.dumps(
-                    {
-                        "schema": 1,
-                        "applicationInfo": {"name": "Test"},
-                    }
-                )
+            _write_threatmodel(
+                tmp_path / run_name,
+                {
+                    "schema": 1,
+                    "applicationInfo": {"name": "Test"},
+                },
             )
 
         evaluator = ThreatModelEvaluator(use_embeddings=False)

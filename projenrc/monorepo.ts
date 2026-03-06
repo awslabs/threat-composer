@@ -118,6 +118,11 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
       receiveArgs: true,
     });
 
+    this.addTask("ai:eval", {
+      exec: "uv run --project packages/threat-composer-ai threat-composer-ai-eval",
+      receiveArgs: true,
+    });
+
     this.addTask("build:packs", {
       exec: "npx ts-node ./scripts/data/buildPacks.ts ThreatPack && npx ts-node ./scripts/data/buildPacks.ts MitigationPack",
     });

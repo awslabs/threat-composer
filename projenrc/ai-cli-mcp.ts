@@ -58,6 +58,7 @@ export default class ThreatComposerPythonAIProject extends UvPythonProject {
       scripts: {
         "threat-composer-ai-cli": "threat_composer_ai.__main__:main",
         "threat-composer-ai-mcp": "threat_composer_ai.mcp_server:main",
+        "threat-composer-ai-eval": "threat_composer_ai.eval.cli:eval_cli",
       },
     });
 

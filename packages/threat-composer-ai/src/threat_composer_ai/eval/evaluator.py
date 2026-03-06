@@ -47,7 +47,7 @@ class ThreatModelEvaluator:
             embedding_model: Model name for sentence-transformers
             match_threshold: Minimum similarity to consider items matched
         """
-        self.loader = RunLoader(validate=False)
+        self.loader = RunLoader()
         self.semantic = SemanticComparator(
             model_name=embedding_model,
             use_embeddings=use_embeddings,

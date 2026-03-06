@@ -7,7 +7,9 @@ from pathlib import Path
 
 import click
 
+from .benchmark import BenchmarkConfig, BenchmarkRunner
 from .evaluator import ThreatModelEvaluator
+from .suite import SuiteConfig, SuiteRunner
 
 
 @click.group()
@@ -210,6 +212,436 @@ def eval_history(
                 indent=2,
             )
         click.echo(f"\nHistory data saved to: {output}")
+
+
+@eval_cli.command("benchmark")
+@click.argument(
+    "directory_path",
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
+)
+@click.option(
+    "--runs",
+    "-n",
+    type=int,
+    default=3,
+    help="Number of runs to execute (default: 3)",
+)
+@click.option(
+    "--name",
+    type=str,
+    default=None,
+    help="Experiment name (default: auto-generated from timestamp)",
+)
+@click.option(
+    "--description",
+    type=str,
+    default="",
+    help="Experiment description",
+)
+@click.option(
+    "--output-dir",
+    "-o",
+    type=click.Path(path_type=Path),
+    help="Base output directory for all runs",
+)
+@click.option("--aws-region", type=str, help="AWS region for Bedrock API calls")
+@click.option(
+    "--aws-model-id", type=str, help="AWS Bedrock model ID (frozen across all runs)"
+)
+@click.option("--aws-profile", type=str, help="AWS profile name")
+@click.option(
+    "--execution-timeout", type=float, help="Maximum execution timeout in seconds"
+)
+@click.option(
+    "--node-timeout", type=float, help="Maximum timeout per agent node in seconds"
+)
+@click.option(
+    "--skip-validation",
+    is_flag=True,
+    help="Skip AWS credential validation",
+)
+@click.option(
+    "--enable-telemetry",
+    is_flag=True,
+    help="Enable Jaeger telemetry tracing",
+)
+@click.option(
+    "--dimension",
+    type=click.Choice(["baseline", "model", "prompt", "tools", "temperature"]),
+    default="baseline",
+    help="Experiment dimension being tested (default: baseline)",
+)
+@click.option(
+    "--dimension-value",
+    type=str,
+    default="",
+    help="Value for the experiment dimension (e.g. model name, prompt version)",
+)
+@click.option(
+    "--no-embeddings",
+    is_flag=True,
+    help="Disable embedding-based similarity in eval (faster, less accurate)",
+)
+def benchmark(
+    directory_path: Path,
+    runs: int,
+    name: str | None,
+    description: str,
+    output_dir: Path | None,
+    aws_region: str | None,
+    aws_model_id: str | None,
+    aws_profile: str | None,
+    execution_timeout: float | None,
+    node_timeout: float | None,
+    skip_validation: bool,
+    enable_telemetry: bool,
+    dimension: str,
+    dimension_value: str,
+    no_embeddings: bool,
+):
+    """
+    Run threat modeling N times and evaluate consistency.
+
+    Executes threat-composer-ai against DIRECTORY_PATH multiple times with
+    identical configuration, then runs pairwise eval across all successful
+    runs to produce a consistency score.
+
+    \b
+    Examples:
+        # Baseline: 5 runs with default model
+        threat-composer-ai-eval benchmark ./my-app -n 5
+
+        # Model experiment: test a different model
+        threat-composer-ai-eval benchmark ./my-app -n 3 \\
+            --aws-model-id us.anthropic.claude-sonnet-4-20250514-v1:0 \\
+            --dimension model \\
+            --dimension-value claude-sonnet-4
+
+        # Custom output location
+        threat-composer-ai-eval benchmark ./my-app -n 3 -o ./benchmarks/
+    """
+    from datetime import datetime, timezone
+
+    if runs < 2:
+        click.echo("Error: Need at least 2 runs for consistency evaluation", err=True)
+        raise SystemExit(1)
+
+    experiment_name = (
+        name or f"benchmark-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}"
+    )
+
+    config = BenchmarkConfig(
+        experiment_name=experiment_name,
+        experiment_description=description,
+        working_directory=directory_path.resolve(),
+        num_runs=runs,
+        aws_model_id=aws_model_id,
+        aws_region=aws_region,
+        aws_profile=aws_profile,
+        execution_timeout=execution_timeout,
+        node_timeout=node_timeout,
+        output_base_dir=output_dir.resolve() if output_dir else None,
+        skip_validation=skip_validation,
+        enable_telemetry=enable_telemetry,
+        dimension=dimension,
+        dimension_value=dimension_value or (aws_model_id or "default"),
+    )
+
+    runner = BenchmarkRunner(config)
+    report = runner.run()
+    report.print_summary()
+
+    if report.successful_runs < 2:
+        raise SystemExit(1)
+    if report.consistency_score < 0.5:
+        raise SystemExit(2)
+
+
+@eval_cli.command("suite")
+@click.argument(
+    "config_file",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+)
+@click.option(
+    "--output-dir",
+    "-o",
+    type=click.Path(path_type=Path),
+    help="Override output directory for all suite results",
+)
+@click.option(
+    "--runs",
+    "-n",
+    type=int,
+    default=None,
+    help="Override runs_per_target from config file",
+)
+@click.option("--aws-region", type=str, help="Override AWS region from config")
+@click.option("--aws-model-id", type=str, help="Override model ID from config")
+@click.option("--aws-profile", type=str, help="Override AWS profile from config")
+@click.option(
+    "--skip-validation",
+    is_flag=True,
+    help="Skip AWS credential validation",
+)
+def suite(
+    config_file: Path,
+    output_dir: Path | None,
+    runs: int | None,
+    aws_region: str | None,
+    aws_model_id: str | None,
+    aws_profile: str | None,
+    skip_validation: bool,
+):
+    """
+    Run benchmarks across multiple codebases from a config file.
+
+    CONFIG_FILE: Path to a JSON or YAML suite configuration file.
+
+    \b
+    The config file defines multiple target codebases and shared settings.
+    Each target is benchmarked independently, then results are aggregated
+    into an overall consistency score.
+
+    \b
+    Example JSON config (suite.json):
+        {
+          "name": "baseline-v1",
+          "description": "Baseline across diverse codebases",
+          "runs_per_target": 3,
+          "config": {
+            "aws_model_id": "global.anthropic.claude-sonnet-4-20250514-v1:0"
+          },
+          "targets": [
+            {"name": "browser-ext", "path": "./codebases/browser-ext"},
+            {"name": "dns-infra", "path": "./codebases/dns-infra"},
+            {"name": "ecommerce", "path": "./codebases/ecommerce"}
+          ]
+        }
+
+    \b
+    Example YAML config (suite.yaml) - requires pyyaml:
+        name: baseline-v1
+        runs_per_target: 3
+        config:
+          aws_model_id: global.anthropic.claude-sonnet-4-20250514-v1:0
+        targets:
+          - name: browser-ext
+            path: ./codebases/browser-ext
+          - name: dns-infra
+            path: ./codebases/dns-infra
+
+    \b
+    Examples:
+        threat-composer-ai-eval suite ./suite.json
+        threat-composer-ai-eval suite ./suite.yaml -n 5
+        threat-composer-ai-eval suite ./suite.json -o ./results/
+    """
+    config = SuiteConfig.from_file(config_file)
+
+    # Apply CLI overrides
+    if runs is not None:
+        config.runs_per_target = runs
+    if aws_region:
+        config.aws_region = aws_region
+    if aws_model_id:
+        config.aws_model_id = aws_model_id
+    if aws_profile:
+        config.aws_profile = aws_profile
+    if skip_validation:
+        config.skip_validation = True
+    if output_dir:
+        config.output_base_dir = output_dir.resolve()
+
+    if not config.targets:
+        click.echo("Error: No targets defined in suite config", err=True)
+        raise SystemExit(1)
+
+    runner = SuiteRunner(config)
+    report = runner.run()
+    report.print_summary()
+
+    if report.targets_completed == 0:
+        raise SystemExit(1)
+    if report.overall_consistency_score < 0.5:
+        raise SystemExit(2)
+
+
+@eval_cli.command("eval-files")
+@click.argument("files", nargs=-1, type=click.Path(exists=True, path_type=Path))
+@click.option(
+    "--output",
+    "-o",
+    type=click.Path(path_type=Path),
+    help="Output JSON file for results",
+)
+@click.option(
+    "--no-embeddings",
+    is_flag=True,
+    help="Disable embedding-based similarity (faster, less accurate)",
+)
+@click.option("--name", type=str, default=None, help="Experiment name")
+@click.option(
+    "--dimension",
+    type=click.Choice(["baseline", "model", "prompt", "tools", "temperature"]),
+    default="baseline",
+    help="Experiment dimension being tested",
+)
+@click.option("--dimension-value", type=str, default=None, help="Dimension value label")
+def eval_files(
+    files: tuple[Path, ...],
+    output: Path | None,
+    no_embeddings: bool,
+    name: str | None,
+    dimension: str,
+    dimension_value: str | None,
+):
+    """
+    Evaluate consistency across existing threat model files.
+
+    Pass 2 or more paths to .tc.json files (or directories containing
+    threatmodel.tc.json). Runs pairwise eval without any inference.
+
+    This works with threat model files produced by any tool, not just
+    threat-composer-ai. Files can have any name as long as they follow
+    the Threat Composer v1 schema.
+
+    \b
+    Examples:
+        # Compare 3 files directly
+        threat-composer-ai-eval eval-files run1.tc.json run2.tc.json run3.tc.json
+
+        # Compare directories containing threatmodel.tc.json
+        threat-composer-ai-eval eval-files ./session-1/ ./session-2/ ./session-3/
+
+        # Mix files and directories
+        threat-composer-ai-eval eval-files ./output1.json ./session-2/ ./other.tc.json
+
+        # With experiment metadata
+        threat-composer-ai-eval eval-files *.tc.json --name "opus-vs-sonnet" \\
+            --dimension model --dimension-value opus-4.6
+    """
+    from datetime import datetime, timezone
+
+    if len(files) < 2:
+        click.echo("Error: Need at least 2 files to compare", err=True)
+        raise SystemExit(1)
+
+    timestamp = datetime.now(timezone.utc).isoformat()
+    experiment_name = (
+        name or f"eval-files-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}"
+    )
+
+    click.echo(f"Evaluating {len(files)} threat model files...")
+    for f in files:
+        click.echo(f"  {f}")
+
+    evaluator = ThreatModelEvaluator(use_embeddings=not no_embeddings)
+
+    n = len(files)
+    pairs = []
+    all_scores = []
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            click.echo(f"  Comparing {files[i].name} vs {files[j].name}...", nl=False)
+            try:
+                report = evaluator.compare_runs(files[i], files[j])
+            except FileNotFoundError as e:
+                click.echo(f" ERROR: {e}")
+                continue
+
+            score = report.overall_consistency_score
+            all_scores.append(score)
+            click.echo(f" {score:.1%}")
+
+            pairs.append(
+                {
+                    "run_a": i,
+                    "run_a_path": str(files[i]),
+                    "run_b": j,
+                    "run_b_path": str(files[j]),
+                    "score": score,
+                    "component_scores": report.get_component_scores(),
+                }
+            )
+
+    if not all_scores:
+        click.echo("Error: No successful comparisons", err=True)
+        raise SystemExit(1)
+
+    avg = sum(all_scores) / len(all_scores)
+    mn = min(all_scores)
+    mx = max(all_scores)
+
+    # Print summary in benchmark report format
+    print("\n" + "=" * 70)
+    print("CONSISTENCY REPORT")
+    print("=" * 70)
+    print(f"Experiment: {experiment_name}")
+    print(f"Timestamp:  {timestamp}")
+    print(f"Files:      {n}")
+    print(f"Pairs:      {len(pairs)}")
+
+    print(f"\n{'OVERALL CONSISTENCY SCORE:':<30} {avg:.1%}")
+
+    print("\nPairwise scores:")
+    for pair in pairs:
+        print(
+            f"  {Path(pair['run_a_path']).name} ↔ "
+            f"{Path(pair['run_b_path']).name}: {pair['score']:.1%}"
+        )
+
+    # Component averages
+    component_names = set()
+    for pair in pairs:
+        component_names.update(pair["component_scores"].keys())
+
+    if component_names:
+        print("\nComponent averages:")
+        for comp in sorted(component_names):
+            comp_scores = [
+                p["component_scores"][comp]
+                for p in pairs
+                if comp in p["component_scores"]
+            ]
+            comp_avg = sum(comp_scores) / len(comp_scores) if comp_scores else 0
+            print(f"  {comp:<20} {comp_avg:.1%}")
+
+    print(f"\nAverage: {avg:.1%}  Min: {mn:.1%}  Max: {mx:.1%}")
+
+    if avg >= 0.7:
+        assessment = "✓ HIGH consistency"
+    elif avg >= 0.5:
+        assessment = "⚠ MODERATE consistency"
+    else:
+        assessment = "✗ LOW consistency"
+    print(f"\nAssessment: {assessment}")
+    print("=" * 70)
+
+    # Save report
+    report_data = {
+        "experiment_name": experiment_name,
+        "timestamp": timestamp,
+        "config": {
+            "dimension": dimension,
+            "dimension_value": dimension_value,
+            "files": [str(f) for f in files],
+        },
+        "eval_summary": {
+            "average": avg,
+            "min": mn,
+            "max": mx,
+            "num_pairs": len(pairs),
+            "num_files": n,
+        },
+        "pairwise_scores": pairs,
+        "consistency_score": avg,
+    }
+
+    if output:
+        with open(output, "w") as f_out:
+            json.dump(report_data, f_out, indent=2)
+        click.echo(f"\nResults saved to: {output}")
 
 
 # Main entry point for standalone use

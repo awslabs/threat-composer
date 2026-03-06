@@ -13,6 +13,7 @@ Usage:
     report.to_json("eval_results.json")
 """
 
+from .benchmark import BenchmarkConfig, BenchmarkReport, BenchmarkRunner
 from .comparators import (
     AssumptionComparator,
     MitigationComparator,
@@ -23,8 +24,15 @@ from .evaluator import ThreatModelEvaluator
 from .loader import RunLoader
 from .metrics import ConsistencyMetrics, DistributionMetrics
 from .report import ComponentScore, EvalReport, ThreatMatchResult
+from .suite import SuiteConfig, SuiteReport, SuiteRunner
 
 __all__ = [
+    "BenchmarkConfig",
+    "BenchmarkReport",
+    "BenchmarkRunner",
+    "SuiteConfig",
+    "SuiteReport",
+    "SuiteRunner",
     "ThreatModelEvaluator",
     "EvalReport",
     "ComponentScore",

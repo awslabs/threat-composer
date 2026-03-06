@@ -9,6 +9,15 @@
         }
       ]
     },
+    "ai:eval": {
+      "name": "ai:eval",
+      "steps": [
+        {
+          "exec": "uv run --project packages/threat-composer-ai threat-composer-ai-eval",
+          "receiveArgs": true
+        }
+      ]
+    },
     "build": {
       "name": "build",
       "description": "Full release build for all affected projects",

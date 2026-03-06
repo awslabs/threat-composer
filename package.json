@@ -2,6 +2,7 @@
   "name": "@aws/threat-composer-monorepo",
   "scripts": {
     "ai:cli": "npx projen ai:cli",
+    "ai:eval": "npx projen ai:eval",
     "build": "npx projen build",
     "build:packs": "npx projen build:packs",
     "build:schema": "npx projen build:schema",
