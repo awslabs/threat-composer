@@ -6,20 +6,15 @@ Semantic comparison and consistency scoring for threat model outputs. Works with
 
 Track output stability across prompt, model, tool, and temperature tuning iterations. The eval module answers: "If I run the same threat modeling process twice, how similar are the results?"
 
-## Installation
+## Dependencies
 
-The eval module requires additional dependencies:
+The eval module requires these packages (install via `pip install threat-composer-ai[eval]` or manually):
 
 ```bash
-# Required for semantic similarity (recommended)
-pip install sentence-transformers
-
-# Required for optimal matching algorithm
-pip install scipy
-
-# Or install all eval dependencies
 pip install sentence-transformers scipy numpy
 ```
+
+All three are required — there is no fallback mode.
 
 ## CLI Commands
 
@@ -45,9 +40,6 @@ threat-composer-ai-eval eval-files *.tc.json \
     --dimension model \
     --dimension-value opus-4.6 \
     -o results.json
-
-# Faster (but less accurate) without embeddings
-threat-composer-ai-eval eval-files *.tc.json --no-embeddings
 ```
 
 Files can have any name and live anywhere. They just need to follow the Threat Composer v1 schema with keys like `applicationInfo`, `architecture`, `dataflow`, `threats`, `mitigations`, `assumptions`.
@@ -82,7 +74,6 @@ Options:
 - `--dimension-value` — Label for the dimension value
 - `--aws-model-id` — Override the Bedrock model ID
 - `--aws-region`, `--aws-profile` — AWS configuration
-- `--no-embeddings` — Faster eval without sentence-transformers
 
 ### suite — Benchmark across multiple codebases
 
@@ -175,7 +166,6 @@ When pointing at a directory, the loader looks for `threatmodel.tc.json` in that
 from threat_composer_ai.eval import ThreatModelEvaluator
 
 evaluator = ThreatModelEvaluator(
-    use_embeddings=True,      # Use sentence-transformers for semantic similarity
     match_threshold=0.4,      # Minimum similarity for matching
 )
 
@@ -206,7 +196,7 @@ Weighted combination of component scores:
 
 ### Semantic Similarity
 
-Uses `sentence-transformers` with `all-MiniLM-L6-v2` to compare text semantically. "Unauthorized access to database" and "attacker gains DB access" score high even though they share few words. Falls back to Jaccard token similarity if sentence-transformers is not installed.
+Uses `sentence-transformers` with `all-MiniLM-L6-v2` to compare text semantically. "Unauthorized access to database" and "attacker gains DB access" score high even though they share few words.
 
 ### Matching Algorithm
 
@@ -214,6 +204,19 @@ For threats, mitigations, and assumptions:
 1. Build a similarity matrix comparing every item in run A against every item in run B
 2. Use the Hungarian algorithm (`scipy.optimize.linear_sum_assignment`) for optimal 1:1 matching
 3. Pairs below the match threshold (default 0.4) are considered unmatched
+
+### Component Scoring (F1-Symmetric)
+
+Each list-type component (threats, mitigations, assumptions) is scored using F1-symmetric matching:
+
+```
+recall_a = matched / count_a    (% of A's items found in B)
+recall_b = matched / count_b    (% of B's items found in A)
+f1_match_rate = harmonic_mean(recall_a, recall_b)
+overall = f1_match_rate * 0.5 + avg_similarity * 0.5
+```
+
+This ensures unmatched items in either run penalise the score equally, regardless of which run is "A" vs "B".
 
 ### Threat Field Weights
 

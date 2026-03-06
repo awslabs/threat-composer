@@ -25,25 +25,24 @@ class TestSemanticComparator:
 
     def test_exact_match(self):
         """Exact strings should have similarity 1.0."""
-        comp = SemanticComparator(use_embeddings=False)
+        comp = SemanticComparator()
         assert comp.text_similarity("hello world", "hello world") == 1.0
 
     def test_empty_strings(self):
         """Empty strings should handle gracefully."""
-        comp = SemanticComparator(use_embeddings=False)
+        comp = SemanticComparator()
         assert comp.text_similarity("", "") == 1.0
         assert comp.text_similarity("hello", "") == 0.0
 
-    def test_jaccard_similarity(self):
-        """Jaccard fallback should work."""
-        comp = SemanticComparator(use_embeddings=False)
-        # "hello world" vs "hello there" share "hello"
+    def test_semantic_similarity(self):
+        """Semantically similar texts should score high."""
+        comp = SemanticComparator()
         sim = comp.text_similarity("hello world", "hello there")
         assert 0.0 < sim < 1.0
 
     def test_set_similarity(self):
         """Set similarity should compute Jaccard correctly."""
-        comp = SemanticComparator(use_embeddings=False)
+        comp = SemanticComparator()
 
         # Identical sets
         assert comp.set_similarity(["a", "b"], ["a", "b"]) == 1.0
@@ -61,7 +60,7 @@ class TestThreatComparator:
 
     @pytest.fixture
     def comparator(self):
-        semantic = SemanticComparator(use_embeddings=False)
+        semantic = SemanticComparator()
         return ThreatComparator(semantic)
 
     def test_identical_threats(self, comparator):
@@ -248,7 +247,7 @@ class TestThreatModelEvaluator:
         for run_name in ["run_a", "run_b"]:
             _write_threatmodel(tmp_path / run_name, tm_data)
 
-        evaluator = ThreatModelEvaluator(use_embeddings=False)
+        evaluator = ThreatModelEvaluator()
         report = evaluator.compare_runs(tmp_path / "run_a", tmp_path / "run_b")
 
         assert report.overall_consistency_score > 0.9
@@ -280,7 +279,7 @@ class TestThreatModelEvaluator:
             },
         )
 
-        evaluator = ThreatModelEvaluator(use_embeddings=False)
+        evaluator = ThreatModelEvaluator()
         report = evaluator.compare_runs(tmp_path / "run_a", tmp_path / "run_b")
 
         assert report.overall_consistency_score < 0.9
@@ -296,7 +295,7 @@ class TestThreatModelEvaluator:
                 },
             )
 
-        evaluator = ThreatModelEvaluator(use_embeddings=False)
+        evaluator = ThreatModelEvaluator()
         report = evaluator.compare_runs(tmp_path / "run_a", tmp_path / "run_b")
 
         output_path = tmp_path / "report.json"

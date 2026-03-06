@@ -5,17 +5,9 @@ Provides embedding-based similarity and LLM-as-judge comparison methods.
 """
 
 import hashlib
-import re
 from typing import Any
 
-# numpy is optional - use fallback if not available
-try:
-    import numpy as np
-
-    HAS_NUMPY = True
-except ImportError:
-    HAS_NUMPY = False
-    np = None  # type: ignore
+import numpy as np
 
 from .report import (
     AssumptionMatchResult,
@@ -45,60 +37,43 @@ class SemanticComparator:
     Computes semantic similarity between text using embeddings.
 
     Uses sentence-transformers for local embedding computation.
-    Falls back to simple text similarity if embeddings unavailable.
+    Requires sentence-transformers and numpy to be installed.
     """
 
-    def __init__(
-        self, model_name: str = "all-MiniLM-L6-v2", use_embeddings: bool = True
-    ):
+    def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
         """
         Initialize comparator.
 
         Args:
             model_name: Sentence transformer model name
-            use_embeddings: If False, use simple text similarity instead
         """
         self.model_name = model_name
-        self.use_embeddings = use_embeddings
         self._model = None
         self._embedding_cache: dict[str, np.ndarray] = {}
 
     @property
     def model(self):
         """Lazy-load the embedding model."""
-        if self._model is None and self.use_embeddings:
-            try:
-                from sentence_transformers import SentenceTransformer
+        if self._model is None:
+            from sentence_transformers import SentenceTransformer
 
-                self._model = SentenceTransformer(self.model_name)
-            except ImportError:
-                print(
-                    "Warning: sentence-transformers not installed. Using fallback similarity."
-                )
-                self.use_embeddings = False
+            self._model = SentenceTransformer(self.model_name)
         return self._model
 
     def get_embedding(self, text: str) -> Any:
         """Get embedding for text, using cache."""
-        if not self.use_embeddings or not HAS_NUMPY:
-            return None
-
         # Check cache
         cache_key = hashlib.md5(text.encode()).hexdigest()
         if cache_key in self._embedding_cache:
             return self._embedding_cache[cache_key]
 
         # Compute embedding
-        if self.model:
-            embedding = self.model.encode(text, convert_to_numpy=True)
-            self._embedding_cache[cache_key] = embedding
-            return embedding
-        return None
+        embedding = self.model.encode(text, convert_to_numpy=True)
+        self._embedding_cache[cache_key] = embedding
+        return embedding
 
     def cosine_similarity(self, vec_a: Any, vec_b: Any) -> float:
         """Compute cosine similarity between two vectors."""
-        if not HAS_NUMPY:
-            return 0.0
         dot = np.dot(vec_a, vec_b)
         norm_a = np.linalg.norm(vec_a)
         norm_b = np.linalg.norm(vec_b)
@@ -108,9 +83,7 @@ class SemanticComparator:
 
     def text_similarity(self, text_a: str, text_b: str) -> float:
         """
-        Compute similarity between two texts.
-
-        Uses embeddings if available, otherwise falls back to token overlap.
+        Compute similarity between two texts using embeddings.
         """
         if not text_a or not text_b:
             return 0.0 if (text_a or text_b) else 1.0
@@ -123,29 +96,9 @@ class SemanticComparator:
         if text_a == text_b:
             return 1.0
 
-        # Try embedding similarity
         emb_a = self.get_embedding(text_a)
         emb_b = self.get_embedding(text_b)
-
-        if emb_a is not None and emb_b is not None:
-            return self.cosine_similarity(emb_a, emb_b)
-
-        # Fallback: Jaccard similarity on tokens
-        return self._jaccard_similarity(text_a, text_b)
-
-    def _jaccard_similarity(self, text_a: str, text_b: str) -> float:
-        """Compute Jaccard similarity on word tokens."""
-        tokens_a = set(re.findall(r"\w+", text_a.lower()))
-        tokens_b = set(re.findall(r"\w+", text_b.lower()))
-
-        if not tokens_a and not tokens_b:
-            return 1.0
-        if not tokens_a or not tokens_b:
-            return 0.0
-
-        intersection = len(tokens_a & tokens_b)
-        union = len(tokens_a | tokens_b)
-        return intersection / union if union > 0 else 0.0
+        return self.cosine_similarity(emb_a, emb_b)
 
     def set_similarity(self, set_a: list | set, set_b: list | set) -> float:
         """Compute Jaccard similarity between two sets (case-insensitive for strings)."""

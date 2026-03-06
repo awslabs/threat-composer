@@ -35,7 +35,6 @@ class ThreatModelEvaluator:
 
     def __init__(
         self,
-        use_embeddings: bool = True,
         embedding_model: str = "all-MiniLM-L6-v2",
         match_threshold: float = 0.4,
     ):
@@ -43,14 +42,12 @@ class ThreatModelEvaluator:
         Initialize evaluator.
 
         Args:
-            use_embeddings: Use sentence-transformers for semantic similarity
             embedding_model: Model name for sentence-transformers
             match_threshold: Minimum similarity to consider items matched
         """
         self.loader = RunLoader()
         self.semantic = SemanticComparator(
             model_name=embedding_model,
-            use_embeddings=use_embeddings,
         )
         self.threat_comparator = ThreatComparator(self.semantic)
         self.mitigation_comparator = MitigationComparator(self.semantic)
@@ -259,7 +256,11 @@ class ThreatModelEvaluator:
         count_a: int,
         count_b: int,
     ) -> ComponentScore:
-        """Create ComponentScore from match results."""
+        """Create ComponentScore from match results.
+
+        Uses F1-symmetric scoring so that unmatched items in *both* runs
+        penalise the score equally, avoiding the previous A-biased match_rate.
+        """
         matched = sum(1 for m in matches if m.is_matched)
         unmatched_a = sum(1 for m in matches if not m.is_matched)
         unmatched_b = max(0, count_b - matched)
@@ -268,24 +269,26 @@ class ThreatModelEvaluator:
         matched_sims = [m.overall_similarity for m in matches if m.is_matched]
         avg_sim = sum(matched_sims) / len(matched_sims) if matched_sims else 0.0
 
-        # Overall score considers both match rate and quality
-        match_rate = matched / count_a if count_a > 0 else 1.0
-        count_ratio = (
-            min(count_a, count_b) / max(count_a, count_b)
-            if max(count_a, count_b) > 0
-            else 1.0
+        # Symmetric match rate using F1 (harmonic mean of recall from both sides)
+        recall_a = matched / count_a if count_a > 0 else 1.0  # % of A found in B
+        recall_b = matched / count_b if count_b > 0 else 1.0  # % of B found in A
+        f1_match_rate = (
+            2 * (recall_a * recall_b) / (recall_a + recall_b)
+            if (recall_a + recall_b) > 0
+            else 0.0
         )
 
-        # Weighted combination
-        overall = match_rate * 0.4 + avg_sim * 0.4 + count_ratio * 0.2
+        # Overall: equal weight to match coverage and match quality
+        overall = f1_match_rate * 0.5 + avg_sim * 0.5
 
         return ComponentScore(
             component_name=component_name,
             overall_score=overall,
             field_scores={
-                "match_rate": match_rate,
+                "recall_a": recall_a,
+                "recall_b": recall_b,
+                "f1_match_rate": f1_match_rate,
                 "avg_similarity": avg_sim,
-                "count_ratio": count_ratio,
             },
             item_count_a=count_a,
             item_count_b=count_b,

@@ -289,7 +289,7 @@ class BenchmarkRunner:
         """Run pairwise eval across all successful runs."""
         from .evaluator import ThreatModelEvaluator
 
-        evaluator = ThreatModelEvaluator(use_embeddings=True)
+        evaluator = ThreatModelEvaluator()
         n = len(run_paths)
         pairs = []
         all_scores = []

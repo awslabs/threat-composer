@@ -28,11 +28,6 @@ def eval_cli():
     help="Output JSON file for detailed results",
 )
 @click.option(
-    "--no-embeddings",
-    is_flag=True,
-    help="Disable embedding-based similarity (faster, less accurate)",
-)
-@click.option(
     "--threshold",
     type=float,
     default=0.4,
@@ -43,7 +38,6 @@ def compare_runs(
     run_a: Path,
     run_b: Path,
     output: Path | None,
-    no_embeddings: bool,
     threshold: float,
     verbose: bool,
 ):
@@ -58,7 +52,6 @@ def compare_runs(
     click.echo(f"  Run B: {run_b}")
 
     evaluator = ThreatModelEvaluator(
-        use_embeddings=not no_embeddings,
         match_threshold=threshold,
     )
 
@@ -94,20 +87,16 @@ def compare_runs(
     type=click.Path(path_type=Path),
     help="Output JSON file for detailed results",
 )
-@click.option(
-    "--no-embeddings", is_flag=True, help="Disable embedding-based similarity"
-)
 def compare_latest(
     base_path: Path,
     output: Path | None,
-    no_embeddings: bool,
 ):
     """
     Compare the two most recent runs in a directory.
 
     BASE_PATH: Directory containing run folders (e.g., .threat-composer/)
     """
-    evaluator = ThreatModelEvaluator(use_embeddings=not no_embeddings)
+    evaluator = ThreatModelEvaluator()
 
     report = evaluator.find_and_compare_latest(base_path)
 
@@ -130,13 +119,9 @@ def compare_latest(
     type=click.Path(path_type=Path),
     help="Output JSON file for history data",
 )
-@click.option(
-    "--no-embeddings", is_flag=True, help="Disable embedding-based similarity"
-)
 def eval_history(
     base_path: Path,
     output: Path | None,
-    no_embeddings: bool,
 ):
     """
     Evaluate consistency across all runs in a directory.
@@ -158,7 +143,7 @@ def eval_history(
     click.echo("\nConsistency History (consecutive pairs):")
     click.echo("-" * 60)
 
-    evaluator = ThreatModelEvaluator(use_embeddings=not no_embeddings)
+    evaluator = ThreatModelEvaluator()
     history = []
 
     for i in range(len(runs) - 1):
@@ -277,11 +262,6 @@ def eval_history(
     default="",
     help="Value for the experiment dimension (e.g. model name, prompt version)",
 )
-@click.option(
-    "--no-embeddings",
-    is_flag=True,
-    help="Disable embedding-based similarity in eval (faster, less accurate)",
-)
 def benchmark(
     directory_path: Path,
     runs: int,
@@ -297,7 +277,6 @@ def benchmark(
     enable_telemetry: bool,
     dimension: str,
     dimension_value: str,
-    no_embeddings: bool,
 ):
     """
     Run threat modeling N times and evaluate consistency.
@@ -474,11 +453,6 @@ def suite(
     type=click.Path(path_type=Path),
     help="Output JSON file for results",
 )
-@click.option(
-    "--no-embeddings",
-    is_flag=True,
-    help="Disable embedding-based similarity (faster, less accurate)",
-)
 @click.option("--name", type=str, default=None, help="Experiment name")
 @click.option(
     "--dimension",
@@ -490,7 +464,6 @@ def suite(
 def eval_files(
     files: tuple[Path, ...],
     output: Path | None,
-    no_embeddings: bool,
     name: str | None,
     dimension: str,
     dimension_value: str | None,
@@ -535,7 +508,7 @@ def eval_files(
     for f in files:
         click.echo(f"  {f}")
 
-    evaluator = ThreatModelEvaluator(use_embeddings=not no_embeddings)
+    evaluator = ThreatModelEvaluator()
 
     n = len(files)
     pairs = []
@@ -835,13 +808,9 @@ def _print_component_details(score):
     type=click.Path(path_type=Path),
     help="Output JSON file for matrix data",
 )
-@click.option(
-    "--no-embeddings", is_flag=True, help="Disable embedding-based similarity"
-)
 def compare_matrix(
     run_paths: tuple[Path, ...],
     output: Path | None,
-    no_embeddings: bool,
 ):
     """
     Compare multiple runs against each other (pairwise matrix).
@@ -860,7 +829,7 @@ def compare_matrix(
 
     click.echo(f"Comparing {n} runs ({n * (n - 1) // 2} pairs)...")
 
-    evaluator = ThreatModelEvaluator(use_embeddings=not no_embeddings)
+    evaluator = ThreatModelEvaluator()
 
     # Build similarity matrix
     matrix = [[0.0] * n for _ in range(n)]
