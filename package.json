@@ -73,8 +73,12 @@
     "semver": "^7.5.3",
     "@babel/traverse": "^7.25.0",
     "postcss": "^8.4.31",
-    "web-ext-run": "^0.2.1",
-    "esbuild": "^0.25.4"
+    "esbuild": "^0.25.4",
+    "tar": "^7.5.9",
+    "lodash": "^4.17.23",
+    "qs": "^6.15.0",
+    "nx/**/minimatch": "^9.0.9",
+    "syncpack/**/minimatch": "^9.0.9"
   },
   "engines": {
     "node": ">=16",

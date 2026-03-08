@@ -47,12 +47,28 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
       "^8.4.31"
     );
     this.tryFindObjectFile("package.json")?.addOverride(
-      "resolutions.web-ext-run",
-      "^0.2.1"
-    );
-    this.tryFindObjectFile("package.json")?.addOverride(
       "resolutions.esbuild",
       "^0.25.4"
+    );
+    this.tryFindObjectFile("package.json")?.addOverride(
+      "resolutions.tar",
+      "^7.5.9"
+    );
+    this.tryFindObjectFile("package.json")?.addOverride(
+      "resolutions.lodash",
+      "^4.17.23"
+    );
+    this.tryFindObjectFile("package.json")?.addOverride(
+      "resolutions.qs",
+      "^6.15.0"
+    );
+    this.tryFindObjectFile("package.json")?.addOverride(
+      "resolutions.nx/**/minimatch",
+      "^9.0.9"
+    );
+    this.tryFindObjectFile("package.json")?.addOverride(
+      "resolutions.syncpack/**/minimatch",
+      "^9.0.9"
     );
 
     this.tryFindObjectFile("package.json")?.addOverride("workspaces.nohoist", [
