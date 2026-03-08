@@ -46,7 +46,7 @@
     "husky": "8.0.3",
     "license-checker": "25.0.1",
     "npm-check-updates": "17.1.18",
-    "nx": "19.0.0",
+    "nx": "19.8.14",
     "prettier": "2.8.8",
     "projen": "^0.82.8",
     "syncpack": "^13",
@@ -74,11 +74,7 @@
     "@babel/traverse": "^7.25.0",
     "postcss": "^8.4.31",
     "web-ext-run": "^0.2.1",
-    "esbuild": "^0.25.4",
-    "fast-xml-parser": "^5.4.1",
-    "tar": "^7.5.9",
-    "qs": "^6.15.0",
-    "lodash": "^4.17.23"
+    "esbuild": "^0.25.4"
   },
   "engines": {
     "node": ">=16",
