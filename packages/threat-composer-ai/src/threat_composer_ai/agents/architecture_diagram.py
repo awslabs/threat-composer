@@ -15,6 +15,7 @@ from ..tools import (
     threat_composer_dia_examples,
     threat_composer_dia_list_icons,
     threat_composer_workdir_file_read,
+    threat_composer_workdir_file_write,
 )
 from ..utils import get_tool_name
 from .common import (
@@ -79,6 +80,31 @@ Use the ${get_tool_name(threat_composer_dia_architecture)} tool to execute your 
 - Pass the Python code you wrote to the tool
 - The tool will execute the code in a restricted namespace and output an SVG file
 
+### Step 5: Save Mermaid Diagram
+After rendering the SVG, convert your architecture to Mermaid syntax and save it:
+- Use ${get_tool_name(threat_composer_workdir_file_read)} to read the architecture description if needed
+- Write Mermaid diagram code to the output directory using ${get_tool_name(threat_composer_workdir_file_write)}
+- Save as "architecture-diagram.mmd" in the diagrams output directory
+
+Mermaid example:
+```mermaid
+graph LR
+    subgraph VPC
+        LB[Load Balancer]
+        subgraph Application Tier
+            WEB1[web1]
+            WEB2[web2]
+        end
+        subgraph Database Tier
+            DB[(PostgreSQL)]
+        end
+    end
+    LB --> WEB1
+    LB --> WEB2
+    WEB1 --> DB
+    WEB2 --> DB
+```
+
 ## Python Code Requirements
 
 Example structure:
@@ -102,6 +128,7 @@ with Diagram("Architecture Name", show=False, direction="LR"):
 
 - Do not provide interim responses or respond with content of the diagram
 - The final SVG will be automatically saved to the configured output path
+- Save the Mermaid diagram as "architecture-diagram.mmd"
 - Your final response must be a single line confirming completion
 
 ## Quality Checklist
@@ -158,6 +185,10 @@ def create_architecture_diagram_agent(
         {
             "name": "threat_composer_workdir_file_read",
             "path": os.path.join(tools_dir, "threat_composer_workdir_file_read.py"),
+        },
+        {
+            "name": "threat_composer_workdir_file_write",
+            "path": os.path.join(tools_dir, "threat_composer_workdir_file_write.py"),
         },
         {
             "name": "threat_composer_dia_list_icons",

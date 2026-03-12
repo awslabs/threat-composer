@@ -9,7 +9,7 @@ import os
 from strands import Agent
 
 from ..config import AppConfig
-from ..tools import threat_composer_dia_dfd, threat_composer_workdir_file_read
+from ..tools import threat_composer_dia_dfd, threat_composer_workdir_file_read, threat_composer_workdir_file_write
 from ..utils import get_tool_name
 from .common import (
     any_input_files_changed,
@@ -48,7 +48,7 @@ You are a system analyst creating Data Flow Diagrams (DFDs) from existing textua
 ## REQUIRED TOOLS:
 1. Use ${get_tool_name(threat_composer_workdir_file_read)} to read the dataflow description input file
 2. Use ${get_tool_name(threat_composer_dia_dfd)} to execute Python diagram code and generate the SVG
-3. Use ${get_tool_name(threat_composer_dia_dfd)} with the Python code which will create the dataflow diagram as SVG
+3. Use ${get_tool_name(threat_composer_workdir_file_write)} to save the Mermaid diagram
 
 ## CRITICAL: DF Identifiers are Mandatory
 
@@ -85,7 +85,7 @@ The following custom node classes are available for creating DFD diagrams:
 Generate Python code following this pattern:
 
 ```python
-with Diagram("System Name - Data Flow Diagram", direction="LR"):
+with Diagram("System Name - Data Flow Diagram", show=False, direction="LR"):
     # External entities and actors
     user = HumanActor("End User")
     external_api = ExternalEntity("External API")
@@ -116,11 +116,10 @@ with Diagram("System Name - Data Flow Diagram", direction="LR"):
 
 ## Diagram Parameters
 
-The `Diagram` class accepts these parameters (automatically configured by the tool):
-- `filename` - Output filename (auto-set)
-- `outformat` - Output format, always "svg" (auto-set)
-- `show` - Whether to open file after generation, always False (auto-set)
-- `direction` - Layout direction: "LR" (left-to-right), "TB" (top-to-bottom), "RL", "BT"
+The `Diagram` class MUST include these parameters:
+- `show=False` - Required to prevent opening file after generation
+- `direction` - Layout direction: "LR" (left-to-right, recommended), "TB" (top-to-bottom), "RL", "BT"
+- Additional optional: `filename`, `outformat` (auto-configured by tool)
 
 ## Layout Guidelines
 
@@ -138,6 +137,36 @@ The `Diagram` class accepts these parameters (automatically configured by the to
 1. **Read source file** - Use ${get_tool_name(threat_composer_workdir_file_read)} to get existing dataflows from ONLY the 'Data flows' section table. Ignore other content.
 2. **Generate Python code** - Create diagram code for the data flows using the node classes
 3. **Execute diagram** - Use ${get_tool_name(threat_composer_dia_dfd)} tool with the Python code which will create the dataflow diagram as SVG
+4. **Save Mermaid diagram** - Convert the dataflow to Mermaid syntax and save as "dataflow-diagram.mmd" using ${get_tool_name(threat_composer_workdir_file_write)}
+
+Mermaid DFD example:
+```mermaid
+graph LR
+    User([End User])
+    ExtAPI[External API]
+    
+    subgraph DMZ[DMZ - Trust Boundary]
+        APIGW[API Gateway]
+        LB[Load Balancer]
+    end
+    
+    subgraph AppZone[Application Zone - Trust Boundary]
+        Auth[Auth Service]
+        Logic[Business Logic]
+    end
+    
+    subgraph DataZone[Data Zone - Trust Boundary]
+        UserDB[(User Database)]
+        Cache[(Redis Cache)]
+    end
+    
+    User -->|DF1: Login Request| APIGW
+    APIGW -->|DF2: Auth Request| Auth
+    Auth -->|DF3: User Query| UserDB
+    UserDB -->|DF4: User Data| Auth
+    Auth -->|DF5: Auth Token| APIGW
+    APIGW -->|DF6: Session Token| User
+```
 
 ## Quality Checklist
 
@@ -154,7 +183,7 @@ After reading the dataflow description, call the diagram tool:
 
 ```
 ${get_tool_name(threat_composer_dia_dfd)}(code=\"\"\"
-with Diagram("My System DFD", direction="LR"):
+with Diagram("My System DFD", show=False, direction="LR"):
     user = HumanActor("User")
     with TrustBoundary("Internal"):
         api = Process("API")
@@ -212,6 +241,10 @@ def create_dataflow_diagram_agent(
         {
             "name": "threat_composer_workdir_file_read",
             "path": os.path.join(tools_dir, "threat_composer_workdir_file_read.py"),
+        },
+        {
+            "name": "threat_composer_workdir_file_write",
+            "path": os.path.join(tools_dir, "threat_composer_workdir_file_write.py"),
         },
         {
             "name": "threat_composer_dia_dfd",
