@@ -20,6 +20,7 @@ from ..tools import (
 from ..utils import get_tool_name
 from ..utils.relative_path_helper import create_prompt_path_from_config
 from .common import (
+    ASSUMPTION_GUIDANCE_SNIPPET,
     CODE_ANALYSIS_PROMPT_SNIPPET,
     copy_output_from_previous_session,
     create_agent_model,
@@ -97,7 +98,7 @@ def create_system_prompt(config: AppConfig):
     Your primary responsibilities:
     1. Perform code analysis using tools
     2. Determine Application Name and Description
-    4. Document all assumptions you make during analysis
+    4. Document assumptions per the ASSUMPTION GUIDANCE below
     5. Write structured outputs to markdown files using tools
 
     {CODE_ANALYSIS_PROMPT_SNIPPET}
@@ -119,12 +120,12 @@ def create_system_prompt(config: AppConfig):
     REQUIRED FILE OUTPUTS:
     1. Write to "{create_prompt_path_from_config("output_directory", "components_output_sub_dir", config.application_info_filename)}" with the following structure {output_format}
 
-    Documented assumptions should include, but are not limited to:
-    - Code completeness and accuracy
-    - Technology stack characteristics
-    - Deployment environment
+    {ASSUMPTION_GUIDANCE_SNIPPET}
 
-    Remember: Be explicit about what you're assuming vs. what you can definitively determine from the code.
+    As the application info agent, focus your assumptions on:
+    - Unfinalized design decisions about the application's purpose or scope
+    - Scope boundaries for what the application covers vs. what is out of scope
+    - Do NOT record facts you can observe directly from the code
 
     FINAL RESPONSE:
     1. Your final reponse must be a single line. No formatting."""

@@ -20,6 +20,7 @@ from ..tools import (
 from ..utils import get_tool_name
 from ..utils.relative_path_helper import create_prompt_path_from_config
 from .common import (
+    ASSUMPTION_GUIDANCE_SNIPPET,
     CODE_ANALYSIS_PROMPT_SNIPPET,
     any_input_files_changed,
     copy_output_from_previous_session,
@@ -117,7 +118,7 @@ def create_system_prompt(config: AppConfig):
    3. If doing file enumeration you must use {get_tool_name(threat_composer_list_workdir_files_gitignore_filtered)}
    4. You must use {get_tool_name(threat_composer_workdir_file_read)} tool to read file contents
    5. Determine elements and dataflow of application to the degree of detail that it could be used by another agent to create a data flow diagram
-   6. Document all assumptions you make during analysis
+   6. Document assumptions per the ASSUMPTION GUIDANCE below
    7. Write structured outputs to markdown files using tools
 
    {CODE_ANALYSIS_PROMPT_SNIPPET}
@@ -139,7 +140,12 @@ def create_system_prompt(config: AppConfig):
 
    1. Write to "{create_prompt_path_from_config("output_directory", "components_output_sub_dir", config.dataflow_description_filename)}" with the following structure {output_format}
 
-   Remember: Be explicit about what you're assuming vs. what you can definitively determine from the code.
+   {ASSUMPTION_GUIDANCE_SNIPPET}
+
+   As the dataflow agent, focus your assumptions on:
+   - Unfinalized design decisions about data flows, trust boundaries, or external integrations
+   - Scope boundaries for data flows not fully visible in the code
+   - Do NOT record facts you can observe directly from the code
 
    FINAL RESPONSE:
    1. Your final reponse must be a single line. No formatting."""

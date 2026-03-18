@@ -261,6 +261,33 @@ CODE_ANALYSIS_PROMPT_SNIPPET = f"""When doing code analsyis:
 - Identify source code directories, infrastructure code, configuration files, test directories
 """
 
+ASSUMPTION_GUIDANCE_SNIPPET = """
+    ASSUMPTION GUIDANCE:
+    An assumption is something you take for granted or accept as true without proof.
+    Assumptions help avoid spending unnecessary time on irrelevant design considerations,
+    out-of-scope threats, or debating the effectiveness of commonly employed mitigations.
+
+    WHAT IS an assumption:
+    - Unfinalized design decisions: choices you expect to make but haven't confirmed.
+      Example: "Application will use REST-based APIs for service communication"
+    - Scope boundaries: threats or concerns you are deliberately excluding.
+      Example: "Threats related to physical data center security are out of scope"
+    - Mitigation effectiveness: pervasive controls whose sufficiency you accept without debate.
+      Example: "TLS 1.2/1.3 is sufficient to mitigate tampering and information disclosure of data in transit"
+
+    WHAT IS NOT an assumption:
+    - Observable facts from the code (e.g. "Application uses Python 3.11" — that's a finding, not an assumption)
+    - Technology inventory (e.g. "System uses AWS Bedrock" — if you can see it in the code, it's a fact)
+    - Restatements of architecture or dataflow (those belong in their respective sections)
+
+    RULES:
+    - Only record genuine assumptions — things accepted as true without proof
+    - Tag each assumption with its type: "Design Decision", "Scope Boundary", or "Mitigation Effectiveness"
+    - Do NOT duplicate assumptions likely covered by other agents in the workflow
+    - Fewer high-quality assumptions are better than many trivial ones
+    - Assumptions should be revisited when designs change or new security research emerges
+"""
+
 
 def create_enhanced_boto_config() -> BotocoreConfig:
     """
@@ -360,38 +387,41 @@ def get_agent_model_config(
     }
 
     # Agent-specific optimizations
+    # Analytical agents all use 0.2 for consistency — they do structured
+    # analysis, not creative writing. Diagram/assembly agents use 0.1
+    # for deterministic code generation.
     agent_configs = {
         "application_info": {
-            "temperature": 0.5,  # More creative for discovering patterns
-            "max_tokens": 16384,  # Large for comprehensive repo analysis
+            "temperature": 0.2,
+            "max_tokens": 16384,
         },
         "architecture": {
-            "temperature": 0.5,  # More creative for discovering patterns
-            "max_tokens": 16384,  # Large for comprehensive repo analysis
+            "temperature": 0.2,
+            "max_tokens": 16384,
         },
         "architecture_diagram": {
-            "temperature": 0.1,  # Very focused
+            "temperature": 0.1,
             "max_tokens": 16384,
         },
         "dataflow": {
-            "temperature": 0.5,  # More creative for discovering patterns
+            "temperature": 0.2,
             "max_tokens": 16384,
         },
         "dataflow_diagram": {
-            "temperature": 0.1,  # Very focused
-            "max_tokens": 32768,  # Passing around a bunch of things
+            "temperature": 0.1,
+            "max_tokens": 32768,
         },
         "threats": {
-            "temperature": 0.2,  # Very focused for systematic STRIDE analysis
+            "temperature": 0.2,
             "max_tokens": 32768,
         },
         "mitigations": {
-            "temperature": 0.6,  # Some creatively
-            "max_tokens": 16384,
+            "temperature": 0.2,
+            "max_tokens": 32768,
         },
         "threat_model": {
-            "temperature": 0.1,  # Very precise for schema generation
-            "max_tokens": 8192,  # small mostly deterministic stuff
+            "temperature": 0.1,
+            "max_tokens": 8192,
         },
     }
 

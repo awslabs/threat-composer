@@ -19,6 +19,7 @@ from ..tools import (
 from ..utils import get_tool_name
 from ..utils.relative_path_helper import create_prompt_path_from_config
 from .common import (
+    ASSUMPTION_GUIDANCE_SNIPPET,
     any_input_files_changed,
     copy_output_from_previous_session,
     create_agent_model,
@@ -172,7 +173,12 @@ def create_system_prompt(config: AppConfig):
     REQUIRED FILE OUTPUTS:
     1. Write to "{create_prompt_path_from_config("output_directory", "components_output_sub_dir", config.threats_filename)}" with the following structure {output_format}
 
-    Remember: Document all assumptions you make during analysis. Be explicit about what you're assuming vs. what you can definitively determine from the code.
+    {ASSUMPTION_GUIDANCE_SNIPPET}
+
+    As the threats agent, focus your assumptions on:
+    - Scope boundaries: threats you are deliberately excluding from analysis
+    - Mitigation effectiveness: pervasive controls (e.g. TLS, framework defaults) whose sufficiency you accept without debate
+    - Do NOT record facts about the technology stack — those are findings, not assumptions
 
     FINAL RESPONSE:
     1. Your final reponse must be a single line. No formatting.
