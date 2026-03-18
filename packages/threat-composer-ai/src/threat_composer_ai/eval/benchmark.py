@@ -98,6 +98,7 @@ class BenchmarkReport:
     eval_summary: dict = field(default_factory=dict)
     pairwise_scores: list[dict] = field(default_factory=list)
     consistency_score: float = 0.0
+    analytical_consistency_score: float = 0.0
 
     # Timing
     total_duration_seconds: float = 0.0
@@ -130,13 +131,18 @@ class BenchmarkReport:
 
         if self.successful_runs >= 2:
             print(f"\n{'OVERALL CONSISTENCY SCORE:':<30} {self.consistency_score:.1%}")
+            print(
+                f"{'ANALYTICAL SCORE:':<30} {self.analytical_consistency_score:.1%}"
+                f"  (threats/mitigations/assumptions only)"
+            )
 
             if self.pairwise_scores:
                 print("\nPairwise scores:")
                 for pair in self.pairwise_scores:
+                    analytical = pair.get("analytical_score", 0)
                     print(
                         f"  Run {pair['run_a']} ↔ Run {pair['run_b']}: "
-                        f"{pair['score']:.1%}"
+                        f"{pair['score']:.1%} (analytical: {analytical:.1%})"
                     )
 
             if self.eval_summary:
@@ -220,6 +226,9 @@ class BenchmarkRunner:
             print(f"\nRunning eval across {len(successful_paths)} runs...")
             eval_result = self._run_eval(successful_paths)
             report.consistency_score = eval_result.get("average", 0.0)
+            report.analytical_consistency_score = eval_result.get(
+                "analytical_average", 0.0
+            )
             report.eval_summary = eval_result.get("summary", {})
             report.pairwise_scores = eval_result.get("pairs", [])
 
@@ -293,12 +302,15 @@ class BenchmarkRunner:
         n = len(run_paths)
         pairs = []
         all_scores = []
+        all_analytical_scores = []
 
         for i in range(n):
             for j in range(i + 1, n):
                 report = evaluator.compare_runs(run_paths[i], run_paths[j])
                 score = report.overall_consistency_score
+                analytical_score = report.analytical_consistency_score
                 all_scores.append(score)
+                all_analytical_scores.append(analytical_score)
                 pairs.append(
                     {
                         "run_a": i,
@@ -306,6 +318,7 @@ class BenchmarkRunner:
                         "run_b": j,
                         "run_b_path": str(run_paths[j]),
                         "score": score,
+                        "analytical_score": analytical_score,
                         "component_scores": report.get_component_scores(),
                     }
                 )
@@ -314,11 +327,19 @@ class BenchmarkRunner:
         mn = min(all_scores) if all_scores else 0.0
         mx = max(all_scores) if all_scores else 0.0
 
+        analytical_avg = (
+            sum(all_analytical_scores) / len(all_analytical_scores)
+            if all_analytical_scores
+            else 0.0
+        )
+
         return {
             "average": avg,
+            "analytical_average": analytical_avg,
             "pairs": pairs,
             "summary": {
                 "average": avg,
+                "analytical_average": analytical_avg,
                 "min": mn,
                 "max": mx,
                 "num_pairs": len(pairs),

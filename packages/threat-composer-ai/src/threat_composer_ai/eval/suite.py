@@ -166,7 +166,9 @@ class SuiteReport:
 
     # Aggregate scores
     overall_consistency_score: float = 0.0
+    overall_analytical_score: float = 0.0
     per_target_scores: dict[str, float] = field(default_factory=dict)
+    per_target_analytical_scores: dict[str, float] = field(default_factory=dict)
 
     # Stats
     targets_completed: int = 0
@@ -209,7 +211,11 @@ class SuiteReport:
                 self.per_target_scores.items(), key=lambda x: x[1], reverse=True
             ):
                 indicator = "✓" if score >= 0.7 else "⚠" if score >= 0.5 else "✗"
-                print(f"  {indicator} {name:<30} {score:.1%}")
+                analytical = self.per_target_analytical_scores.get(name, 0)
+                print(
+                    f"  {indicator} {name:<30} {score:.1%}"
+                    f"  (analytical: {analytical:.1%})"
+                )
 
             scores = list(self.per_target_scores.values())
             print(f"\n  Mean:   {sum(scores) / len(scores):.1%}")
@@ -221,6 +227,10 @@ class SuiteReport:
         # Overall
         print(
             f"\n{'OVERALL CONSISTENCY SCORE:':<30} {self.overall_consistency_score:.1%}"
+        )
+        print(
+            f"{'ANALYTICAL SCORE:':<30} {self.overall_analytical_score:.1%}"
+            f"  (threats/mitigations/assumptions only)"
         )
 
         if self.overall_consistency_score >= 0.7:
@@ -255,7 +265,7 @@ class SuiteRunner:
 
         # Determine suite output base
         suite_output = self.config.output_base_dir or Path(
-            f".threat-composer-suite/{self.config.name}"
+            f".threat-composer/suite/{self.config.name}"
         )
         suite_output = Path(suite_output)
         suite_output.mkdir(parents=True, exist_ok=True)
@@ -325,6 +335,9 @@ class SuiteRunner:
                     report.per_target_scores[target.name] = (
                         bench_report.consistency_score
                     )
+                    report.per_target_analytical_scores[target.name] = (
+                        bench_report.analytical_consistency_score
+                    )
                 else:
                     print(f"  ⚠ {target.name}: insufficient successful runs for eval")
 
@@ -344,6 +357,10 @@ class SuiteRunner:
             scores = list(report.per_target_scores.values())
             report.overall_consistency_score = sum(scores) / len(scores)
 
+        if report.per_target_analytical_scores:
+            a_scores = list(report.per_target_analytical_scores.values())
+            report.overall_analytical_score = sum(a_scores) / len(a_scores)
+
         # Build target_results for serialization
         for name, bench_report in target_reports:
             if bench_report:
@@ -351,6 +368,7 @@ class SuiteRunner:
                     {
                         "target_name": name,
                         "consistency_score": bench_report.consistency_score,
+                        "analytical_consistency_score": bench_report.analytical_consistency_score,
                         "successful_runs": bench_report.successful_runs,
                         "failed_runs": bench_report.failed_runs,
                         "duration_seconds": bench_report.total_duration_seconds,

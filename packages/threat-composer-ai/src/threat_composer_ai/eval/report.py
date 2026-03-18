@@ -147,6 +147,9 @@ class EvalReport:
 
     # Overall scores
     overall_consistency_score: float = 0.0
+    analytical_consistency_score: float = (
+        0.0  # threats + mitigations + assumptions only
+    )
 
     # Component scores
     application_info_score: ComponentScore | None = None
@@ -201,6 +204,10 @@ class EvalReport:
 
         print(
             f"\n{'OVERALL CONSISTENCY SCORE:':<30} {self.overall_consistency_score:.1%}"
+        )
+        print(
+            f"{'ANALYTICAL SCORE:':<30} {self.analytical_consistency_score:.1%}"
+            f"  (threats/mitigations/assumptions only)"
         )
 
         print("\n" + "-" * 40)

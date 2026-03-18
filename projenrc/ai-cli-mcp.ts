@@ -49,6 +49,8 @@ export default class ThreatComposerPythonAIProject extends UvPythonProject {
         "pytest-cov",
         "pytest-asyncio",
         "ruff",
+        "numpy",
+        "sentence-transformers",
       ],
 
       // UV-specific configuration
@@ -138,7 +140,7 @@ export default class ThreatComposerPythonAIProject extends UvPythonProject {
     // Override the dev dependencies to include Ruff and other tools
     this.tryFindObjectFile("pyproject.toml")?.addOverride(
       "dependency-groups.dev",
-      ["pytest==7.4.3", "pytest-mock", "pytest-cov", "pytest-asyncio", "ruff"]
+      ["pytest==7.4.3", "pytest-mock", "pytest-cov", "pytest-asyncio", "ruff", "numpy", "sentence-transformers"]
     );
   }
 }

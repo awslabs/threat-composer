@@ -40,35 +40,79 @@ class SemanticComparator:
     Requires sentence-transformers and numpy to be installed.
     """
 
-    def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
+    # Models that are native sentence-transformers (have pooling built in)
+    _SENTENCE_TRANSFORMER_MODELS = {
+        "all-MiniLM-L6-v2",
+        "all-mpnet-base-v2",
+        "all-distilroberta-v1",
+        "paraphrase-MiniLM-L6-v2",
+        "cisco-ai/SecureBERT2.0-biencoder",
+    }
+
+    def __init__(self, model_name: str = "all-mpnet-base-v2"):
         """
         Initialize comparator.
 
         Args:
-            model_name: Sentence transformer model name
+            model_name: Model name — either a sentence-transformers model
+                or a raw HuggingFace model (e.g. ehsanaghaei/SecureBERT).
+                Raw models use mean-pooling over token embeddings.
         """
         self.model_name = model_name
         self._model = None
+        self._tokenizer = None
+        self._is_sentence_transformer = (
+            model_name in self._SENTENCE_TRANSFORMER_MODELS
+            or model_name.startswith("sentence-transformers/")
+        )
         self._embedding_cache: dict[str, np.ndarray] = {}
 
     @property
     def model(self):
         """Lazy-load the embedding model."""
         if self._model is None:
-            from sentence_transformers import SentenceTransformer
+            if self._is_sentence_transformer:
+                from sentence_transformers import SentenceTransformer
 
-            self._model = SentenceTransformer(self.model_name)
+                self._model = SentenceTransformer(self.model_name)
+            else:
+                from transformers import AutoModel, AutoTokenizer
+
+                self._tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+                self._model = AutoModel.from_pretrained(self.model_name)
+                self._model.eval()
         return self._model
+
+    def _mean_pool(self, model_output: Any, attention_mask: Any) -> Any:
+        """Mean pooling over token embeddings, respecting attention mask."""
+        import torch
+
+        token_embeddings = model_output.last_hidden_state
+        mask_expanded = (
+            attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+        )
+        summed = torch.sum(token_embeddings * mask_expanded, dim=1)
+        counts = torch.clamp(mask_expanded.sum(dim=1), min=1e-9)
+        return (summed / counts).squeeze()
 
     def get_embedding(self, text: str) -> Any:
         """Get embedding for text, using cache."""
-        # Check cache
-        cache_key = hashlib.md5(text.encode()).hexdigest()
+        cache_key = hashlib.md5(f"{self.model_name}:{text}".encode()).hexdigest()
         if cache_key in self._embedding_cache:
             return self._embedding_cache[cache_key]
 
-        # Compute embedding
-        embedding = self.model.encode(text, convert_to_numpy=True)
+        if self._is_sentence_transformer:
+            embedding = self.model.encode(text, convert_to_numpy=True)
+        else:
+            import torch
+
+            inputs = self._tokenizer(
+                text, return_tensors="pt", truncation=True, max_length=512, padding=True
+            )
+            with torch.no_grad():
+                outputs = self.model(**inputs)
+            embedding = self._mean_pool(outputs, inputs["attention_mask"]).numpy()
+
         self._embedding_cache[cache_key] = embedding
         return embedding
 

@@ -196,7 +196,7 @@ Weighted combination of component scores:
 
 ### Semantic Similarity
 
-Uses `sentence-transformers` with `all-MiniLM-L6-v2` to compare text semantically. "Unauthorized access to database" and "attacker gains DB access" score high even though they share few words.
+Uses `sentence-transformers` with `all-mpnet-base-v2` to compare text semantically. "Unauthorized access to database" and "attacker gains DB access" score high even though they share few words.
 
 ### Matching Algorithm
 

@@ -35,7 +35,7 @@ class ThreatModelEvaluator:
 
     def __init__(
         self,
-        embedding_model: str = "all-MiniLM-L6-v2",
+        embedding_model: str = "all-mpnet-base-v2",
         match_threshold: float = 0.4,
     ):
         """
@@ -132,6 +132,7 @@ class ThreatModelEvaluator:
 
         # Calculate overall score
         report.overall_consistency_score = self._calculate_overall_score(report)
+        report.analytical_consistency_score = self._calculate_analytical_score(report)
 
         return report
 
@@ -358,6 +359,32 @@ class ThreatModelEvaluator:
             weight = weights.get(name, 0.1)
             weighted_sum += score * weight
             total_weight += weight
+
+        return weighted_sum / total_weight if total_weight > 0 else 0.0
+
+    def _calculate_analytical_score(self, report: EvalReport) -> float:
+        """Calculate consistency score for analytical components only.
+
+        Covers threats, mitigations, and assumptions — the components that
+        represent actual threat modeling judgment rather than descriptive
+        summaries of the codebase. This score is a more honest measure of
+        consistency because the descriptive components (app_info, architecture,
+        dataflow) naturally converge and inflate the overall score.
+        """
+        weights = {
+            "threats": 0.50,
+            "mitigations": 0.35,
+            "assumptions": 0.15,
+        }
+
+        total_weight = 0.0
+        weighted_sum = 0.0
+
+        scores = report.get_component_scores()
+        for name, weight in weights.items():
+            if name in scores:
+                weighted_sum += scores[name] * weight
+                total_weight += weight
 
         return weighted_sum / total_weight if total_weight > 0 else 0.0
 

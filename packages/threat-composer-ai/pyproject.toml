@@ -40,7 +40,9 @@ dev = [
   "pytest-mock",
   "pytest-cov",
   "pytest-asyncio",
-  "ruff"
+  "ruff",
+  "numpy",
+  "sentence-transformers"
 ]
 
 [tool.uv]

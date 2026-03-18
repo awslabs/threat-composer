@@ -461,12 +461,19 @@ def suite(
     help="Experiment dimension being tested",
 )
 @click.option("--dimension-value", type=str, default=None, help="Dimension value label")
+@click.option(
+    "--embedding-model",
+    type=str,
+    default=None,
+    help="Embedding model name (default: all-mpnet-base-v2). Supports sentence-transformers or HuggingFace models.",
+)
 def eval_files(
     files: tuple[Path, ...],
     output: Path | None,
     name: str | None,
     dimension: str,
     dimension_value: str | None,
+    embedding_model: str | None,
 ):
     """
     Evaluate consistency across existing threat model files.
@@ -508,7 +515,11 @@ def eval_files(
     for f in files:
         click.echo(f"  {f}")
 
-    evaluator = ThreatModelEvaluator()
+    eval_kwargs = {}
+    if embedding_model:
+        eval_kwargs["embedding_model"] = embedding_model
+        click.echo(f"  Embedding model: {embedding_model}")
+    evaluator = ThreatModelEvaluator(**eval_kwargs)
 
     n = len(files)
     pairs = []
@@ -524,8 +535,9 @@ def eval_files(
                 continue
 
             score = report.overall_consistency_score
+            analytical = report.analytical_consistency_score
             all_scores.append(score)
-            click.echo(f" {score:.1%}")
+            click.echo(f" {score:.1%} (analytical: {analytical:.1%})")
 
             pairs.append(
                 {
@@ -534,6 +546,7 @@ def eval_files(
                     "run_b": j,
                     "run_b_path": str(files[j]),
                     "score": score,
+                    "analytical_score": analytical,
                     "component_scores": report.get_component_scores(),
                 }
             )
@@ -546,6 +559,11 @@ def eval_files(
     mn = min(all_scores)
     mx = max(all_scores)
 
+    all_analytical = [p["analytical_score"] for p in pairs]
+    analytical_avg = (
+        sum(all_analytical) / len(all_analytical) if all_analytical else 0.0
+    )
+
     # Print summary in benchmark report format
     print("\n" + "=" * 70)
     print("CONSISTENCY REPORT")
@@ -556,6 +574,10 @@ def eval_files(
     print(f"Pairs:      {len(pairs)}")
 
     print(f"\n{'OVERALL CONSISTENCY SCORE:':<30} {avg:.1%}")
+    print(
+        f"{'ANALYTICAL SCORE:':<30} {analytical_avg:.1%}"
+        f"  (threats/mitigations/assumptions only)"
+    )
 
     print("\nPairwise scores:")
     for pair in pairs:

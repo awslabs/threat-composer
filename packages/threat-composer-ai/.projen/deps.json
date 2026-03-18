@@ -1,6 +1,10 @@
 {
   "dependencies": [
     {
+      "name": "numpy",
+      "type": "devenv"
+    },
+    {
       "name": "pytest",
       "type": "devenv"
     },
@@ -18,6 +22,10 @@
     },
     {
       "name": "ruff",
+      "type": "devenv"
+    },
+    {
+      "name": "sentence-transformers",
       "type": "devenv"
     },
     {
