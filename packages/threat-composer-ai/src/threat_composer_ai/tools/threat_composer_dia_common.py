@@ -60,6 +60,121 @@ def embed_images_as_base64(svg_content: str) -> str:
     return re.sub(pattern, replace_image_href, svg_content)
 
 
+def deduplicate_embedded_images(svg_content: str) -> str:
+    """
+    Deduplicate base64-embedded images in SVG using <defs>/<use> references.
+
+    The mingrammer/diagrams library embeds the same PNG icon (e.g., the AWS EC2 icon)
+    independently for every node instance. A diagram with 62 nodes but only 26 unique
+    icons wastes ~65% of image data on duplicates.
+
+    This function:
+    1. Finds all <image> elements with base64 data URIs
+    2. Groups them by identical image data
+    3. For images used more than once, moves one copy into a <defs> block
+    4. Replaces all occurrences with <use> references to the defined image
+
+    This is a lossless transformation — the rendered SVG is visually identical.
+
+    Args:
+        svg_content: SVG string with base64-embedded images (output of embed_images_as_base64)
+
+    Returns:
+        Optimized SVG string with deduplicated images
+    """
+    # Match full <image> elements with base64 data URIs
+    # Captures: (full element, attributes before href, data URI, attributes after href)
+    image_pattern = re.compile(
+        r"(<image\s)"
+        r"([^>]*?)"
+        r'xlink:href="(data:image/png;base64,[A-Za-z0-9+/=]+)"'
+        r"([^>]*?)"
+        r"(/?>)",
+        re.DOTALL,
+    )
+
+    # First pass: collect all images and group by data URI
+    matches = list(image_pattern.finditer(svg_content))
+    if not matches:
+        return svg_content
+
+    # Map data_uri -> list of match objects
+    uri_to_matches: dict[str, list[re.Match]] = {}
+    for m in matches:
+        data_uri = m.group(3)
+        uri_to_matches.setdefault(data_uri, []).append(m)
+
+    # Only deduplicate URIs that appear more than once
+    duplicated_uris = {uri: ms for uri, ms in uri_to_matches.items() if len(ms) > 1}
+    if not duplicated_uris:
+        return svg_content
+
+    # Generate stable short IDs for each unique duplicated image
+    uri_to_def_id: dict[str, str] = {}
+    for i, uri in enumerate(duplicated_uris):
+        uri_to_def_id[uri] = f"dedup-img-{i}"
+
+    # Build <defs> block with one <image> definition per unique duplicated image
+    # Extract width/height from the first occurrence of each
+    defs_entries = []
+    for uri, ms in duplicated_uris.items():
+        def_id = uri_to_def_id[uri]
+        first_match = ms[0]
+        # Combine pre and post attributes to extract width/height
+        all_attrs = first_match.group(2) + " " + first_match.group(4)
+
+        width_m = re.search(r'width="([^"]*)"', all_attrs)
+        height_m = re.search(r'height="([^"]*)"', all_attrs)
+        width_attr = f' width="{width_m.group(1)}"' if width_m else ""
+        height_attr = f' height="{height_m.group(1)}"' if height_m else ""
+
+        defs_entries.append(
+            f'<image id="{def_id}" xlink:href="{uri}"{width_attr}{height_attr}/>'
+        )
+
+    defs_block = "<defs>\n" + "\n".join(defs_entries) + "\n</defs>"
+
+    # Second pass: collect all replacements, then apply from end to start
+    # so string offsets remain valid across all URI groups
+    replacements: list[tuple[int, int, str]] = []  # (start, end, replacement_str)
+    for uri, ms in duplicated_uris.items():
+        def_id = uri_to_def_id[uri]
+        for m in ms:
+            all_attrs = m.group(2) + " " + m.group(4)
+
+            # Preserve position attributes (x, y, transform) from each instance
+            preserved = []
+            for attr_name in ("x", "y", "transform"):
+                attr_m = re.search(rf'{attr_name}="([^"]*)"', all_attrs)
+                if attr_m:
+                    preserved.append(f'{attr_name}="{attr_m.group(1)}"')
+
+            # Preserve width/height per instance (they may differ)
+            for attr_name in ("width", "height"):
+                attr_m = re.search(rf'{attr_name}="([^"]*)"', all_attrs)
+                if attr_m:
+                    preserved.append(f'{attr_name}="{attr_m.group(1)}"')
+
+            preserved_str = " ".join(preserved)
+            use_element = f'<use xlink:href="#{def_id}" {preserved_str}/>'
+            replacements.append((m.start(), m.end(), use_element))
+
+    # Sort by start position descending so later replacements don't shift earlier offsets
+    replacements.sort(key=lambda r: r[0], reverse=True)
+
+    result = svg_content
+    for start, end, replacement in replacements:
+        result = result[:start] + replacement + result[end:]
+
+    # Insert <defs> block after the opening <svg ...> tag
+    svg_open_end = re.search(r"<svg[^>]*>", result)
+    if svg_open_end:
+        insert_pos = svg_open_end.end()
+        result = result[:insert_pos] + "\n" + defs_block + "\n" + result[insert_pos:]
+
+    return result
+
+
 def inject_diagram_params(code: str, filename: str, output_dir: str) -> str:
     """
     Inject filename and outformat parameters into Diagram() calls.
@@ -283,6 +398,7 @@ def execute_diagram_code(
             # Read SVG and embed images as base64 data URIs
             svg_content = svg_files[0].read_text(encoding="utf-8")
             svg_content = embed_images_as_base64(svg_content)
+            svg_content = deduplicate_embedded_images(svg_content)
             output_path.write_text(svg_content, encoding="utf-8")
 
         log_success(f"{diagram_type} diagram generated: {output_path}")
