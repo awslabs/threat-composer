@@ -243,10 +243,10 @@ const BrainstormBoardInner: FC<{ onNavigateToThreat?: NavigateToThreatHandler }>
           paddingBottom: '8px', // Space for the scrollbar
         }}>
           <div style={{
-            display: 'flex',
-            flexDirection: 'row',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
             gap: '20px',
-            width: 'fit-content', // Allow container to grow based on content
+            width: '100%',
           }}>
             {columnConfig.map(column => {
               // Show assumptions and mitigations based on individual visibility
