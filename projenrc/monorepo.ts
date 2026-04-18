@@ -56,7 +56,7 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
     );
     this.tryFindObjectFile("package.json")?.addOverride(
       "resolutions.lodash",
-      "^4.17.23"
+      "^4.18.0"
     );
     this.tryFindObjectFile("package.json")?.addOverride(
       "resolutions.qs",
