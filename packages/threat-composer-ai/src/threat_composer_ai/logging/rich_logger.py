@@ -5,8 +5,17 @@ from pathlib import Path
 
 from rich.console import Console
 from rich.logging import RichHandler
-from rich.markup import escape as rich_escape
+from rich.markup import escape as _rich_escape
 from rich.theme import Theme
+
+
+def rich_escape(value) -> str:
+    """Safely escape a value for Rich markup, handling None and non-string types."""
+    if value is None:
+        return "None"
+    if not isinstance(value, str):
+        value = str(value)
+    return _rich_escape(value)
 
 # Custom theme for threat-composer-ai
 THREAT_COMPOSER_THEME = Theme(
