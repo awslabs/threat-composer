@@ -223,6 +223,8 @@ def clear_agent_context() -> None:
 
 def _log_markup(logger, level, message):
     """Log a message that contains pre-escaped Rich markup tags."""
+    if not logger.isEnabledFor(level):
+        return
     record = logger.makeRecord(
         logger.name, level, "(unknown)", 0, message, (), None
     )
