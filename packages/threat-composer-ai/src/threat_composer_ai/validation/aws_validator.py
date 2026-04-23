@@ -10,7 +10,7 @@ from botocore.exceptions import (
 )
 from strands import Agent
 
-from ..agents.common import create_agent_model
+from ..agents.common import create_agent_model, mark_model_no_sampling_support
 from ..config import AppConfig
 from ..logging import log_debug, log_error, log_success, log_warning
 
@@ -67,6 +67,12 @@ def get_aws_credential_info(config: AppConfig) -> dict[str, str]:
         }
 
 
+def _is_sampling_param_error(error: Exception) -> bool:
+    """Check if an exception is caused by unsupported sampling parameters."""
+    msg = str(error).lower()
+    return "temperature" in msg and "deprecated" in msg
+
+
 def validate_aws_bedrock_inference(config: AppConfig) -> bool:
     """ """
     try:
@@ -80,6 +86,25 @@ def validate_aws_bedrock_inference(config: AppConfig) -> bool:
         return True
 
     except Exception as e:
+        if _is_sampling_param_error(e):
+            # Model doesn't support sampling params — cache this and retry without them
+            log_warning(
+                f"Model {config.aws_model_id} does not support sampling parameters, retrying without temperature"
+            )
+            mark_model_no_sampling_support(config.aws_model_id)
+            try:
+                agent = Agent(
+                    system_prompt="You like pineapple on your pizza.",
+                    model=create_agent_model("test", config),
+                    callback_handler=None,
+                )
+                agent("Testing...")
+                log_success("Inference validated successfully (without sampling params)")
+                return True
+            except Exception as retry_err:
+                log_error(f"Inference validation failed on retry: {str(retry_err)}")
+                return False
+
         log_error(f"Inference validation failed: {str(e)}")
         return False
 
