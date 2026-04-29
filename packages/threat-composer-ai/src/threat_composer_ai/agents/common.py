@@ -276,6 +276,12 @@ def create_enhanced_boto_config() -> BotocoreConfig:
     )
 
 
+# Module-level cache: tracks model IDs that have rejected sampling parameters.
+# Populated at runtime when a model returns a "temperature is deprecated" error,
+# so no hardcoded model list is needed.
+_models_without_sampling_support: set[str] = set()
+
+
 def create_default_bedrock_model(
     model_id: str | None = None,
     region_name: str | None = None,
@@ -287,10 +293,15 @@ def create_default_bedrock_model(
     """
     Create a default BedrockModel configuration for threat modeling agents.
 
+    Automatically detects models that don't support sampling parameters
+    (temperature, top_p, top_k). On the first call for a given model, if the
+    API rejects the temperature parameter, the model ID is cached and all
+    subsequent calls for that model will omit sampling params without retrying.
+
     Args:
         model_id: Model ID to use (defaults to config or Claude)
         region_name: AWS region (defaults to config or us-west-2)
-        temperature: Model temperature (0.3 for focused analysis)
+        temperature: Model temperature (0.3 for focused analysis, ignored for models that don't support it)
         max_tokens: Maximum tokens (16384 for comprehensive analysis)
         config: Optional AppConfig for default values
         **kwargs: Additional model parameters
@@ -305,6 +316,8 @@ def create_default_bedrock_model(
     default_region = config.aws_region
     profile = config.aws_profile if config else None
 
+    resolved_model_id = model_id or default_model_id
+
     # Create boto session with profile if specified
     boto_session = None
     if profile:
@@ -315,12 +328,18 @@ def create_default_bedrock_model(
     # Build model parameters conditionally
     # When boto_session is provided, don't pass region_name (they're mutually exclusive)
     model_params = {
-        "model_id": model_id or default_model_id,
+        "model_id": resolved_model_id,
         "cache_tools": "default",
         "boto_client_config": create_enhanced_boto_config(),
-        "temperature": temperature,
         "max_tokens": max_tokens,
     }
+
+    # Only include temperature if this model hasn't previously rejected it.
+    # Models like Claude Opus 4.7+ return a 400 ValidationException when
+    # sampling params are provided. The cache is populated by
+    # mark_model_no_sampling_support() when that error is detected.
+    if resolved_model_id not in _models_without_sampling_support:
+        model_params["temperature"] = temperature
 
     if boto_session:
         model_params["boto_session"] = boto_session
@@ -328,6 +347,20 @@ def create_default_bedrock_model(
         model_params["region_name"] = region_name or default_region
 
     return BedrockModel(**model_params, **kwargs)
+
+
+def mark_model_no_sampling_support(model_id: str) -> None:
+    """
+    Record that a model does not support sampling parameters.
+
+    Call this when a model returns a ValidationException indicating that
+    temperature/top_p/top_k is deprecated. All future BedrockModel instances
+    for this model ID will omit sampling parameters automatically.
+
+    Args:
+        model_id: The Bedrock model ID that rejected sampling params
+    """
+    _models_without_sampling_support.add(model_id)
 
 
 def create_default_conversation_manager():
