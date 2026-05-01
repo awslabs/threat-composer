@@ -22,6 +22,12 @@ RUN nvm install $NODE_VERSION
 # Required to build the threat-composer app
 RUN npm install -g @aws/pdk yarn
 
+# Graphviz needed by the threat-composer-ai package (installed as root)
+RUN dnf install -y graphviz && dnf clean all
+
+# uv (required by packages/threat-composer-ai postinstall hook)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+
 # Create a non-root user named 'app' and set up home directory
 RUN useradd -m app
 
