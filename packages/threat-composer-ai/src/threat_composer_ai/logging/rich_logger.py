@@ -17,6 +17,7 @@ def rich_escape(value) -> str:
         value = str(value)
     return _rich_escape(value)
 
+
 # Custom theme for threat-composer-ai
 THREAT_COMPOSER_THEME = Theme(
     {
@@ -76,9 +77,7 @@ class AgentAwareFormatter(logging.Formatter):
         if record.agent == "system":
             formatted = f"[workflow]🔧 SYSTEM[/workflow] | {raw_message}"
         else:
-            formatted = (
-                f"[agent]🤖 {record.agent.upper()}[/agent] | {raw_message}"
-            )
+            formatted = f"[agent]🤖 {record.agent.upper()}[/agent] | {raw_message}"
 
         return formatted
 
@@ -225,9 +224,7 @@ def _log_markup(logger, level, message):
     """Log a message that contains pre-escaped Rich markup tags."""
     if not logger.isEnabledFor(level):
         return
-    record = logger.makeRecord(
-        logger.name, level, "(unknown)", 0, message, (), None
-    )
+    record = logger.makeRecord(logger.name, level, "(unknown)", 0, message, (), None)
     record._rich_markup_safe = True
     logger.handle(record)
 
@@ -236,21 +233,33 @@ def log_workflow_step(step_name: str, description: str = "") -> None:
     """Log a workflow step with special formatting."""
     logger = get_logger(__name__)
     if description:
-        _log_markup(logger, logging.INFO, f"[progress]📋 STEP: {rich_escape(step_name)}[/progress] - {rich_escape(description)}")
+        _log_markup(
+            logger,
+            logging.INFO,
+            f"[progress]📋 STEP: {rich_escape(step_name)}[/progress] - {rich_escape(description)}",
+        )
     else:
-        _log_markup(logger, logging.INFO, f"[progress]📋 STEP: {rich_escape(step_name)}[/progress]")
+        _log_markup(
+            logger,
+            logging.INFO,
+            f"[progress]📋 STEP: {rich_escape(step_name)}[/progress]",
+        )
 
 
 def log_agent_message(agent_name: str, action: str, details: str = "") -> None:
     """Log an agent action with special formatting."""
     logger = get_logger(__name__)
     if details:
-        _log_markup(logger, logging.INFO,
-            f"[agent]🤖 {rich_escape(agent_name.upper())}[/agent] | [success]⚡ {rich_escape(action)}[/success] - {rich_escape(details)}"
+        _log_markup(
+            logger,
+            logging.INFO,
+            f"[agent]🤖 {rich_escape(agent_name.upper())}[/agent] | [success]⚡ {rich_escape(action)}[/success] - {rich_escape(details)}",
         )
     else:
-        _log_markup(logger, logging.INFO,
-            f"[agent]🤖 {rich_escape(agent_name.upper())}[/agent] | [success]⚡ {rich_escape(action)}[/success]"
+        _log_markup(
+            logger,
+            logging.INFO,
+            f"[agent]🤖 {rich_escape(agent_name.upper())}[/agent] | [success]⚡ {rich_escape(action)}[/success]",
         )
 
 
@@ -258,12 +267,16 @@ def log_agent_tool_use(agent_name: str, action: str, details: str = "") -> None:
     """Log an agent action with special formatting."""
     logger = get_logger(__name__)
     if details:
-        _log_markup(logger, logging.INFO,
-            f"[agent]🤖 {rich_escape(agent_name.upper())}[/agent] | [progress]🔨 {rich_escape(action)}[/progress] - {rich_escape(details)}"
+        _log_markup(
+            logger,
+            logging.INFO,
+            f"[agent]🤖 {rich_escape(agent_name.upper())}[/agent] | [progress]🔨 {rich_escape(action)}[/progress] - {rich_escape(details)}",
         )
     else:
-        _log_markup(logger, logging.INFO,
-            f"[agent]🤖 {rich_escape(agent_name.upper())}[/agent] | [progress]🔨 {rich_escape(action)}[/progress]"
+        _log_markup(
+            logger,
+            logging.INFO,
+            f"[agent]🤖 {rich_escape(agent_name.upper())}[/agent] | [progress]🔨 {rich_escape(action)}[/progress]",
         )
 
 
@@ -282,7 +295,9 @@ def log_error(message: str) -> None:
 def log_warning(message: str) -> None:
     """Log a warning message with special formatting."""
     logger = get_logger(__name__)
-    _log_markup(logger, logging.WARNING, f"[warning]⚠️  {rich_escape(message)}[/warning]")
+    _log_markup(
+        logger, logging.WARNING, f"[warning]⚠️  {rich_escape(message)}[/warning]"
+    )
 
 
 def log_debug(message: str) -> None:
@@ -296,11 +311,15 @@ def log_model_config(
 ) -> None:
     """Log model configuration at startup with special formatting."""
     logger = get_logger(__name__)
-    _log_markup(logger, logging.INFO,
-        f"[success]🤖 MODEL CONFIG | Model: {rich_escape(model_id)} | Source: {rich_escape(model_source)}[/success]"
+    _log_markup(
+        logger,
+        logging.INFO,
+        f"[success]🤖 MODEL CONFIG | Model: {rich_escape(model_id)} | Source: {rich_escape(model_source)}[/success]",
     )
-    _log_markup(logger, logging.INFO,
-        f"[success]🤖 MODEL CONFIG | Region: {rich_escape(region)} | Source: {rich_escape(region_source)}[/success]"
+    _log_markup(
+        logger,
+        logging.INFO,
+        f"[success]🤖 MODEL CONFIG | Region: {rich_escape(region)} | Source: {rich_escape(region_source)}[/success]",
     )
 
 
@@ -312,37 +331,77 @@ def log_startup_banner(config, sources: dict[str, str]) -> None:
 
     # Banner header
     _log_markup(logger, logging.INFO, "[workflow]" + "=" * 80 + "[/workflow]")
-    _log_markup(logger, logging.INFO, "[workflow]🚀 THREAT COMPOSER AI - WORKFLOW STARTING[/workflow]")
+    _log_markup(
+        logger,
+        logging.INFO,
+        "[workflow]🚀 THREAT COMPOSER AI - WORKFLOW STARTING[/workflow]",
+    )
     _log_markup(logger, logging.INFO, "[workflow]" + "=" * 80 + "[/workflow]")
 
     # Invocation source
     invocation_emoji = "💻" if config.invocation_source == "CLI" else "🔌"
-    _log_markup(logger, logging.INFO, f"[success]{invocation_emoji} INVOCATION SOURCE: {rich_escape(config.invocation_source)}[/success]")
+    _log_markup(
+        logger,
+        logging.INFO,
+        f"[success]{invocation_emoji} INVOCATION SOURCE: {rich_escape(config.invocation_source)}[/success]",
+    )
 
     # Session info
     session_id = config.output_directory.name
-    _log_markup(logger, logging.INFO, f"[info]📋 SESSION ID: {rich_escape(session_id)}[/info]")
+    _log_markup(
+        logger, logging.INFO, f"[info]📋 SESSION ID: {rich_escape(session_id)}[/info]"
+    )
 
     # AWS Configuration
     _log_markup(logger, logging.INFO, "[workflow]" + "-" * 80 + "[/workflow]")
     _log_markup(logger, logging.INFO, "[workflow]☁️  AWS CONFIGURATION[/workflow]")
-    _log_markup(logger, logging.INFO, f"[success]  Profile: {rich_escape(config.aws_profile)} | Source: {rich_escape(sources.get('aws_profile', 'unknown'))}[/success]")
-    _log_markup(logger, logging.INFO, f"[success]  Region: {rich_escape(config.aws_region)} | Source: {rich_escape(sources.get('aws_region', 'unknown'))}[/success]")
-    _log_markup(logger, logging.INFO, f"[success]  Model ID: {rich_escape(config.aws_model_id)} | Source: {rich_escape(sources.get('aws_model_id', 'unknown'))}[/success]")
+    _log_markup(
+        logger,
+        logging.INFO,
+        f"[success]  Profile: {rich_escape(config.aws_profile)} | Source: {rich_escape(sources.get('aws_profile', 'unknown'))}[/success]",
+    )
+    _log_markup(
+        logger,
+        logging.INFO,
+        f"[success]  Region: {rich_escape(config.aws_region)} | Source: {rich_escape(sources.get('aws_region', 'unknown'))}[/success]",
+    )
+    _log_markup(
+        logger,
+        logging.INFO,
+        f"[success]  Model ID: {rich_escape(config.aws_model_id)} | Source: {rich_escape(sources.get('aws_model_id', 'unknown'))}[/success]",
+    )
 
     # Directories
     _log_markup(logger, logging.INFO, "[workflow]" + "-" * 80 + "[/workflow]")
     _log_markup(logger, logging.INFO, "[workflow]📁 DIRECTORIES[/workflow]")
-    _log_markup(logger, logging.INFO, f"[info]  Working: {rich_escape(str(config.working_directory))}[/info]")
-    _log_markup(logger, logging.INFO, f"[info]  Output: {rich_escape(str(config.output_directory))}[/info]")
+    _log_markup(
+        logger,
+        logging.INFO,
+        f"[info]  Working: {rich_escape(str(config.working_directory))}[/info]",
+    )
+    _log_markup(
+        logger,
+        logging.INFO,
+        f"[info]  Output: {rich_escape(str(config.output_directory))}[/info]",
+    )
 
     # Runtime Configuration
     _log_markup(logger, logging.INFO, "[workflow]" + "-" * 80 + "[/workflow]")
     _log_markup(logger, logging.INFO, "[workflow]⚙️  RUNTIME CONFIGURATION[/workflow]")
-    _log_markup(logger, logging.INFO, f"[info]  Execution Timeout: {config.execution_timeout}s[/info]")
-    _log_markup(logger, logging.INFO, f"[info]  Node Timeout: {config.node_timeout}s[/info]")
-    _log_markup(logger, logging.INFO, f"[info]  Verbose Logging: {config.verbose}[/info]")
-    _log_markup(logger, logging.INFO, f"[info]  Telemetry: {config.enable_telemetry}[/info]")
+    _log_markup(
+        logger,
+        logging.INFO,
+        f"[info]  Execution Timeout: {config.execution_timeout}s[/info]",
+    )
+    _log_markup(
+        logger, logging.INFO, f"[info]  Node Timeout: {config.node_timeout}s[/info]"
+    )
+    _log_markup(
+        logger, logging.INFO, f"[info]  Verbose Logging: {config.verbose}[/info]"
+    )
+    _log_markup(
+        logger, logging.INFO, f"[info]  Telemetry: {config.enable_telemetry}[/info]"
+    )
 
     # Banner footer
     _log_markup(logger, logging.INFO, "[workflow]" + "=" * 80 + "[/workflow]")

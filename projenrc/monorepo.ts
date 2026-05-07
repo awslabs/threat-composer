@@ -70,6 +70,10 @@ class ThreatComposerMonorepoProject extends MonorepoTsProject {
       "resolutions.syncpack/**/minimatch",
       "^9.0.9"
     );
+    this.tryFindObjectFile("package.json")?.addOverride(
+      "resolutions.fast-xml-parser",
+      "^5.7.3"
+    );
 
     this.tryFindObjectFile("package.json")?.addOverride("workspaces.nohoist", [
       "**/wxt",

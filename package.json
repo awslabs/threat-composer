@@ -78,7 +78,8 @@
     "lodash": "^4.18.0",
     "qs": "^6.15.0",
     "nx/**/minimatch": "^9.0.9",
-    "syncpack/**/minimatch": "^9.0.9"
+    "syncpack/**/minimatch": "^9.0.9",
+    "fast-xml-parser": "^5.7.3"
   },
   "engines": {
     "node": ">=16",
