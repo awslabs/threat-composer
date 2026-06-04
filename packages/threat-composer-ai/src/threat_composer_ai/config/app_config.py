@@ -56,7 +56,7 @@ class AppConfig:
 
     # AWS configuration
     aws_region: str = "us-west-2"
-    aws_model_id: str = "global.anthropic.claude-sonnet-4-20250514-v1:0"
+    aws_model_id: str = "global.anthropic.claude-sonnet-4-5-20250929-v1:0"
     aws_profile: str | None = None
 
     # Runtime configuration

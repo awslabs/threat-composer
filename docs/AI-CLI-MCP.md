@@ -59,7 +59,7 @@ Without the extension, you can still view and edit the generated JSON files as t
 
 Threat Composer AI uses **Amazon Bedrock** for AI inference, which incurs costs based on token usage. By default, the tool uses:
 
-- **Model**: Claude Sonnet 4 (`global.anthropic.claude-sonnet-4-20250514-v1:0`)
+- **Model**: Claude Sonnet 4.5 (`global.anthropic.claude-sonnet-4-5-20250929-v1:0`)
 - **Service Tier**: Standard on-demand (default)
 
 **Estimated costs** vary based on codebase size and complexity. A typical threat model generation may use 500,000-1,500,000+ tokens depending on the project.
