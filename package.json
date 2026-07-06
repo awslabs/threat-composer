@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@aws-cdk/aws-cognito-identitypool-alpha": "latest",
-    "aws-cdk-lib": "2.194.0",
+    "aws-cdk-lib": "2.246.0",
     "cdk-nag": "2.35.88"
   },
   "resolutions": {
