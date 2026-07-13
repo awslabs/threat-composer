@@ -62,6 +62,12 @@ _active_workflow_ref = {"workflow": None}
     type=click.Path(exists=True, path_type=Path),
     help="Rerun from previous session directory (incremental execution)",
 )
+@click.option(
+    "--workflow",
+    type=click.Choice(["baseline", "custom"], case_sensitive=False),
+    default="baseline",
+    help="Workflow to use for threat modeling (default: baseline)",
+)
 def main(
     directory_path: Path,
     verbose: bool,
@@ -74,6 +80,7 @@ def main(
     skip_validation: bool,
     enable_telemetry: bool,
     rerun_from: Path | None,
+    workflow: str,
 ):
     """
     AI-powered automated threat modeling for codebases.
@@ -111,6 +118,7 @@ def main(
         node_timeout=node_timeout,
         invocation_source="CLI",
         setup_logging=True,
+        workflow_name=workflow,
     )
 
     # Log startup information
