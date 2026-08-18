@@ -29,7 +29,7 @@
       "type": "runtime"
     },
     {
-      "name": "botocore",
+      "name": "botocore[crt]",
       "type": "runtime"
     },
     {

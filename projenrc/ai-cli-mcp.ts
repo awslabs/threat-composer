@@ -24,7 +24,19 @@ export default class ThreatComposerPythonAIProject extends UvPythonProject {
         "strands-agents-tools",
         "click",
         "boto3",
-        "botocore",
+        // [crt] pulls in awscrt, which the login credential provider requires.
+        // The AWS SDKs and Tools reference lists Boto3 support for the login
+        // provider as "Requires CRT"; without it, resolving credentials from a
+        // profile that uses login_session fails with MissingDependencyException
+        // before any AWS call is made.
+        //
+        // Declared on botocore rather than boto3 because that is the package
+        // botocore's own error message names, and the form the Strands docs
+        // recommend for `aws login`. boto3[crt] would be equivalent -- it
+        // resolves to botocore[crt] -- but matching the error text is easier to
+        // follow. Profiles using static credentials, environment variables or
+        // credential_process resolve earlier in the chain and are unaffected.
+        "botocore[crt]",
         "rich",
         "json-schema-to-pydantic",
         "pathspec",
