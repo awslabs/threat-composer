@@ -62,6 +62,8 @@ Threat Composer AI uses **Amazon Bedrock** for AI inference, which incurs costs 
 - **Model**: Claude Sonnet 5 (`global.anthropic.claude-sonnet-5`)
 - **Service Tier**: Standard on-demand (default)
 
+Claude Sonnet 5 always applies adaptive reasoning. Reasoning tokens are billed as output tokens, so output usage is higher than for a model without reasoning.
+
 **Estimated costs** vary based on codebase size and complexity. A typical threat model generation may use 500,000-1,500,000+ tokens depending on the project.
 
 For current pricing information, see:
