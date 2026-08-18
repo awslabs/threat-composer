@@ -20,6 +20,10 @@ from strands.models import BedrockModel
 from strands.types.content import SystemContentBlock
 
 from ..config import AppConfig
+from ..config.model_capabilities import (
+    accepts_sampling_params,
+    resolve_max_output_tokens,
+)
 from ..logging import create_strands_rich_handler
 from ..tools import threat_composer_list_workdir_files_gitignore_filtered
 from ..tools.threat_composer_generate_uuid4 import (
@@ -276,33 +280,30 @@ def create_enhanced_boto_config() -> BotocoreConfig:
     )
 
 
-# Module-level cache: tracks model IDs that have rejected sampling parameters.
-# Populated at runtime when a model returns a "temperature is deprecated" error,
-# so no hardcoded model list is needed.
-_models_without_sampling_support: set[str] = set()
-
-
 def create_default_bedrock_model(
     model_id: str | None = None,
     region_name: str | None = None,
     temperature: float = 0.3,
-    max_tokens: int = 16384,
+    max_tokens: int = 32768,
     config: AppConfig | None = None,
     **kwargs,
 ) -> BedrockModel:
     """
     Create a default BedrockModel configuration for threat modeling agents.
 
-    Automatically detects models that don't support sampling parameters
-    (temperature, top_p, top_k). On the first call for a given model, if the
-    API rejects the temperature parameter, the model ID is cached and all
-    subsequent calls for that model will omit sampling params without retrying.
+    Sampling parameters and the output budget are both resolved per model via
+    config.model_capabilities, so pointing an agent at a different model cannot
+    produce a request that model rejects:
+
+    - temperature is omitted for models that reject sampling parameters
+    - max_tokens is clamped to the model's output ceiling
 
     Args:
         model_id: Model ID to use (defaults to config or Claude)
         region_name: AWS region (defaults to config or us-west-2)
-        temperature: Model temperature (0.3 for focused analysis, ignored for models that don't support it)
-        max_tokens: Maximum tokens (16384 for comprehensive analysis)
+        temperature: Model temperature (0.3 for focused analysis, omitted for
+            models that reject sampling parameters)
+        max_tokens: Desired maximum output tokens, clamped to the model ceiling
         config: Optional AppConfig for default values
         **kwargs: Additional model parameters
 
@@ -331,14 +332,13 @@ def create_default_bedrock_model(
         "model_id": resolved_model_id,
         "cache_tools": "default",
         "boto_client_config": create_enhanced_boto_config(),
-        "max_tokens": max_tokens,
+        "max_tokens": resolve_max_output_tokens(resolved_model_id, max_tokens),
     }
 
-    # Only include temperature if this model hasn't previously rejected it.
-    # Models like Claude Opus 4.7+ return a 400 ValidationException when
-    # sampling params are provided. The cache is populated by
-    # mark_model_no_sampling_support() when that error is detected.
-    if resolved_model_id not in _models_without_sampling_support:
+    # Omitted for models that reject a non-default temperature with a 400
+    # (Sonnet 5, Opus 4.7+). Resolved from the capability registry, which also
+    # honours anything the pre-flight probe learned at runtime.
+    if accepts_sampling_params(resolved_model_id):
         model_params["temperature"] = temperature
 
     if boto_session:
@@ -347,20 +347,6 @@ def create_default_bedrock_model(
         model_params["region_name"] = region_name or default_region
 
     return BedrockModel(**model_params, **kwargs)
-
-
-def mark_model_no_sampling_support(model_id: str) -> None:
-    """
-    Record that a model does not support sampling parameters.
-
-    Call this when a model returns a ValidationException indicating that
-    temperature/top_p/top_k is deprecated. All future BedrockModel instances
-    for this model ID will omit sampling parameters automatically.
-
-    Args:
-        model_id: The Bedrock model ID that rejected sampling params
-    """
-    _models_without_sampling_support.add(model_id)
 
 
 def create_default_conversation_manager():
@@ -386,45 +372,54 @@ def get_agent_model_config(
     Returns:
         Dictionary of model configuration parameters
     """
-    # Base configuration
+    # max_tokens is the budget an agent WANTS. It is clamped to the model's
+    # ceiling by resolve_max_output_tokens() when the model is built, so a value
+    # here may exceed what a smaller model accepts without breaking that model.
+    #
+    # Budgets are generous because requesting a high cap is free: Bedrock bills
+    # actual output, not the requested maximum, while under-requesting risks
+    # truncation. Truncation is expensive - on a tool-calling agent it surfaces
+    # as MaxTokensReachedException, which Strands treats as unrecoverable and
+    # which fails the whole run. Reasoning models make this sharper still, since
+    # thinking tokens are drawn from this same budget.
     base_config = {
         "temperature": 0.3,
-        "max_tokens": 16384,
+        "max_tokens": 32768,
     }
 
     # Agent-specific optimizations
     agent_configs = {
         "application_info": {
             "temperature": 0.5,  # More creative for discovering patterns
-            "max_tokens": 16384,  # Large for comprehensive repo analysis
+            "max_tokens": 32768,  # Large for comprehensive repo analysis
         },
         "architecture": {
             "temperature": 0.5,  # More creative for discovering patterns
-            "max_tokens": 16384,  # Large for comprehensive repo analysis
+            "max_tokens": 32768,  # Large for comprehensive repo analysis
         },
         "architecture_diagram": {
             "temperature": 0.1,  # Very focused
-            "max_tokens": 16384,
+            "max_tokens": 32768,
         },
         "dataflow": {
             "temperature": 0.5,  # More creative for discovering patterns
-            "max_tokens": 16384,
+            "max_tokens": 32768,
         },
         "dataflow_diagram": {
             "temperature": 0.1,  # Very focused
-            "max_tokens": 32768,  # Passing around a bunch of things
+            "max_tokens": 100_000,  # Passing around a bunch of things
         },
         "threats": {
             "temperature": 0.2,  # Very focused for systematic STRIDE analysis
-            "max_tokens": 32768,
+            "max_tokens": 100_000,  # Largest output in the pipeline
         },
         "mitigations": {
             "temperature": 0.6,  # Some creatively
-            "max_tokens": 16384,
+            "max_tokens": 32768,
         },
         "threat_model": {
             "temperature": 0.1,  # Very precise for schema generation
-            "max_tokens": 8192,  # small mostly deterministic stuff
+            "max_tokens": 16384,  # small mostly deterministic stuff
         },
     }
 
