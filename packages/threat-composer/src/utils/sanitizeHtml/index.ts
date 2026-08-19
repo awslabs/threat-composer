@@ -14,15 +14,17 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import sanitizeHtmlString from 'sanitize-html';
+import { transformExcludingMermaidDefinitions } from '../mermaidCodeBlock';
 
 const sanitizeHtml: any = (data: any) => {
   if (data) {
     if (Array.isArray(data)) {
       return data.map(d => sanitizeHtml(d));
     } else if (typeof data === 'string') {
-      return sanitizeHtmlString(data, {
+      // Mermaid diagram definitions are rendered as diagrams instead of html, so they are kept as authored
+      return transformExcludingMermaidDefinitions(data, value => sanitizeHtmlString(value, {
         allowedTags: [],
-      });
+      }));
     } else if (typeof data === 'object') {
       return Object.keys(data).reduce(
         (attrs, key) => ({

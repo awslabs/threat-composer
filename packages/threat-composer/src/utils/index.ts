@@ -16,4 +16,5 @@
 export { default as getThreatFromThreatPacksThreat } from './getThreatFromThreatPacksThreat';
 export { default as getNewThreatStatement } from './getNewThreatStatement';
 export { default as escapeMarkdown } from './escapeMarkdown';
+export { MERMAID_LANGUAGE, transformExcludingMermaidDefinitions } from './mermaidCodeBlock';
 export { default as standardizeNumericId } from './standardizeNumericId';

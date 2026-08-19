@@ -36,6 +36,11 @@ describe('sanitizeHtml', () => {
     expect(sanitizeHtml([testObj, testObj])).toEqual([result, result]);
   });
 
+  test('keeps mermaid diagram definitions as authored', () => {
+    const content = '<b>Diagram</b>\n\n```mermaid\nflowchart LR\n  A[User] --> B[App]\n```';
+    expect(sanitizeHtml(content)).toEqual('Diagram\n\n```mermaid\nflowchart LR\n  A[User] --> B[App]\n```');
+  });
+
   test('parses nested object to saniztise html string if there is any', () => {
     expect(sanitizeHtml({
       ...testObj,
