@@ -99,7 +99,9 @@ def validate_aws_bedrock_inference(config: AppConfig) -> bool:
                     callback_handler=None,
                 )
                 agent("Testing...")
-                log_success("Inference validated successfully (without sampling params)")
+                log_success(
+                    "Inference validated successfully (without sampling params)"
+                )
                 return True
             except Exception as retry_err:
                 log_error(f"Inference validation failed on retry: {str(retry_err)}")
