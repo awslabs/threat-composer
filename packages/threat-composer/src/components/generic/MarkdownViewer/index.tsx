@@ -18,11 +18,13 @@ import Icon from '@cloudscape-design/components/icon';
 import TextContent from '@cloudscape-design/components/text-content';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC } from 'react';
+import { Children, FC, ReactNode, isValidElement } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
+import { MERMAID_LANGUAGE } from '../../../utils/mermaidCodeBlock';
+import MermaidDiagram from '../MermaidDiagram';
 
 const externalPattern = /^((https?):\/\/)/;
 
@@ -84,7 +86,29 @@ const styles = css({
   },
 });
 
+const MERMAID_CLASS_NAME = `language-${MERMAID_LANGUAGE}`;
+
+const isMermaidClassName = (className?: string) => (className || '').split(' ').includes(MERMAID_CLASS_NAME);
+
+const isMermaidCodeElement = (node: ReactNode) =>
+  isValidElement(node) && isMermaidClassName((node.props as { className?: string }).className);
+
 const components = {
+  // The code block wrapper is dropped for mermaid, as the diagram replaces the code markup entirely
+  pre: ({ node, children, ...props }: any) => {
+    if (Children.toArray(children).some(isMermaidCodeElement)) {
+      return <>{children}</>;
+    }
+
+    return <pre {...props}>{children}</pre>;
+  },
+  code: ({ node, inline, className, children, ...props }: any) => {
+    if (!inline && isMermaidClassName(className)) {
+      return <MermaidDiagram code={Children.toArray(children).join('')} />;
+    }
+
+    return <code className={className} {...props}>{children}</code>;
+  },
   a: (props: any) => {
     if (props.href) {
       const isExternal = externalPattern.test(props.href);

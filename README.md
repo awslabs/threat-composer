@@ -22,6 +22,7 @@ Threat Composer is a threat modeling ecosystem that helps you identify security 
 
 - **Threat Statement Composition**: Structured threat grammar with adaptive suggestions
 - **Visual Diagrams**: Architecture and data flow diagram support
+- **Mermaid Diagrams**: Author Mermaid diagrams directly in any Markdown field, with a live preview
 - **Assumptions Tracking**: Document and link assumptions to threats and mitigations
 - **Insights Dashboard**: Quality metrics and improvement suggestions
 - **Threat & Mitigation Packs**: Reusable threat and mitigation libraries (self-hosted)
