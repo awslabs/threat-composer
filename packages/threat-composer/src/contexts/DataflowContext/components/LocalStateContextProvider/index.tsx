@@ -13,12 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { DataflowInfo } from '../../../../customTypes';
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback, useState } from 'react';
+import type { DataflowInfo } from '../../../../customTypes';
 import { INFO_DEFAULT_VALUE } from '../../../constants';
-import { LocalStateContextProviderBaseProps } from '../../../types';
+import type { LocalStateContextProviderBaseProps } from '../../../types';
 import { DataflowInfoContext } from '../../context';
-import { DataflowContextProviderProps } from '../../types';
+import type { DataflowContextProviderProps } from '../../types';
 
 const ApplicationLocalStateContextProvider: FC<PropsWithChildren<
 DataflowContextProviderProps & LocalStateContextProviderBaseProps<DataflowInfo>>> = ({

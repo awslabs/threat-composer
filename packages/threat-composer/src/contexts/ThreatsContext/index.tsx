@@ -13,11 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
 import ThreatsLocalStateContextProvider from './components/LocalStateContextProvider';
 import ThreatsLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useThreatsContext } from './context';
-import { ThreatsContextProviderProps } from './types';
+import type { ThreatsContextProviderProps } from './types';
 import { STORAGE_LOCAL_STATE } from '../../configs';
 import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
 import ThreatsMigration from '../../migrations/ThreatsMigration';

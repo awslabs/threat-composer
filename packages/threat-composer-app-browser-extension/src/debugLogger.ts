@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TCConfig } from './entrypoints/popup/config';
+import type { TCConfig } from './entrypoints/popup/config';
 
 export function logDebugMessage(config: TCConfig, msg: string) {
   const debugPrefix = 'ThreatComposerExtension: ';

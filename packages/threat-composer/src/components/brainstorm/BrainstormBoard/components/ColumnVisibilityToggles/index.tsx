@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { Container, SpaceBetween, Toggle } from '@cloudscape-design/components';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 /**
  * Props interface for ColumnVisibilityToggles component

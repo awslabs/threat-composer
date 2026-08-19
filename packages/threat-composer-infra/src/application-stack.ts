@@ -13,16 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import path from 'path';
-import { PDKNag } from '@aws/pdk/pdk-nag';
-import {
-  StaticWebsite,
-  StaticWebsiteOrigin,
-  StaticWebsiteProps,
-} from '@aws/pdk/static-website';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import type { StackProps } from 'aws-cdk-lib';
 import {
   Stack,
-  StackProps,
   CfnOutput,
   Stage,
   Duration,
@@ -30,7 +25,6 @@ import {
 } from 'aws-cdk-lib';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import {
-  DistributionProps,
   LambdaEdgeEventType,
   ResponseHeadersPolicy,
   HeadersFrameOption,
@@ -39,24 +33,35 @@ import {
 import { Version } from 'aws-cdk-lib/aws-lambda';
 import { HostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
+import type { AwsSdkCall } from 'aws-cdk-lib/custom-resources';
 import {
-  AwsSdkCall,
   PhysicalResourceId,
   AwsCustomResource,
   AwsCustomResourcePolicy,
 } from 'aws-cdk-lib/custom-resources';
 import { NagSuppressions } from 'cdk-nag';
-import { Construct } from 'constructs';
+import type { Construct } from 'constructs';
 import { STAGE_PREFIX_IDE_EXTENSION_ENV } from './constants';
+import type { StaticWebsiteDistributionProps } from './static-website';
+import { StaticWebsite } from './static-website';
 
-const PACKAGES_ROOT = path.join(__dirname, '..', '..');
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const PACKAGES_ROOT = path.join(SCRIPT_DIR, '..', '..');
 
 const removeLeadingSlash = (value: string): string => {
   return value.slice(0, 1) == '/' ? value.slice(1) : value;
 };
 
+export interface ApplicationStackProps extends StackProps {
+  /**
+   * ARN of the CLOUDFRONT-scoped WAF WebACL to attach to the distribution.
+   * Produced by the companion us-east-1 stack; see `WebAclStack`.
+   */
+  readonly webAclArn?: string;
+}
+
 export class ApplicationStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(scope: Construct, id: string, props?: ApplicationStackProps) {
     super(scope, id, props);
 
     const stageName = Stage.of(this)?.stageName || 'Dev';
@@ -87,10 +92,6 @@ export class ApplicationStack extends Stack {
     ) as string;
     const lambdaEdge = this.node.tryGetContext(
       `lambdaEdge${stageName}`,
-    ) as string;
-    const cidrType = this.node.tryGetContext(`cidrType${stageName}`) as string;
-    const cidrRanges = this.node.tryGetContext(
-      `cidrRanges${stageName}`,
     ) as string;
 
     const contentSecurityPolicyOverride = this.node.tryGetContext(
@@ -149,9 +150,8 @@ export class ApplicationStack extends Stack {
       },
     );
 
-    let distributionProps: DistributionProps = {
+    let distributionProps: StaticWebsiteDistributionProps = {
       defaultBehavior: {
-        origin: new StaticWebsiteOrigin(),
         responseHeadersPolicy: responseHeadersPolicy,
       },
     };
@@ -230,21 +230,11 @@ export class ApplicationStack extends Stack {
       };
     }
 
-    const websiteProps: StaticWebsiteProps = {
+    const website = new StaticWebsite(this, 'StaticWebsite', {
       websiteContentPath: assetPath,
-      webAclProps: {
-        cidrAllowList: {
-          cidrType: cidrType === 'IPV6' ? 'IPV6' : 'IPV4',
-          cidrRanges: cidrRanges
-            ?.split(',')
-            .map((x) => x.trim())
-            .filter((x) => !!x) || ['192.168.0.0/24'],
-        },
-      },
+      webAclArn: props?.webAclArn,
       distributionProps,
-    };
-
-    const website = new StaticWebsite(this, 'StaticWebsite', websiteProps);
+    });
 
     if (hostedZoneId && hostedZoneName) {
       const hostZone = HostedZone.fromHostedZoneAttributes(
@@ -264,16 +254,18 @@ export class ApplicationStack extends Stack {
       });
     }
 
-    this.suppressCDKNagViolations(websiteProps, website);
+    this.suppressCDKNagViolations(distributionProps, website);
 
     new CfnOutput(this, 'WebsiteCloudfrontDomainName', {
       value: website.cloudFrontDistribution.domainName,
     });
   }
 
-  private suppressCDKNagViolations = (props: StaticWebsiteProps, website: StaticWebsite) => {
-    const stack = Stack.of(this);
-    !props.distributionProps?.certificate &&
+  private suppressCDKNagViolations = (
+    distributionProps: StaticWebsiteDistributionProps,
+    website: StaticWebsite,
+  ) => {
+    !distributionProps.certificate &&
       [
         'AwsSolutions-CFR4',
         'AwsPrototyping-CloudFrontDistributionHttpsViewerNoOutdatedSSL',
@@ -337,10 +329,10 @@ export class ApplicationStack extends Stack {
               reason:
                 'Buckets can contain arbitrary content, therefore wildcard resources under a bucket are required.',
               appliesTo: [
+                // Partition-agnostic: this used to be built from
+                // PDKNag.getStackPartitionRegex().
                 {
-                  regex: `/^Policy::arn:${PDKNag.getStackPartitionRegex(
-                    stack,
-                  )}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole$/g`,
+                  regex: '/^Policy::arn:.*:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole$/g',
                 },
               ],
             },

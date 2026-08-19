@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import parseThreatStatement from '.';
-import { TemplateThreatStatement } from '../../customTypes';
+import type { TemplateThreatStatement } from '../../customTypes';
 
 describe('parseThreatStatement', () => {
   test('parses threat statement element with template and generates output', () => {
@@ -32,7 +32,7 @@ describe('parseThreatStatement', () => {
     };
     const template = 'A [threat_source] [prerequisites] can [threat_action], which leads to [threat_impact] of [impacted_assets]';
 
-    const outputProcessor = jest.fn().mockImplementation((_token, content, before, _filled) => [
+    const outputProcessor = vi.fn().mockImplementation((_token, content, before, _filled) => [
       before,
       content,
     ]);

@@ -21,7 +21,8 @@ import Header from '@cloudscape-design/components/header';
 import Link from '@cloudscape-design/components/link';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import Toggle from '@cloudscape-design/components/toggle';
-import { FC, useContext } from 'react';
+import type { FC } from 'react';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   DefaultConfig,

@@ -16,8 +16,9 @@
 import {
   DEFAULT_WORKSPACE_ID,
 } from '@aws/threat-composer';
-import { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
-import { FC, PropsWithChildren, useMemo } from 'react';
+import type { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
+import type { FC, PropsWithChildren } from 'react';
+import { useMemo } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import AppLayoutComponent from '../../components/FullAppLayout';
 import {
@@ -37,7 +38,7 @@ import useNotifications from '../../hooks/useNotifications';
 import generateUrl from '../../utils/generateUrl';
 import WorkspaceSelector from '../WorkspaceSelector';
 
-const defaultHref = process.env.PUBLIC_URL || '/';
+const defaultHref = import.meta.env.BASE_URL || '/';
 
 const AppLayout: FC<PropsWithChildren<{}>> = ({
   children,

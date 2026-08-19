@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { STATUS_NOT_SET } from '../../../../configs';
-import { DataExchangeFormat } from '../../../../customTypes';
+import type { DataExchangeFormat } from '../../../../customTypes';
 import mitigationStatus from '../../../../data/status/mitigationStatus.json';
 import escapeMarkdown from '../../../../utils/escapeMarkdown';
 import parseTableCellContent from '../../../../utils/parseTableCellContent';

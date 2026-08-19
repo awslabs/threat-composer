@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
 import WindowExporter from '../../components/generic/WindowExporter';
-import { ComposerMode, DataExchangeFormat, ViewNavigationEvent } from '../../customTypes';
+import type { ComposerMode, DataExchangeFormat, ViewNavigationEvent } from '../../customTypes';
 import ApplicationInfoContextProvider from '../ApplicationContext';
 import ArchitectureInfoContextProvider from '../ArchitectureContext';
 import AssumptionLinksContextProvider from '../AssumptionLinksContext';

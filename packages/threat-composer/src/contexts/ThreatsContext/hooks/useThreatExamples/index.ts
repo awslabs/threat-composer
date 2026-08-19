@@ -14,10 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useMemo } from 'react';
-import { TemplateThreatStatement } from '../../../../customTypes';
+import type { TemplateThreatStatement } from '../../../../customTypes';
 import threatStatementExamplesData from '../../../../data/threatStatementExamples.json';
 import renderThreatStatement from '../../../../utils/renderThreatStatement';
-import { PerFieldExamplesType, DEFAULT_PER_FIELD_EXAMPLES } from '../../context';
+import type { PerFieldExamplesType } from '../../context';
+import { DEFAULT_PER_FIELD_EXAMPLES } from '../../context';
 import {
   addNewValueToStringArray,
   addNewValueArrayToStringArray,

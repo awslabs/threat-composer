@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { METADATA_KEY_SOURCE, METADATA_KEY_SOURCE_THREAT_PACK, METADATA_KEY_SOURCE_THREAT_PACK_MITIGATION_CANDIDATE } from '../../configs';
-import { Mitigation } from '../../customTypes';
+import type { Mitigation } from '../../customTypes';
 import getMetadata from '../getMetadata';
 
 const matchThreatPackMitigationCandidate = (mitigation: Mitigation, threatPackId: string, mitigationCandiateId: string) => {

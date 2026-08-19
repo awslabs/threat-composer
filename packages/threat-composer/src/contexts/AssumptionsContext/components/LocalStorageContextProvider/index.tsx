@@ -13,13 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_ASSUMPTION_LIST } from '../../../../configs/localStorageKeys';
-import { Assumption } from '../../../../customTypes';
+import type { Assumption } from '../../../../customTypes';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { AssumptionsContext } from '../../context';
-import { AssumptionsContextProviderProps } from '../../types';
+import type { AssumptionsContextProviderProps } from '../../types';
 import useAssumptions from '../../useAssumptions';
 
 export const getLocalStorageKey = (workspaceId: string | null) => {

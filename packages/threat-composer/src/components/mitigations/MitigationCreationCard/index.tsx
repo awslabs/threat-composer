@@ -18,10 +18,12 @@ import { useState, useCallback, forwardRef } from 'react';
 import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { Mitigation, MitigationSchema } from '../../../customTypes';
+import type { Mitigation } from '../../../customTypes';
+import { MitigationSchema } from '../../../customTypes';
 import getNewMitigation from '../../../utils/getNewMitigation';
 import AssumptionLinkView from '../../assumptions/AssumptionLinkView';
-import GenericEntityCreationCard, { GenericEntityCreationCardRefProps } from '../../generic/GenericEntityCreationCard';
+import type { GenericEntityCreationCardRefProps } from '../../generic/GenericEntityCreationCard';
+import GenericEntityCreationCard from '../../generic/GenericEntityCreationCard';
 import ThreatLinkView from '../../threats/ThreatLinkView';
 
 export interface MitigationCreationCardProps {

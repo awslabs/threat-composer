@@ -13,12 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { ApplicationInfo } from '../../../../customTypes';
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback, useState } from 'react';
+import type { ApplicationInfo } from '../../../../customTypes';
 import { INFO_DEFAULT_VALUE } from '../../../constants';
-import { LocalStateContextProviderBaseProps } from '../../../types';
+import type { LocalStateContextProviderBaseProps } from '../../../types';
 import { ApplicationInfoContext } from '../../context';
-import { ApplicationContextProviderProps } from '../../types';
+import type { ApplicationContextProviderProps } from '../../types';
 
 const ApplicationLocalStateContextProvider: FC<
 PropsWithChildren<ApplicationContextProviderProps & LocalStateContextProviderBaseProps<ApplicationInfo>>> = ({

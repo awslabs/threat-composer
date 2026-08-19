@@ -13,11 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { Assumption } from '../../../../customTypes';
-import { LocalStateContextProviderBaseProps } from '../../../types';
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback, useState } from 'react';
+import type { Assumption } from '../../../../customTypes';
+import type { LocalStateContextProviderBaseProps } from '../../../types';
 import { AssumptionsContext } from '../../context';
-import { AssumptionsContextProviderProps } from '../../types';
+import type { AssumptionsContextProviderProps } from '../../types';
 import useAssumptions from '../../useAssumptions';
 
 const AssumptionsLocalStateContextProvider: FC<PropsWithChildren<

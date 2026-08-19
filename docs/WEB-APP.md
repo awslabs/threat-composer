@@ -149,7 +149,6 @@ The [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected
 
 - [NodeJS](https://nodejs.org/en/) (version 20 or higher)
 - [Yarn](https://yarnpkg.com/) (installed via `npm install -g yarn`)
-- [PDK](https://aws.github.io/aws-pdk/overview/index.html) (installed via `npm install -g @aws/pdk`)
 - [AWS CLI](https://aws.amazon.com/cli/) (version 2 or higher)
 - [AWS CLI Configuration](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html) (configured via `aws configure`)
 - [AWS CDK v2](https://aws.amazon.com/cdk/) CLI (installed via `npm install -g aws-cdk`)

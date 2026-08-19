@@ -21,8 +21,9 @@ import { BrainstormDataSchema } from './brainstorm';
 import { DataflowInfoSchema } from './dataflow';
 import { MitigationSchema, MitigationLinkSchema } from './mitigations';
 import { TemplateThreatStatementSchema } from './threats';
-import { WorkspaceSchema, Workspace } from './workspaces';
-import { EventHandler } from '../utils/EventController';
+import type { Workspace } from './workspaces';
+import { WorkspaceSchema } from './workspaces';
+import type { EventHandler } from '../utils/EventController';
 
 export const DataExchangeFormatSchema = z.object({
   schema: z.number().max(1).describe('Schema version identifier'),

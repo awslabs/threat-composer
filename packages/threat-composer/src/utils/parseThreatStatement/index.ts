@@ -14,7 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import a from 'indefinite';
-import { TemplateThreatStatement, ThreatFieldTypes, threatFieldTypeMapping } from '../../customTypes';
+import type { TemplateThreatStatement, ThreatFieldTypes } from '../../customTypes';
+import { threatFieldTypeMapping } from '../../customTypes';
 import correctIndefiniteArticle from '../correctIndefiniteArticle';
 import getFieldContentByToken from '../getFieldContentByToken';
 

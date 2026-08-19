@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement } from './threats';
+import type { TemplateThreatStatement } from './threats';
 
 export type ThreatFieldTypes = 'threat_source' | 'prerequisites' | 'threat_action' | 'threat_impact' | 'impacted_goal' | 'impacted_assets';
 

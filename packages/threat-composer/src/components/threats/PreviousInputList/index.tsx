@@ -22,7 +22,7 @@ import TextContent from '@cloudscape-design/components/text-content';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { useCallback, useMemo, useState } from 'react';
-import { PerFieldExample } from '../../../customTypes';
+import type { PerFieldExample } from '../../../customTypes';
 
 export const DEFAULT_NUM_DISPLAY = 5;
 

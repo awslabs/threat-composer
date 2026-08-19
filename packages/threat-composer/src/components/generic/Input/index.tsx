@@ -13,10 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import FormField, { FormFieldProps } from '@cloudscape-design/components/form-field';
-import InputComponent, { InputProps as InputComponentProps } from '@cloudscape-design/components/input';
-import React, { FC } from 'react';
-import { z } from 'zod';
+import type { FormFieldProps } from '@cloudscape-design/components/form-field';
+import FormField from '@cloudscape-design/components/form-field';
+import type { InputProps as InputComponentProps } from '@cloudscape-design/components/input';
+import InputComponent from '@cloudscape-design/components/input';
+import type { FC } from 'react';
+import React from 'react';
+import type { z } from 'zod';
 import useContentValidation from '../../../hooks/useContentValidation';
 
 export interface InputProps extends FormFieldProps, InputComponentProps {

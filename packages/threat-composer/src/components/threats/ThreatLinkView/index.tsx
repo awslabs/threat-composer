@@ -16,8 +16,9 @@
 import Autosuggest from '@cloudscape-design/components/autosuggest';
 import ExpandableSection from '@cloudscape-design/components/expandable-section';
 import TokenGroup from '@cloudscape-design/components/token-group';
-import React, { FC, useMemo } from 'react';
-import { TemplateThreatStatement } from '../../../customTypes';
+import type { FC } from 'react';
+import React, { useMemo } from 'react';
+import type { TemplateThreatStatement } from '../../../customTypes';
 
 export interface ThreatLinkProps {
   linkedThreatIds: string[];

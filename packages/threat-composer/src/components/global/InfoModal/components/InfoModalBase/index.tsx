@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { FC, PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
 import styles from '../../styles';
 
 export interface InfoModalBaseProps {

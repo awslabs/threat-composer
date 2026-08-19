@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { FC } from 'react';
+import type { FC } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { ConfigDetailView } from './ConfigDetailView';
 import Config from './ConfigView';

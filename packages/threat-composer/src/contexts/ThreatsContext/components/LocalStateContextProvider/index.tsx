@@ -13,14 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { TemplateThreatStatement } from '../../../../customTypes';
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback, useState } from 'react';
+import type { TemplateThreatStatement } from '../../../../customTypes';
 import { useGlobalSetupContext } from '../../../GlobalSetupContext/context';
-import { LocalStateContextProviderBaseProps } from '../../../types';
+import type { LocalStateContextProviderBaseProps } from '../../../types';
 import { ThreatsContext } from '../../context';
 import useThreatExamples from '../../hooks/useThreatExamples';
 import useThreats from '../../hooks/useThreats';
-import { ThreatsContextProviderProps } from '../../types';
+import type { ThreatsContextProviderProps } from '../../types';
 
 const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps & LocalStateContextProviderBaseProps<TemplateThreatStatement[]>>> = ({
   children,

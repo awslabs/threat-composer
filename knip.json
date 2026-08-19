@@ -1,0 +1,42 @@
+{
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/**/*.ts"],
+      "project": ["scripts/**/*.ts"]
+    },
+    "packages/threat-composer": {
+      "entry": [
+        "src/**/*.stories.tsx",
+        ".storybook/{main,preview}.{ts,tsx}"
+      ],
+      "project": ["src/**/*.{ts,tsx}", ".storybook/**/*.{ts,tsx}"]
+    },
+    "packages/threat-composer-app": {
+      "entry": [
+        "index.html",
+        "src/service-worker.ts",
+        "src/stubs/*.ts"
+      ],
+      "project": ["src/**/*.{ts,tsx}"]
+    },
+    "packages/threat-composer-app-browser-extension": {
+      "entry": [
+        "wxt.config.ts",
+        "src/entrypoints/**/*.{ts,tsx}",
+        "public/*.js"
+      ],
+      "project": ["src/**/*.{ts,tsx}"],
+      "ignoreDependencies": [
+        "@wxt-dev/auto-icons"
+      ]
+    },
+    "packages/threat-composer-infra": {
+      "entry": ["src/pipeline.ts", "test/**/*.test.ts"],
+      "project": ["src/**/*.ts", "test/**/*.ts"],
+      "ignoreDependencies": [
+        "tsx"
+      ]
+    }
+  },
+  "ignoreBinaries": ["generate-attribution", "uv", "Apache-2.0", "ISC"]
+}

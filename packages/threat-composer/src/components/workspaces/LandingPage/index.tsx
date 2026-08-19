@@ -22,7 +22,7 @@ import Header from '@cloudscape-design/components/header';
 import Link from '@cloudscape-design/components/link';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
-import { FC } from 'react';
+import type { FC } from 'react';
 import HowItWorks from '../../../assets/how-it-works.png';
 import SwitchToExample from '../../../assets/switch-to-example-workspace.gif';
 import { useGlobalSetupContext } from '../../../contexts';

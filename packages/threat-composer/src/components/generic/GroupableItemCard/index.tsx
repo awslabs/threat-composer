@@ -19,9 +19,10 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import Textarea from '@cloudscape-design/components/textarea';
 import { colorBorderDividerDefault, colorBackgroundButtonPrimaryActive } from '@cloudscape-design/design-tokens';
-import { FC, useCallback, useState, useRef, useEffect, DragEvent } from 'react';
-import { PromotionHandlers, ThreatCreationHandlers } from '../../../contexts/BrainstormContext/types';
-import { BrainstormItem, BrainstormData } from '../../../customTypes/brainstorm';
+import type { FC, DragEvent } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
+import type { PromotionHandlers, ThreatCreationHandlers } from '../../../contexts/BrainstormContext/types';
+import type { BrainstormItem, BrainstormData } from '../../../customTypes/brainstorm';
 
 // Item Card Component
 interface GroupableItemCardProps {

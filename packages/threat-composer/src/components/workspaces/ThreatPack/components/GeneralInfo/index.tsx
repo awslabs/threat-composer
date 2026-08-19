@@ -14,8 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Container from '@cloudscape-design/components/container';
-import { FC } from 'react';
-import { ThreatPack } from '../../../../../customTypes';
+import type { FC } from 'react';
+import type { ThreatPack } from '../../../../../customTypes';
 
 export interface GeneralInfoProps {
   threatPack: ThreatPack;

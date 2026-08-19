@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { BrainstormData, BrainstormItem } from '../../customTypes/brainstorm';
+import type { BrainstormData, BrainstormItem } from '../../customTypes/brainstorm';
 
 export interface BrainstormContextApi {
   brainstormData: BrainstormData;

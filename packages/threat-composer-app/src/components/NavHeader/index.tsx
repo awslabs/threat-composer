@@ -14,9 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useThemeContext } from '@aws/threat-composer';
-import TopNavigation, { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
+import type { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
+import TopNavigation from '@cloudscape-design/components/top-navigation';
 import { Mode, Density } from '@cloudscape-design/global-styles';
-import { FC, useMemo } from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 
 /**
  * Props for Top Navigation Header

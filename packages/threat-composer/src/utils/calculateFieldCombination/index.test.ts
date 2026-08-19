@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import calculateFieldCombination from '.';
-import { TemplateThreatStatement } from '../../customTypes';
+import type { TemplateThreatStatement } from '../../customTypes';
 
 describe('calculateFieldCombination', () => {
   test('should return the field combination score', async () => {

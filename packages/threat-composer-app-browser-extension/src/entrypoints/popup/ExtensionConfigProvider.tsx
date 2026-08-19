@@ -14,8 +14,10 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { Spinner } from '@cloudscape-design/components';
-import { FC, useEffect, ReactNode, createContext } from 'react';
-import { TCConfig, DefaultConfig, getExtensionConfig, useExtensionConfig } from './config';
+import type { FC, ReactNode } from 'react';
+import { useEffect, createContext } from 'react';
+import type { TCConfig } from './config';
+import { DefaultConfig, getExtensionConfig, useExtensionConfig } from './config';
 import { logDebugMessage } from '../../debugLogger';
 
 export interface ExtensionConfigProviderProps {

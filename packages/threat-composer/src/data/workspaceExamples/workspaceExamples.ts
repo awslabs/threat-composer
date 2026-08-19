@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import genAIChatbot from './GenAIChatbot.tc.json';
 import threatComposer from './ThreatComposer.tc.json';
-import { WorkspaceExample } from '../../customTypes';
+import type { WorkspaceExample } from '../../customTypes';
 // {IMPORT_PLACEHOLDER}
 
 const workspaceExamples = [

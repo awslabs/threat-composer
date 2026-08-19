@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { DataExchangeFormat } from '../../customTypes';
+import type { DataExchangeFormat } from '../../customTypes';
 
 export interface CrossWorkspaceContextApi {
   cloneWorkspaceData: (targetWorkspaceId: string, data: DataExchangeFormat) => Promise<void>;

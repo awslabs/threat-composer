@@ -19,7 +19,7 @@ import RadioGroup from '@cloudscape-design/components/radio-group';
 import Select from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { css } from '@emotion/react';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 const styles = {
   selector: css({

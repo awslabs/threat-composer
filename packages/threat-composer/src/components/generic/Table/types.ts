@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { CollectionPreferencesProps } from '@cloudscape-design/components/collection-preferences';
-import { HeaderProps } from '@cloudscape-design/components/header';
-import { TableProps as CloudscapeTableProps } from '@cloudscape-design/components/table';
+import type { CollectionPreferencesProps } from '@cloudscape-design/components/collection-preferences';
+import type { HeaderProps } from '@cloudscape-design/components/header';
+import type { TableProps as CloudscapeTableProps } from '@cloudscape-design/components/table';
 
 export interface TableProps extends CloudscapeTableProps, Pick<HeaderProps, 'actions' | 'info' | 'description'> {
   /**

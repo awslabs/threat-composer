@@ -14,8 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { TCConfig, IntegrationTypes } from '../../popup/config';
-import { TCGitLabState } from '../types';
+import type { TCConfig } from '../../popup/config';
+import { IntegrationTypes } from '../../popup/config';
+import type { TCGitLabState } from '../types';
 import { SPAIntegrationHandler } from './spa-handler';
 import { waitForCondition, retryWithBackoff, getTCJSONCandidate, TC_BUTTON_TEXT, TC_BUTTON_ID } from '../utils/core-utils';
 

@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { ViewNavigationEvent } from '../../../customTypes';
+import type { ViewNavigationEvent } from '../../../customTypes';
 
 export interface WorkspaceInsightsProps {
   onThreatEditorView?: ViewNavigationEvent['onThreatEditorView'];

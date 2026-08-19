@@ -14,8 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { Container, Header, SpaceBetween, TextContent, Input } from '@cloudscape-design/components';
-import { BaseKeyDetail } from '@cloudscape-design/components/internal/events';
-import { FC, useCallback } from 'react';
+import type { BaseKeyDetail } from '@cloudscape-design/components/internal/events';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 
 /**
  * Props interface for EntityCreationCard component

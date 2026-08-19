@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { ThreatModel } from '@aws/threat-composer';
-import { FC } from 'react';
+import type { FC } from 'react';
 import {
   ROUTE_APPLICATION_INFO,
   ROUTE_ARCHITECTURE_INFO,

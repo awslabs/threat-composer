@@ -17,8 +17,9 @@
 import Button from '@cloudscape-design/components/button';
 import HeaderComponent from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { FC, useMemo } from 'react';
-import { ComposerMode, TemplateThreatStatement } from '../../../customTypes';
+import type { FC } from 'react';
+import { useMemo } from 'react';
+import type { ComposerMode, TemplateThreatStatement } from '../../../customTypes';
 
 export interface HeaderProps {
   composerMode: ComposerMode;

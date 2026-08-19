@@ -15,14 +15,16 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 import { SpaceBetween } from '@cloudscape-design/components';
-import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
+import type { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
+import ButtonDropdown from '@cloudscape-design/components/button-dropdown';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
-import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
-import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import type { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
+import type { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import TextContent from '@cloudscape-design/components/text-content';
-import { FC, useCallback, useMemo } from 'react';
+import type { FC } from 'react';
+import { useCallback, useMemo } from 'react';
 import { THREAT_STATUS_COLOR_MAPPING } from '../../../configs/status';
-import { TemplateThreatStatement } from '../../../customTypes';
+import type { TemplateThreatStatement } from '../../../customTypes';
 import threatStatus from '../../../data/status/threatStatus.json';
 import AssumptionLink from '../../assumptions/AssumptionLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';

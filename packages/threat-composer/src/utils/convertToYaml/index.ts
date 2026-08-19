@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { stringify } from 'yaml';
-import { DataExchangeFormat } from '../../customTypes';
+import type { DataExchangeFormat } from '../../customTypes';
 
 /**
  * Convert the threat model into Yaml format

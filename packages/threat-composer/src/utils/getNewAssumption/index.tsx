@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
-import { Assumption } from '../../customTypes';
+import type { Assumption } from '../../customTypes';
 
 const getNewAssumption = (content: string = ''): Assumption => {
   return {

@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
+import type { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
 import { useCallback } from 'react';
-import { ThreatStatementListFilter, ViewNavigationEvent } from '../../../../../customTypes';
+import type { ThreatStatementListFilter, ViewNavigationEvent } from '../../../../../customTypes';
 
 const useThreatListLinkClicked = (onThreatListView: ViewNavigationEvent['onThreatListView']) => {
   return useCallback((filter?: ThreatStatementListFilter): CancelableEventHandler<BaseNavigationDetail> => (event) => {

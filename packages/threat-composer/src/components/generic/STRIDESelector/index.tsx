@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import FormField from '@cloudscape-design/components/form-field';
 import Multiselect from '@cloudscape-design/components/multiselect';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 export const OPTIONS = [
   { label: 'Spoofing', value: 'S' },

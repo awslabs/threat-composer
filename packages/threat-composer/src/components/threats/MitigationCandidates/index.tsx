@@ -15,12 +15,14 @@
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { useMemo, FC, useState, useEffect } from 'react';
+import type { FC } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { METADATA_KEY_SOURCE_THREAT_PACK, METADATA_KEY_SOURCE_THREAT_PACK_MITIGATION_CANDIDATE } from '../../../configs';
 import { useThreatPacksContext } from '../../../contexts';
-import { Mitigation } from '../../../customTypes/mitigations';
+import type { Mitigation } from '../../../customTypes/mitigations';
 import getMetadata from '../../../utils/getMetadata';
-import Table, { ColumnDefinition } from '../../generic/Table';
+import type { ColumnDefinition } from '../../generic/Table';
+import Table from '../../generic/Table';
 
 export interface MitigationCandidatesProp {
   threatPackId: string;

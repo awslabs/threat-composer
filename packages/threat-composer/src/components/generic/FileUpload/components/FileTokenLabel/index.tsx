@@ -16,7 +16,7 @@
 import Spacebetween from '@cloudscape-design/components/space-between';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import TextContent from '@cloudscape-design/components/text-content';
-import { FC } from 'react';
+import type { FC } from 'react';
 import getDisplayLastModified from '../../utils/getDisplayLastModified';
 import getDisplaySize from '../../utils/getDisplaySize';
 

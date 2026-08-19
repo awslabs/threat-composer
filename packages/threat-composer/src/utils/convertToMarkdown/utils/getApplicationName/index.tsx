@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat } from '../../../../customTypes';
+import type { DataExchangeFormat } from '../../../../customTypes';
 import escapeMarkdown from '../../../../utils/escapeMarkdown';
 
 export const getApplicationName = async (

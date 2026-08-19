@@ -14,9 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
-import FormField, { FormFieldProps } from '@cloudscape-design/components/form-field';
+import type { FormFieldProps } from '@cloudscape-design/components/form-field';
+import FormField from '@cloudscape-design/components/form-field';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import React, { FC, useCallback, useRef, useMemo, useState, useEffect } from 'react';
+import type { FC } from 'react';
+import React, { useCallback, useRef, useMemo, useState, useEffect } from 'react';
 import FileTokenLabel from './components/FileTokenLabel';
 import getDisplaySize from './utils/getDisplaySize';
 

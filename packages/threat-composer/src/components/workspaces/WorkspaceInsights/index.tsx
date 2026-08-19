@@ -13,17 +13,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Board, { BoardProps } from '@cloudscape-design/board-components/board';
+import type { BoardProps } from '@cloudscape-design/board-components/board';
+import Board from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
 import Header from '@cloudscape-design/components/header';
-import { useState, ReactNode, useCallback, FC } from 'react';
+import type { ReactNode, FC } from 'react';
+import { useState, useCallback } from 'react';
 import MitigationStatus from './components/MitigationStatus';
 import Overview from './components/Overview';
 import STRIDEAllocation from './components/STRIDEAllocation';
 import ThreatGrammar from './components/ThreatGrammar';
 import ThreatPrioritization from './components/ThreatPrioritization';
 import ThreatStatus from './components/ThreatStatus';
-import { WorkspaceInsightsProps } from './types';
+import type { WorkspaceInsightsProps } from './types';
 import ContentLayout from '../../generic/ContentLayout';
 
 export * from './types';

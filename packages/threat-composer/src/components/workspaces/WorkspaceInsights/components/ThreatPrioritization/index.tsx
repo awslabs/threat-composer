@@ -25,7 +25,8 @@ import {
   colorChartsStatusHigh,
   colorChartsStatusNeutral,
 } from '@cloudscape-design/design-tokens';
-import { useMemo, useCallback, FC } from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback } from 'react';
 import {
   LEVEL_HIGH,
   LEVEL_LOW,
@@ -37,7 +38,7 @@ import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 import DashboardNumber from '../../../../generic/DashboardNumber';
 import useThreatListLinkClicked from '../../hooks/useThreatListLinkClicked';
-import { WorkspaceInsightsProps } from '../../types';
+import type { WorkspaceInsightsProps } from '../../types';
 
 const ThreatPrioritization: FC<WorkspaceInsightsProps> = ({
   onThreatEditorView,

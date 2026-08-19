@@ -28,10 +28,10 @@ Built with:
 
 ```bash
 # From repository root
-pdk install --frozen-lockfile
+yarn install --frozen-lockfile
 
 # Run Storybook for component development
-pdk run storybook
+yarn storybook
 ```
 
 Storybook will open at [http://localhost:6006](http://localhost:6006)
@@ -42,7 +42,7 @@ Storybook will open at [http://localhost:6006](http://localhost:6006)
 
 ```bash
 # From repository root
-pdk build
+yarn build
 
 # Or from package directory
 cd packages/threat-composer

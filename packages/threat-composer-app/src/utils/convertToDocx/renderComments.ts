@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { EntityBase } from '@aws/threat-composer';
+import type { EntityBase } from '@aws/threat-composer';
 import convertMarkdown from './convertMarkdown';
 
 const renderComment = async (metadata: EntityBase['metadata']) => {

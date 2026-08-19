@@ -18,10 +18,12 @@ import Button from '@cloudscape-design/components/button';
 import ContentLayout from '@cloudscape-design/components/content-layout';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { FC, useMemo } from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { useThreatPacksContext } from '../../../contexts/ThreatPacksContext';
-import { ThreatPack } from '../../../customTypes/referencePacks';
-import Table, { ColumnDefinition } from '../../generic/Table';
+import type { ThreatPack } from '../../../customTypes/referencePacks';
+import type { ColumnDefinition } from '../../generic/Table';
+import Table from '../../generic/Table';
 
 export interface ThreatPacksProps {
   onThreatPackLinkClicked?: (id: string) => void;

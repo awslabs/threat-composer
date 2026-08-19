@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
 import BrainstormLocalStateContextProvider from './components/LocalStateContextProvider';
 import BrainstormLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useBrainstormContext } from './context';
@@ -22,7 +22,7 @@ import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
 
 export * from './context';
 export * from './types';
-export { BrainstormItem, BrainstormData } from '../../customTypes/brainstorm';
+export type { BrainstormItem, BrainstormData } from '../../customTypes/brainstorm';
 
 export interface BrainstormContextProviderProps {
   workspaceId: string | null;

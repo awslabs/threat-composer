@@ -19,8 +19,10 @@ import Button from '@cloudscape-design/components/button';
 import Header from '@cloudscape-design/components/header';
 import Modal from '@cloudscape-design/components/modal';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import React, { FC, useMemo, useState } from 'react';
-import { TemplateThreatStatement, TemplateThreatStatementSchema } from '../../../customTypes';
+import type { FC } from 'react';
+import React, { useMemo, useState } from 'react';
+import type { TemplateThreatStatement } from '../../../customTypes';
+import { TemplateThreatStatementSchema } from '../../../customTypes';
 import renderThreatStatement from '../../../utils/renderThreatStatement';
 import Textarea from '../../generic/Textarea';
 

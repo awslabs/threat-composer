@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { ArchitectureInfo } from '../../customTypes';
+import type { ArchitectureInfo } from '../../customTypes';
 
 export interface DataflowInfoContextApi {
   dataflowInfo: ArchitectureInfo;

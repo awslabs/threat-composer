@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useCallback } from 'react';
-import { MitigationLink } from '../../customTypes';
+import type { MitigationLink } from '../../customTypes';
 
 export const isSameMitigationLink = (entity1: MitigationLink, entity2: MitigationLink) => {
   return entity1.mitigationId === entity2.mitigationId

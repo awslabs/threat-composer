@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
-import { FC, ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import Tooltip from '../../../../generic/Tooltip';
 
 export interface ExpandableTokenProps {

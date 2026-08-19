@@ -15,7 +15,8 @@
  ******************************************************************************************************************** */
 import { z } from 'zod';
 import { EntityBaseSchema, StatusSchema, MetadataSchemaThreats } from './entities';
-import { SINGLE_FIELD_INPUT_MAX_LENGTH, LEVEL_HIGH, LEVEL_MEDIUM, LEVEL_LOW, LEVEL_NOT_SET, STATUS_NOT_SET, THREAT_STATUS_IDENTIFIED, THREAT_STATUS_NOT_USEFUL, THREAT_STATUS_RESOLVED } from '../configs';
+import type { LEVEL_HIGH, LEVEL_MEDIUM, LEVEL_LOW, LEVEL_NOT_SET, STATUS_NOT_SET, THREAT_STATUS_IDENTIFIED, THREAT_STATUS_NOT_USEFUL, THREAT_STATUS_RESOLVED } from '../configs';
+import { SINGLE_FIELD_INPUT_MAX_LENGTH } from '../configs';
 import threatStatus from '../data/status/threatStatus.json';
 
 export const ThreatStatementDisplayTokenSchema = z.object({

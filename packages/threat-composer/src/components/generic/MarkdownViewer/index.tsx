@@ -18,7 +18,7 @@ import Icon from '@cloudscape-design/components/icon';
 import TextContent from '@cloudscape-design/components/text-content';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC } from 'react';
+import type { FC } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import frontmatter from 'remark-frontmatter';

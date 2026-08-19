@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { MitigationListFilter } from './mitigations';
-import { ThreatStatementListFilter } from './threats';
+import type { MitigationListFilter } from './mitigations';
+import type { ThreatStatementListFilter } from './threats';
 
 export interface ViewNavigationEvent {
   onApplicationInfoView?: () => void;

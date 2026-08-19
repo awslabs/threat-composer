@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { FC } from 'react';
+import type { FC } from 'react';
 import threatStatementEditor from '../../../../../assets/threat-statement-flow.png';
 import styles from '../../styles';
 import InfoModalBase from '../InfoModalBase';

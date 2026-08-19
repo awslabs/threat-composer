@@ -24,7 +24,7 @@ import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { useCallback, useMemo, useState } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { PerFieldExample } from '../../../customTypes';
+import type { PerFieldExample } from '../../../customTypes';
 import renderArrayField from '../../../utils/renderArrayField';
 import shuffle from '../../../utils/shuffle';
 

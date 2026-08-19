@@ -13,11 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useState } from 'react';
-import { Workspace } from '../../../../customTypes';
+import type { FC } from 'react';
+import { useState } from 'react';
+import type { Workspace } from '../../../../customTypes';
 import { useWorkspaceExamplesContext } from '../../../WorkspaceExamplesContext';
 import { WorkspacesContext } from '../../context';
-import { WorkspacesContextProviderProps } from '../../types';
+import type { WorkspacesContextProviderProps } from '../../types';
 import useCurrentWorkspace from '../../useCurrentWorkspace';
 import useWorkspaces from '../../useWorkspaces';
 

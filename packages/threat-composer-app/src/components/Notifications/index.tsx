@@ -13,12 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Flashbar, {
+import type {
   FlashbarProps,
 } from '@cloudscape-design/components/flashbar';
+import Flashbar from '@cloudscape-design/components/flashbar';
 import Link from '@cloudscape-design/components/link';
 import * as awsui from '@cloudscape-design/design-tokens';
-import { FC, useEffect, useState } from 'react';
+import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 
 export interface NotificationsProps {
   addPadding?: boolean;

@@ -14,8 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Container from '@cloudscape-design/components/container';
-import { FC } from 'react';
-import { MitigationPack } from '../../../../../customTypes';
+import type { FC } from 'react';
+import type { MitigationPack } from '../../../../../customTypes';
 
 export interface GeneralInfoProps {
   mitigationPack: MitigationPack;

@@ -15,8 +15,9 @@
  ******************************************************************************************************************** */
 
 import ContentLayoutComponent from '@cloudscape-design/components/content-layout';
-import Header, { HeaderProps } from '@cloudscape-design/components/header';
-import { FC, PropsWithChildren } from 'react';
+import type { HeaderProps } from '@cloudscape-design/components/header';
+import Header from '@cloudscape-design/components/header';
+import type { FC, PropsWithChildren } from 'react';
 import { useApplicationInfoContext } from '../../../contexts/ApplicationContext';
 
 export interface ContentLayoutProps extends Omit<HeaderProps, 'info'> {

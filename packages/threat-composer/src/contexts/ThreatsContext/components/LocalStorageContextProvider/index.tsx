@@ -13,16 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_STATEMENT_LIST, LOCAL_STORAGE_KEY_EDITING_STATEMENT } from '../../../../configs/localStorageKeys';
-import { TemplateThreatStatement } from '../../../../customTypes';
+import type { TemplateThreatStatement } from '../../../../customTypes';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { useGlobalSetupContext } from '../../../GlobalSetupContext/context';
 import { ThreatsContext } from '../../context';
 import useThreatExamples from '../../hooks/useThreatExamples';
 import useThreats from '../../hooks/useThreats';
-import { ThreatsContextProviderProps } from '../../types';
+import type { ThreatsContextProviderProps } from '../../types';
 
 export const getLocalStorageKey = (workspaceId: string | null) => {
   if (workspaceId) {

@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ExternalHyperlink, IImageOptions, ImageRun, Paragraph } from 'docx';
+import type { IImageOptions } from 'docx';
+import { ExternalHyperlink, ImageRun, Paragraph } from 'docx';
 import { FALLBACK_IMAGE } from './fallbackImage';
 import fetchImage from './fetchImage';
 

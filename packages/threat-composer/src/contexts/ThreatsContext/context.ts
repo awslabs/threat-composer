@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { PerFieldExample, TemplateThreatStatement } from '../../customTypes';
+import type { PerFieldExample, TemplateThreatStatement } from '../../customTypes';
 import threatStatementExamplesData from '../../data/threatStatementExamples.json';
 export type View = 'list' | 'editor';
 

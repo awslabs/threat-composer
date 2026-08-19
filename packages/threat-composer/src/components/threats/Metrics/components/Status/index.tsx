@@ -16,7 +16,7 @@
 /** @jsxImportSource @emotion/react */
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import { css } from '@emotion/react';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 const styles = css({
   background: 'transparent',

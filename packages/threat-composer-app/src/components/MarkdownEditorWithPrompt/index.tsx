@@ -14,8 +14,10 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { MarkdownEditorProps, MarkdownEditor } from '@aws/threat-composer';
-import { FC, useState } from 'react';
+import type { MarkdownEditorProps } from '@aws/threat-composer';
+import { MarkdownEditor } from '@aws/threat-composer';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { unstable_usePrompt } from 'react-router-dom';
 
 const MarkdownEditorWithPrompt: FC<MarkdownEditorProps> = ({

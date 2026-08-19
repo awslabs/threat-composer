@@ -18,12 +18,14 @@ import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { FC, useCallback, useState, useMemo, useEffect } from 'react';
-import { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
+import type { FC } from 'react';
+import { useCallback, useState, useMemo, useEffect } from 'react';
+import type { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
 import imageStyles from '../../../styles/image';
 import ContentLayout from '../../generic/ContentLayout';
 import ImageEdit from '../ImageEdit';
-import MarkdownEditor, { MarkdownEditorProps } from '../MarkdownEditor';
+import type { MarkdownEditorProps } from '../MarkdownEditor';
+import MarkdownEditor from '../MarkdownEditor';
 import MarkdownViewer from '../MarkdownViewer';
 
 export interface BaseDiagramInfoProps extends EditableComponentBaseProps {

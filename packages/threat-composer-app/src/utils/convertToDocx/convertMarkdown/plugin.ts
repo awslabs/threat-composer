@@ -16,7 +16,8 @@
 import type * as mdast from 'mdast';
 import type { Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
-import { mdastToDocx, DocxOptions, ImageDataMap } from './transformer';
+import type { DocxOptions, ImageDataMap } from './transformer';
+import { mdastToDocx } from './transformer';
 import { invariant } from './utils';
 
 export type { DocxOptions };

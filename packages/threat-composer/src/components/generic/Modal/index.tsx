@@ -17,7 +17,8 @@
 import Button from '@cloudscape-design/components/button';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC, PropsWithChildren, useEffect } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+import { useEffect } from 'react';
 
 const styles = {
   main: css({

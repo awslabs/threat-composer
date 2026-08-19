@@ -13,12 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren } from 'react';
-import { AppMode, ComposerMode, DataExchangeFormat } from '../../customTypes';
+import type { FC, PropsWithChildren } from 'react';
+import type { AppMode, ComposerMode, DataExchangeFormat } from '../../customTypes';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import WorkspaceContextAggregator from '../WorkspaceContextAggregator';
 import WorkspaceExamplesContext from '../WorkspaceExamplesContext';
-import WorkspacesContextProvider, { WorkspacesContextProviderProps } from '../WorkspacesContext';
+import type { WorkspacesContextProviderProps } from '../WorkspacesContext';
+import WorkspacesContextProvider from '../WorkspacesContext';
 
 export interface ContextAggregatorProps {
   composerMode?: ComposerMode;

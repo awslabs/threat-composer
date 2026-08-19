@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
 import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
-import { Mitigation } from '../../customTypes';
+import type { Mitigation } from '../../customTypes';
 export type View = 'list' | 'editor';
 
 export interface MitigationsContextApi {

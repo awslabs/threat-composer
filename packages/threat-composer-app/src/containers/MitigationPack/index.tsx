@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { MitigationPackComponent } from '@aws/threat-composer';
-import { FC } from 'react';
+import type { FC } from 'react';
 import { useParams } from 'react-router-dom';
 
 const MitigationPack: FC = () => {

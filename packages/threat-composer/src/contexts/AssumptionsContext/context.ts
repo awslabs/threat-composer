@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
 import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
-import { Assumption } from '../../customTypes';
+import type { Assumption } from '../../customTypes';
 export type View = 'list' | 'editor';
 
 export interface AssumptionsContextApi {

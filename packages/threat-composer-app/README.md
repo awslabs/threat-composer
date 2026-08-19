@@ -22,10 +22,10 @@ This package contains the Threat Composer web application built with Create Reac
 
 ```bash
 # From repository root
-pdk install --frozen-lockfile
+yarn install --frozen-lockfile
 
 # Start development server
-pdk run dev
+yarn dev
 
 # Or from package directory
 cd packages/threat-composer-app
@@ -38,7 +38,7 @@ The app will open at [http://localhost:3000](http://localhost:3000)
 
 ```bash
 # From repository root
-pdk build
+yarn build
 
 # Or from package directory
 cd packages/threat-composer-app

@@ -1,4 +1,4 @@
-import { defineConfig, type UserManifest } from 'wxt';
+import { defineConfig, type ConfigEnv, type UserManifest } from 'wxt';
 import react from '@vitejs/plugin-react';
 import copy from 'rollup-plugin-copy';
 
@@ -60,7 +60,10 @@ export default defineConfig({
           {
             src: '../threat-composer-app/build/browser-extension/index.html',
             dest: env.browser === 'chrome' ? ['./.output/chrome-mv3'] : ['./.output/firefox-mv2'],
-            transform: (contents) => contents.toString().replace('<\/body><\/html>', '<script src=\"' + tcScriptInjectForThreatComposer + '\"><\/script><\/body><\/html>')
+            // Matches `</body></html>` with optional whitespace in between.
+            // create-react-app minified the document to a single line; Vite
+            // preserves the source formatting, so the newline must be tolerated.
+            transform: (contents) => contents.toString().replace(/<\/body>\s*<\/html>/, '<script src="' + tcScriptInjectForThreatComposer + '"></script></body></html>')
           },
           {
             src: '../threat-composer-app/build/browser-extension/*.js',

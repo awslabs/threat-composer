@@ -15,8 +15,8 @@
  ******************************************************************************************************************** */
 
 import { logDebugMessage } from '../../../debugLogger';
-import { TCConfig } from '../../popup/config';
-import { SPAIntegrationState } from '../types';
+import type { TCConfig } from '../../popup/config';
+import type { SPAIntegrationState } from '../types';
 import { cleanupExistingThreatComposerButtons, threatComposerButtonExists, TC_BUTTON_ID } from './core-utils';
 
 /**

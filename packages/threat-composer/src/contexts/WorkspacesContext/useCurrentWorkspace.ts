@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { useEffect, useMemo } from 'react';
 import { DEFAULT_WORKSPACE_ID } from '../../configs';
-import { Workspace } from '../../customTypes';
+import type { Workspace } from '../../customTypes';
 
 const useCurrentWorkspace = (
   lastWorkspace: Workspace | null,

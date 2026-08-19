@@ -14,20 +14,24 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useThemeContext } from '@aws/threat-composer';
-import AppLayoutComponent, {
+import type {
   AppLayoutProps as AppLayoutComponentProps,
 } from '@cloudscape-design/components/app-layout';
-import BreadcrumbGroup, { BreadcrumbGroupProps } from '@cloudscape-design/components/breadcrumb-group';
-import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
-import SideNavigation, { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
-import { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
+import AppLayoutComponent from '@cloudscape-design/components/app-layout';
+import type { BreadcrumbGroupProps } from '@cloudscape-design/components/breadcrumb-group';
+import BreadcrumbGroup from '@cloudscape-design/components/breadcrumb-group';
+import type { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import type { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
+import SideNavigation from '@cloudscape-design/components/side-navigation';
+import type { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
 import { Mode } from '@cloudscape-design/global-styles';
-import { FC, ReactNode, useState, useCallback, createContext, PropsWithChildren, ReactElement, useContext, useMemo, useEffect } from 'react';
+import type { FC, ReactNode, PropsWithChildren, ReactElement } from 'react';
+import { useState, useCallback, createContext, useContext, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import appLogoDark from '../../assets/logo-dark.svg';
 import appLogoLight from '../../assets/logo-light.svg';
 import { SEARCH_PARAM_MODE } from '../../config/searchParams';
-import { NavHeaderProps } from '../NavHeader';
+import type { NavHeaderProps } from '../NavHeader';
 
 export type AppLayoutProps = (NavHeaderProps | { header: ReactElement<TopNavigationProps> })
 & {

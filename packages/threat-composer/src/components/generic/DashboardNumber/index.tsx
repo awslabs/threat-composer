@@ -16,10 +16,11 @@
 /** @jsxImportSource @emotion/react */
 
 import Icon from '@cloudscape-design/components/icon';
-import Link, { LinkProps } from '@cloudscape-design/components/link';
+import type { LinkProps } from '@cloudscape-design/components/link';
+import Link from '@cloudscape-design/components/link';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { css } from '@emotion/react';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 const styles = {
   link: css({

@@ -13,11 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { FC } from 'react';
+import type { FC } from 'react';
 import WorkspaceSelectorComponent from '../../components/workspaces/WorkspaceSelector';
 import { APP_MODE_BROWSER_EXTENSION, APP_MODE_IDE_EXTENSION } from '../../configs';
 import ContextAggregator from '../../contexts/ContextAggregator';
-import { ComposerMode } from '../../customTypes';
+import type { ComposerMode } from '../../customTypes';
 
 export interface WorkspaceSelectorProps {
   composerMode: string;

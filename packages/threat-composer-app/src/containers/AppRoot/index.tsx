@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 
 import { GlobalSetupContext } from '@aws/threat-composer';
-import { FC } from 'react';
+import type { FC } from 'react';
 import { Outlet } from 'react-router-dom';
 import { appMode } from '../../config/appMode';
 import useFeatures from '../../hooks/useFeatures';

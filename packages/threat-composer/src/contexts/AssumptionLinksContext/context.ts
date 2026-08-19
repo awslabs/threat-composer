@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { AssumptionLink } from '../../customTypes';
+import type { AssumptionLink } from '../../customTypes';
 export type View = 'list' | 'editor';
 
 export interface AssumptionLinksContextApi {

@@ -18,7 +18,7 @@ import { APP_MODE_IDE_EXTENSION, STORAGE_LOCAL_STATE, STORAGE_LOCAL_STORAGE } fr
 import { useGlobalSetupContext } from '../../contexts';
 import { useWorkspaceExamplesContext } from '../../contexts/WorkspaceExamplesContext';
 import { useWorkspacesContext } from '../../contexts/WorkspacesContext';
-import { DataExchangeFormat } from '../../customTypes';
+import type { DataExchangeFormat } from '../../customTypes';
 import isWorkspaceExample from '../../utils/isWorkspaceExample';
 
 type StorageType = typeof STORAGE_LOCAL_STATE | typeof STORAGE_LOCAL_STORAGE;

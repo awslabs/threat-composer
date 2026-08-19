@@ -14,10 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
+import type { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
+import ExpandableSection from '@cloudscape-design/components/expandable-section';
 import Grid from '@cloudscape-design/components/grid';
 import { useState } from 'react';
-import { EntityBase } from '../../../customTypes';
+import type { EntityBase } from '../../../customTypes';
 import expandablePanelHeaderStyles from '../../../styles/expandablePanelHeader';
 import CommentsEdit from '../CommentsEdit';
 

@@ -85,7 +85,7 @@ export async function getExtensionConfig(): Promise<TCConfig> {
 }
 
 export function setExtensionConfig(config: TCConfig) {
-  browser.storage.local.set({ tcConfig: config }).then(() => {
+  void browser.storage.local.set({ tcConfig: config }).then(() => {
     logDebugMessage(config, 'Saved config to browser storage');
   });
 }

@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { v4 as uuidV4 } from 'uuid';
 import { DEFAULT_THREAT_STATUS } from '../../configs/status';
-import { TemplateThreatStatement } from '../../customTypes';
+import type { TemplateThreatStatement } from '../../customTypes';
 
 const getNewThreatStatement = (): TemplateThreatStatement => {
   return {

@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { Paragraph, Table, TableOfContents } from 'docx';
+import type { Paragraph, Table, TableOfContents } from 'docx';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 import markdown from 'remark-parse';

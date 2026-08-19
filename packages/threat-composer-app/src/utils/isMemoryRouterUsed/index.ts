@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { APP_MODE_IDE_EXTENSION, APP_MODE_BROWSER_EXTENSION } from '@aws/threat-composer';
 
-const appMode = process.env.REACT_APP_APP_MODE;
+const appMode = import.meta.env.VITE_APP_MODE;
 
 const isMemoryRouterUsed = () => {
   return appMode === APP_MODE_IDE_EXTENSION || appMode === APP_MODE_BROWSER_EXTENSION;

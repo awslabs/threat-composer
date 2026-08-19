@@ -14,7 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
-import { FC, PropsWithChildren, useCallback } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback } from 'react';
 
 export interface CopyToClipbordProps {
   /**

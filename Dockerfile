@@ -20,7 +20,7 @@ RUN echo node > .nvmrc
 RUN nvm install $NODE_VERSION
 
 # Required to build the threat-composer app
-RUN npm install -g @aws/pdk yarn
+RUN npm install -g yarn
 
 # uv (required by packages/threat-composer-ai postinstall hook)
 COPY --from=ghcr.io/astral-sh/uv:0.11.26 /uv /uvx /usr/local/bin/
@@ -34,8 +34,6 @@ RUN mkdir /app && chown app:app /app
 
 # # Switch to the 'app' user
 USER app
-# Set the path so we can use pdk
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
 
 # # Set the working directory to the app directory

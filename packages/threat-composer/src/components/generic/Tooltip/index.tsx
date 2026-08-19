@@ -16,7 +16,8 @@
 /** @jsxImportSource @emotion/react */
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import React, { FC, PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+import React from 'react';
 import { useMobileMediaQuery } from '../../../hooks/useMediaQuery';
 
 const styles = {

@@ -13,13 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat } from '@aws/threat-composer';
+import type { DataExchangeFormat } from '@aws/threat-composer';
 import { useCallback } from 'react';
 import { generatePath } from 'react-router-dom';
 import { ROUTE_PREVIEW } from '../../config/routes';
 
 const TEMP_PREVIEW_DATA_KEY = 'ThreatStatementGenerator.TempPreviewData';
-const ROUTE_BASE_PATH = process.env.REACT_APP_ROUTE_BASE_PATH;
+const ROUTE_BASE_PATH = import.meta.env.VITE_ROUTE_BASE_PATH;
 
 const useOnPreview = () => {
   const handlePreview = useCallback((data: DataExchangeFormat) => {

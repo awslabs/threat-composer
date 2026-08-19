@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { ApplicationInfo } from '../../customTypes';
+import type { ApplicationInfo } from '../../customTypes';
 
 export interface ApplicationInfoContextApi {
   applicationInfo: ApplicationInfo;

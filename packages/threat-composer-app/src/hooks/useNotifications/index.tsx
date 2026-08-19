@@ -16,7 +16,7 @@
 import { useMemo } from 'react';
 import Notifications from '../../components/Notifications';
 
-const toDisplayNotification = (process.env.REACT_APP_GITHUB_PAGES === 'true');
+const toDisplayNotification = (import.meta.env.VITE_GITHUB_PAGES === 'true');
 
 const useNotifications = (addPadding?: boolean) => {
   return useMemo(() => toDisplayNotification ? <Notifications addPadding={addPadding}/> : undefined, []);

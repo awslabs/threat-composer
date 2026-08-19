@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { Table as DocxTable, ITableOptions } from 'docx';
+import type { ITableOptions } from 'docx';
+import { Table as DocxTable } from 'docx';
 
 class Table extends DocxTable {
   constructor(opts: ITableOptions) {

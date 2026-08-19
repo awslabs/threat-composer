@@ -13,22 +13,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import type {
+  ParagraphChild,
+  TableOfContents,
+  IImageOptions,
+  ILevelsOptions,
+} from 'docx';
 import {
   convertInchesToTwip,
   Packer,
   Document,
   Paragraph,
-  ParagraphChild,
   TableRow,
   TableCell,
-  TableOfContents,
   TextRun,
   ExternalHyperlink,
   HeadingLevel,
   LevelFormat,
   AlignmentType,
-  IImageOptions,
-  ILevelsOptions,
   FootnoteReferenceRun,
   CheckBox,
 } from 'docx';

@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useCallback } from 'react';
-import { BrainstormData, BrainstormItem } from '../../customTypes/brainstorm';
+import type { BrainstormData, BrainstormItem } from '../../customTypes/brainstorm';
 
 const initialState: BrainstormData = {
   assumptions: [],

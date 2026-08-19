@@ -16,20 +16,21 @@
 
 import { logDebugMessage } from '../debugLogger';
 import { AmazonCodeHandler } from './content-script/handlers/amazon-code-handler';
-import { BaseIntegrationHandler } from './content-script/handlers/base-handler';
+import type { BaseIntegrationHandler } from './content-script/handlers/base-handler';
 import { BitbucketHandler } from './content-script/handlers/bitbucket-handler';
 import { CodeCatalystHandler } from './content-script/handlers/codecatalyst-handler';
 import { GitHubHandler } from './content-script/handlers/github-handler';
 import { GitLabHandler } from './content-script/handlers/gitlab-handler';
 import { SPAIntegrationHandler } from './content-script/handlers/spa-handler';
-import {
+import type {
   TCGitHubState,
   TCGitLabState,
   TCCodeCatalystState,
   TCAmazonCodeState,
   TCBitbucketState,
 } from './content-script/types';
-import { getExtensionConfig, TCConfig, IntegrationTypes } from './popup/config';
+import type { TCConfig } from './popup/config';
+import { getExtensionConfig, IntegrationTypes } from './popup/config';
 
 // WXT framework imports
 declare const defineContentScript: any;

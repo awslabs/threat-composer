@@ -18,7 +18,8 @@ import { ThreatModelView } from '@aws/threat-composer';
 import { Container } from '@cloudscape-design/components';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC, useEffect, useMemo } from 'react';
+import type { FC } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 const styles = {

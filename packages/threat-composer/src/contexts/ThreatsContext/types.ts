@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ViewNavigationEvent } from '../../customTypes';
-import { ContextProviderBaseProps } from '../types';
+import type { ViewNavigationEvent } from '../../customTypes';
+import type { ContextProviderBaseProps } from '../types';
 
 export type View = 'list' | 'editor';
 

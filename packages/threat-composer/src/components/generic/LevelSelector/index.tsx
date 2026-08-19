@@ -14,8 +14,10 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import FormField from '@cloudscape-design/components/form-field';
-import Select, { SelectProps } from '@cloudscape-design/components/select';
-import React, { FC } from 'react';
+import type { SelectProps } from '@cloudscape-design/components/select';
+import Select from '@cloudscape-design/components/select';
+import type { FC } from 'react';
+import React from 'react';
 import { LEVEL_SELECTOR_OPTIONS } from '../../../configs';
 
 export const NO_VALUE = '-';

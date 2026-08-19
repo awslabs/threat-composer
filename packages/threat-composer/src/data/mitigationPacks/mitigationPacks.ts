@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import GenAIChatbot from './generated/GenAIChatbot.json';
-import { MitigationPack } from '../../customTypes';
+import type { MitigationPack } from '../../customTypes';
 // {IMPORT_PLACEHOLDER}
 
 const mitigationPacks = [

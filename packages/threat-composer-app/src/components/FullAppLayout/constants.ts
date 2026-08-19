@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { SplitPanelProps } from '@cloudscape-design/components/split-panel';
+import type { SplitPanelProps } from '@cloudscape-design/components/split-panel';
 
 export const splitPanelI18nStrings: SplitPanelProps.I18nStrings = {
   preferencesTitle: 'Preferences',

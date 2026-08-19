@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TemplateThreatStatement, ThreatFieldTypes, threatFieldTypeMapping } from '../../customTypes';
+import type { TemplateThreatStatement, ThreatFieldTypes } from '../../customTypes';
+import { threatFieldTypeMapping } from '../../customTypes';
 import calculateFieldCombination from '../calculateFieldCombination';
 
 const allFields = Object.keys(threatFieldTypeMapping);

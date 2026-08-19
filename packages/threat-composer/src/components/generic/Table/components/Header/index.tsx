@@ -13,8 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import CloudscapeHeader, { HeaderProps as CloudscapeHeaderProps } from '@cloudscape-design/components/header';
-import { FC, isValidElement, createElement, PropsWithChildren, useMemo } from 'react';
+import type { HeaderProps as CloudscapeHeaderProps } from '@cloudscape-design/components/header';
+import CloudscapeHeader from '@cloudscape-design/components/header';
+import type { FC, PropsWithChildren } from 'react';
+import { isValidElement, createElement, useMemo } from 'react';
 
 export interface HeaderProps {
   actions?: CloudscapeHeaderProps['actions'];

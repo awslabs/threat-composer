@@ -15,12 +15,13 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 import Badge from '@cloudscape-design/components/badge';
-import { SelectProps } from '@cloudscape-design/components/select';
+import type { SelectProps } from '@cloudscape-design/components/select';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC, useMemo, useState, useRef } from 'react';
+import type { FC } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import PriorityEdit from '..//PriorityEdit';
-import { TemplateThreatStatement } from '../../../customTypes';
+import type { TemplateThreatStatement } from '../../../customTypes';
 
 export interface PriorityBadgeProps {
   editingStatement: TemplateThreatStatement;

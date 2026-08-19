@@ -13,13 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_MITIGATION_LINK_LIST } from '../../../../configs/localStorageKeys';
-import { MitigationLink } from '../../../../customTypes';
+import type { MitigationLink } from '../../../../customTypes';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { MitigationLinksContext } from '../../context';
-import { MitigationLinksContextProviderProps } from '../../types';
+import type { MitigationLinksContextProviderProps } from '../../types';
 import useMitigationLinks from '../../useMitigationLinks';
 
 export const getLocalStorageKey = (workspaceId: string | null) => {

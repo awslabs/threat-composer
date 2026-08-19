@@ -30,7 +30,7 @@ let initialTheme = initialThemeString ?
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={initialTheme} appMode={process.env.REACT_APP_APP_MODE || undefined}>
+    <ThemeProvider theme={initialTheme} appMode={import.meta.env.VITE_APP_MODE || undefined}>
       <App />
     </ThemeProvider>
   </React.StrictMode>,

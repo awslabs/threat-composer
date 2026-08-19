@@ -12,15 +12,15 @@ This monorepo hosts multiple packages that make up the Threat Composer ecosystem
 - **threat-composer-infra**: AWS CDK infrastructure code
 - **threat-composer-ai**: AI-powered CLI and MCP server for automated threat modeling
 
-The repository is defined and maintained using [projen](https://github.com/projen/projen) and [aws-prototyping-sdk](https://github.com/aws/aws-prototyping-sdk).
+The repository is a [Yarn workspaces](https://classic.yarnpkg.com/en/docs/workspaces) monorepo. Each package owns its own `package.json` scripts; the root scripts fan out to them in dependency order.
 
 ## Repository Structure
 
 | Project                               | Path                                           | Description                                                                                            | Tech Stack                                                                          |
 | ------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
 | threat-composer                       | packages/threat-composer                       | UI components for threat-composer                                                                      | [React](https://react.dev/), [CloudScape design system](https://cloudscape.design/) |
-| threat-composer-app                   | packages/threat-composer-app                   | threat-composer Single Page App (SPA) bootstrapped by [create-react-app](https://create-react-app.dev/) | React                                                                               |
-| threat-composer-infra                 | packages/threat-composer-infra                 | threat-composer Infrastructure CDK App                                                                 | [aws-prototyping-sdk constructs](https://github.com/aws/aws-prototyping-sdk)        |
+| threat-composer-app                   | packages/threat-composer-app                   | threat-composer Single Page App (SPA) built with [Vite](https://vite.dev/) | React                                                                               |
+| threat-composer-infra                 | packages/threat-composer-infra                 | threat-composer Infrastructure CDK App                                                                 | [AWS CDK](https://aws.amazon.com/cdk/)                                              |
 | threat-composer-app-browser-extension | packages/threat-composer-app-browser-extension | threat-composer browser extension                                                                      | [wxt](https://wxt.dev/), React                                                      |
 | threat-composer-ai                    | packages/threat-composer-ai                    | AI-powered CLI and MCP server                                                                          | Python, [Strands](https://github.com/awslabs/strands), FastMCP                      |
 
@@ -30,7 +30,6 @@ The repository is defined and maintained using [projen](https://github.com/proje
 
 - [NodeJS](https://nodejs.org/en/) (version 20 or higher)
 - [Yarn](https://yarnpkg.com/) - Install via `npm install -g yarn`
-- [PDK](https://aws.github.io/aws-pdk/overview/index.html) - Install via `npm install -g @aws/pdk`
 - [git-secrets](https://github.com/awslabs/git-secrets#installing-git-secrets)
 - [oss-attribution-generator](https://www.npmjs.com/package/oss-attribution-generator) - Install via `npm install -g oss-attribution-generator`
 
@@ -53,7 +52,7 @@ cd threat-composer
 ### Install Dependencies
 
 ```bash
-pdk install --frozen-lockfile
+yarn install --frozen-lockfile
 ```
 
 This will install all dependencies for all packages in the monorepo.
@@ -61,7 +60,7 @@ This will install all dependencies for all packages in the monorepo.
 ### Build All Projects
 
 ```bash
-pdk build
+yarn build
 ```
 
 This builds all packages in the correct dependency order.
@@ -75,7 +74,7 @@ The threat-composer package contains the core UI components. The recommended dev
 #### Run Storybook
 
 ```bash
-pdk run storybook
+yarn storybook
 ```
 
 Open [http://localhost:6006](http://localhost:6006/) to view it in the browser. The page will reload if you make edits.
@@ -94,7 +93,7 @@ yarn test
 #### Start Development Server
 
 ```bash
-pdk run dev
+yarn dev
 ```
 
 This starts the web application in development mode. Open [http://localhost:3000](http://localhost:3000/) to view it in the browser.
@@ -175,25 +174,25 @@ uv run pytest
 
 ```bash
 # Install all dependencies
-pdk install --frozen-lockfile
+yarn install --frozen-lockfile
 
 # Build all packages
-pdk build
+yarn build
 
 # Run Storybook
-pdk run storybook
+yarn storybook
 
 # Start web app dev server
-pdk run dev
+yarn dev
 
 # Run all tests
-pdk test
+yarn test
 
 # Lint all packages
-pdk run lint
+yarn eslint
 
 # Format code
-pdk run format
+yarn eslint
 ```
 
 ### Package-Specific Commands
@@ -262,7 +261,7 @@ src/
 
 ```bash
 # Run all tests
-pdk test
+yarn test
 
 # Run tests for specific package
 cd packages/threat-composer
@@ -281,7 +280,7 @@ yarn test --coverage
 
 ```bash
 # Lint all packages
-pdk run eslint
+yarn eslint
 ```
 
 ### Formatting
@@ -290,14 +289,14 @@ The project uses Prettier for code formatting:
 
 ```bash
 # Format all code
-pdk run format
+yarn eslint
 ```
 
 ### Type Checking
 
 ```bash
 # Type check all packages
-pdk run type-check
+yarn typecheck
 
 # Type check specific package
 cd packages/threat-composer
@@ -309,7 +308,7 @@ yarn type-check
 ### Build All Packages
 
 ```bash
-pdk build
+yarn build
 ```
 
 ### Build Specific Package
@@ -358,8 +357,8 @@ Quick deploy:
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/my-feature`
 3. Make your changes
-4. Run tests: `pdk test`
-5. Run linting: `pdk run lint`
+4. Run tests: `yarn test`
+5. Run linting: `yarn eslint`
 6. Commit your changes: `git commit -m "Add my feature"`
 7. Push to your fork: `git push origin feature/my-feature`
 8. Create a Pull Request
@@ -400,7 +399,7 @@ Types:
 
 ```bash
 git clean -fXd
-pdk install --frozen-lockfile
+yarn install --frozen-lockfile
 ```
 
 ### Getting Help

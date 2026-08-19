@@ -16,7 +16,7 @@
 /** @jsxImportSource @emotion/react */
 import Grid from '@cloudscape-design/components/grid';
 import { css } from '@emotion/react';
-import { FC } from 'react';
+import type { FC } from 'react';
 import styles from '../../styles';
 import InfoModalBase from '../InfoModalBase';
 

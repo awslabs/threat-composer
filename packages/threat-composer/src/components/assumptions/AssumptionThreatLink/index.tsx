@@ -13,10 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useEffect, useState } from 'react';
+import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { AssumptionLink } from '../../../customTypes';
+import type { AssumptionLink } from '../../../customTypes';
 import ThreatLinkView from '../../threats/ThreatLinkView';
 
 export interface AssumptionThreatLinkProps {

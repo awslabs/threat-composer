@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import GenAIChatbot from './generated/GenAIChatbot.json';
-import { ThreatPack } from '../../customTypes';
+import type { ThreatPack } from '../../customTypes';
 // {IMPORT_PLACEHOLDER}
 
 const threatPacks = [

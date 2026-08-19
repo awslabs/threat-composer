@@ -14,7 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { Loading } from '@aws/threat-composer';
-import { FC, Suspense, useState } from 'react';
+import type { FC } from 'react';
+import { Suspense, useState } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { routerOpts, createRouter, routes } from '../../../../routes';
 

@@ -14,7 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useMemo } from 'react';
-import { EntityBase, MetadataCommentSchema } from '../../../customTypes';
+import type { EntityBase } from '../../../customTypes';
+import { MetadataCommentSchema } from '../../../customTypes';
 import MarkdownEditor from '../MarkdownEditor';
 
 export interface CommentsEditProps<T> {

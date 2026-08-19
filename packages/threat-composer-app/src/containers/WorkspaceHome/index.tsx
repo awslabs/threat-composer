@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { WorkspaceHome as WorkspaceHomeComponent, ThreatStatementListFilter, MitigationListFilter } from '@aws/threat-composer';
+import type { ThreatStatementListFilter, MitigationListFilter } from '@aws/threat-composer';
+import { WorkspaceHome as WorkspaceHomeComponent } from '@aws/threat-composer';
 import { ROUTE_APPLICATION_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST } from '../../config/routes';
 import useNavigateView from '../../hooks/useNavigationView';
 

@@ -36,7 +36,7 @@ import {
 } from '../config/routes';
 import isMemoryRouterUsed from '../utils/isMemoryRouterUsed';
 
-const ROUTE_BASE_PATH = process.env.REACT_APP_ROUTE_BASE_PATH;
+const ROUTE_BASE_PATH = import.meta.env.VITE_ROUTE_BASE_PATH;
 
 const AppRoot = React.lazy(() => import('../containers/AppRoot'));
 const WorkspaceRoot = React.lazy(() => import('../containers/WorkspaceRoot'));

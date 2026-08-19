@@ -13,14 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import type { ThreatStatementListFilter } from '@aws/threat-composer';
 import {
   DEFAULT_WORKSPACE_ID,
   WorkspaceContextAggregator,
   WorkspacesContext,
-  ThreatStatementListFilter,
   WorkspaceExamplesContext,
 } from '@aws/threat-composer';
-import { useCallback, FC } from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { useNavigate, useParams, useSearchParams, Outlet } from 'react-router-dom';
 import {
   ROUTE_THREAT_EDITOR_PATH,

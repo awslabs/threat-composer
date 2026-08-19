@@ -14,7 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Multiselect from '@cloudscape-design/components/multiselect';
-import React, { FC, useMemo } from 'react';
+import type { FC } from 'react';
+import React, { useMemo } from 'react';
 
 export interface AssetSelectorProps {
   allAssets: string[];

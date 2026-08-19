@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC } from 'react';
+import type { FC } from 'react';
 import { useDataflowInfoContext } from '../../../contexts/DataflowContext/context';
-import { DataflowInfoSchema, EditableComponentBaseProps } from '../../../customTypes';
+import type { EditableComponentBaseProps } from '../../../customTypes';
+import { DataflowInfoSchema } from '../../../customTypes';
 import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
 
 const DataflowInfo: FC<EditableComponentBaseProps> = (props) => {

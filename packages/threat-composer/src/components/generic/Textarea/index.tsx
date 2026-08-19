@@ -13,12 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import FormField, { FormFieldProps } from '@cloudscape-design/components/form-field';
-import { BaseChangeDetail } from '@cloudscape-design/components/input/interfaces';
-import { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
-import TextareaComponent, { TextareaProps as TextareaComponetProps } from '@cloudscape-design/components/textarea';
-import React, { FC, useCallback } from 'react';
-import { z } from 'zod';
+import type { FormFieldProps } from '@cloudscape-design/components/form-field';
+import FormField from '@cloudscape-design/components/form-field';
+import type { BaseChangeDetail } from '@cloudscape-design/components/input/interfaces';
+import type { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import type { TextareaProps as TextareaComponetProps } from '@cloudscape-design/components/textarea';
+import TextareaComponent from '@cloudscape-design/components/textarea';
+import type { FC } from 'react';
+import React, { useCallback } from 'react';
+import type { z } from 'zod';
 import useContentValidation from '../../../hooks/useContentValidation';
 
 export interface TextAreaProps extends FormFieldProps, TextareaComponetProps {

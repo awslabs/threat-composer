@@ -14,7 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { MitigationPacksComponent } from '@aws/threat-composer';
-import { FC, useCallback } from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ROUTE_MITIGATION_PACK } from '../../config/routes';
 import generateUrl from '../../utils/generateUrl';

@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { Mitigation, TemplateThreatStatement, ThreatPack, ThreatPackUsage } from '../../customTypes';
+import type { Mitigation, TemplateThreatStatement, ThreatPack, ThreatPackUsage } from '../../customTypes';
 
 export interface ThreatPacksContextApi {
   threatPacks: ThreatPack[];

@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { TableCell, Paragraph, IParagraphOptions } from 'docx';
+import type { IParagraphOptions } from 'docx';
+import { TableCell, Paragraph } from 'docx';
 
 class TableHeaderCell extends TableCell {
   constructor(paragraph: string | IParagraphOptions) {

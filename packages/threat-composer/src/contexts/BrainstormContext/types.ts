@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { BrainstormItem } from '../../customTypes/brainstorm';
+import type { BrainstormItem } from '../../customTypes/brainstorm';
 
 // Promotion handlers interface
 export interface PromotionHandlers {

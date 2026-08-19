@@ -16,7 +16,7 @@
 /** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
 import { css } from '@emotion/react';
-import { FC } from 'react';
+import type { FC } from 'react';
 import styles from '../../styles';
 import InfoModalBase from '../InfoModalBase';
 

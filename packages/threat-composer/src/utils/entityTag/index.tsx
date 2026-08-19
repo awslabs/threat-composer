@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { EntityBase } from '../../customTypes';
+import type { EntityBase } from '../../customTypes';
 
 export const addTagToEntity = (entity: EntityBase, tag: string) => {
   const updated: EntityBase = {

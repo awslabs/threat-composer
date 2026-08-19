@@ -13,10 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useCallback, useEffect, useState } from 'react';
+import type { FC } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
-import { AssumptionLink } from '../../../customTypes';
+import type { AssumptionLink } from '../../../customTypes';
 import getNewMitigation from '../../../utils/getNewMitigation';
 import MitigationLinkView from '../../mitigations/MitigationLinkView';
 

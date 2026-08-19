@@ -14,7 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { applyDensity, applyMode, Density, Mode } from '@cloudscape-design/global-styles';
-import { FC, createContext, useState, useEffect, useContext, PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_THEME_MODE, LOCAL_STORAGE_KEY_THEME_DENSITY } from '../../../configs';
 

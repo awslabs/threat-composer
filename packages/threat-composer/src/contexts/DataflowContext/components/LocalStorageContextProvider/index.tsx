@@ -13,14 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_DATAFLOW_INFO } from '../../../../configs/localStorageKeys';
-import { DataflowInfo } from '../../../../customTypes';
+import type { DataflowInfo } from '../../../../customTypes';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { INFO_DEFAULT_VALUE } from '../../../constants';
 import { DataflowInfoContext, useDataflowInfoContext } from '../../context';
-import { DataflowContextProviderProps } from '../../types';
+import type { DataflowContextProviderProps } from '../../types';
 
 export const getLocalStorageKey = (workspaceId: string | null) => {
   if (workspaceId) {

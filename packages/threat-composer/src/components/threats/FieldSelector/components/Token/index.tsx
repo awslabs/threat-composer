@@ -16,7 +16,7 @@
 /** @jsxImportSource @emotion/react */
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC, PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
 import Tooltip from '../../../../generic/Tooltip';
 
 export interface TokenProps {

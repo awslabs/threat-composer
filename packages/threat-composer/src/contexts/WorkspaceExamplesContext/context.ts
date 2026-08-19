@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useContext, createContext } from 'react';
-import { WorkspaceExampleWithId } from '../../customTypes';
+import type { WorkspaceExampleWithId } from '../../customTypes';
 
 export interface WorkspaceExamplesContextApi {
   workspaceExamples: WorkspaceExampleWithId[];

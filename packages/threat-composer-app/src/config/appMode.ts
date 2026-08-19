@@ -19,7 +19,7 @@ import {
   APP_MODE_IDE_EXTENSION,
 } from '@aws/threat-composer';
 
-const appModeEnv = process.env.REACT_APP_APP_MODE;
+const appModeEnv = import.meta.env.VITE_APP_MODE;
 
 export const appMode = appModeEnv === APP_MODE_BROWSER_EXTENSION ?
   APP_MODE_BROWSER_EXTENSION :

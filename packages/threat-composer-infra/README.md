@@ -25,7 +25,7 @@ This package contains AWS CDK infrastructure code for deploying Threat Composer 
 
 ```bash
 # From repository root
-pdk install --frozen-lockfile
+yarn install --frozen-lockfile
 
 # Bootstrap CDK (if not already done)
 cdk bootstrap aws://<account-id>/<region>
@@ -130,3 +130,29 @@ When contributing to this package:
 ## License
 
 Licensed under Apache-2.0. See [LICENSE](../../LICENSE) for details.
+
+## Migration off `@aws/pdk`
+
+This package used to build on `@aws/pdk`'s CDK constructs. Those have been
+replaced with plain AWS CDK:
+
+| Was | Now |
+| --- | --- |
+| `PDKNag.app()` | `new App()` plus the `cdk-nag` `AwsSolutionsChecks` aspect |
+| `StaticWebsite` / `StaticWebsiteOrigin` | `src/static-website.ts` — private S3 bucket, CloudFront distribution with an Origin Access Control, and a `BucketDeployment` |
+| `CloudfrontWebAcl` (inside `StaticWebsite`) | `src/web-acl-stack.ts` — a plain `CfnIPSet` + `CfnWebACL` |
+| `PDKPipeline` / `PDKPipelineWithCodeConnection` | `pipelines.CodePipeline` in `src/pipeline-stack.ts` |
+| `PDKNag.getStackPartitionRegex()` | a partition-agnostic suppression regex |
+
+Two behavioural consequences worth knowing:
+
+- **The WAF WebACL is now its own stack.** CloudFront-scoped WAF resources can
+  only exist in `us-east-1`. PDK reached that region from anywhere using a
+  Lambda-backed custom resource; the replacement uses ordinary CloudFormation,
+  so the WebACL lives in a companion `us-east-1` stack and its ARN reaches the
+  application stack through a cross-region reference. Deploy a whole stage
+  (`cdk deploy 'Dev/*'`) rather than the app stack alone.
+- **Sonar scanning was dropped.** `PDKPipeline` could attach a Sonar scanner via
+  the `sonarqubeScannerConfig` context value. That value is unset in
+  `cdk.context.json`; if it is needed again, add a `CodeBuildStep` to the
+  pipeline's `post` steps.

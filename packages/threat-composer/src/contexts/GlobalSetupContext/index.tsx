@@ -15,13 +15,14 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 import { Mode, Density } from '@cloudscape-design/global-styles';
-import { FC, PropsWithChildren, useState, useEffect } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+import { useState, useEffect } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { GlobalSetupContext, useGlobalSetupContext } from './context';
 import { useThemeContext } from '../../components/generic/ThemeProvider';
 import InfoModal from '../../components/global/InfoModal';
 import { LOCAL_STORAGE_KEY_NEW_VISIT_FLAG } from '../../configs/localStorageKeys';
-import { ComposerMode, AppMode } from '../../customTypes';
+import type { ComposerMode, AppMode } from '../../customTypes';
 import EventController from '../../utils/EventController';
 
 export interface GlobalSetupContextProviderProps {

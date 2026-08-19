@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useWorkspacesContext } from '@aws/threat-composer';
-import { BreadcrumbGroupProps } from '@cloudscape-design/components';
+import type { BreadcrumbGroupProps } from '@cloudscape-design/components';
 import { useEffect } from 'react';
 import { useAppLayoutContext } from '../../components/FullAppLayout';
 

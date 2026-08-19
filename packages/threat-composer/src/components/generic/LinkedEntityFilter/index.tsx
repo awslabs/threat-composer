@@ -18,7 +18,7 @@ import Box from '@cloudscape-design/components/box';
 import SegmentedControl from '@cloudscape-design/components/segmented-control';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC } from 'react';
+import type { FC } from 'react';
 import svgStyles from '../../../styles/svg';
 import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
 import Tooltip from '../Tooltip';

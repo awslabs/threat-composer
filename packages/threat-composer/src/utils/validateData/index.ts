@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat, DataExchangeFormatSchema } from '../../customTypes';
+import type { DataExchangeFormat } from '../../customTypes';
+import { DataExchangeFormatSchema } from '../../customTypes';
 
 const validateData = (data: DataExchangeFormat) => {
   const validation = DataExchangeFormatSchema.safeParse(data);

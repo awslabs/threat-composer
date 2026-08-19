@@ -14,10 +14,12 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Autosuggest from '@cloudscape-design/components/autosuggest';
-import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
+import type { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
+import ExpandableSection from '@cloudscape-design/components/expandable-section';
 import TokenGroup from '@cloudscape-design/components/token-group';
-import React, { FC, useMemo } from 'react';
-import { Assumption } from '../../../customTypes';
+import type { FC } from 'react';
+import React, { useMemo } from 'react';
+import type { Assumption } from '../../../customTypes';
 
 export interface AssumptionLinkProps {
   variant?: ExpandableSectionProps['variant'];

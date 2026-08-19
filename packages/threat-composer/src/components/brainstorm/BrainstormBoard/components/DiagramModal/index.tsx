@@ -22,7 +22,8 @@ import {
   Grid,
   SegmentedControl,
 } from '@cloudscape-design/components';
-import { FC, useState, useEffect, useCallback, CSSProperties } from 'react';
+import type { FC, CSSProperties } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 /**
  * Props interface for DiagramModal component

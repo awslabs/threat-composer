@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import Box from '@cloudscape-design/components/box';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 const EmptyState: FC<{
   title: string;

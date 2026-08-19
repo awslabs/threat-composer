@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
 import CrossWorkspaceLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useCrossWorkspaceContext } from './context';
 

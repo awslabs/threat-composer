@@ -14,14 +14,17 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { FormField, FormFieldProps } from '@cloudscape-design/components';
+import type { FormFieldProps } from '@cloudscape-design/components';
+import { FormField } from '@cloudscape-design/components';
 import { colorTextStatusError, borderRadiusInput, colorBorderInputDefault, colorBorderInputFocused } from '@cloudscape-design/design-tokens';
 import { Mode } from '@cloudscape-design/global-styles';
 import { css } from '@emotion/react';
-import { MDXEditor, MDXEditorMethods, DiffSourceToggleWrapper, ListsToggle, toolbarPlugin, diffSourcePlugin, linkPlugin, thematicBreakPlugin, linkDialogPlugin, UndoRedo, headingsPlugin, codeBlockPlugin, codeMirrorPlugin, markdownShortcutPlugin, BoldItalicUnderlineToggles, BlockTypeSelect, CodeToggle, CreateLink, InsertCodeBlock, InsertImage, imagePlugin, InsertTable, tablePlugin, listsPlugin, HEADING_LEVEL } from '@mdxeditor/editor';
-import { FC, useState, useRef } from 'react';
+import type { MDXEditorMethods, HEADING_LEVEL } from '@mdxeditor/editor';
+import { MDXEditor, DiffSourceToggleWrapper, ListsToggle, toolbarPlugin, diffSourcePlugin, linkPlugin, thematicBreakPlugin, linkDialogPlugin, UndoRedo, headingsPlugin, codeBlockPlugin, codeMirrorPlugin, markdownShortcutPlugin, BoldItalicUnderlineToggles, BlockTypeSelect, CodeToggle, CreateLink, InsertCodeBlock, InsertImage, imagePlugin, InsertTable, tablePlugin, listsPlugin } from '@mdxeditor/editor';
+import type { FC } from 'react';
+import { useState, useRef } from 'react';
 import { useContentValidation } from '../../../hooks';
-import { TextAreaProps } from '../Textarea';
+import type { TextAreaProps } from '../Textarea';
 import { useThemeContext } from '../ThemeProvider';
 
 import '@mdxeditor/editor/style.css';

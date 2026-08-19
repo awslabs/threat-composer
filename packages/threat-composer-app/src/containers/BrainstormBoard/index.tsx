@@ -13,11 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import type { NavigateToThreatHandler } from '@aws/threat-composer';
 import {
   BrainstormBoard,
-  NavigateToThreatHandler,
 } from '@aws/threat-composer';
-import { FC, useCallback } from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 

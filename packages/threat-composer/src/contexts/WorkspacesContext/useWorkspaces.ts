@@ -17,7 +17,7 @@ import { useCallback, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { DEFAULT_WORKSPACE_ID } from '../../configs/constants';
 import { EVENT_WORKSPACE_CHANGED } from '../../configs/events';
-import { Workspace } from '../../customTypes';
+import type { Workspace } from '../../customTypes';
 import isWorkspaceExample from '../../utils/isWorkspaceExample';
 import { useWorkspaceExamplesContext } from '../WorkspaceExamplesContext';
 

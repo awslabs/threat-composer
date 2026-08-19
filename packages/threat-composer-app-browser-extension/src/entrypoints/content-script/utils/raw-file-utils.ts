@@ -16,7 +16,7 @@
 
 import { createTCButton, extractContentDirectly, processTCCandidate, getTCJSONCandidate } from './core-utils';
 import { logDebugMessage } from '../../../debugLogger';
-import { TCConfig, IntegrationTypes } from '../../popup/config';
+import type { TCConfig } from '../../popup/config';
 
 /**
  * Check if current page is a raw site (has <pre> tag)

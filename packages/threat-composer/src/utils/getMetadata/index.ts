@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { Metadata } from '../../customTypes';
+import type { Metadata } from '../../customTypes';
 
 const getMetadata= (metadata?: Metadata[]): {
   [key: string]: Metadata['value'];

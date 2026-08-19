@@ -14,9 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { useCallback, useEffect, useState } from 'react';
-import { ComposerMode, TemplateThreatStatement } from '../../../../customTypes';
+import type { ComposerMode, TemplateThreatStatement } from '../../../../customTypes';
 import getNewThreatStatement from '../../../../utils/getNewThreatStatement';
-import { View } from '../../types';
+import type { View } from '../../types';
 
 const useThreats = (
   composerMode: ComposerMode,

@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ReactElement } from 'react';
+import type { ReactElement } from 'react';
 
 export interface WorkspacesContextProviderProps {
   workspaceName?: string; // The name is used in url

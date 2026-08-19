@@ -20,7 +20,7 @@ import { getExtensionConfig } from './popup/config';
 
 export default defineBackground(() => {
 
-  browser.runtime.onMessage.addListener(function (request: any, sender: any, sendResponse: any) {
+  browser.runtime.onMessage.addListener(function (request: any, _sender: any, sendResponse: any) {
 
     getExtensionConfig().then(config => {
 
@@ -29,15 +29,15 @@ export default defineBackground(() => {
       if (request.schema) { //This is likely the JSON from a threat model
         logDebugMessage(config, 'Message recieved - Threat Model JSON');
 
-        browser.storage.local.set({ threatModel: request }).then(() => {
+        void browser.storage.local.set({ threatModel: request }).then(() => {
           logDebugMessage(config, 'Saved to browser storage');
         });
 
-        browser.tabs.query({ url: tcUrl + '*' }).then((tabs: any) => {
+        void browser.tabs.query({ url: tcUrl + '*' }).then((tabs: any) => {
           if (tabs.length > 0) {
-            browser.tabs.update(tabs[0].id, { active: true, url: tcUrl + 'index.html' });
+            void browser.tabs.update(tabs[0].id, { active: true, url: tcUrl + 'index.html' });
           } else {
-            browser.tabs.create({ url: tcUrl + 'index.html' });
+            void browser.tabs.create({ url: tcUrl + 'index.html' });
           }
         });
         sendResponse({});

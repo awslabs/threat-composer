@@ -18,9 +18,11 @@ import Box from '@cloudscape-design/components/box';
 import Container from '@cloudscape-design/components/container';
 import ContentLayout from '@cloudscape-design/components/content-layout';
 import Form from '@cloudscape-design/components/form';
-import { FC, useCallback, useContext, useMemo } from 'react';
+import type { FC } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { IntegrationConfig, DefaultConfig } from './config';
+import type { IntegrationConfig } from './config';
+import { DefaultConfig } from './config';
 import { ExtensionConfigContext } from './ExtensionConfigProvider';
 import { RegexArrayForm } from './RegexArrayForm';
 

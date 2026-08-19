@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC } from 'react';
+import type { FC } from 'react';
 import Full from './components/Full';
 import Standalone from './components/Standalone';
 import getComposerMode from '../../utils/getComposerMode';

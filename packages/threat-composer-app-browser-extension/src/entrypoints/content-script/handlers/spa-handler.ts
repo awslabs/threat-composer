@@ -14,8 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { TCConfig } from '../../popup/config';
-import { SPAIntegrationState } from '../types';
+import type { TCConfig } from '../../popup/config';
+import type { SPAIntegrationState } from '../types';
 import { BaseIntegrationHandler } from './base-handler';
 import {
   shouldSkipProcessing,
@@ -45,7 +45,7 @@ export abstract class SPAIntegrationHandler extends BaseIntegrationHandler {
     }
 
     // Handle SPA navigation first
-    const navigationOccurred = handleSPANavigation(this.state, this.config, this.integrationType);
+    handleSPANavigation(this.state, this.config, this.integrationType);
 
     // Handle same-file navigation
     const regExCheck = new RegExp(this.config.fileExtension);

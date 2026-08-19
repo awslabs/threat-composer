@@ -16,12 +16,14 @@
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import ExpandableSection from '@cloudscape-design/components/expandable-section';
-import PropertyFilter, { PropertyFilterProps } from '@cloudscape-design/components/property-filter';
+import type { PropertyFilterProps } from '@cloudscape-design/components/property-filter';
+import PropertyFilter from '@cloudscape-design/components/property-filter';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
-import { FC, useState, useMemo, useCallback, useImperativeHandle, forwardRef } from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useCallback, useImperativeHandle, forwardRef } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { TemplateThreatStatement } from '../../../customTypes';
+import type { TemplateThreatStatement } from '../../../customTypes';
 import STRIDE from '../../../data/stride';
 import intersectArrays from '../../../utils/intersectArrays';
 import shuffle from '../../../utils/shuffle';

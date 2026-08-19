@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useEffect, ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
+import { useEffect } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { v4 as uuidv4 } from 'uuid';
 import { LOCAL_STORAGE_KEY_WORKSPACE_LIST_MIGRATION } from '../../configs/localStorageKeys';

@@ -25,7 +25,7 @@ import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext/context
 import { useMitigationLinksContext } from '../../contexts/MitigationLinksContext/context';
 import { useMitigationsContext } from '../../contexts/MitigationsContext/context';
 import { useThreatsContext } from '../../contexts/ThreatsContext/context';
-import { DataExchangeFormat, TemplateThreatStatement } from '../../customTypes';
+import type { DataExchangeFormat, TemplateThreatStatement } from '../../customTypes';
 import cleanupThreatData from '../../utils/cleanupThreatData';
 import { downloadObjectAsJson } from '../../utils/downloadContent';
 import getExportFileName from '../../utils/getExportFileName';

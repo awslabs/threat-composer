@@ -14,7 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { Button, Input, SpaceBetween, TokenGroup } from '@cloudscape-design/components';
-import { FC, useCallback, useState } from 'react';
+import type { FC } from 'react';
+import { useCallback, useState } from 'react';
 
 export interface RegexArrayFormProps {
   readonly strings: string[];
