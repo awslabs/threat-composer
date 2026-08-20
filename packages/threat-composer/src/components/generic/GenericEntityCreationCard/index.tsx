@@ -40,6 +40,11 @@ export interface GenericEntityCreationCardProps {
   onReset?: () => void;
   customEditors?: ReactNode;
   validateData?: TextAreaProps['validateData'];
+  /**
+   * Accessible name for the content textarea. The field is visually unlabelled,
+   * so without this the control has no accessible name at all.
+   */
+  contentAriaLabel?: string;
 }
 
 const GenericEntityCreationCard = forwardRef<GenericEntityCreationCardRefProps, GenericEntityCreationCardProps>(({
@@ -50,6 +55,7 @@ const GenericEntityCreationCard = forwardRef<GenericEntityCreationCardRefProps, 
   onReset,
   customEditors,
   validateData,
+  contentAriaLabel,
 }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -100,6 +106,7 @@ const GenericEntityCreationCard = forwardRef<GenericEntityCreationCardRefProps, 
               })}
               validateData={validateData}
               singleLine
+              ariaLabel={contentAriaLabel}
               ref={textareaRef}
             />
             {customEditors}

@@ -10,6 +10,7 @@ import {
   waitForAppShell,
   workspacePath,
 } from '../fixtures/app';
+import { cs } from '../fixtures/cloudscape';
 import { DEFAULT_WORKSPACE, PACK_ID } from '../fixtures/routes';
 
 /**
@@ -75,9 +76,10 @@ test.describe('threat packs', () => {
     await page.goto(workspacePath(`threatPacks/${PACK_ID}`));
     await waitForAppShell(page);
 
-    const checkedRows = page.locator('table tbody input[type="checkbox"]:checked');
-    await expect(checkedRows).toHaveCount(3);
-    await expect(checkedRows.first()).toBeDisabled();
+    await expect(page.locator(cs.tableSelectedRows)).toHaveCount(3);
+    await expect(
+      page.locator(cs.tableRowSelection(1)).locator('input[type="checkbox"]'),
+    ).toBeDisabled();
   });
 
   test('the referenced count on the list page reflects what was imported', async ({ page }) => {

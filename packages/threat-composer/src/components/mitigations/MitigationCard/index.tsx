@@ -97,6 +97,7 @@ const MitigationCard: FC<MitigationCardProps> = ({
               onChange={({ detail }) => setEditingValue(detail.value)}
               validateData={MitigationSchema.shape.content.safeParse}
               singleLine
+              ariaLabel='Mitigation content'
             />
             <SpaceBetween direction='horizontal' size='s'>
               <Button onClick={handleCancel}>Cancel</Button>

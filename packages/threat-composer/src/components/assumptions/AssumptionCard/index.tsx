@@ -84,6 +84,7 @@ const AssumptionCard: FC<AssumptionCardProps> = ({
               onChange={({ detail }) => setEditingValue(detail.value)}
               validateData={AssumptionSchema.shape.content.safeParse}
               singleLine
+              ariaLabel='Assumption content'
             />
             <SpaceBetween direction='horizontal' size='s'>
               <Button onClick={handleCancel}>Cancel</Button>

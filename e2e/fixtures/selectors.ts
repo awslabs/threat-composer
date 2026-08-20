@@ -3,12 +3,17 @@
   SPDX-License-Identifier: Apache-2.0
  ******************************************************************************************************************** */
 import type { Locator, Page } from '@playwright/test';
+import { cs } from './cloudscape';
 
 /**
  * Low-level selectors for DOM shapes that cannot be reached with plain
  * getByRole/getByLabel. Every one of these was verified against the running app;
  * the comments record *why* the obvious approach does not work, so nobody
  * "simplifies" them back into something that silently matches nothing.
+ *
+ * Where Cloudscape internals must be targeted, we go through its official
+ * `test-utils/selectors` API (see ./cloudscape.ts) rather than hand-writing class
+ * patterns, so a Cloudscape upgrade cannot silently break the suite.
  */
 
 /**
@@ -16,7 +21,7 @@ import type { Locator, Page } from '@playwright/test';
  * assumption, mitigation) is a Container, as is the filter panel above the
  * cards, so this must always be narrowed with `.filter({ has: heading })`.
  */
-export const CARD = 'div[class*="awsui_root_"][class*="awsui_variant-default"]';
+export const CARD = cs.container;
 
 /**
  * The card action buttons (remove / edit) are Cloudscape icon buttons with no

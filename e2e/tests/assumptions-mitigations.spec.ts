@@ -6,14 +6,15 @@ import { test, expect } from '../fixtures/console-guard';
 import {
   addSimpleEntity,
   addThreat,
-  chooseFromAutosuggest,
+  chooseExistingFromAutosuggest,
+  createViaAutosuggest,
   editEntityCard,
   expandSection,
   gotoWorkspace,
   navigateVia,
   removeEntityCard,
 } from '../fixtures/app';
-import { entityCard } from '../fixtures/selectors';
+import { CARD, entityCard } from '../fixtures/selectors';
 import { DEFAULT_WORKSPACE } from '../fixtures/routes';
 
 /**
@@ -56,12 +57,12 @@ for (const kind of ['assumption', 'mitigation'] as const) {
       await page.getByRole('button', { name: `Add new ${kind}` }).click();
 
       const creationCard = page
-        .locator('div[class*="awsui_root_"][class*="awsui_variant-default"]')
+        .locator(CARD)
         .filter({ has: page.getByRole('heading', { name: `Add new ${kind}` }) })
         .first();
 
       await expect(creationCard.getByRole('button', { name: 'Save', exact: true })).toBeDisabled();
-      await creationCard.locator('textarea').first().fill('Some content');
+      await creationCard.getByLabel(`${Kind} content`, { exact: true }).fill('Some content');
       await expect(creationCard.getByRole('button', { name: 'Save', exact: true })).toBeEnabled();
 
       // Reset clears the draft rather than saving it.
@@ -99,7 +100,7 @@ test.describe('linking between threats, assumptions and mitigations', () => {
     const search = card.getByPlaceholder('Search threat');
     // Only existing threats can be linked from here — this field cannot create a
     // threat, so the offered option must be the real threat.
-    await chooseFromAutosuggest(page, search, 'forge', /forge a signed token/);
+    await chooseExistingFromAutosuggest(page, search, 'forge', /forge a signed token/);
 
     await expect(card.getByRole('button', { name: /^Linked threats \(1\)$/ })).toBeVisible();
 
@@ -119,7 +120,7 @@ test.describe('linking between threats, assumptions and mitigations', () => {
 
     const search = card.getByPlaceholder('Search mitigation');
     // Free text in this field creates a brand-new mitigation.
-    await chooseFromAutosuggest(page, search, 'Enable KMS key rotation', /Add new mitigation/);
+    await createViaAutosuggest(page, search, 'Enable KMS key rotation');
 
     await expect(card.getByRole('button', { name: /^Linked mitigations \(1\)$/ })).toBeVisible();
 
@@ -135,7 +136,7 @@ test.describe('linking between threats, assumptions and mitigations', () => {
 
     await expandSection(page, /^Linked mitigations \(0\)$/);
     const search = page.getByPlaceholder('Search mitigation');
-    await chooseFromAutosuggest(page, search, 'Rate-limit the login endpoint', /Add new mitigation/);
+    await createViaAutosuggest(page, search, 'Rate-limit the login endpoint');
     await expect(page.getByRole('button', { name: /^Linked mitigations \(1\)$/ })).toBeVisible();
 
     // Token dismiss labels are numbered by the entity's numericId.
@@ -152,7 +153,7 @@ test.describe('linking between threats, assumptions and mitigations', () => {
     await page.getByPlaceholder('Enter threat source').fill('mitigated actor');
     await expandSection(page, /^Linked mitigations \(0\)$/);
     const mitSearch = page.getByPlaceholder('Search mitigation');
-    await chooseFromAutosuggest(page, mitSearch, 'A real mitigation', /Add new mitigation/);
+    await createViaAutosuggest(page, mitSearch, 'A real mitigation');
     await page.getByRole('button', { name: /^(Add to list|Add to workspace .+)$/ }).click();
     await expect(page).toHaveURL(/\/threats$/);
 

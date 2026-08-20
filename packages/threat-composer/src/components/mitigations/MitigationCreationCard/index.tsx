@@ -73,6 +73,7 @@ MitigationCreationCardProps
     editingEntity={editingEntity}
     setEditingEntity={setEditingEntity}
     header='Add new mitigation'
+    contentAriaLabel='Mitigation content'
     onSave={handleSave}
     onReset={handleReset}
     validateData={MitigationSchema.shape.content.safeParse}

@@ -100,8 +100,42 @@ The console guard also carries two allow-listed React dev warnings
 were verified against `origin/main` and are absent from the production bundle.
 See the comments in `fixtures/console-guard.ts` for the fixes.
 
+## Selector policy
+
+Roughly 92% of the suite matches on accessible names and visible text
+(`getByRole`, `getByLabel`, `getByPlaceholder`), which is stable across builds.
+React's generated ids (`:r17:`, `formField:r1r:`) are **never** used — they change
+between renders. Preference order when writing a new selector:
+
+1. Role / label / text
+2. Repo-owned hooks — `#WorkspacesSelect` (an explicit `controlId`), `#root`,
+   `.tooltipText` (this repo's own `generic/Tooltip`)
+3. Cloudscape's official `test-utils/selectors`, wrapped in `fixtures/cloudscape.ts`
+4. Nothing else
+
+Cloudscape's internal classes are hashed (`awsui_root_14iqq_fl8v6_189`), but that
+hash lives in the *published* package, so it is unaffected by our builds and
+changes only on upgrade. `fixtures/cloudscape.ts` reads the names from the
+installed package at test time so an upgrade updates them automatically, rather
+than hard-coding a `[class*="awsui_root_"]` guess.
+
+`tests/selector-contract.spec.ts` is the canary: if any of these structural hooks
+moves, that one test fails with an explicit message instead of the change
+surfacing as dozens of unrelated timeouts.
+
 ## Notes and gotchas
 
+- **Animations are suppressed** (`stillPage` fixture + `reducedMotion: 'reduce'`).
+  This is load-bearing, verified by control experiment: with animations on, the
+  autosuggest tests fail with `locator.click` timeouts because Cloudscape dropdowns
+  move while the surrounding list reflows. Fixing the movement at source is what
+  let the autosuggest helpers drop a retry loop, a forced click and keyboard index
+  arithmetic in favour of a plain click.
+- **`reuseExistingServer` can mislead the preview suite.** If a dev server is
+  already on :3000, `vite preview` reuses it and the preview specs silently test
+  the dev server instead of the built bundle. `tests-preview/build-artifacts.spec.ts`
+  catches this (it asserts the `static/js` layout), but the failure reads oddly at
+  first. Stop any dev server before `yarn e2e:preview`.
 - **Clipboard permissions** are granted in both configs. "Copy as Markdown" calls
   `navigator.clipboard.writeText`, which headless Chromium otherwise rejects with
   an uncaught page error — a false positive for the console guard, and it would

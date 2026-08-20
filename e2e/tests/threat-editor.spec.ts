@@ -13,7 +13,7 @@ import {
   waitForAppShell,
   workspacePath,
 } from '../fixtures/app';
-import { byTooltip, entityCard, grammarToken, threatSaveButton } from '../fixtures/selectors';
+import { CARD, byTooltip, entityCard, grammarToken, threatSaveButton } from '../fixtures/selectors';
 import { DEFAULT_WORKSPACE } from '../fixtures/routes';
 
 /**
@@ -201,7 +201,7 @@ test.describe('threat statement editor', () => {
     // The FieldSelector has its own "More actions" menu, separate from the
     // workspace-level one in the top strip.
     await page
-      .locator('div[class*="awsui_root_"][class*="awsui_variant-default"]')
+      .locator(CARD)
       .filter({ has: page.getByRole('heading', { name: "Let's write a threat statement!" }) })
       .getByRole('button', { name: 'More actions' })
       .click();

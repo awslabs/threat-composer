@@ -75,14 +75,18 @@ type ConsoleGuardFixtures = {
 /**
  * Cloudscape animates expandable sections, dropdowns and modals. Those animations
  * are the root cause of a whole class of intermittent failures: while a container
- * is still expanding, a control inside it is technically visible but moving, so a
- * click can land on the wrong element or focus can fail to settle. Symptoms
- * included "element is not stable", clicks silently missing, and inputs never
- * receiving typed text.
+ * is still expanding, a control inside it is visible but MOVING, so a click misses,
+ * focus fails to settle, or Playwright reports "element is not stable".
  *
- * Suppressing animations makes the DOM settle immediately. This is a test-harness
- * concern only — it changes no application logic — and `reducedMotion: 'reduce'`
- * is set in both configs as well, which Cloudscape itself honours.
+ * This is load-bearing, not belt-and-braces. Verified by control experiment:
+ * disabling this fixture and re-running `assumptions-mitigations` at
+ * `--repeat-each=6` reproduces `locator.click: Test timeout` on the autosuggest
+ * tests; with it enabled the same run is 60/60. Fixing the movement at source is
+ * what allowed the autosuggest helpers to drop a 3-attempt retry loop, a forced
+ * click, and keyboard index arithmetic in favour of a plain click.
+ *
+ * Test-harness concern only — it changes no application logic. Both configs also
+ * set `contextOptions: { reducedMotion: 'reduce' }`, which Cloudscape honours.
  */
 const NO_ANIMATION_CSS = `
   *, *::before, *::after {

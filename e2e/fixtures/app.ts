@@ -3,8 +3,10 @@
   SPDX-License-Identifier: Apache-2.0
  ******************************************************************************************************************** */
 import { expect, type Locator, type Page } from '@playwright/test';
+import { cs } from './cloudscape';
 import { DEFAULT_WORKSPACE } from './routes';
 import {
+  CARD,
   byTooltip,
   confirmDeleteButton,
   entityCard,
@@ -276,105 +278,87 @@ export async function setThreatMetadata(
 }
 
 /**
- * Pick a specific option from a Cloudscape Autosuggest.
+ * Type free text into an Autosuggest and commit it as a NEW entity.
  *
- * Three approaches were tried before this one; the notes matter because the
- * failures are intermittent and easy to reintroduce:
+ * The link fields offer an entered-text entry (`Add new mitigation: "…"`,
+ * `Use: "…"`) which Cloudscape keeps highlighted while the dropdown is open — so
+ * Enter is exactly the right gesture here, and no clicking is involved.
  *
- *  - A plain `.click()` fails with "element is not stable" and then "element was
- *    detached from the DOM". The dropdown is positioned relative to its input, so
- *    it moves while the surrounding card list reflows.
- *  - `.click({ force: true })` skips the stability wait but still clicks at
- *    coordinates, so it misses intermittently under parallel load.
- *  - Pressing Enter commits the *entered text* rather than the matching option,
- *    because Cloudscape keeps the `Use: "<typed>"` entry highlighted at index 0.
- *    On the "Search threat" field that silently links nothing, since free text
- *    there only resolves against existing ids. ArrowDown sent to the input does
- *    not move the highlight either.
- *
- *  - `dispatchEvent` never resolves: Playwright keeps retrying the locator while
- *    the dropdown re-renders.
- *
- * So the option is selected with the keyboard, which touches no coordinates and
- * is how a keyboard user does it. The one subtlety is the off-by-one: on open
- * there is NO highlight (`aria-activedescendant` is null, and the `aria-selected`
- * flag on the `Use: "<typed>"` entry reflects the selected *value*, not the
- * highlight). So the first ArrowDown lands on index 0, and reaching index N takes
- * N+1 presses.
+ * Cloudscape's `findEnteredTextOption()` identifies that entry precisely, so the
+ * test asserts the app actually offered creation before committing, rather than
+ * hoping Enter did the right thing.
  */
-export async function chooseFromAutosuggest(
+export async function createViaAutosuggest(
+  page: Page,
+  input: Locator,
+  text: string,
+  offerPattern: RegExp = /Add new|Use:/,
+): Promise<void> {
+  await input.click();
+  await input.fill(text);
+
+  // Assert the app actually offered to create, by the option's visible label.
+  //
+  // Two Cloudscape selectors are deliberately NOT used here:
+  //  - `findEnteredTextOption()` resolves to `has-background` in selectors mode,
+  //    a class every highlighted item carries, so it matches the wrong element.
+  //  - `findOptions()` matches only entries carrying `data-test-index`, and the
+  //    entered-text entry has none — so it is excluded by design.
+  // The visible label is both simpler and independent of Cloudscape internals.
+  const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  await expect(
+    page.getByText(new RegExp(`(${offerPattern.source}).*${escaped}`)).first(),
+    `expected the autosuggest to offer creating "${text}"`,
+  ).toBeVisible();
+
+  await input.press('Enter');
+}
+
+/**
+ * Pick an EXISTING option from an Autosuggest.
+ *
+ * Enter cannot be used for this: Cloudscape keeps the entered-text entry
+ * (`Use: "<typed>"`) at the top of the highlight order, so a bare Enter commits
+ * the typed string. On the "Search threat" field that resolves against nothing and
+ * silently creates no link — a false pass, which is exactly the bug this helper
+ * exists to avoid.
+ *
+ * So the intended option is targeted directly, via Cloudscape's official
+ * `findOptions()` selector. Earlier revisions needed a retry loop and a forced
+ * click because the dropdown moved while the surrounding card list reflowed;
+ * suppressing animations (see the `stillPage` fixture) removed that movement, so a
+ * plain click is now sufficient.
+ */
+export async function chooseExistingFromAutosuggest(
   page: Page,
   input: Locator,
   text: string,
   optionPattern: RegExp,
 ): Promise<void> {
-  const target = page.getByRole('option', { name: optionPattern });
+  await input.click();
+  await input.fill(text);
 
-  // This widget is genuinely racy, and the whole open → locate → select sequence
-  // has to complete before anything closes the dropdown again:
-  //  - The app moves focus asynchronously after a save (the creation card calls
-  //    focusTextarea), which closes an open dropdown.
-  //  - Cloudscape only opens the dropdown in response to a real keystroke;
-  //    `fill()` alone sets the value without opening it.
-  //  - The option list re-renders while filtering, so the option's position is
-  //    only valid for as long as the list is untouched.
-  //
-  // So one bounded retry wraps the entire sequence. Only *getting into* the right
-  // state is retried; the caller's assertions about the resulting link are
-  // untouched.
-  const ATTEMPTS = 3;
-  let lastError: unknown;
-
-  for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
-    try {
-      await input.click();
-      // `fill` for the bulk (atomic), then the final character as a real keystroke
-      // so the dropdown opens and re-filters on the complete text.
-      await input.fill(text.slice(0, -1));
-      await input.press(text.slice(-1));
-      await expect(input).toHaveValue(text, { timeout: 2_000 });
-      await expect(target.first()).toBeVisible({ timeout: 3_000 });
-
-      // Click the option with the stability check skipped.
-      //
-      // Keyboard selection is NOT usable here: Cloudscape's highlight offset is
-      // not predictable from the option index (the first ArrowDown after opening
-      // does not move the highlight), so arrowing lands on the wrong entry and
-      // silently commits the `Use: "<typed>"` text instead — which resolves to
-      // nothing on the "Search threat" field and creates no link at all.
-      //
-      // `force` is safe here because the preceding assertions already established
-      // that the option is present and visible; it only skips the "has it stopped
-      // moving?" wait, which never settles while the dropdown is anchored to a
-      // reflowing list.
-      await target.first().click({ force: true });
-
-      // Selection committed: the dropdown closes and the input is cleared.
-      await expect(target).toHaveCount(0, { timeout: 3_000 });
-      return;
-    } catch (error) {
-      lastError = error;
-    }
-  }
-
-  throw new Error(
-    `could not select an autosuggest option matching ${optionPattern} after ${ATTEMPTS} attempts. ` +
-      `Last error: ${lastError instanceof Error ? lastError.message : String(lastError)}`,
-  );
+  // `findOptions()` gives the real options only (they carry `data-test-index`);
+  // the entered-text entry is excluded, so filtering here cannot accidentally
+  // match `Use: "<typed>"`.
+  const option = page.locator(cs.autosuggestOptions).filter({ hasText: optionPattern }).first();
+  await expect(option, `expected an autosuggest option matching ${optionPattern}`).toBeVisible();
+  await option.click();
 }
+
 
 /** Link a mitigation from inside the threat editor, creating it if new. */
 export async function linkMitigationFromEditor(page: Page, content: string): Promise<void> {
   await expandSection(page, /^Linked mitigations \(\d+\)$/);
   const search = page.getByPlaceholder('Search mitigation');
-  await chooseFromAutosuggest(page, search, content, /Add new mitigation/);
+  await createViaAutosuggest(page, search, content);
 }
 
 /** Link an assumption from inside the threat editor, creating it if new. */
 export async function linkAssumptionFromEditor(page: Page, content: string): Promise<void> {
   await expandSection(page, /^Linked assumptions \(\d+\)$/);
   const search = page.getByPlaceholder('Search assumption');
-  await chooseFromAutosuggest(page, search, content, /Add new assumption/);
+  await createViaAutosuggest(page, search, content);
 }
 
 /** Save a brand-new threat and land back on the list. */
@@ -406,15 +390,27 @@ type SimpleEntity = 'assumption' | 'mitigation';
  */
 export async function addSimpleEntity(page: Page, kind: SimpleEntity, content: string): Promise<void> {
   const label = `Add new ${kind}`;
+  const Kind = kind === 'assumption' ? 'Assumption' : 'Mitigation';
   await page.getByRole('button', { name: label }).click();
 
   const creationCard = page
-    .locator('div[class*="awsui_root_"][class*="awsui_variant-default"]')
+    .locator(CARD)
     .filter({ has: page.getByRole('heading', { name: label }) })
     .first();
 
-  const textarea = creationCard.locator('textarea').first();
+  // The field is visually unlabelled, so it is reached by the accessible name
+  // added for it in the library rather than by position within the card.
+  const textarea = creationCard.getByLabel(`${Kind} content`, { exact: true });
   await expect(textarea).toBeVisible();
+
+  // Wait for focus to actually arrive before typing. The button's job is to scroll
+  // to and focus this field, but it does so via a 300ms setTimeout
+  // (GenericEntityCreationCard.focusTextarea). If we race past it, that pending
+  // focus fires later and steals focus from whatever the test has moved on to —
+  // which showed up as an autosuggest dropdown closing mid-interaction. Asserting
+  // it here drains the timer and also verifies the button's documented behaviour.
+  await expect(textarea, 'the add button should focus the content field').toBeFocused();
+
   await textarea.fill(content);
 
   const save = creationCard.getByRole('button', { name: 'Save', exact: true });
@@ -440,14 +436,16 @@ export async function editEntityCard(
   const card = entityCard(page, kind, numericId);
   await byTooltip(card, 'Edit').first().click();
 
-  const textarea = card.locator('textarea').first();
+  // Reached by accessible name, not position. Threats have no in-card editor, so
+  // only assumptions and mitigations get here.
+  const textarea = card.getByLabel(`${kind} content`, { exact: true });
   await expect(textarea).toBeVisible();
   await textarea.fill(newContent);
   await card.getByRole('button', { name: 'Save', exact: true }).click();
 
-  // Edit mode is over once the textarea is gone; only then is the card showing
-  // rendered content rather than an editor.
-  await expect(card.locator('textarea')).toHaveCount(0);
+  // Edit mode is over once the editor is gone; only then is the card showing
+  // rendered content rather than an input.
+  await expect(textarea).toHaveCount(0);
   await expect(card).toContainText(newContent);
 }
 
@@ -468,17 +466,15 @@ export async function removeEntityCard(
 
 // ---------------------------------------------------------------------- packs
 
-/**
- * Add rows from a reference pack to the current workspace.
- * Checkbox 0 is the table's select-all, so row checkboxes start at index 1.
- */
+/** Add the first `rowCount` rows from a reference pack to the current workspace. */
 export async function addPackRowsToWorkspace(page: Page, rowCount: number): Promise<void> {
   const addButton = page.getByRole('button', { name: 'Add to workspace' });
   await expect(addButton, 'disabled with an empty selection').toBeDisabled();
 
-  const rowCheckboxes = page.locator('table input[type="checkbox"]');
-  for (let i = 1; i <= rowCount; i++) {
-    await rowCheckboxes.nth(i).check();
+  // Cloudscape's per-row selection selector is 1-indexed by BODY row, so there is
+  // no need to know that the first checkbox on the page is "select all".
+  for (let row = 1; row <= rowCount; row++) {
+    await page.locator(cs.tableRowSelection(row)).locator('input[type="checkbox"]').check();
   }
 
   await expect(addButton).toBeEnabled();
