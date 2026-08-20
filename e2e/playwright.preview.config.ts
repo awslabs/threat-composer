@@ -1,0 +1,70 @@
+/** *******************************************************************************************************************
+  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+  SPDX-License-Identifier: Apache-2.0
+ ******************************************************************************************************************** */
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import { defineConfig, devices } from '@playwright/test';
+
+/**
+ * Production-preview config: serves the already-built `build/website` bundle
+ * via `vite preview` (http://localhost:3000) and runs ONLY the specs that need
+ * production behaviour the dev server never exercises:
+ *   - Service worker registration (only when import.meta.env.PROD).
+ *   - Rollup chunking of the lazy routes as they actually ship.
+ *   - The precache manifest / app-shell route.
+ *
+ * Prerequisite: the website must be built first, e.g.
+ *   yarn workspace @aws/threat-composer-app run compile:website
+ * (or a full `yarn build`). This config does not build for you beyond starting
+ * `vite preview`, which fails fast if build/website is missing.
+ */
+
+const E2E_DIR = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(E2E_DIR, '..');
+
+const BASE_URL = process.env.TC_PREVIEW_URL ?? 'http://localhost:3000';
+const REUSE_SERVER = !process.env.CI;
+
+export default defineConfig({
+  testDir: path.join(E2E_DIR, 'tests-preview'),
+  timeout: 60_000,
+  expect: { timeout: 15_000 },
+  fullyParallel: false,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 1 : 0,
+  workers: 1,
+  reporter: [
+    ['list'],
+    ['html', { open: 'never', outputFolder: 'playwright-report-preview' }],
+  ],
+  use: {
+    baseURL: BASE_URL,
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    // Matches the dev config: "Copy as Markdown" uses navigator.clipboard, which
+    // headless Chromium rejects by default with an uncaught page error.
+    permissions: ['clipboard-read', 'clipboard-write'],
+    // Cloudscape honours prefers-reduced-motion, which removes the expand /
+    // dropdown animations that otherwise make controls moving targets. The
+    // console-guard fixture also injects a zero-duration stylesheet.
+    contextOptions: { reducedMotion: 'reduce' },
+  },
+  projects: [
+    {
+      name: 'chromium-preview',
+      use: { ...devices['Desktop Chrome'] },
+    },
+  ],
+  webServer: process.env.TC_PREVIEW_URL
+    ? undefined
+    : {
+        command: 'yarn workspace @aws/threat-composer-app run preview',
+        cwd: REPO_ROOT,
+        url: BASE_URL,
+        reuseExistingServer: REUSE_SERVER,
+        timeout: 120_000,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      },
+});

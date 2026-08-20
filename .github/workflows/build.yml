@@ -21,3 +21,51 @@ jobs:
       - run: yarn install --frozen-lockfile --check-files
       - run: PATH=/tmp/git-secrets/bin:$PATH yarn build
       - run: yarn eslint
+
+  e2e:
+    # Playwright functional tests for the web app. Kept as a separate job from
+    # build-test: it needs browsers installed and is the only job that exercises
+    # the app at runtime, so a failure here should be distinguishable at a glance
+    # from a compile or lint failure.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - run: npm install -g yarn
+      - run: yarn install --frozen-lockfile --check-files
+      # The library must be compiled before the app can be served. `copy-assets`
+      # is required too, not optional: the library's PNG/GIF and CSS are rsync'd
+      # into lib/ and imported from the ESM output, and the suite asserts that
+      # images load and the app is styled.
+      - run: yarn workspace @aws/threat-composer run compile
+      - run: yarn workspace @aws/threat-composer run copy-assets
+      # The preview suite serves the production bundle from build/website.
+      - run: yarn workspace @aws/threat-composer-app run compile:website
+      # e2e is a standalone package, not a yarn workspace, so that the app's
+      # Vitest config never picks up these specs.
+      - name: Install e2e dependencies
+        run: npm ci
+        working-directory: e2e
+      - name: Typecheck e2e specs
+        run: npm run typecheck
+        working-directory: e2e
+      - name: Run dev-server suite
+        run: npm test
+        working-directory: e2e
+      - name: Run production-preview suite
+        run: npm run test:preview
+        working-directory: e2e
+      - name: Upload Playwright reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-reports
+          path: |
+            e2e/playwright-report/
+            e2e/playwright-report-preview/
+            e2e/test-results/
+          retention-days: 7

@@ -1,0 +1,7 @@
+node_modules/
+test-results/
+test-results-preview/
+playwright-report/
+playwright-report-preview/
+playwright/.cache/
+.auth/

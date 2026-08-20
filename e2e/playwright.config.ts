@@ -1,0 +1,78 @@
+/** *******************************************************************************************************************
+  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+  SPDX-License-Identifier: Apache-2.0
+ ******************************************************************************************************************** */
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import { defineConfig, devices } from '@playwright/test';
+
+/**
+ * Default config: runs the functional suite against the Vite **dev** server
+ * (`yarn dev` -> http://localhost:3000).
+ *
+ * Notes on the migration this suite guards (see report.html):
+ *  - The dev server does NOT set VITE_APP_MODE and does NOT register the
+ *    service worker. Production-only behaviour (SW registration, precache,
+ *    app-shell route) is covered separately in playwright.preview.config.ts.
+ *  - Specs live in ./tests and MUST stay outside packages/*\/src so the app's
+ *    Vitest `include` glob never picks them up.
+ */
+
+const E2E_DIR = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(E2E_DIR, '..');
+
+const BASE_URL = process.env.TC_BASE_URL ?? 'http://localhost:3000';
+
+// Allow pointing the suite at an already-running server (CI or a manually
+// started `yarn dev`) instead of having Playwright spawn one.
+const REUSE_SERVER = !process.env.CI;
+
+export default defineConfig({
+  testDir: path.join(E2E_DIR, 'tests'),
+  // Route-loading + console-error checks can be slow on a cold Vite dev server
+  // (first request triggers on-the-fly dependency optimisation).
+  timeout: 60_000,
+  expect: { timeout: 15_000 },
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 1 : 0,
+  workers: process.env.CI ? 2 : undefined,
+  reporter: [
+    ['list'],
+    ['html', { open: 'never', outputFolder: 'playwright-report' }],
+  ],
+  use: {
+    baseURL: BASE_URL,
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    // "Copy as Markdown" calls navigator.clipboard.writeText, which headless
+    // Chromium rejects by default with an uncaught "Write permission denied".
+    // Granting the permission both silences a false positive in the console guard
+    // and lets the tests assert what was actually copied.
+    permissions: ['clipboard-read', 'clipboard-write'],
+    // Cloudscape honours prefers-reduced-motion, which removes the expand /
+    // dropdown animations that otherwise make controls moving targets. The
+    // console-guard fixture also injects a zero-duration stylesheet.
+    contextOptions: { reducedMotion: 'reduce' },
+  },
+  projects: [
+    {
+      name: 'chromium-dev',
+      use: { ...devices['Desktop Chrome'] },
+    },
+  ],
+  webServer: process.env.TC_BASE_URL
+    ? undefined
+    : {
+        // Run the app's dev server from the repo root via the workspace.
+        command: 'yarn workspace @aws/threat-composer-app run dev',
+        cwd: REPO_ROOT,
+        url: BASE_URL,
+        reuseExistingServer: REUSE_SERVER,
+        // Vite dev boot + first optimize pass can take a while on a clean install.
+        timeout: 180_000,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      },
+});
