@@ -513,3 +513,146 @@ export async function downloadFromReport(page: Page, item: string) {
   await page.getByRole('menuitem', { name: item }).click();
   return download;
 }
+
+// --------------------------------------------------------------- status
+
+/**
+ * Change an entity's status from the badge on its card.
+ *
+ * The badge is a bare `<button>` showing the current status; clicking it swaps in
+ * a Cloudscape Select and focuses it after a 200ms timeout, and the Select closes
+ * again on blur. Two details matter:
+ *
+ *  - The card already contains hidden Selects (status and priority live in the
+ *    collapsed Metadata section), so the editor must be picked with `:visible`.
+ *  - Status options render their description alongside the label, so the
+ *    accessible name is "Resolved\nAll agreed risk response actions…". An exact
+ *    name match silently matches nothing — hence the `^`-anchored regex.
+ */
+export async function openStatusEditor(
+  page: Page,
+  kind: 'Threat' | 'Assumption' | 'Mitigation',
+  numericId: number,
+  currentStatus: string,
+): Promise<void> {
+  const card = entityCard(page, kind, numericId);
+  await card.getByRole('button', { name: currentStatus, exact: true }).click();
+
+  const editor = card.locator(`${cs.select}:visible`).first();
+  await expect(editor, 'clicking the status badge should reveal a status select').toBeVisible();
+
+  // The badge focuses the Select via `setTimeout(..., 200)`, and the Select
+  // collapses again on blur. Opening it before that focus lands means the
+  // late-arriving focus can close the dropdown again — so wait for the focus
+  // rather than racing it.
+  const trigger = editor.locator('button').first();
+  await expect(trigger, 'the status select should receive focus from the badge').toBeFocused();
+  await trigger.click();
+}
+
+export async function setStatusFromBadge(
+  page: Page,
+  kind: 'Threat' | 'Assumption' | 'Mitigation',
+  numericId: number,
+  currentStatus: string,
+  newStatus: string,
+): Promise<void> {
+  await openStatusEditor(page, kind, numericId, currentStatus);
+  await page.getByRole('option', { name: new RegExp(`^${newStatus}`) }).click();
+  await expect(
+    entityCard(page, kind, numericId).getByRole('button', { name: newStatus, exact: true }),
+  ).toBeVisible();
+}
+
+// ----------------------------------------------------------------- tags
+
+/** Add a tag to an entity card. The input commits on Enter; there is no button. */
+export async function addTag(card: Locator, tag: string): Promise<void> {
+  const input = card.getByPlaceholder('Add tag');
+  await expect(input).toBeVisible();
+  await input.fill(tag);
+  await input.press('Enter');
+  await expect(card.getByRole('button', { name: `Remove ${tag}` })).toBeVisible();
+}
+
+/** Remove a tag via its TokenGroup dismiss control. */
+export async function removeTag(card: Locator, tag: string): Promise<void> {
+  await card.getByRole('button', { name: `Remove ${tag}` }).click();
+  await expect(card.getByRole('button', { name: `Remove ${tag}` })).toHaveCount(0);
+}
+
+// -------------------------------------------------------------- filters
+
+/**
+ * Apply a value in one of the list's Multiselect filters.
+ *
+ * Options here also carry descriptions (status especially), so `optionPattern`
+ * should be `^`-anchored rather than an exact string.
+ */
+export async function applyFilter(
+  page: Page,
+  placeholder: string,
+  optionPattern: RegExp,
+): Promise<void> {
+  await page.getByRole('button', { name: placeholder }).click();
+  await page.getByRole('option', { name: optionPattern }).click();
+  // Multiselects stay open for further choices; close so the list is unobstructed.
+  await page.keyboard.press('Escape');
+}
+
+export async function clearFilters(page: Page): Promise<void> {
+  const clear = page.getByRole('button', { name: 'Clear filters' });
+  await expect(clear).toBeEnabled();
+  await clear.click();
+  await expect(clear).toBeDisabled();
+}
+
+/** Set the threats list sort field and/or direction. */
+export async function setSortBy(
+  page: Page,
+  { field, direction }: { field?: 'Id' | 'Priority'; direction?: 'Ascending' | 'Descending' },
+): Promise<void> {
+  if (field) {
+    await page.getByLabel('Sort by').click();
+    await page.getByRole('option', { name: new RegExp(`^${field}`) }).click();
+  }
+  if (direction) {
+    await page.getByRole('radio', { name: direction }).check();
+  }
+}
+
+/** Titles of the threat cards, in the order they are rendered. */
+export async function threatCardOrder(page: Page): Promise<string[]> {
+  const headings = await page.getByRole('heading').allInnerTexts();
+  return headings.filter((t) => /^Threat \d/.test(t)).map((t) => t.split('\n')[0]);
+}
+
+// ------------------------------------------------------------- insights
+
+/**
+ * The drill-down link for a labelled figure on the Insights dashboard.
+ *
+ * Each figure is an anchor whose only text is the number, so it cannot be
+ * identified on its own. The label immediately precedes it, so the link is found
+ * by document order from the label — which survives styling changes in a way that
+ * class- or index-based lookup would not.
+ */
+export function insightsDrilldown(page: Page, label: string): Locator {
+  return page.getByText(label, { exact: true }).first().locator('xpath=following::a[1]');
+}
+
+// -------------------------------------------------- metadata / comments
+
+/**
+ * Expand a card's Metadata section and return its Comments editor.
+ *
+ * Comments is only mounted once the section is expanded. It is an MDXEditor
+ * contenteditable, not a form control, so its `Comments` FormField label is not a
+ * usable `getByLabel` target.
+ */
+export async function openCardComments(card: Locator): Promise<Locator> {
+  await card.getByRole('button', { name: /^Metadata$/ }).click();
+  const editor = card.locator('[contenteditable="true"]').first();
+  await expect(editor, 'Comments should mount once Metadata is expanded').toBeVisible();
+  return editor;
+}

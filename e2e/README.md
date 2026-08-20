@@ -70,6 +70,11 @@ TC_BASE_URL=http://localhost:3000 npx playwright test
 | Boot & styling | `tests/smoke.spec.ts` | The app renders; Cloudscape's side-effect CSS import took effect. |
 | Every lazy route | `tests/routes.spec.ts` | Each route renders a heading only *it* produces, so a test cannot pass on the shared shell. Side-nav reachability, both pack detail routes, `threats/:threatId` with a real UUID, `/preview/:dataKey`. |
 | Workspaces | `tests/workspaces.spec.ts` | Create, duplicate-name rejection, rename, clone, delete and data removal (both friction dialogs), isolation between workspaces, read-only Example workspace. |
+| Status, tags, comments | `tests/status-and-tags.spec.ts` | Threat status from the card badge *and* the editor; the separate four-value mitigation status set; tag add/remove on all three entity types with reload checks; Comments metadata (which is the entire Metadata section on assumptions and mitigations). |
+| Filters & sorting | `tests/filters-and-sorting.spec.ts` | All ten threat filters including the three "Not Set" sentinels, AND-across / OR-within combination, `Clear filters`, and `Sort by` Id/Priority × Ascending/Descending (unset priority ranks lowest). |
+| Insights drill-downs | `tests/insights-dashboard.spec.ts` | Accurate counts, and the cross-page contract where a figure navigates to a list with its filter pre-applied via `initialFilter`. |
+| Print / preview & images | `tests/preview-and-content.spec.ts` | The real Print handoff (localStorage → new tab → rendered model), the import modal's Preview, and the diagram image controls including URL validation and upload. |
+| Dark mode | `tests/theme.spec.ts` | `applyMode(Mode.Dark)` takes effect, persists across reload, and survives navigation. `Mode` is a runtime enum, so this is in the value-erasure risk class from the `import type` codemod. |
 | Threat editor | `tests/threat-editor.spec.ts` | The guided grammar composer: token-driven field editors, random example, start over, metadata, custom template, duplicate, edit, remove, filtering. |
 | Assumptions & mitigations | `tests/assumptions-mitigations.spec.ts` | CRUD for both, and the linking model — including creating an entity from a link field and the linked-entity filters. |
 | Reference packs | `tests/packs.spec.ts` | Pack list → detail, bulk add to workspace, already-imported rows locked, referenced counts. |
@@ -99,6 +104,15 @@ The console guard also carries two allow-listed React dev warnings
 (`ReactDOM.render` legacy API, and a missing `key` in `ThreatModelView`). Both
 were verified against `origin/main` and are absent from the production bundle.
 See the comments in `fixtures/console-guard.ts` for the fixes.
+
+**Image upload logs a CSP violation.** `browser-image-compression` tries to run in
+a Web Worker created from a `blob:` URL, which the app's own CSP forbids
+(`script-src 'self'` with no `worker-src`). The library falls back to the main
+thread, so uploading a diagram *does* work — but the browser logs the refusal. The
+CSP is byte-identical to `origin/main`, so this is pre-existing. Allowed narrowly,
+per-test, in `tests/preview-and-content.spec.ts`; adding `worker-src blob:` to the
+CSP would remove it. Note the SVG upload test deliberately does *not* allow it,
+since that path skips compression and should stay clean.
 
 ## Selector policy
 

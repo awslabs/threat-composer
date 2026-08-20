@@ -83,4 +83,9 @@ export const cs = {
     scopable(wrapper.findTable().findRowSelectionArea(rowIndex).toSelector()),
   /** Rows currently selected. */
   tableSelectedRows: scopable(wrapper.findTable().findSelectedRows().toSelector()),
+
+  /** Root of a Modal, for scoping assertions to a dialog. */
+  modal: scopable(wrapper.findModal().toSelector()),
+  /** Root of a Toggle, used by the theme switch which has no accessible name. */
+  toggle: scopable(wrapper.findToggle().toSelector()),
 } as const;
