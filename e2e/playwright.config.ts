@@ -23,6 +23,18 @@ const REPO_ROOT = path.resolve(E2E_DIR, '..');
 
 const BASE_URL = process.env.TC_BASE_URL ?? 'http://localhost:3000';
 
+/**
+ * Observability. By default we only pay the cost of artefacts on failure, and
+ * because `retries` is 0 locally `on-first-retry` means traces are effectively
+ * never recorded on a developer machine. Set TC_CAPTURE=1 (or run
+ * `npm run test:trace`) to force a trace + video + screenshots for EVERY test so
+ * you can replay exactly what the suite did:
+ *
+ *   npm run test:trace -- journey-threat-model
+ *   npm run trace test-results/<dir>/trace.zip
+ */
+const CAPTURE_ALL = !!process.env.TC_CAPTURE;
+
 // Allow pointing the suite at an already-running server (CI or a manually
 // started `yarn dev`) instead of having Playwright spawn one.
 const REUSE_SERVER = !process.env.CI;
@@ -43,9 +55,9 @@ export default defineConfig({
   ],
   use: {
     baseURL: BASE_URL,
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    trace: CAPTURE_ALL ? 'on' : 'on-first-retry',
+    screenshot: CAPTURE_ALL ? 'on' : 'only-on-failure',
+    video: CAPTURE_ALL ? 'on' : 'retain-on-failure',
     // "Copy as Markdown" calls navigator.clipboard.writeText, which headless
     // Chromium rejects by default with an uncaught "Write permission denied".
     // Granting the permission both silences a false positive in the console guard

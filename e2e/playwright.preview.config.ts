@@ -26,6 +26,10 @@ const REPO_ROOT = path.resolve(E2E_DIR, '..');
 const BASE_URL = process.env.TC_PREVIEW_URL ?? 'http://localhost:3000';
 const REUSE_SERVER = !process.env.CI;
 
+// See the note in playwright.config.ts: TC_CAPTURE=1 forces artefacts for every
+// test so a passing run can be replayed in the trace viewer.
+const CAPTURE_ALL = !!process.env.TC_CAPTURE;
+
 export default defineConfig({
   testDir: path.join(E2E_DIR, 'tests-preview'),
   timeout: 60_000,
@@ -40,8 +44,9 @@ export default defineConfig({
   ],
   use: {
     baseURL: BASE_URL,
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    trace: CAPTURE_ALL ? 'on' : 'on-first-retry',
+    screenshot: CAPTURE_ALL ? 'on' : 'only-on-failure',
+    video: CAPTURE_ALL ? 'on' : 'off',
     // Matches the dev config: "Copy as Markdown" uses navigator.clipboard, which
     // headless Chromium rejects by default with an uncaught page error.
     permissions: ['clipboard-read', 'clipboard-write'],

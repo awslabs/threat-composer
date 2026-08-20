@@ -61,6 +61,116 @@ To run against a server you already have up, skip Playwright's own:
 TC_BASE_URL=http://localhost:3000 npx playwright test
 ```
 
+### The app under test is the BUILT library, not library source
+
+`@aws/threat-composer` resolves through the workspace symlink to
+`packages/threat-composer/lib/index.js` — there is no Vite alias back to `src`.
+So **editing `packages/threat-composer/src/**` has no effect on a running dev
+server.** After changing library source you must recompile it:
+
+```bash
+yarn workspace @aws/threat-composer run compile
+```
+
+and restart the dev server (clear `node_modules/.vite` if the change still does
+not show up). This is good for fidelity — the suite exercises the artefact that
+actually ships — but it is an easy way to waste an hour wondering why an edit
+changed nothing.
+
+## Seeing what the tests actually did
+
+A green suite is not evidence on its own. These are the ways to inspect it,
+roughly best-first.
+
+### UI mode — the one to reach for
+
+```bash
+yarn e2e:ui          # or: cd e2e && npm run test:ui
+```
+
+Pick any test and step through it. For each action you get the DOM snapshot as
+it was at that moment (inspectable with real devtools), the before/after
+screenshots, the network log, the console, and the exact locator used. It also
+watches files and re-runs on save, and has a locator picker for writing new
+assertions. This is the fastest way to confirm a test is really doing what its
+name claims.
+
+### Watch it drive a real browser
+
+```bash
+yarn e2e:headed                      # whole suite, visible
+cd e2e && npx playwright test status-and-tags --headed --workers=1
+```
+
+Add `--workers=1` or the parallel windows are unwatchable. Note the suite forces
+`reducedMotion: 'reduce'`, so Cloudscape animations are suppressed — it will look
+snappier than the real app.
+
+### Trace viewer — post-mortem of a run
+
+By default artefacts are only kept on failure, and since `retries` is 0 locally
+`trace: 'on-first-retry'` means **traces are never recorded on a passing local
+run**. To force them:
+
+```bash
+cd e2e && npm run test:trace -- journey-threat-model
+npm run trace test-results/<test-dir>/trace.zip
+```
+
+`test:trace` sets `TC_CAPTURE=1`, which turns trace, video and per-step
+screenshots on for every test in both configs. The journey spec alone records
+~200 actions with a screenshot and DOM snapshot at each one.
+
+### HTML report
+
+```bash
+yarn e2e:report      # or: cd e2e && npm run report
+```
+
+Written to `playwright-report/` on every run. Failures embed the screenshot,
+video and trace inline.
+
+### Step through with the inspector
+
+```bash
+cd e2e && npm run test:debug -- status-and-tags
+```
+
+Pauses before each action so you can evaluate locators live.
+
+## Proving the suite would catch a regression
+
+The useful question is not "does it pass" but "does it fail when the app
+breaks". Two worked examples, both reverted afterwards. Remember to recompile
+the library and restart the dev server between each (see above).
+
+**1. Silent status data loss.** In
+`packages/threat-composer/src/components/threats/ThreatStatementList/index.tsx`,
+in `handleUpdateStatementStatus`, change `status,` to `status: statement.status,`
+— the save still runs, nothing throws, but the new status is dropped.
+
+Result: 1 of 11 tests in `status-and-tags.spec.ts` fails —
+`threat status › can be changed from the card badge and survives a reload`, with
+`waiting for ... getByRole('button', { name: 'Resolved' })`. The
+editor-Metadata status test still passes, correctly, because that path uses a
+different handler. Note `tsc` also catches this one via `noUnusedParameters`.
+
+**2. Inverted sort order.** In the same file, in the `else` branch of the sort,
+swap `op1`/`op2`:
+`output.sort((op1, op2) => (op1.numericId || Number.MAX_VALUE) - (op2.numericId || Number.MAX_VALUE))`.
+
+Result: `tsc` and eslint are both clean — this mutation is invisible to static
+analysis. 2 of 12 tests in `filters-and-sorting.spec.ts` fail
+(`defaults to Id descending, and Ascending reverses it`, and
+`sorting survives filtering`). All 8 filter tests and the Priority-sort test
+still pass, because only the Id comparator was touched.
+
+Other one-line mutations worth trying: swap `removeTagFromEntity` for
+`addTagToEntity` in `handleRemoveTagFromStatement` (tag removal silently
+no-ops); change `if (sortBy.ascending)` to `if (!sortBy.ascending)`; negate the
+status filter predicate; or drop a `contentAriaLabel` prop, which should trip
+the canary in `selector-contract.spec.ts` rather than a functional test.
+
 ## What is covered
 
 | Area | Spec | What it guards |

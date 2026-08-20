@@ -13,6 +13,9 @@
     "test:all": "playwright test && playwright test --config=playwright.preview.config.ts",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:trace": "TC_CAPTURE=1 playwright test",
+    "trace": "playwright show-trace",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "report": "playwright show-report"
   },
