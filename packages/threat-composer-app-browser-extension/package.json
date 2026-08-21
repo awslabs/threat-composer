@@ -14,7 +14,7 @@
     "zip:firefox": "wxt zip --browser firefox",
     "postinstall": "wxt prepare",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "test:watch": "vitest",
     "eslint": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src"
   },

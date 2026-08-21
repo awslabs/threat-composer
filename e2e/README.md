@@ -411,10 +411,13 @@ surfacing as dozens of unrelated timeouts.
   it is better served by unit tests over the handler.
 - The Firefox MV2 build (`.output/firefox-mv2`). Playwright cannot side-load
   extensions in Firefox.
-- Unit-level coverage of the extension's pure logic (`matchesAnyRegex`, the SPA
-  state machine in `spa-utils.ts`, `retryWithBackoff`, `waitForCondition`). The
-  package has `vitest`, `jsdom` and `wxt/testing`'s `fakeBrowser` available but no
-  test files yet.
+The extension's pure logic is covered by unit tests inside that package rather
+than here — `yarn workspace @aws/threat-composer-app-browser-extension test`,
+67 tests over `core-utils`, `spa-utils`, `raw-file-utils`, `config` and
+`debugLogger`. Two constraints are recorded in its `vitest.setup.ts`: test files
+must use STATIC imports, and `wxt/testing`'s `fakeBrowser` is deliberately not
+used, both because loading esbuild inside jsdom fails on a `TextEncoder`
+invariant.
 - Storybook (`build/storybook`).
 - Visual regression: styling is checked functionally (computed backgrounds,
   stylesheet presence, images loading) rather than by screenshot comparison.

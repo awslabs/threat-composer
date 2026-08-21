@@ -145,7 +145,12 @@
       {
         "devDependencies": [
           "**/test/**",
-          "**/build-tools/**"
+          "**/__tests__/**",
+          "**/*.test.ts",
+          "**/*.test.tsx",
+          "**/build-tools/**",
+          "vitest.config.ts",
+          "vitest.setup.ts"
         ],
         "optionalDependencies": false,
         "peerDependencies": true
