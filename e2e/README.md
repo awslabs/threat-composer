@@ -106,6 +106,18 @@ Add `--workers=1` or the parallel windows are unwatchable. Note the suite forces
 `reducedMotion: 'reduce'`, so Cloudscape animations are suppressed — it will look
 snappier than the real app.
 
+### Do not run UI mode and the CLI suite at the same time
+
+Both drive the same Vite dev server on :3000, and the contention is enough to
+roughly double wall-clock time: the full suite measured 1.5 min alone and 2.8 min
+with UI mode also running; `packs --repeat-each=8` went from 46 s to 2.1 min. The
+`expect` timeout is 15 s, so a heavy page under that load can cross it and fail
+for no reason other than the load. If tests look flaky in UI mode, check nothing
+else is hitting the dev server first.
+
+`packs.spec.ts` is the most exposed to this — the pack detail page renders a
+paginated 37-row table off a 152 KB JSON module, the heaviest page in the suite.
+
 ### Trace viewer — post-mortem of a run
 
 By default artefacts are only kept on failure, and since `retries` is 0 locally

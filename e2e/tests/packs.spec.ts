@@ -88,9 +88,14 @@ test.describe('threat packs', () => {
     await addPackRowsToWorkspace(page, 2);
 
     await gotoWorkspace(page, DEFAULT_WORKSPACE, 'threatPacks');
-    // "Referenced threats" is the count already pulled into this workspace.
+
+    // "Referenced threats" is the count already pulled into this workspace, and it
+    // is the last column. Assert that CELL exactly rather than the whole row:
+    // `toContainText('2')` on the row was satisfied by any '2' anywhere in it, so
+    // it would have passed for a referenced count of 12, 20 or 25, or if the pack
+    // description ever gained a digit.
     const row = page.locator('table tbody tr').first();
-    await expect(row).toContainText('2');
+    await expect(row.locator('td').last()).toHaveText('2');
   });
 });
 

@@ -466,10 +466,31 @@ export async function removeEntityCard(
 
 // ---------------------------------------------------------------------- packs
 
-/** Add the first `rowCount` rows from a reference pack to the current workspace. */
+/**
+ * Add the first `rowCount` rows from a reference pack to the current workspace.
+ *
+ * `rowCount` must not exceed the table's PAGE SIZE. Pack tables paginate at 10
+ * (the GenAI ChatBot threat pack has 37 threats shown 10 at a time behind a "next
+ * page" button — the table is paginated, not virtualised, so scrolling does not
+ * reveal more). Asking for row 11+ used to fail as a bare 60s `locator.check`
+ * timeout with no hint as to why, which reads as flakiness rather than as the
+ * caller error it is. The explicit row-count check below turns it into a
+ * diagnosable failure. Selecting across pages would need paging support here.
+ */
 export async function addPackRowsToWorkspace(page: Page, rowCount: number): Promise<void> {
   const addButton = page.getByRole('button', { name: 'Add to workspace' });
   await expect(addButton, 'disabled with an empty selection').toBeDisabled();
+
+  // Wait for the table body to populate before indexing into it, and confirm the
+  // requested rows are actually on this page.
+  const bodyRows = page.locator('table tbody tr');
+  await expect(bodyRows.first()).toBeVisible();
+  const available = await bodyRows.count();
+  expect(
+    available,
+    `addPackRowsToWorkspace(${rowCount}) but only ${available} rows are on this page ` +
+      '(pack tables paginate at 10); select fewer rows or add pagination support',
+  ).toBeGreaterThanOrEqual(rowCount);
 
   // Cloudscape's per-row selection selector is 1-indexed by BODY row, so there is
   // no need to know that the first checkbox on the page is "select all".
