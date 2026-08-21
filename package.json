@@ -27,6 +27,8 @@
     "e2e": "cd e2e && npm test",
     "e2e:preview": "cd e2e && npm run test:preview",
     "e2e:variants": "cd e2e && npm run test:variants",
+    "e2e:extension": "cd e2e && npm run test:extension",
+    "e2e:build:extension": "yarn e2e:build:variants && yarn workspace @aws/threat-composer-app-browser-extension run compile",
     "e2e:build:variants": "env -u VITE_ROUTE_BASE_PATH -u VITE_GITHUB_PAGES -u PUBLIC_URL yarn workspace @aws/threat-composer-app run compile:browser-extension && env -u VITE_ROUTE_BASE_PATH -u VITE_GITHUB_PAGES -u PUBLIC_URL yarn workspace @aws/threat-composer-app run compile:ide-extension",
     "e2e:all": "cd e2e && npm run test:all",
     "e2e:typecheck": "cd e2e && npm run typecheck",

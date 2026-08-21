@@ -4,5 +4,6 @@ test-results-preview/
 playwright-report/
 playwright-report-preview/
 playwright-report-variants/
+playwright-report-extension/
 playwright/.cache/
 .auth/

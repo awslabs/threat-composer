@@ -21,13 +21,16 @@ fixtures/
   app.ts             task-level helpers written the way a user works
   routes.ts          the route table, with a per-route assertion for each
   variants.ts        helpers + shared contract for the extension build variants
+  extension.ts       loads the built WXT extension as a real Chromium extension
   data/              import fixtures
 scripts/
-  serve-github-pages.mjs  static server that mounts under a prefix and 404s
-  serve-static.mjs        static server rooted at a build dir (extension variants)
+  serve-github-pages.mjs      static server that mounts under a prefix and 404s
+  serve-static.mjs            static server rooted at a build dir (variants)
+  serve-extension-fixtures.mjs fake GitHub/GitLab/Bitbucket/AmazonCode pages
 tests/               run against the Vite dev server
 tests-preview/       run against the production build via `vite preview`
 tests-variants/      run against build/browser-extension and build/ide-extension
+tests-extension/     run against the loaded WXT extension (.output/chrome-mv3)
 ```
 
 `selectors.ts` and `app.ts` exist so specs read as behaviour. Each awkward
@@ -48,7 +51,8 @@ Then, from the repo root:
 yarn e2e            # dev-server suite (Playwright starts the server itself)
 yarn e2e:preview    # production-preview suite (needs a built website first)
 yarn e2e:variants   # extension build variants (needs yarn e2e:build:variants first)
-yarn e2e:all        # all three
+yarn e2e:extension  # the WXT extension, loaded for real (needs yarn e2e:build:extension)
+yarn e2e:all        # all four
 yarn e2e:typecheck  # tsc --noEmit over the specs
 ```
 
@@ -97,6 +101,46 @@ meaningless, and `page.reload()` throws away all router state. Every spec in
 `activeHref` comes from `location.pathname` and is absolute, so they never match
 and `aria-current` is set on nothing. Verified in both variants — assert on
 rendered content instead.
+
+### The browser extension, loaded for real
+
+```bash
+yarn e2e:build:extension   # browser-extension variant, then wxt build
+yarn e2e:extension
+```
+
+Follows [Playwright's Chrome extensions guide](https://playwright.dev/docs/chrome-extensions).
+Four things about it are non-obvious:
+
+- Extensions require `chromium.launchPersistentContext`, so the browser is
+  launched by the `context` fixture in `fixtures/extension.ts`, not by a
+  `projects` device preset. `channel: 'chromium'` is what makes extensions work
+  **headless**; Chrome and Edge removed the side-loading flags entirely.
+- The extension id is not fixed. Chromium derives it from the unpacked path, so it
+  is read at runtime from the MV3 service worker's URL and the tests assert its
+  shape, not its value. WXT generates `background.js` itself — `wxt.config.ts`
+  declares no background script, but the built manifest has one.
+- **The fixture pages must be served for real.** The content script does not fetch
+  the raw file; it asks the background service worker to, and `page.route` does
+  not intercept service-worker requests. With a routed fixture the background
+  fetch fails silently, `sendResponse(null)` fires, and the button never enables.
+  `scripts/serve-extension-fixtures.mjs` serves fake host pages instead.
+- **Do not assert on `onclick`.** Content scripts run in an isolated world, and an
+  event-handler property assigned there is not reflected into the main world that
+  `page.evaluate` sees — it reads back `null` even after the extension has wired it
+  up. Assert on `disabled` / inline `style.pointer-events`, which are real DOM
+  state and are visible across worlds. `expectButtonEnabled()` handles the
+  tag-dependent difference: GitHub and the raw-file path build a `<button>`,
+  GitLab / Bitbucket / Amazon Code build an `<a>`.
+
+Two fixture shapes are dictated by the handlers rather than chosen:
+Bitbucket derives its raw URL from `location.pathname` (dropping the first two
+segments and rewriting `src/` to `raw/`), so its fixture URL must be
+`/<workspace>/<repo>/src/<branch>/<file>`; and its template must contain **no
+whitespace** between the action-button elements, because insertion reaches the
+inner node with `clone.childNodes[0].childNodes[0]` and indentation makes that a
+text node. When that happens the handler throws, swallows the error, and the
+button simply never appears.
 
 ### The app under test is the BUILT library, not library source
 
@@ -233,6 +277,15 @@ were verified against `tests-variants/`:
   the two storage tests fail, listing the 12 `ThreatStatementGenerator.*` keys
   that leaked into localStorage — the data-leak regression that spec exists for.
 
+**4. Browser extension.** In
+`packages/threat-composer-app-browser-extension/src/entrypoints/content-script/utils/core-utils.ts`,
+change `isLikelyThreatComposerSchema` to `return JSONobj ? true : false`. Clean
+under `tsc`. Rebuild with `yarn e2e:build:extension` and exactly one test fails —
+`JSON without a schema key leaves the button disabled` — which is the guard that
+stops the extension offering to open arbitrary JSON as a threat model. The
+"content that is not JSON at all" test correctly still passes, because
+`JSON.parse` throws before the check is reached.
+
 Other one-line mutations worth trying: swap `removeTagFromEntity` for
 `addTagToEntity` in `handleRemoveTagFromStatement` (tag removal silently
 no-ops); change `if (sortBy.ascending)` to `if (!sortBy.ascending)`; negate the
@@ -269,6 +322,8 @@ the canary in `selector-contract.spec.ts` rather than a functional test.
 | Extension variant contract | `fixtures/variants.ts` (runs under both projects) | The MemoryRouter build actually boots and works: no service worker is registered *or requested*, every side-nav screen renders, the address bar never changes, reload resets the router, workspace mode is singleton, print/download are hidden, and a threat can be created by clicking. |
 | browser-extension build | `tests-variants/browser-extension.spec.ts` | `Export data` is the primary action, the theme toggle works, and both the theme and workspace content **are** persisted to localStorage and survive a reload. |
 | ide-extension build | `tests-variants/ide-extension.spec.ts` | `Save` replaces `Export data`, the theme toggle is absent, the host's `<meta name="dark-mode">` drives the theme (true/false/absent), and **nothing** about the workspace or theme reaches localStorage — so a threat model cannot leak into the IDE's browser profile. |
+| Extension install & popup | `tests-extension/extension-shell.spec.ts` | The extension installs, its MV3 service worker runs, the popup renders all five integration toggles plus debug and Restore defaults, changes persist to extension storage, each per-integration settings view is reachable and shows its shipped patterns, and the bundled viewer boots. |
+| Extension content script | `tests-extension/content-script.spec.ts` | The whole four-hop pipeline against fake GitHub, GitLab, Bitbucket and Amazon Code pages plus a raw `<pre>` view: the button is injected, stays disabled until the background fetch returns JSON carrying `schema`, and clicking it stores the model and opens the bundled viewer with content loaded. Plus the negatives that matter — wrong file extension, out-of-scope origin, disabled integration, schema-less JSON, non-JSON — and that config (`urlRegexes`, `fileExtension`) really drives matching. |
 
 ## Known defects recorded by the suite
 
@@ -349,9 +404,17 @@ surfacing as dozens of unrelated timeouts.
 
 ## Still uncovered
 
-- The WXT browser extension loaded as a real Chromium extension (its content
-  script handlers, popup and config UI are covered by unit tests in that package
-  rather than here).
+- The CodeCatalyst integration. It is the one handler with no coverage: unlike the
+  other four it needs a page script injected into the host page
+  (`scriptInjectForCodeCatalyst.js`) which scrapes an Ace editor session and
+  writes a hidden `#raw-div`. Faking that convincingly needs an Ace instance, so
+  it is better served by unit tests over the handler.
+- The Firefox MV2 build (`.output/firefox-mv2`). Playwright cannot side-load
+  extensions in Firefox.
+- Unit-level coverage of the extension's pure logic (`matchesAnyRegex`, the SPA
+  state machine in `spa-utils.ts`, `retryWithBackoff`, `waitForCondition`). The
+  package has `vitest`, `jsdom` and `wxt/testing`'s `fakeBrowser` available but no
+  test files yet.
 - Storybook (`build/storybook`).
 - Visual regression: styling is checked functionally (computed backgrounds,
   stylesheet presence, images loading) rather than by screenshot comparison.
