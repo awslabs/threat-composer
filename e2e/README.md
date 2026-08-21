@@ -165,9 +165,21 @@ roughly best-first.
 
 ### UI mode — the one to reach for
 
+**UI mode is per-config.** There are four configs, and `--ui` only ever shows the
+tests belonging to the one it was given. A bare `npm run test:ui` uses the default
+`playwright.config.ts`, so it shows the dev suite *only* — the preview, variant and
+extension tests are simply absent, which looks like they have gone missing.
+
 ```bash
-yarn e2e:ui          # or: cd e2e && npm run test:ui
+yarn e2e:ui             # dev suite (tests/)
+yarn e2e:ui:preview     # production preview (tests-preview/)
+yarn e2e:ui:variants    # both extension build variants (tests-variants/)
+yarn e2e:ui:extension   # the loaded browser extension (tests-extension/)
 ```
+
+Each of these starts whatever server its config needs, but the same build
+prerequisites apply as for the headless runs: `yarn e2e:build:variants` before the
+variant UI, `yarn e2e:build:extension` before the extension UI.
 
 Pick any test and step through it. For each action you get the DOM snapshot as
 it was at that moment (inspectable with real devtools), the before/after
