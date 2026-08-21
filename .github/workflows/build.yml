@@ -59,6 +59,17 @@ jobs:
       - name: Run production-preview suite
         run: npm run test:preview
         working-directory: e2e
+      # The two extension variants. Built here rather than in the step above
+      # because they must NOT inherit the GitHub Pages env vars that deploy.yml
+      # sets: VITE_ROUTE_BASE_PATH would put a basename on the memory router and
+      # VITE_GITHUB_PAGES would turn on a banner, so the artifact under test
+      # would not be the one the extensions ship. `env -u` makes that explicit
+      # even though these are unset in this job.
+      - name: Build extension variants
+        run: yarn e2e:build:variants
+      - name: Run build-variant suite
+        run: npm run test:variants
+        working-directory: e2e
       - name: Upload Playwright reports
         if: failure()
         uses: actions/upload-artifact@v4
@@ -67,5 +78,6 @@ jobs:
           path: |
             e2e/playwright-report/
             e2e/playwright-report-preview/
+            e2e/playwright-report-variants/
             e2e/test-results/
           retention-days: 7

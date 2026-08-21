@@ -20,9 +20,14 @@ fixtures/
   selectors.ts       low-level selectors for DOM that getByRole cannot reach
   app.ts             task-level helpers written the way a user works
   routes.ts          the route table, with a per-route assertion for each
+  variants.ts        helpers + shared contract for the extension build variants
   data/              import fixtures
+scripts/
+  serve-github-pages.mjs  static server that mounts under a prefix and 404s
+  serve-static.mjs        static server rooted at a build dir (extension variants)
 tests/               run against the Vite dev server
 tests-preview/       run against the production build via `vite preview`
+tests-variants/      run against build/browser-extension and build/ide-extension
 ```
 
 `selectors.ts` and `app.ts` exist so specs read as behaviour. Each awkward
@@ -42,7 +47,8 @@ Then, from the repo root:
 ```bash
 yarn e2e            # dev-server suite (Playwright starts the server itself)
 yarn e2e:preview    # production-preview suite (needs a built website first)
-yarn e2e:all        # both
+yarn e2e:variants   # extension build variants (needs yarn e2e:build:variants first)
+yarn e2e:all        # all three
 yarn e2e:typecheck  # tsc --noEmit over the specs
 ```
 
@@ -60,6 +66,37 @@ To run against a server you already have up, skip Playwright's own:
 ```bash
 TC_BASE_URL=http://localhost:3000 npx playwright test
 ```
+
+### The extension build variants
+
+`vite build` produces three artifacts from one config. The variant suite covers
+the two that are embedded rather than hosted:
+
+```bash
+yarn e2e:build:variants   # builds build/browser-extension and build/ide-extension
+yarn e2e:variants
+```
+
+Build them with `yarn e2e:build:variants`, not a bare `yarn build`. CI's
+`deploy.yml` sets `VITE_ROUTE_BASE_PATH=/threat-composer` and
+`VITE_GITHUB_PAGES=true` for `yarn build`, which runs *all three* compile targets
+— so a plain `yarn build` puts a basename on the extensions' memory router and
+enables a GitHub Pages banner. The artifact under test would not be the one the
+extensions ship. `e2e:build:variants` strips those vars with `env -u`.
+
+Each variant is served at its own **server root** (ports 4180 and 4181) because
+both are compiled with `base: '/'`, so their asset URLs are absolute — mounting
+under a sub-path 404s everything. Don't pick ports 5060/5061: Chromium blocks
+them as SIP ports and every navigation fails with `net::ERR_UNSAFE_PORT`.
+
+Nothing in `tests/` or `tests-preview/` can be reused, because these builds use a
+**MemoryRouter**. The address bar never changes, `page.goto(deepLink)` is
+meaningless, and `page.reload()` throws away all router state. Every spec in
+`tests-variants/` navigates by clicking. The side nav's active-item highlight is
+*not* a usable signal either: items carry relative hrefs (`threats`) while
+`activeHref` comes from `location.pathname` and is absolute, so they never match
+and `aria-current` is set on nothing. Verified in both variants — assert on
+rendered content instead.
 
 ### The app under test is the BUILT library, not library source
 
@@ -177,6 +214,25 @@ analysis. 2 of 12 tests in `filters-and-sorting.spec.ts` fail
 `sorting survives filtering`). All 8 filter tests and the Priority-sort test
 still pass, because only the Id comparator was touched.
 
+**3. Extension variants (needs a variant rebuild, see above).** Two mutations
+were verified against `tests-variants/`:
+
+- Drop the guard in `packages/threat-composer-app/src/index.tsx` so it reads
+  `serviceWorkerRegistration.register()` instead of
+  `!isMemoryRouterUsed() && serviceWorkerRegistration.register()`. Rebuild the
+  ide-extension variant and **all 16** of its tests fail, because the app enters
+  an infinite reload loop: `checkValidServiceWorker` fetches a
+  `/service-worker.js` that the extension build never emits, gets a 404,
+  unregisters, and calls `window.location.reload()`. The named failure is
+  `the bundle should never fetch service-worker.js`, which recorded three
+  requests for it. One deleted guard bricks the whole IDE bundle.
+
+- In `packages/threat-composer/src/hooks/useWorkspaceStorage/index.ts`, change
+  `if (appMode === APP_MODE_IDE_EXTENSION)` to
+  `if (false && appMode === APP_MODE_IDE_EXTENSION)`. Clean under `tsc`. Exactly
+  the two storage tests fail, listing the 12 `ThreatStatementGenerator.*` keys
+  that leaked into localStorage — the data-leak regression that spec exists for.
+
 Other one-line mutations worth trying: swap `removeTagFromEntity` for
 `addTagToEntity` in `handleRemoveTagFromStatement` (tag removal silently
 no-ops); change `if (sortBy.ascending)` to `if (!sortBy.ascending)`; negate the
@@ -210,6 +266,9 @@ the canary in `selector-contract.spec.ts` rather than a functional test.
 | Service worker | `tests-preview/service-worker.spec.ts` | Registers only in `PROD`. |
 | Build layout | `tests-preview/build-artifacts.spec.ts` | The bundle keeps CRA's `static/{js,css,media}` layout, which the browser extension's copy step depends on. |
 | GitHub Pages deep links | `tests/github-pages-rewrite.spec.ts` | The `404.html` `?/…` → `~and~` rewrite. Skipped unless run against a `VITE_GITHUB_PAGES` build — see the header comment in that file. |
+| Extension variant contract | `fixtures/variants.ts` (runs under both projects) | The MemoryRouter build actually boots and works: no service worker is registered *or requested*, every side-nav screen renders, the address bar never changes, reload resets the router, workspace mode is singleton, print/download are hidden, and a threat can be created by clicking. |
+| browser-extension build | `tests-variants/browser-extension.spec.ts` | `Export data` is the primary action, the theme toggle works, and both the theme and workspace content **are** persisted to localStorage and survive a reload. |
+| ide-extension build | `tests-variants/ide-extension.spec.ts` | `Save` replaces `Export data`, the theme toggle is absent, the host's `<meta name="dark-mode">` drives the theme (true/false/absent), and **nothing** about the workspace or theme reaches localStorage — so a threat model cannot leak into the IDE's browser profile. |
 
 ## Known defects recorded by the suite
 
@@ -290,8 +349,9 @@ surfacing as dozens of unrelated timeouts.
 
 ## Still uncovered
 
-- The `ide-extension` build variant (memory router + `<meta name="dark-mode">`).
-- The WXT browser extension loaded as a real Chromium extension.
+- The WXT browser extension loaded as a real Chromium extension (its content
+  script handlers, popup and config UI are covered by unit tests in that package
+  rather than here).
 - Storybook (`build/storybook`).
 - Visual regression: styling is checked functionally (computed backgrounds,
   stylesheet presence, images loading) rather than by screenshot comparison.
