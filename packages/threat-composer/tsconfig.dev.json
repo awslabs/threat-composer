@@ -6,7 +6,23 @@
     "types": [
       "node",
       "vitest/globals"
-    ]
+    ],
+    // Storybook 10 publishes types only through its "exports" map, with no
+    // top-level "types" field, so this project's node10 resolution -- required
+    // by tsconfig.json for Cloudscape, see the note there -- cannot find them.
+    // The story files are type-checked here and import only `Meta` and
+    // `StoryObj`, so pointing at the declaration file directly is enough. They
+    // cannot simply move to a "bundler" project: they import app components,
+    // which transitively import the Cloudscape subpaths that force node10 in the
+    // first place.
+    //
+    // Remove this once Cloudscape publishes those subpaths and the whole package
+    // can move to "bundler".
+    "paths": {
+      "@storybook/react": [
+        "../../node_modules/@storybook/react/dist/index.d.ts"
+      ]
+    }
   },
   // vitest.config.ts is checked by tsconfig.node.json instead: it imports Vite
   // and @vitejs/plugin-react, which ship only an "exports" map and so cannot be

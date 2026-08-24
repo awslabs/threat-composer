@@ -56,11 +56,9 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.6",
-    "@storybook/addon-essentials": "^8.6.18",
-    "@storybook/addon-interactions": "^8.6.18",
-    "@storybook/addon-links": "^8.6.18",
-    "@storybook/react": "^8.6.18",
-    "@storybook/react-vite": "^8.6.18",
+    "@storybook/addon-links": "^10.5.10",
+    "@storybook/react": "^10.5.10",
+    "@storybook/react-vite": "^10.5.10",
     "@types/indefinite": "2.3.4",
     "@types/node": "^26",
     "@types/react": "19.2.18",
@@ -77,7 +75,7 @@
     "jsdom": "^30.0.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "storybook": "^8.6.18",
+    "storybook": "^10.5.10",
     "typescript": "npm:@typescript/typescript6@6.0.2",
     "vite": "^8.2.2",
     "vitest": "^4.1.11"
