@@ -1,8 +1,8 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-# Run ESLint on JavaScript/TypeScript packages
-yarn workspaces run eslint
+# Run ESLint on JavaScript/TypeScript packages, and on the e2e suite.
+# `yarn eslint` is used rather than `yarn workspaces run eslint` so this matches
+# what CI checks: e2e is a standalone package, not a workspace, so the workspaces
+# form silently skips it.
+yarn eslint
 
 # Run Ruff on Python package - CHECK ONLY (no auto-fix)
 # If checks fail, run manually: cd packages/threat-composer-ai && uv run ruff check . --fix && uv run ruff format .
