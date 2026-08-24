@@ -68,9 +68,9 @@ export default [
   ...compat
     .config({
       extends: ['../../.eslintrc.header.json'],
-      plugins: ['import'],
+      plugins: ['import-x'],
       rules: {
-        'import/no-extraneous-dependencies': [
+        'import-x/no-extraneous-dependencies': [
           'error',
           {
             devDependencies: ['**/eslint.config.mjs'],

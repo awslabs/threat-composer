@@ -6,7 +6,7 @@
   "root": true,
   "plugins": [
     "@typescript-eslint",
-    "import"
+    "import-x"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -15,17 +15,17 @@
     "project": "./tsconfig.dev.json"
   },
   "extends": [
-    "plugin:import/typescript",
+    "plugin:import-x/typescript",
     "../../.eslintrc.header.json"
   ],
   "settings": {
-    "import/parsers": {
+    "import-x/parsers": {
       "@typescript-eslint/parser": [
         ".ts",
         ".tsx"
       ]
     },
-    "import/resolver": {
+    "import-x/resolver": {
       "node": {},
       "typescript": {
         "project": "./tsconfig.dev.json",
@@ -133,7 +133,7 @@
     "@typescript-eslint/no-require-imports": [
       "error"
     ],
-    "import/no-extraneous-dependencies": [
+    "import-x/no-extraneous-dependencies": [
       "error",
       {
         "devDependencies": [
@@ -144,10 +144,10 @@
         "peerDependencies": true
       }
     ],
-    "import/no-unresolved": [
+    "import-x/no-unresolved": [
       "error"
     ],
-    "import/order": [
+    "import-x/order": [
       "warn",
       {
         "groups": [
@@ -160,7 +160,7 @@
         }
       }
     ],
-    "import/no-duplicates": [
+    "import-x/no-duplicates": [
       "error"
     ],
     "no-shadow": [
