@@ -236,38 +236,61 @@ export async function typeIntoMarkdownEditor(page: Page, text: string, index = 0
   // MDXEditor is Lexical-backed and SILENTLY DROPS keystrokes sent before its editor
   // state has finished initialising. The element is visible, and it even reports
   // focused, while still swallowing input — so neither a visibility nor a
-  // `toBeFocused` wait is sufficient. Observed repeatedly under React 19:
-  // "API Gateway fronts a Lambda…" arrived as "mbda authoriser and…" (first 23
-  // characters gone) and "Card data flows from…" as "ows from…" (first 12 gone).
-  // Because the loss is silent, the failure surfaced much later as a missing
-  // getByText, a long way from the cause.
+  // `toBeFocused` wait is sufficient, and nor is `data-lexical-editor="true"`, which
+  // is already set on the element while input is still being discarded.
   //
-  // So: type, verify, and retry the whole thing until the full string is present.
-  // Each attempt clears the field first, otherwise partial text from a dropped
-  // attempt accumulates. Verifying here also pins the positional `nth(index)` pick to
-  // the right editor, which matters during route changes when the outgoing page's
-  // editor can still be mounted.
-  // Wait for focus before typing. `keyboard.type` sends keys to whatever is focused
-  // at that instant, and MDXEditor (Lexical) takes focus asynchronously after the
-  // click, so typing immediately can send the opening characters nowhere.
+  // The signature is always a lost LEADING prefix, and the amount lost scales with
+  // machine load: "API Gateway fronts a Lambda authoriser…" has arrived as
+  // "ay fronts a Lambda authoriser…", "ts a Lambda authoriser…" and
+  // "a authoriser…" on different runs. That is an editor becoming ready partway
+  // through the typing, not keystrokes being dropped at random.
   await editable.click();
   await expect(editable, 'the markdown editor should take focus before typing').toBeFocused();
 
+  // Both callers fill a freshly mounted, empty section. Asserted rather than assumed,
+  // because the probe below clears the editor: if this helper is ever pointed at an
+  // editor that already has content, fail here rather than silently discard it.
+  await expect(editable, 'the markdown editor should be empty before typing').toHaveText(/^\s*$/);
+
+  // Readiness probe. Since every proxy signal lies, the only trustworthy one is a
+  // keystroke that demonstrably SURVIVES: send a single character, wait for it to
+  // appear, then confirm it is still there a beat later.
+  //
+  // Persistence is the part that matters. Keystrokes sent before Lexical finishes
+  // initialising do reach the DOM, but are then thrown away when Lexical applies its
+  // initial (empty) editor state — which is exactly why the loss was always a leading
+  // prefix. So "the character appeared" is not sufficient; "the character was not
+  // subsequently wiped" is. If it does get wiped, this block throws and the retry
+  // runs against an editor that has by then initialised.
+  //
+  // `toContainText` rather than an equality check because a probe from an earlier
+  // attempt can arrive late, leaving more than one character behind; the select-all
+  // clear that follows removes however many accumulated.
+  const PROBE = 'x';
+  await expect(
+    async () => {
+      await page.keyboard.type(PROBE);
+      await expect(editable).toContainText(PROBE, { timeout: 500 });
+      await page.waitForTimeout(150);
+      // Short, bounded: this is a "still there?" check, not another wait for it to
+      // arrive. (`timeout: 0` would mean wait indefinitely, which would hang here.)
+      await expect(editable).toContainText(PROBE, { timeout: 500 });
+    },
+    'a keystroke should survive in the markdown editor, proving it has initialised',
+  ).toPass({ timeout: 15_000 });
+
+  await page.keyboard.press('ControlOrMeta+a');
+  await page.keyboard.press('Backspace');
+  await expect(editable, 'the probe should be cleared before typing').toHaveText(/^\s*$/);
+
   await page.keyboard.type(text);
 
-  // Then VERIFY the text landed. This is the part that matters, and the original
-  // helper had no equivalent: a partial write is otherwise silent and surfaces much
-  // later as an unrelated missing-getByText, a long way from the cause. It also pins
-  // the positional `nth(index)` pick to the intended editor, which matters during a
-  // route change when the outgoing page's editor can still be mounted.
-  //
-  // Deliberately NOT wrapped in a retry. A dropped-keystroke race was seen twice while
-  // upgrading (losing the first 23 and 12 characters), but it is rare: it did not
-  // recur once across 378 test executions with exactly this
-  // click/focus/type/verify sequence, and could not be reproduced in isolation even at
-  // 10-way parallelism. Retrying inside the helper would make any recurrence
-  // INVISIBLE; leaving it to Playwright's own `retries` keeps it visible as a flaky
-  // test in the report, which is where flake tolerance belongs.
+  // Note what is and is not retried. The probe above retries a single character, which
+  // is a readiness wait. The payload is still typed exactly ONCE and verified once, so
+  // a truncated write still fails the test loudly — that was the point of the previous
+  // no-retry note, and it is preserved. Verifying here also pins the positional
+  // `nth(index)` pick to the intended editor, which matters during a route change when
+  // the outgoing page's editor can still be mounted.
   await expect(editable, 'the typed text should be in the editor at this index').toContainText(
     text,
   );
