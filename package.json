@@ -60,6 +60,7 @@
     "@types/node": "^26",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
+    "@typescript/native": "npm:typescript@7.0.2",
     "eslint": "^9",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.5",
@@ -72,7 +73,7 @@
     "npm-check-updates": "23.0.2",
     "prettier": "3.9.6",
     "tsx": "4.23.12",
-    "typescript": "6.0.3",
+    "typescript": "npm:@typescript/typescript6@6.0.2",
     "zod": "^4"
   },
   "resolutions": {

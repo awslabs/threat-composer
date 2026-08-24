@@ -11,7 +11,9 @@
     // a subpath (internal/events) that is absent from that package's "exports"
     // map. It is erased at compile time, so it never resolves at runtime.
     // See the longer note in packages/threat-composer/tsconfig.json: node10 is
-    // deprecated in TS 6 and removed in TS 7, so this pins the toolchain to TS 6.
+    // deprecated in TS 6 and removed in TS 7, so this project's `typecheck`
+    // script invokes `tsc6` (the TypeScript 6 compiler) rather than `tsc`, which
+    // the side-by-side install points at TypeScript 7.
     "moduleResolution": "node",
     "ignoreDeprecations": "6.0",
     "jsx": "react-jsx",
