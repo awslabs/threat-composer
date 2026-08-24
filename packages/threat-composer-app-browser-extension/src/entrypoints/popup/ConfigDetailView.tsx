@@ -78,7 +78,7 @@ export const ConfigDetailView: FC<ConfigDetailViewProps> = () => {
             <Form actions={(
               <SpaceBetween size="xs" direction="horizontal">
                 <Button onClick={() => {
-                  navigate('/');
+                  void navigate('/');
                 }}>Back</Button>
                 <Button onClick={resetToDefaults}>Reset to Defaults</Button>
               </SpaceBetween>

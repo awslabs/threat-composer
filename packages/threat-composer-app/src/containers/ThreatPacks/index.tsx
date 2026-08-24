@@ -26,7 +26,7 @@ const ThreatPacks: FC = () => {
   const navigate = useNavigate();
 
   const handleThreatPackLinkClick = useCallback((threatPackId: string) => {
-    workspaceId && navigate(generateUrl(
+    workspaceId && void navigate(generateUrl(
       ROUTE_THREAT_PACK,
       searchParms,
       workspaceId,

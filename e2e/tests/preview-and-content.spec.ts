@@ -158,7 +158,12 @@ test.describe('diagram images', () => {
     // upload still works — but the browser logs the refusal. The CSP is
     // byte-identical to origin/main, so this is pre-existing, not a migration
     // regression. Allow exactly that one message.
-    allowConsoleError(page, /Refused to create a worker from 'blob:/);
+    //
+    // The wording is browser-version dependent: older Chromium said "Refused to
+    // create a worker from 'blob:…'", newer builds say "Creating a worker from
+    // 'blob:…' violates the following Content Security Policy directive". Match
+    // both, anchored on the worker-from-blob phrasing so it stays narrow.
+    allowConsoleError(page, /(Refused to create|Creating) a worker from 'blob:/);
 
     await gotoWorkspace(page, DEFAULT_WORKSPACE, 'architecture');
     await page.getByRole('radio', { name: 'From file upload' }).check();
@@ -238,7 +243,9 @@ test.describe('diagram images', () => {
   });
 
   test('switching back to "No Image" clears the diagram but keeps the text', async ({ page }) => {
-    allowConsoleError(page, /Refused to create a worker from 'blob:/);
+    // See the note above: the CSP worker message is worded differently across
+    // Chromium versions.
+    allowConsoleError(page, /(Refused to create|Creating) a worker from 'blob:/);
 
     await gotoWorkspace(page, DEFAULT_WORKSPACE, 'architecture');
 

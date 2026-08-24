@@ -39,7 +39,7 @@ const PriorityBadge: FC<PriorityBadgeProps> = ({
   editingStatement,
   onEditMetadata,
 }) => {
-  const ref = useRef<SelectProps.Ref>();
+  const ref = useRef<SelectProps.Ref | undefined>(undefined);
   const priority = useMemo(() => {
     return (editingStatement.metadata?.find(m => m.key === 'Priority')?.value as string) || undefined;
   }, [editingStatement.metadata]);

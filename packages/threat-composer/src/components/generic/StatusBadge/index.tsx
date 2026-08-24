@@ -36,7 +36,7 @@ const StatusBadge: FC<StatusBadgeProps> = ({
   options,
   statusColorMapping,
 }) => {
-  const ref = useRef<SelectProps.Ref>();
+  const ref = useRef<SelectProps.Ref | undefined>(undefined);
 
   const [editMode, setEditMode] = useState(false);
 

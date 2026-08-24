@@ -10,7 +10,10 @@
     // Node10 resolution, not "bundler": a Cloudscape type-only import reaches
     // a subpath (internal/events) that is absent from that package's "exports"
     // map. It is erased at compile time, so it never resolves at runtime.
+    // See the longer note in packages/threat-composer/tsconfig.json: node10 is
+    // deprecated in TS 6 and removed in TS 7, so this pins the toolchain to TS 6.
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "jsx": "react-jsx",
     "types": [
       "node",

@@ -37,7 +37,7 @@ const WorkspaceRoot: FC = () => {
   const navigate = useNavigate();
 
   const handleThreatListView = useCallback((filter?: ThreatStatementListFilter) => {
-    navigate(generateUrl(ROUTE_THREAT_LIST_PATH, searchParams, workspaceId), {
+    void navigate(generateUrl(ROUTE_THREAT_LIST_PATH, searchParams, workspaceId), {
       state: filter ? {
         filter,
       } : undefined,
@@ -45,7 +45,7 @@ const WorkspaceRoot: FC = () => {
   }, [navigate, workspaceId, searchParams]);
 
   const handleThreatEditorView = useCallback((newThreatId: string, idToCopy?: string) => {
-    navigate(generateUrl(ROUTE_THREAT_EDITOR_PATH, searchParams, workspaceId, newThreatId, undefined, idToCopy ? {
+    void navigate(generateUrl(ROUTE_THREAT_EDITOR_PATH, searchParams, workspaceId, newThreatId, undefined, idToCopy ? {
       idToCopy,
     } : undefined), {
       state: {
@@ -56,7 +56,7 @@ const WorkspaceRoot: FC = () => {
 
   const handleWorkspaceChanged = useCallback((newWorkspaceId: string) => {
     const url = generateUrl(ROUTE_WORKSPACE_HOME, searchParams, newWorkspaceId);
-    navigate(url);
+    void navigate(url);
   }, [navigate, workspaceId, searchParams]);
 
   return (

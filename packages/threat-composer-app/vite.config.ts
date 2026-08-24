@@ -107,13 +107,14 @@ export default defineConfig(({ mode }) => {
       // Storybook bundle), and tries to resolve imports out of already-built
       // assets. index.html is the only real entry point.
       entries: ['index.html'],
-      esbuildOptions: {
-        // `define` above does not reach pre-bundled dependencies; they are
-        // processed by esbuild separately.
-        define: {
-          global: 'globalThis',
-        },
-      },
+      // Vite 8 pre-bundles with Rolldown rather than esbuild and ignores the old
+      // `optimizeDeps.esbuildOptions`. Its replacement, `optimizeDeps.rolldownOptions`,
+      // rejects a `define` key outright ("Invalid key: Expected never but received
+      // define"), so the CRA-era `global` shim for pre-bundled deps has no direct
+      // equivalent here. The top-level `define` still covers application code.
+      // tests/word-export.spec.ts is the guard for this: packing a .docx is the path
+      // that actually needs `global`, so if that test passes, dep pre-bundling is
+      // handling it and nothing more is required.
     },
     build: {
       outDir,

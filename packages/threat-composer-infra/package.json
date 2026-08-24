@@ -19,20 +19,20 @@
     "eslint": "eslint --ext .ts --fix --no-error-on-unmatched-pattern src test"
   },
   "dependencies": {
-    "aws-cdk-lib": "^2.194.0",
-    "cdk-nag": "2.35.88",
-    "constructs": "^10.0.5"
+    "aws-cdk-lib": "^2.266.0",
+    "cdk-nag": "^2",
+    "constructs": "^10.8.1"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@typescript-eslint/eslint-plugin": "^7",
-    "@typescript-eslint/parser": "^7",
-    "aws-cdk": "^2.194.0",
+    "@types/node": "^26",
+    "@typescript-eslint/eslint-plugin": "^8",
+    "@typescript-eslint/parser": "^8",
+    "aws-cdk": "^2.1138.0",
     "eslint": "^8",
-    "eslint-import-resolver-typescript": "3.10.1",
-    "eslint-plugin-import": "2.31.0",
-    "tsx": "4.19.2",
-    "typescript": "5.8.3",
-    "vitest": "^3.2.4"
+    "eslint-import-resolver-typescript": "4.4.5",
+    "eslint-plugin-import": "2.32.0",
+    "tsx": "4.23.12",
+    "typescript": "6.0.3",
+    "vitest": "^4.1.11"
   }
 }

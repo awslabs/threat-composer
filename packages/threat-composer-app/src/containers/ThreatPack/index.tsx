@@ -34,7 +34,7 @@ const ThreatPack: FC = () => {
         threatPackId: selectedThreatPackId,
         threatPackThreatId: threat.id,
       });
-    navigate(url, {
+    void navigate(url, {
       state: {
         threatPackId: selectedThreatPackId,
         threatPackThreatId: threat.id,

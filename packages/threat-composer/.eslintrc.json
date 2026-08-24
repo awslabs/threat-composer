@@ -44,10 +44,6 @@
     "indent": [
       "off"
     ],
-    "@typescript-eslint/indent": [
-      "error",
-      2
-    ],
     "quotes": [
       "error",
       "single",
@@ -114,9 +110,6 @@
       "error",
       "multi-line",
       "consistent"
-    ],
-    "@typescript-eslint/member-delimiter-style": [
-      "error"
     ],
     "semi": [
       "error",

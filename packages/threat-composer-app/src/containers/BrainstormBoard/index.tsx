@@ -34,7 +34,7 @@ const BrainstormBoardContainer: FC = () => {
    */
   const handleNavigateToThreat: NavigateToThreatHandler = useCallback((workspaceName, itemId, fieldKey, fieldValue) => {
     const params = `fieldKey=${fieldKey}&fieldValue=${encodeURIComponent(fieldValue)}`;
-    navigate(`/workspaces/${workspaceName}/threats/${itemId}?${params}`);
+    void navigate(`/workspaces/${workspaceName}/threats/${itemId}?${params}`);
   }, [navigate]);
 
   return (

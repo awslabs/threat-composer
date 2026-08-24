@@ -17,7 +17,8 @@ import type { BoardProps } from '@cloudscape-design/board-components/board';
 import Board from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
 import Header from '@cloudscape-design/components/header';
-import type { ReactNode, FC } from 'react';
+// React 19 removed the GLOBAL JSX namespace, so JSX.Element must now be imported.
+import type { ReactNode, FC, JSX } from 'react';
 import { useState, useCallback } from 'react';
 import MitigationStatus from './components/MitigationStatus';
 import Overview from './components/Overview';
@@ -28,7 +29,7 @@ import ThreatStatus from './components/ThreatStatus';
 import type { WorkspaceInsightsProps } from './types';
 import ContentLayout from '../../generic/ContentLayout';
 
-export * from './types';
+export type * from './types';
 
 export interface ItemType {
   title: string;

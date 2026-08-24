@@ -19,27 +19,27 @@
     "eslint": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src"
   },
   "dependencies": {
-    "@cloudscape-design/components": "3.0.956",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "react-router-dom": "6.30.3"
+    "@cloudscape-design/components": "3.0.1350",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-router-dom": "7.18.2"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "18.3.20",
-    "@types/react-dom": "18.3.7",
-    "@typescript-eslint/eslint-plugin": "^7",
-    "@typescript-eslint/parser": "^7",
-    "@vitejs/plugin-react": "4.4.1",
-    "@wxt-dev/auto-icons": "^1.1.0",
+    "@types/node": "^26",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@typescript-eslint/eslint-plugin": "^8",
+    "@typescript-eslint/parser": "^8",
+    "@vitejs/plugin-react": "6.1.0",
+    "@wxt-dev/auto-icons": "^1.1.2",
     "eslint": "^8",
-    "eslint-import-resolver-typescript": "3.10.1",
-    "eslint-plugin-import": "2.31.0",
-    "jsdom": "^25.0.1",
+    "eslint-import-resolver-typescript": "4.4.5",
+    "eslint-plugin-import": "2.32.0",
+    "jsdom": "^30.0.1",
     "rollup-plugin-copy": "3.5.0",
-    "typescript": "5.8.3",
-    "vitest": "^3.2.4",
-    "wxt": "0.20.6"
+    "typescript": "6.0.3",
+    "vitest": "^4.1.11",
+    "wxt": "0.21.4"
   },
   "browserslist": {
     "production": [

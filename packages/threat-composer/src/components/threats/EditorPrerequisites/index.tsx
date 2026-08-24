@@ -33,7 +33,7 @@ import type { EditorProps } from '../ThreatStatementEditor/types';
 const EditorPrerequisites: FC<EditorProps> = forwardRef<TextareaProps.Ref, EditorProps>(({
   statement, setStatement, fieldData,
 }, ref) => {
-  const inputRef = useRef<TextareaProps.Ref>();
+  const inputRef = useRef<TextareaProps.Ref | undefined>(undefined);
   const { perFieldExamples, previousInputs } = useThreatsContext();
   const { brainstormData } = useBrainstormContext();
 

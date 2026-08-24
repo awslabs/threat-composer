@@ -408,8 +408,25 @@ surfacing as dozens of unrelated timeouts.
   the suite is safe to run in parallel. `tests/persistence.spec.ts` asserts this.
 - **The dev server registers no service worker** and sets no `VITE_APP_MODE`.
   Anything production-only belongs in `tests-preview/`.
-- **Node / Vite pinning.** The repo pins Vite to 6 (root `resolutions`) because
-  Vite 7 needs Node ≥ 20.19. Don't unpin without bumping Node.
+- **Node.** The repo targets Node 24 (Krypton LTS); CI pins `node-version: '24'`.
+  Vite 8 requires Node ≥ 20.19, so Node 20.18 and earlier will not run the build.
+- **`resolutions` are load-bearing.** Two entries in the root block exist to make
+  the dependency graph resolve at all, not as security floors:
+  `vite` and `react`/`react-dom`/`@types/react*` mirror the direct deps (without
+  them the old majors get forced back in), and
+  `@cloudscape-design/component-toolkit` must be pinned to `^1.0.0-beta.179`.
+  Without that last one, `@cloudscape-design/components` 3.0.1350 resolves against
+  toolkit `beta.96` and the app build dies with 206 `MISSING_EXPORT` errors
+  (`validateProps`, `initThemes`, `useMergeRefs`, `useUniqueId`).
+- **Upper bounds that are not ours to lift.** Four dependencies cannot go to their
+  latest major because something else in the tree has not caught up:
+  TypeScript stays on 6 (`typescript-eslint` peers at `<6.1.0`, and TS 7 removes
+  `moduleResolution: node10` which Cloudscape's incomplete `exports` map still
+  needs); ESLint stays on 8 (`eslint-plugin-header` 3.1.1, last published 2021,
+  has a rule schema ESLint 9 rejects, and `eslint-plugin-import` peers at `^9`);
+  Storybook stays on 8 (`addon-essentials` and `addon-interactions` have no
+  release past 8.6.14); and `cdk-nag` stays on 2 (v3 removes `NagSuppressions`
+  outright). Each is recorded with its evidence in the upgrade commit.
 - **Not wired into the git hooks.** `pre-push` already runs a full build; adding
   browser tests would make every push considerably slower. CI runs them instead,
   in a dedicated `e2e` job (see `.github/workflows/build.yml`).

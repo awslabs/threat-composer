@@ -26,7 +26,7 @@ const MitigationPacks: FC = () => {
   const navigate = useNavigate();
 
   const handleMitigationPackLinkClicked = useCallback((mitigationPackId: string) => {
-    workspaceId && navigate(generateUrl(
+    workspaceId && void navigate(generateUrl(
       ROUTE_MITIGATION_PACK,
       searchParms,
       workspaceId,

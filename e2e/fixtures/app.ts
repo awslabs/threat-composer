@@ -69,10 +69,36 @@ export async function gotoWorkspace(page: Page, workspaceId: string, segment: st
   await waitForAppShell(page);
 }
 
-/** Navigate via the side navigation, the way a user would. */
+/**
+ * Navigate via the side navigation, the way a user would.
+ *
+ * This waits for the URL to actually reach the clicked link's target. That matters:
+ * `waitForAppShell` only asserts the navigation's own "Dashboard" entry is visible,
+ * and that is present on EVERY page, so on its own it is not a signal that the
+ * destination rendered at all. Callers were therefore free to start interacting
+ * while the PREVIOUS page's content was still mounted.
+ *
+ * That was a latent race, not a theoretical one. `fillDiagramInfo` on the
+ * Architecture page would pick up the Application-info page's "Edit" button, click
+ * it as it was being unmounted, and hang until the test timed out. It survived the
+ * old dependency set purely on render timing and started failing the journey spec
+ * under React 19.
+ *
+ * The link's own href is used as the expected destination rather than a hand-kept
+ * name-to-route table, so this cannot drift out of sync with the nav.
+ */
 export async function navigateVia(page: Page, linkName: string): Promise<void> {
-  await page.getByRole('navigation').getByRole('link', { name: linkName, exact: true }).click();
+  const link = page.getByRole('navigation').getByRole('link', { name: linkName, exact: true });
+  const href = await link.getAttribute('href');
+
+  await link.click();
   await waitForAppShell(page);
+
+  // "Reference packs" is an expandable group with href="#", not a destination.
+  if (href && href !== '#') {
+    const target = href.replace(/^\/+/, '');
+    await page.waitForURL((url) => url.pathname.replace(/\/+$/, '').endsWith(target));
+  }
 }
 
 // ---------------------------------------------------------------- workspaces
@@ -131,16 +157,52 @@ export async function workspaceAction(page: Page, item: string): Promise<void> {
 
 // ------------------------------------------------------- application details
 
+/**
+ * Put an Application-info / Architecture / Dataflow section into edit mode.
+ *
+ * These sections render in one of two states depending on whether they already
+ * hold content: populated shows a single "Edit" button, empty drops straight into
+ * the editor with "Cancel" / "Confirm".
+ *
+ * This deliberately does NOT sample `editButton.isVisible()` and branch on the
+ * result. That was the previous implementation and it is a race: `isVisible()` is a
+ * point-in-time read with no auto-waiting, so on a freshly created workspace it
+ * could catch "Edit" during the render that then swapped it for the editor, and the
+ * subsequent click would hang forever on a button that had already gone. It
+ * happened to work under the old dependency set and started failing the journey
+ * spec on React 19 purely because the render ordering shifted.
+ *
+ * Instead: wait until the section has settled into EITHER state, then act. The
+ * post-condition is the same in both cases -- we are in edit mode with a Confirm
+ * button available.
+ */
+export async function enterEditMode(page: Page): Promise<void> {
+  const editButton = page.getByRole('button', { name: 'Edit', exact: true });
+  const confirmButton = page.getByRole('button', { name: 'Confirm' });
+
+  // `toPass` rather than a read-then-act sequence. Any variant of
+  // "is Edit visible? then click it" is racy here, because during a route change the
+  // outgoing page's Edit button can still be mounted when the check runs and gone by
+  // the time the click lands — the click then blocks until the test times out.
+  // Retrying the whole decision, with short per-attempt timeouts, converges on
+  // whichever state the section actually settles into.
+  await expect(async () => {
+    if (await confirmButton.isVisible()) {
+      // Empty sections mount straight into the editor.
+      return;
+    }
+
+    await editButton.click({ timeout: 2_000 });
+    await expect(confirmButton).toBeVisible({ timeout: 2_000 });
+  }, 'the section should end up in edit mode').toPass({ timeout: 30_000 });
+}
+
 export async function fillApplicationInfo(
   page: Page,
   { name, description }: { name: string; description: string },
 ): Promise<void> {
-  // An empty workspace opens this page already in edit mode; a populated one
-  // needs the Edit button first.
-  const editButton = page.getByRole('button', { name: 'Edit', exact: true });
-  if (await editButton.isVisible().catch(() => false)) {
-    await editButton.click();
-  }
+  await enterEditMode(page);
+  await expectSingleMarkdownEditor(page);
 
   await page.getByPlaceholder('Enter application name').fill(name);
   await typeIntoMarkdownEditor(page, description);
@@ -158,8 +220,61 @@ export async function fillApplicationInfo(
 export async function typeIntoMarkdownEditor(page: Page, text: string, index = 0): Promise<void> {
   const editable = page.locator('[contenteditable="true"]').nth(index);
   await expect(editable).toBeVisible();
+
+  // MDXEditor is Lexical-backed and SILENTLY DROPS keystrokes sent before its editor
+  // state has finished initialising. The element is visible, and it even reports
+  // focused, while still swallowing input — so neither a visibility nor a
+  // `toBeFocused` wait is sufficient. Observed repeatedly under React 19:
+  // "API Gateway fronts a Lambda…" arrived as "mbda authoriser and…" (first 23
+  // characters gone) and "Card data flows from…" as "ows from…" (first 12 gone).
+  // Because the loss is silent, the failure surfaced much later as a missing
+  // getByText, a long way from the cause.
+  //
+  // So: type, verify, and retry the whole thing until the full string is present.
+  // Each attempt clears the field first, otherwise partial text from a dropped
+  // attempt accumulates. Verifying here also pins the positional `nth(index)` pick to
+  // the right editor, which matters during route changes when the outgoing page's
+  // editor can still be mounted.
+  // Wait for focus before typing. `keyboard.type` sends keys to whatever is focused
+  // at that instant, and MDXEditor (Lexical) takes focus asynchronously after the
+  // click, so typing immediately can send the opening characters nowhere.
   await editable.click();
+  await expect(editable, 'the markdown editor should take focus before typing').toBeFocused();
+
   await page.keyboard.type(text);
+
+  // Then VERIFY the text landed. This is the part that matters, and the original
+  // helper had no equivalent: a partial write is otherwise silent and surfaces much
+  // later as an unrelated missing-getByText, a long way from the cause. It also pins
+  // the positional `nth(index)` pick to the intended editor, which matters during a
+  // route change when the outgoing page's editor can still be mounted.
+  //
+  // Deliberately NOT wrapped in a retry. A dropped-keystroke race was seen twice while
+  // upgrading (losing the first 23 and 12 characters), but it is rare: it did not
+  // recur once across 378 test executions with exactly this
+  // click/focus/type/verify sequence, and could not be reproduced in isolation even at
+  // 10-way parallelism. Retrying inside the helper would make any recurrence
+  // INVISIBLE; leaving it to Playwright's own `retries` keeps it visible as a flaky
+  // test in the report, which is where flake tolerance belongs.
+  await expect(editable, 'the typed text should be in the editor at this index').toContainText(
+    text,
+  );
+}
+
+/**
+ * Wait for a section that owns exactly one markdown editor to have settled.
+ *
+ * Application info, Architecture and Dataflow each render a single MDXEditor. Route
+ * changes overlap, though: the URL updates and the new section mounts while the
+ * previous one is still tearing down, so there can transiently be two editors on the
+ * page. `typeIntoMarkdownEditor` picks by index, so it has to wait for the extra one
+ * to go before choosing.
+ */
+async function expectSingleMarkdownEditor(page: Page): Promise<void> {
+  await expect(
+    page.locator('[contenteditable="true"]'),
+    'expected exactly one markdown editor once the section settled',
+  ).toHaveCount(1);
 }
 
 /** Architecture and Dataflow share one component (BaseDiagramInfo). */
@@ -167,10 +282,8 @@ export async function fillDiagramInfo(
   page: Page,
   { introduction, imageUrl }: { introduction: string; imageUrl?: string },
 ): Promise<void> {
-  const editButton = page.getByRole('button', { name: 'Edit', exact: true });
-  if (await editButton.isVisible().catch(() => false)) {
-    await editButton.click();
-  }
+  await enterEditMode(page);
+  await expectSingleMarkdownEditor(page);
 
   await typeIntoMarkdownEditor(page, introduction);
 

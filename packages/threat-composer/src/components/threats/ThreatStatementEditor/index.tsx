@@ -136,8 +136,8 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
   ...props
 }) => {
   const { setEditingStatement, saveStatement, addStatement } = useThreatsContext();
-  const inputRef = useRef<{ focus(): void }>();
-  const fullExamplesRef = useRef<{ collapse(): void }>();
+  const inputRef = useRef<{ focus(): void } | undefined>(undefined);
+  const fullExamplesRef = useRef<{ collapse(): void } | undefined>(undefined);
   const { currentWorkspace, workspaceList } = useWorkspacesContext();
   const [editor, setEditor] = useState<ThreatFieldTypes | undefined>(props.initialEditorField ?? getRecommendedEditor(editingStatement));
   const [suggestions, setSuggestions] = useState<string[]>([]);

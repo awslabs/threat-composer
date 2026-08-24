@@ -59,7 +59,7 @@ const EditWorkspace: FC<EditWorkspaceProps> = ({
   currentWorkspace,
   ...props
 }) => {
-  const inputRef = useRef<InputProps.Ref>();
+  const inputRef = useRef<InputProps.Ref | undefined>(undefined);
   const [value, setValue] = useState(props.value || '');
   const [errorText, setErrorText] = useState('');
 

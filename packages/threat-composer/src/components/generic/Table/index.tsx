@@ -108,5 +108,5 @@ const Table: FC<TableProps> = ({ disableSettings, preferences: collectionPrefere
 };
 
 export default Table;
-export * from './types';
+export type * from './types';
 export * from './config';

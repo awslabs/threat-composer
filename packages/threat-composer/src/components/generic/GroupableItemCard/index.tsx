@@ -213,7 +213,7 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const isGrouped = groupedItems.length > 1;
