@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import type { CollectionPreferencesProps } from '@cloudscape-design/components/collection-preferences';
 import type { HeaderProps } from '@cloudscape-design/components/header';
 import type { TableProps as CloudscapeTableProps } from '@cloudscape-design/components/table';

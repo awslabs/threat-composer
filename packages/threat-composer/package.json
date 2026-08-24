@@ -17,7 +17,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.dev.json",
     "test": "vitest run",
     "test:watch": "vitest",
-    "eslint": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src",
+    "eslint": "eslint --fix --no-error-on-unmatched-pattern src",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build -o storybook.out",
     "package": "mkdir -p dist/js && npm pack --pack-destination dist/js"

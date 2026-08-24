@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { beforeEach, describe, expect, it } from 'vitest';
 import { DefaultConfig } from '../../../popup/config';
 import { TC_BUTTON_ID, createTCButton } from '../core-utils';

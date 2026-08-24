@@ -16,7 +16,7 @@
     "watch": "cdk deploy --hotswap && cdk watch",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "eslint": "eslint --ext .ts --fix --no-error-on-unmatched-pattern src test"
+    "eslint": "eslint --fix --no-error-on-unmatched-pattern src test"
   },
   "dependencies": {
     "aws-cdk-lib": "^2.266.0",

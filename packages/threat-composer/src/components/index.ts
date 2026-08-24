@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 export { default as ThreatStatementEditor } from './threats/ThreatStatementEditor';
 export { default as ThreatStatementList } from './threats/ThreatStatementList';
 export { default as ApplicationInfoComponent } from './application/ApplicationInfo';

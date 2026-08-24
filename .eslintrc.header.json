@@ -1,0 +1,12 @@
+{
+  "plugins": ["notice"],
+  "rules": {
+    "notice/notice": [
+      "error",
+      {
+        "templateFile": "../../header.js",
+        "onNonMatchingHeader": "replace"
+      }
+    ]
+  }
+}

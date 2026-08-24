@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import type { FC } from 'react';
 import WorkspaceSelectorComponent from '../../components/workspaces/WorkspaceSelector';
 import { APP_MODE_BROWSER_EXTENSION, APP_MODE_IDE_EXTENSION } from '../../configs';

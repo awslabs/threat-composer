@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { Container, Header, SpaceBetween, TextContent, Input } from '@cloudscape-design/components';
 import type { BaseKeyDetail } from '@cloudscape-design/components/internal/events';
 import type { FC } from 'react';
