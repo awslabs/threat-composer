@@ -14,7 +14,7 @@
     "compile": "tsc6 -p tsconfig.json",
     "copy-assets": "rsync -a --prune-empty-dirs --include='*/' --include='*.css' --include='*.png' --include='*.gif' --exclude='*' ./src/ ./lib/",
     "build": "yarn clean && yarn compile && yarn copy-assets && yarn storybook:build && yarn test",
-    "typecheck": "tsc6 --noEmit -p tsconfig.dev.json",
+    "typecheck": "tsc6 --noEmit -p tsconfig.dev.json && tsc --noEmit -p tsconfig.node.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "eslint": "eslint --fix --no-error-on-unmatched-pattern src eslint.config.mjs",

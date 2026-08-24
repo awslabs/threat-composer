@@ -21,6 +21,10 @@ jobs:
       - run: yarn install --frozen-lockfile --check-files
       - run: PATH=/tmp/git-secrets/bin:$PATH yarn build
       - run: yarn eslint
+      # Vite strips types without checking them, so the build alone cannot catch
+      # type errors. Without this step the workspace typecheck rotted unnoticed:
+      # web-vitals 6 and mdast 4 broke it and nothing failed.
+      - run: yarn typecheck
 
   e2e:
     # Playwright functional tests for the web app. Kept as a separate job from

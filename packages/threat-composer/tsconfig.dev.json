@@ -8,10 +8,12 @@
       "vitest/globals"
     ]
   },
+  // vitest.config.ts is checked by tsconfig.node.json instead: it imports Vite
+  // and @vitejs/plugin-react, which ship only an "exports" map and so cannot be
+  // resolved under this project's node10 setting.
   "include": [
     "src",
-    ".storybook",
-    "vitest.config.ts"
+    ".storybook"
   ],
   "exclude": [
     "node_modules"

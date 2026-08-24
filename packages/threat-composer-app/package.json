@@ -14,7 +14,7 @@
     "compile": "yarn compile:website && yarn compile:browser-extension && yarn compile:ide-extension",
     "post-compile": "mkdir -p ./build/storybook && cp -r ../threat-composer/storybook.out/. ./build/storybook/",
     "build": "yarn compile && yarn post-compile && yarn test",
-    "typecheck": "tsc6 --noEmit -p tsconfig.json",
+    "typecheck": "tsc6 --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "eslint": "eslint --fix --no-error-on-unmatched-pattern src eslint.config.mjs"

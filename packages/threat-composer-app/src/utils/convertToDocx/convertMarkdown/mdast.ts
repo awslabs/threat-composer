@@ -42,12 +42,12 @@ import type {
   Image,
   LinkReference,
   ImageReference,
-  Footnote,
   FootnoteReference,
   Resource,
   Association,
   Reference,
   Alternative,
+  RootContent,
 } from 'mdast';
 export type {
   Parent,
@@ -77,7 +77,6 @@ export type {
   Image,
   LinkReference,
   ImageReference,
-  Footnote,
   FootnoteReference,
   Resource,
   Association,
@@ -97,51 +96,21 @@ export interface InlineMath extends Literal {
   type: 'inlineMath';
 }
 
-export type Content =
-  | TopLevelContent
-  | ListContent
-  | TableContent
-  | RowContent
-  | PhrasingContent;
-
-export type TopLevelContent =
-  | BlockContent
-  | FrontmatterContent
-  | DefinitionContent;
-
-export type BlockContent =
-  | Paragraph
-  | Heading
-  | ThematicBreak
-  | Blockquote
-  | List
-  | Table
-  | HTML
-  | Code
-  | Math;
-
-export type FrontmatterContent = YAML | TOML;
-
-export type DefinitionContent = Definition | FootnoteDefinition;
-
-export type ListContent = ListItem;
-
-export type TableContent = TableRow;
-
-export type RowContent = TableCell;
-
-export type PhrasingContent = StaticPhrasingContent | Link | LinkReference;
-
-export type StaticPhrasingContent =
-  | Text
-  | Emphasis
-  | Strong
-  | Delete
-  | HTML
-  | InlineCode
-  | Break
-  | Image
-  | ImageReference
-  | Footnote
-  | FootnoteReference
-  | InlineMath;
+/**
+ * Any node this pipeline can encounter while walking a parsed tree.
+ *
+ * This module used to keep a full hand-written copy of mdast's content unions
+ * (TopLevelContent, BlockContent, PhrasingContent and friends) written against
+ * mdast 3. mdast 4 restructured those unions, so the local copies silently
+ * drifted and mdast's own node arrays stopped being assignable to them.
+ * Deriving from mdast's `RootContent` removes that entire class of drift. The
+ * copies are deleted; nothing outside this file referenced them.
+ *
+ * Widened with the nodes the remark plugins in this pipeline can contribute:
+ * remark-frontmatter can yield `toml`, and the math nodes are declared above.
+ *
+ * mdast 4 also removed the inline `footnote` node. GFM footnotes arrive as a
+ * `footnoteReference` plus a `footnoteDefinition`, both still handled by the
+ * transformer.
+ */
+export type Content = RootContent | TOML | Math | InlineMath;

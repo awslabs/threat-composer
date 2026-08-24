@@ -19,6 +19,7 @@ import type {
   TableOfContents,
   IImageOptions,
   ILevelsOptions,
+  IPropertiesOptions,
 } from 'docx';
 import {
   convertInchesToTwip,
@@ -35,7 +36,6 @@ import {
   FootnoteReferenceRun,
   CheckBox,
 } from 'docx';
-import type { IPropertiesOptions } from 'docx/build/file/core-properties';
 import type * as mdast from './mdast';
 import { invariant } from './utils';
 import Table from '../components/Table';
@@ -312,9 +312,8 @@ const convertNodes = (
       case 'imageReference':
         // FIXME: unimplemented
         break;
-      case 'footnote':
-        results.push(buildFootnote(node, ctx));
-        break;
+      // No `case 'footnote'`: mdast 4 removed the inline footnote node, so it
+      // can no longer occur. GFM footnotes arrive as the two cases below.
       case 'footnoteReference':
         // do we need context here?
         results.push(buildFootnoteReference(node));
@@ -560,14 +559,6 @@ const buildImage = (
   const imageRun = getImageRun (image, type, width, height);
 
   return imageRun;
-};
-
-const buildFootnote = ({ children }: mdast.Footnote, ctx: Context) => {
-  // FIXME: transform to paragraph for now
-  const { nodes } = convertNodes(children, ctx);
-  return new Paragraph({
-    children: nodes,
-  });
 };
 
 const buildFootnoteDefinition = (

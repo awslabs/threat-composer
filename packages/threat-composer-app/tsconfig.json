@@ -41,10 +41,11 @@
     "skipLibCheck": true,
     "noEmit": true
   },
+  // vite.config.ts and vitest.config.ts are checked by tsconfig.node.json
+  // instead: they import Vite and @vitejs/plugin-react, which ship only an
+  // "exports" map and so cannot be resolved under this project's node10 setting.
   "include": [
-    "src",
-    "vite.config.ts",
-    "vitest.config.ts"
+    "src"
   ],
   "exclude": [
     "node_modules",
