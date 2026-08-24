@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import { logDebugMessage } from '../debugLogger';
 import { AmazonCodeHandler } from './content-script/handlers/amazon-code-handler';
 import type { BaseIntegrationHandler } from './content-script/handlers/base-handler';

@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import { getApplicationInfoContent } from './utils/getApplicationInfo';
 import { getApplicationName } from './utils/getApplicationName';
 import { getArchitectureContent } from './utils/getArchitecture';

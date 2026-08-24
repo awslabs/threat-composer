@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 const getPageCount = (totalItemsCount?: number, pageSize?: number) => {
   if (!totalItemsCount || !pageSize) {
     return 0;

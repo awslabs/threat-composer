@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import { logDebugMessage } from '../../../debugLogger';
 import type { TCConfig } from '../../popup/config';
 import { IntegrationTypes } from '../../popup/config';

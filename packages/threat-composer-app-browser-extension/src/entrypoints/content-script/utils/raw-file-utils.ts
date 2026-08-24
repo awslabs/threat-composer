@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import { createTCButton, extractContentDirectly, processTCCandidate, getTCJSONCandidate } from './core-utils';
 import { logDebugMessage } from '../../../debugLogger';
 import type { TCConfig } from '../../popup/config';

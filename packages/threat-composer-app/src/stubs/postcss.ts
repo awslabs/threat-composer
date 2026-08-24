@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 /**
  * Browser stub for `postcss`, aliased in vite.config.ts.
  *

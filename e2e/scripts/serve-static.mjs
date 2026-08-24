@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 /**
  * Dumb static file server, rooted at the directory you point it at.
  *

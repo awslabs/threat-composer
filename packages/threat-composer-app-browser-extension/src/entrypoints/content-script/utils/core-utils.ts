@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import { logDebugMessage } from '../../../debugLogger';
 import type { TCConfig } from '../../popup/config';
 import type { TCJSONSimplifiedSchema, RetryOptions, DOMWaitOptions } from '../types';

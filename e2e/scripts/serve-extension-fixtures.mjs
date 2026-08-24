@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 /**
  * Fake code-host pages for the browser-extension tests.
  *

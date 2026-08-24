@@ -1,12 +1,6 @@
 {
-  "plugins": ["notice"],
+  "plugins": ["license-header"],
   "rules": {
-    "notice/notice": [
-      "error",
-      {
-        "templateFile": "../../header.js",
-        "onNonMatchingHeader": "replace"
-      }
-    ]
+    "license-header/header": ["error", "../../header.js"]
   }
 }

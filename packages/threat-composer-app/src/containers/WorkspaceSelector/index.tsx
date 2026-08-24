@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import {
   WorkspaceSelector as WorkspaceSelectorComponent,
   APP_MODE_BROWSER_EXTENSION,

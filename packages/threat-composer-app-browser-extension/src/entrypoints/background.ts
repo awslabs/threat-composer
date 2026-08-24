@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import { logDebugMessage } from '../debugLogger';
 import { getExtensionConfig } from './popup/config';
 

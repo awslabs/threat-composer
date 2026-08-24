@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 /**
  * Minimal static server that mimics GitHub Pages project-page behaviour, so the
  * deep-link recovery path can actually be exercised.

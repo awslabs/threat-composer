@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import {
   APP_MODE_BROWSER_EXTENSION,
   APP_MODE_IDE_EXTENSION,

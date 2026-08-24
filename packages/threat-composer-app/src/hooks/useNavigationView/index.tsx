@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import { DEFAULT_WORKSPACE_ID } from '@aws/threat-composer';
 import { useCallback } from 'react';
 import type { NavigateOptions } from 'react-router-dom';

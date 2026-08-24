@@ -9,7 +9,10 @@
     "node": true,
     "browser": true
   },
-  "plugins": ["notice", "@typescript-eslint"],
+  "plugins": [
+    "license-header",
+    "@typescript-eslint"
+  ],
   "ignorePatterns": [
     "node_modules/",
     "test-results/",
@@ -20,12 +23,9 @@
     "playwright-report-extension/"
   ],
   "rules": {
-    "notice/notice": [
+    "license-header/header": [
       "error",
-      {
-        "templateFile": "header.js",
-        "onNonMatchingHeader": "replace"
-      }
+      "header.js"
     ]
   }
 }

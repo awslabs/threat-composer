@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import { GlobalSetupContext } from '@aws/threat-composer';
 import type { FC } from 'react';
 import { Outlet } from 'react-router-dom';

@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import { SEARCH_PARAM_MODE } from '../../config/searchParams';
 
 const DEFAULT_MODE = import.meta.env.VITE_DEFAULT_MODE;

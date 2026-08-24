@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import { useSearchParams } from 'react-router-dom';
 import { SEARCH_PARAM_FEATURES } from '../../config/searchParams';
 

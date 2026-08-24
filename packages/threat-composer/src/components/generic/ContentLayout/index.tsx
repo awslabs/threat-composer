@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import ContentLayoutComponent from '@cloudscape-design/components/content-layout';
 import type { HeaderProps } from '@cloudscape-design/components/header';
 import Header from '@cloudscape-design/components/header';

@@ -14,6 +14,5 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 export { default as BrainstormBoard } from './BrainstormBoard';
 export type { NavigateToThreatHandler, BrainstormBoardProps } from './BrainstormBoard';

@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import type { TCConfig } from '../../popup/config';
 import { IntegrationTypes } from '../../popup/config';
 import type { TCGitLabState } from '../types';

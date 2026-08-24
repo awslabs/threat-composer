@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import type { ViewNavigationEvent } from '../../../customTypes';
 
 export interface WorkspaceInsightsProps {

@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-
 import type { TCConfig } from '../../popup/config';
 import type { SPAIntegrationState } from '../types';
 import { BaseIntegrationHandler } from './base-handler';
