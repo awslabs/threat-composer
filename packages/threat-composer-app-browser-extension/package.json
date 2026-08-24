@@ -25,6 +25,7 @@
     "react-router-dom": "7.18.2"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.6",
     "@types/node": "^26",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
@@ -32,7 +33,7 @@
     "@typescript-eslint/parser": "^8",
     "@vitejs/plugin-react": "6.1.0",
     "@wxt-dev/auto-icons": "^1.1.2",
-    "eslint": "^8",
+    "eslint": "^9",
     "eslint-import-resolver-typescript": "4.4.5",
     "eslint-plugin-import": "2.32.0",
     "jsdom": "^30.0.1",
