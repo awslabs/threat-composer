@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
-    "eslint": "eslint --fix --no-error-on-unmatched-pattern src"
+    "eslint": "eslint --fix --no-error-on-unmatched-pattern src eslint.config.mjs"
   },
   "dependencies": {
     "@cloudscape-design/components": "3.0.1352",

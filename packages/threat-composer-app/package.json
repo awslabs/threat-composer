@@ -17,7 +17,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "eslint": "eslint --fix --no-error-on-unmatched-pattern src"
+    "eslint": "eslint --fix --no-error-on-unmatched-pattern src eslint.config.mjs"
   },
   "dependencies": {
     "@aws/threat-composer": "0.0.0",

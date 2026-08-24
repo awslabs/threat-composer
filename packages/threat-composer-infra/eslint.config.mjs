@@ -38,7 +38,9 @@ export default [
   },
   // Flat config has no `ignorePatterns`; ignores are top-level and must come first.
   {
-    ignores: ['**/*.js', '**/*.mjs', '**/*.d.ts', 'node_modules/', '**/*.generated.ts', 'coverage/', 'cdk.out/'],
+    // `**/*.mjs` is deliberately NOT ignored: eslint.config.mjs is the only .mjs file
+    // in this package and it is now linted by the self-lint block below.
+    ignores: ['**/*.js', '**/*.d.ts', 'node_modules/', '**/*.generated.ts', 'coverage/', 'cdk.out/'],
   },
   // Flat config also drops the `--ext` flag and only discovers .js/.mjs/.cjs by
   // default, so the translated configs must be scoped to the TypeScript sources
@@ -47,4 +49,37 @@ export default [
     ...config,
     files: ['**/*.ts', '**/*.tsx'],
   })),
+  // Lint this config file itself. The undeclared `@eslint/eslintrc` dependency that
+  // shipped with the ESLint 9 migration survived a full `yarn eslint` run precisely
+  // because flat config files sat outside the lint scope: the translated configs above
+  // are scoped to **/*.ts{,x}, and the CLI only ever pointed at src/.
+  //
+  // The translated .eslintrc.json is deliberately not reused here. It is a typed config
+  // keyed to a tsconfig this file is not part of, so applying it fails with a project
+  // service error. Only the two rules that can catch this class of defect are enabled,
+  // on the default parser: the licence header, and the extraneous-dependency check.
+  //
+  // `devDependencies` is widened to cover this file, which legitimately imports one.
+  // An import declared in no manifest at all is still an error, and that is the case
+  // that went unnoticed before.
+  ...compat
+    .config({
+      extends: ['../../.eslintrc.header.json'],
+      plugins: ['import'],
+      rules: {
+        'import/no-extraneous-dependencies': [
+          'error',
+          {
+            devDependencies: ['**/eslint.config.mjs'],
+            optionalDependencies: false,
+            peerDependencies: true,
+          },
+        ],
+      },
+    })
+    .map((config) => ({
+      ...config,
+      files: ['eslint.config.mjs'],
+      languageOptions: { ecmaVersion: 'latest', sourceType: 'module' },
+    })),
 ];
