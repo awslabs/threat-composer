@@ -84,9 +84,18 @@ export class PipelineStack extends Stack {
                 // floor at runtime, so a 20.x runtime older than 20.19 would
                 // now fail here while CI stayed green.
                 //
-                // A runtime version the CodeBuild image does not provide fails
-                // the build outright, so confirm the image in use offers 24
-                // before relying on this.
+                // A runtime version the image does not provide fails the build
+                // outright, so this was checked rather than assumed: nodejs 24
+                // is available on Ubuntu 22.04 standard:7.0, which is the image
+                // CodeBuildStep resolves to here. Note the runtime sets differ
+                // per image and are not simply newest-wins -- 18 and 20 are on
+                // 7.0 but not on 8.0.
+                //
+                // The image is not pinned explicitly, so it keeps receiving
+                // security updates. It is recorded in the pipeline snapshot
+                // test, so an aws-cdk-lib upgrade that moves off an image
+                // carrying nodejs 24 shows up as a snapshot diff rather than a
+                // pipeline failure.
                 nodejs: '24',
               },
             },
