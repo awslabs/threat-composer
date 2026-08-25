@@ -1,0 +1,24 @@
+{
+  "name": "@aws/threat-composer-e2e",
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "description": "Playwright end-to-end / functional tests for the threat-composer web app. Kept outside packages/* so the app's Vitest config (which globs src/**/*.{spec,test}.{ts,tsx}) never tries to run these specs.",
+  "type": "module",
+  "scripts": {
+    "postinstall": "playwright install chromium",
+    "test": "playwright test",
+    "test:dev": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:trace": "TC_CAPTURE=1 playwright test",
+    "trace": "playwright show-trace",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.49.1",
+    "typescript": "5.8.3"
+  }
+}

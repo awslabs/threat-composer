@@ -28,3 +28,59 @@ jobs:
       # invokes its ruff target, so lint has been enforced only by the
       # pre-commit hook. This gives CI parity with the hook.
       - run: yarn nx run threat-composer-ai:lint
+
+  e2e:
+    # Playwright functional tests for the web app. Kept as a separate job from
+    # build-test: it needs a browser installed and is the only job that exercises
+    # the app at runtime, so a failure here is distinguishable at a glance from a
+    # compile or lint failure.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - run: npm install -g yarn
+      - run: yarn install --frozen-lockfile
+      # The library must be compiled before the app can be served: the app
+      # resolves @aws/threat-composer through its "main": "lib/index.js".
+      - run: yarn nx run @aws/threat-composer:compile
+      # The asset copy is required, not optional. The library's CSS/PNG/GIF are
+      # rsync'd out of src into lib and imported from there, and the suite
+      # asserts both that the app is styled and that images load. This mirrors
+      # the first step of the package's projen `post-compile` task; the second
+      # step of that task is a full Storybook build, which the suite does not
+      # need, so it is deliberately not run here.
+      - name: Copy library assets into lib
+        run: >-
+          rsync -ar --prune-empty-dirs --include='*/' --include='*.css'
+          --include='*.png' --include='*.gif' --exclude='*' ./src/* ./lib
+        working-directory: packages/threat-composer
+      # e2e is a standalone npm package rather than a yarn workspace, so that the
+      # app's own test runner never picks up these specs.
+      - name: Install e2e dependencies
+        run: npm ci
+        working-directory: e2e
+      - name: Typecheck e2e specs
+        run: npm run typecheck
+        working-directory: e2e
+      # BROWSER=none stops react-scripts opening a browser when Playwright boots
+      # the dev server through the app's `dev` script.
+      - name: Run web app suite
+        run: npm test
+        working-directory: e2e
+        env:
+          BROWSER: none
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            e2e/playwright-report/
+            e2e/test-results/
+          retention-days: 7
