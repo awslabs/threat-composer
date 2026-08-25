@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,11 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { useCallback, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { DEFAULT_WORKSPACE_ID } from '../../configs/constants';
 import { EVENT_WORKSPACE_CHANGED } from '../../configs/events';
-import { Workspace } from '../../customTypes';
+import type { Workspace } from '../../customTypes';
 import isWorkspaceExample from '../../utils/isWorkspaceExample';
 import { useWorkspaceExamplesContext } from '../WorkspaceExamplesContext';
 

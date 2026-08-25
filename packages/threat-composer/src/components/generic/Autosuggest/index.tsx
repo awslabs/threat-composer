@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,11 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import CloudscapeAutosuggest, { AutosuggestProps as CloudscapeAutosuggestProps } from '@cloudscape-design/components/autosuggest';
-import FormField, { FormFieldProps } from '@cloudscape-design/components/form-field';
-import { BaseKeyDetail, CancelableEventHandler } from '@cloudscape-design/components/internal/events';
-import React, { FC, useCallback, useState } from 'react';
-import { z } from 'zod';
+
+import type { AutosuggestProps as CloudscapeAutosuggestProps } from '@cloudscape-design/components/autosuggest';
+import CloudscapeAutosuggest from '@cloudscape-design/components/autosuggest';
+import type { FormFieldProps } from '@cloudscape-design/components/form-field';
+import FormField from '@cloudscape-design/components/form-field';
+import type { BaseKeyDetail, CancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import type { FC } from 'react';
+import React, { useCallback, useState } from 'react';
+import type { z } from 'zod';
 import useContentValidation from '../../../hooks/useContentValidation';
 
 export interface AutosuggestProps extends FormFieldProps, Omit<CloudscapeAutosuggestProps, 'errorText'> {

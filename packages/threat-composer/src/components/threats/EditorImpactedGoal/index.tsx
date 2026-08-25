@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,17 +13,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
-import { AutosuggestProps } from '@cloudscape-design/components/autosuggest';
-import { BaseKeyDetail, CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
-import TokenGroup, { TokenGroupProps } from '@cloudscape-design/components/token-group';
-import { FC, useCallback, useState, forwardRef } from 'react';
+import type { AutosuggestProps } from '@cloudscape-design/components/autosuggest';
+import type { BaseKeyDetail, CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import type { TokenGroupProps } from '@cloudscape-design/components/token-group';
+import TokenGroup from '@cloudscape-design/components/token-group';
+import type { FC } from 'react';
+import { useCallback, useState, forwardRef } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { ThreatStatementImpactedGoalItem } from '../../../customTypes';
 import Autosuggest from '../../generic/Autosuggest';
 import EditorLayout from '../EditorLayout';
 import ExampleList from '../ExampleList';
-import { EditorProps } from '../ThreatStatementEditor/types';
+import type { EditorProps } from '../ThreatStatementEditor/types';
 
 const EditorImpactedGoal: FC<EditorProps> = forwardRef<AutosuggestProps.Ref, EditorProps>(({
   statement,

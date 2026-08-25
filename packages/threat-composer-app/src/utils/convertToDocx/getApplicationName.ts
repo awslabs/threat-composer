@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,7 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat, escapeMarkdown } from '@aws/threat-composer';
+
+import type { DataExchangeFormat } from '@aws/threat-composer';
+import { escapeMarkdown } from '@aws/threat-composer';
 import { Paragraph, HeadingLevel, TextRun } from 'docx';
 
 export const getApplicationName = async (

@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,8 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
-import { FC, PropsWithChildren, useCallback, useMemo } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback, useMemo } from 'react';
 import { WorkspaceExamplesContext, useWorkspaceExamplesContext } from './context';
 import { EXAMPLES_WORKSPACE_ID_PREFIX, STORAGE_LOCAL_STATE } from '../../configs';
 import workspaceExamplesData from '../../data/workspaceExamples/workspaceExamples';

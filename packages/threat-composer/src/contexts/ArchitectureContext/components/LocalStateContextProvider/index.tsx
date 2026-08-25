@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,12 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { ArchitectureInfo } from '../../../../customTypes';
+
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback, useState } from 'react';
+import type { ArchitectureInfo } from '../../../../customTypes';
 import { INFO_DEFAULT_VALUE } from '../../../constants';
-import { LocalStateContextProviderBaseProps } from '../../../types';
+import type { LocalStateContextProviderBaseProps } from '../../../types';
 import { ArchitectureInfoContext } from '../../context';
-import { ArchitectureContextProviderProps } from '../../types';
+import type { ArchitectureContextProviderProps } from '../../types';
 
 const ArchitectureLocalStateContextProvider: FC<PropsWithChildren<
 ArchitectureContextProviderProps & LocalStateContextProviderBaseProps<ArchitectureInfo>>> = ({

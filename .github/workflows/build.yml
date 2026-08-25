@@ -11,29 +11,40 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '24'
+      # Installed directly rather than through corepack. pnpm 10 manages its own
+      # version from the packageManager field in the root package.json, so the
+      # major here is all that matters and the exact version stays declared in
+      # one place. pnpm also recommends against corepack, which puts a Node shim
+      # in front of every invocation.
+      - run: npm install -g pnpm@10
       - name: Install uv
         uses: astral-sh/setup-uv@v5
       - run: pushd /tmp && git clone --depth 1 https://github.com/awslabs/git-secrets.git && cd ./git-secrets && PREFIX=/tmp/git-secrets make install && popd
       - run: npm install -g typescript
-      - run: npm install -g yarn
       - run: npm install -g oss-attribution-generator
-      - run: npm install -g @aws/pdk
-      - run: pdk install --frozen-lockfile
-      - run: PATH=/tmp/git-secrets/bin:$PATH pdk run build
-      - run: pdk workspaces run eslint
-      # threat-composer-ai is an nx project, not a yarn workspace, so the line
-      # above does not reach it. Its pytest suite already runs as part of
-      # `pdk run build` (threat-composer-ai:build spawns test), but nothing
-      # invokes its ruff target, so lint has been enforced only by the
-      # pre-commit hook. This gives CI parity with the hook.
-      - run: yarn nx run threat-composer-ai:lint
+      - run: pnpm install --frozen-lockfile
+      - run: PATH=/tmp/git-secrets/bin:$PATH pnpm build
+      # `lint` covers everything in one graph: nx runs the `eslint` target on
+      # each TypeScript package and the `lint` target (ruff) on
+      # threat-composer-ai, and the root script adds the e2e suite, which is a
+      # standalone package rather than a workspace. Ruff had previously never
+      # run in CI at all -- only in the pre-commit hook.
+      - run: pnpm lint
+      # Vite strips types without checking them, so the build alone cannot catch
+      # type errors. Without this step the workspace typecheck rotted unnoticed:
+      # web-vitals 6 and mdast 4 broke it and nothing failed.
+      - run: pnpm typecheck
+      # `test` likewise covers both languages: Vitest on the TypeScript packages
+      # and pytest on threat-composer-ai, which nx reaches through the test
+      # target declared in its project.json.
+      - run: pnpm test
 
   e2e:
     # Playwright functional tests for the web app. Kept as a separate job from
-    # build-test: it needs a browser installed and is the only job that exercises
-    # the app at runtime, so a failure here is distinguishable at a glance from a
-    # compile or lint failure.
+    # build-test: it needs browsers installed and is the only job that exercises
+    # the app at runtime, so a failure here should be distinguishable at a glance
+    # from a compile or lint failure.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -41,46 +52,58 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-      - run: npm install -g yarn
-      - run: yarn install --frozen-lockfile
-      # The library must be compiled before the app can be served: the app
-      # resolves @aws/threat-composer through its "main": "lib/index.js".
-      - run: yarn nx run @aws/threat-composer:compile
-      # The asset copy is required, not optional. The library's CSS/PNG/GIF are
-      # rsync'd out of src into lib and imported from there, and the suite
-      # asserts both that the app is styled and that images load. This mirrors
-      # the first step of the package's projen `post-compile` task; the second
-      # step of that task is a full Storybook build, which the suite does not
-      # need, so it is deliberately not run here.
-      - name: Copy library assets into lib
-        run: >-
-          rsync -ar --prune-empty-dirs --include='*/' --include='*.css'
-          --include='*.png' --include='*.gif' --exclude='*' ./src/* ./lib
-        working-directory: packages/threat-composer
-      # e2e is a standalone npm package rather than a yarn workspace, so that the
-      # app's own test runner never picks up these specs.
+          node-version: '24'
+      - run: npm install -g pnpm@10
+      - run: pnpm install --frozen-lockfile
+      # The library must be compiled before the app can be served. `copy-assets`
+      # is required too, not optional: the library's PNG/GIF and CSS are rsync'd
+      # into lib/ and imported from the ESM output, and the suite asserts that
+      # images load and the app is styled.
+      - run: pnpm --filter @aws/threat-composer run compile
+      - run: pnpm --filter @aws/threat-composer run copy-assets
+      # The preview suite serves the production bundle from build/website.
+      - run: pnpm --filter @aws/threat-composer-app run compile:website
+      # e2e is a standalone npm package, not a pnpm workspace, so that the app's
+      # Vitest config never picks up these specs.
       - name: Install e2e dependencies
         run: npm ci
         working-directory: e2e
       - name: Typecheck e2e specs
         run: npm run typecheck
         working-directory: e2e
-      # BROWSER=none stops react-scripts opening a browser when Playwright boots
-      # the dev server through the app's `dev` script.
-      - name: Run web app suite
+      - name: Run dev-server suite
         run: npm test
         working-directory: e2e
-        env:
-          BROWSER: none
-      - name: Upload Playwright report
+      - name: Run production-preview suite
+        run: npm run test:preview
+        working-directory: e2e
+      # The two extension variants. Built here rather than in the step above
+      # because they must NOT inherit the GitHub Pages env vars that deploy.yml
+      # sets: VITE_ROUTE_BASE_PATH would put a basename on the memory router and
+      # VITE_GITHUB_PAGES would turn on a banner, so the artifact under test
+      # would not be the one the extensions ship. `env -u` makes that explicit
+      # even though these are unset in this job.
+      - name: Build extension variants
+        run: pnpm e2e:build:variants
+      - name: Run build-variant suite
+        run: npm run test:variants
+        working-directory: e2e
+      # The WXT extension, loaded as a real Chromium extension. Depends on the
+      # browser-extension variant built above, which wxt copies into .output.
+      - name: Build browser extension
+        run: pnpm --filter @aws/threat-composer-app-browser-extension run compile
+      - name: Run browser-extension suite
+        run: npm run test:extension
+        working-directory: e2e
+      - name: Upload Playwright reports
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-reports
           path: |
             e2e/playwright-report/
+            e2e/playwright-report-preview/
+            e2e/playwright-report-variants/
+            e2e/playwright-report-extension/
             e2e/test-results/
           retention-days: 7

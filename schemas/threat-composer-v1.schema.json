@@ -1,12 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "description": "Threat Composer data exchange format schema for importing/exporting threat modeling data. This schema defines the complete structure for threat modeling sessions including application info, architecture diagrams, data flows, threats, mitigations, and assumptions. Files conforming to this schema should use the .tc.json file extension and can be imported/exported through the Threat Composer application. When generating or validating threat model data, ensure all optional fields are included when available (and additive) to provide comprehensive threat modeling coverage. For more information about Threat Composer and threat modeling best practices, visit: https://github.com/awslabs/threat-composer",
   "type": "object",
   "properties": {
     "schema": {
-      "description": "Schema version identifier",
       "type": "number",
-      "maximum": 1
+      "maximum": 1,
+      "description": "Schema version identifier"
     },
     "applicationInfo": {
       "description": "Information about the application being threat modeled",
@@ -64,13 +63,13 @@
         "type": "object",
         "properties": {
           "id": {
-            "description": "UUID v4 identifier",
             "type": "string",
-            "maxLength": 36
+            "maxLength": 36,
+            "description": "UUID v4 identifier"
           },
           "numericId": {
-            "description": "Numeric identifier for display purposes",
-            "type": "number"
+            "type": "number",
+            "description": "Numeric identifier for display purposes"
           },
           "displayOrder": {
             "description": "Order for displaying threats",
@@ -89,9 +88,9 @@
                       "const": "Comments"
                     },
                     "value": {
-                      "description": "Comment value",
                       "type": "string",
-                      "maxLength": 1000
+                      "maxLength": 1000,
+                      "description": "Comment value"
                     }
                   },
                   "required": [
@@ -135,16 +134,16 @@
             "description": "Categorization tags",
             "type": "array",
             "items": {
-              "description": "Tag value",
               "type": "string",
               "minLength": 1,
-              "maxLength": 30
+              "maxLength": 30,
+              "description": "Tag value"
             }
           },
           "content": {
-            "description": "Assumption. Plain-text",
             "type": "string",
-            "maxLength": 1000
+            "maxLength": 1000,
+            "description": "Assumption. Plain-text"
           }
         },
         "required": [
@@ -162,13 +161,13 @@
         "type": "object",
         "properties": {
           "id": {
-            "description": "UUID v4 identifier",
             "type": "string",
-            "maxLength": 36
+            "maxLength": 36,
+            "description": "UUID v4 identifier"
           },
           "numericId": {
-            "description": "Numeric identifier for display purposes",
-            "type": "number"
+            "type": "number",
+            "description": "Numeric identifier for display purposes"
           },
           "displayOrder": {
             "description": "Order for displaying threats",
@@ -187,9 +186,9 @@
                       "const": "Comments"
                     },
                     "value": {
-                      "description": "Comment value",
                       "type": "string",
-                      "maxLength": 1000
+                      "maxLength": 1000,
+                      "description": "Comment value"
                     }
                   },
                   "required": [
@@ -234,11 +233,11 @@
                       "const": "source"
                     },
                     "value": {
-                      "description": "Source type indicating type of pack",
                       "type": "string",
                       "enum": [
                         "mitigationPack"
-                      ]
+                      ],
+                      "description": "Source type indicating type of pack"
                     }
                   },
                   "required": [
@@ -255,10 +254,10 @@
                       "const": "mitigationPackId"
                     },
                     "value": {
-                      "description": "Identifier for the mitigation pack",
                       "type": "string",
                       "minLength": 1,
-                      "maxLength": 30
+                      "maxLength": 30,
+                      "description": "Identifier for the mitigation pack"
                     }
                   },
                   "required": [
@@ -275,9 +274,9 @@
                       "const": "mitigationPackMitigationId"
                     },
                     "value": {
-                      "description": "UUID v4 identifier for the specific mitigation within the pack",
                       "type": "string",
-                      "maxLength": 36
+                      "maxLength": 36,
+                      "description": "UUID v4 identifier for the specific mitigation within the pack"
                     }
                   },
                   "required": [
@@ -293,16 +292,16 @@
             "description": "Categorization tags",
             "type": "array",
             "items": {
-              "description": "Tag value",
               "type": "string",
               "minLength": 1,
-              "maxLength": 30
+              "maxLength": 30,
+              "description": "Tag value"
             }
           },
           "content": {
-            "description": "Mitigation. Plain-text",
             "type": "string",
-            "maxLength": 1000
+            "maxLength": 1000,
+            "description": "Mitigation. Plain-text"
           },
           "status": {
             "description": "Status of the mitigation",
@@ -342,16 +341,16 @@
             ]
           },
           "assumptionId": {
-            "description": "UUID for the assumption",
             "type": "string",
             "minLength": 36,
-            "maxLength": 36
+            "maxLength": 36,
+            "description": "UUID for the assumption"
           },
           "linkedId": {
-            "description": "UUID of the linked threat or mitigation",
             "type": "string",
             "minLength": 36,
-            "maxLength": 36
+            "maxLength": 36,
+            "description": "UUID of the linked threat or mitigation"
           }
         },
         "required": [
@@ -369,16 +368,16 @@
         "type": "object",
         "properties": {
           "mitigationId": {
-            "description": "UUID for the mitigation",
             "type": "string",
             "minLength": 36,
-            "maxLength": 36
+            "maxLength": 36,
+            "description": "UUID for the mitigation"
           },
           "linkedId": {
-            "description": "UUID of the linked threat or assumption",
             "type": "string",
             "minLength": 36,
-            "maxLength": 36
+            "maxLength": 36,
+            "description": "UUID of the linked threat or assumption"
           }
         },
         "required": [
@@ -395,13 +394,13 @@
         "type": "object",
         "properties": {
           "id": {
-            "description": "UUID v4 identifier",
             "type": "string",
-            "maxLength": 36
+            "maxLength": 36,
+            "description": "UUID v4 identifier"
           },
           "numericId": {
-            "description": "Numeric identifier for display purposes",
-            "type": "number"
+            "type": "number",
+            "description": "Numeric identifier for display purposes"
           },
           "displayOrder": {
             "description": "Order for displaying threats",
@@ -420,9 +419,9 @@
                       "const": "Comments"
                     },
                     "value": {
-                      "description": "Comment value",
                       "type": "string",
-                      "maxLength": 1000
+                      "maxLength": 1000,
+                      "description": "Comment value"
                     }
                   },
                   "required": [
@@ -467,11 +466,11 @@
                       "const": "source"
                     },
                     "value": {
-                      "description": "Source type indicating type of pack",
                       "type": "string",
                       "enum": [
                         "threatPack"
-                      ]
+                      ],
+                      "description": "Source type indicating type of pack"
                     }
                   },
                   "required": [
@@ -538,10 +537,10 @@
                       "const": "threatPackId"
                     },
                     "value": {
-                      "description": "Identifier for the threat pack",
                       "type": "string",
                       "minLength": 1,
-                      "maxLength": 30
+                      "maxLength": 30,
+                      "description": "Identifier for the threat pack"
                     }
                   },
                   "required": [
@@ -558,9 +557,9 @@
                       "const": "threatPackThreatId"
                     },
                     "value": {
-                      "description": "UUID v4 identifier for the specific threat within the pack",
                       "type": "string",
-                      "maxLength": 36
+                      "maxLength": 36,
+                      "description": "UUID v4 identifier for the specific threat within the pack"
                     }
                   },
                   "required": [
@@ -577,9 +576,9 @@
                       "const": "threatPackMitigationCandidateId"
                     },
                     "value": {
-                      "description": "UUID v4 identifier for the mitigation candidate from the threat pack",
                       "type": "string",
-                      "maxLength": 36
+                      "maxLength": 36,
+                      "description": "UUID v4 identifier for the mitigation candidate from the threat pack"
                     }
                   },
                   "required": [
@@ -595,10 +594,10 @@
             "description": "Categorization tags",
             "type": "array",
             "items": {
-              "description": "Tag value",
               "type": "string",
               "minLength": 1,
-              "maxLength": 30
+              "maxLength": 30,
+              "description": "Tag value"
             }
           },
           "threatSource": {
@@ -669,26 +668,25 @@
       "type": "object",
       "properties": {
         "assumptions": {
-          "description": "Assumptions about the design, threats and migations of the application being threat modeled",
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
               "id": {
-                "description": "UUID v4 identifier",
                 "type": "string",
-                "maxLength": 36
+                "maxLength": 36,
+                "description": "UUID v4 identifier"
               },
               "content": {
-                "description": "Brainstorm item for assumption. Assumption about the design, threats and migations of the application being threat modeled. Plain-text",
                 "type": "string",
-                "maxLength": 200
+                "maxLength": 200,
+                "description": "Brainstorm item for assumption. Assumption about the design, threats and migations of the application being threat modeled. Plain-text"
               },
               "createdAt": {
-                "description": "ISO 8601 UTC timestamp when the item was created (e.g., \"2024-01-15T14:30:45.123Z\")",
                 "type": "string",
                 "format": "date-time",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+                "description": "ISO 8601 UTC timestamp when the item was created (e.g., \"2024-01-15T14:30:45.123Z\")"
               },
               "createdBy": {
                 "description": "Identifier of who created this item (user email, ID, display name, or \"ai-agent\"). AI agents should use \"ai-agent\" as the default value.",
@@ -707,29 +705,29 @@
               "createdAt"
             ],
             "additionalProperties": false
-          }
+          },
+          "description": "Assumptions about the design, threats and migations of the application being threat modeled"
         },
         "threatSources": {
-          "description": "Brainstormed threat sources for the application being threat modeled",
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
               "id": {
-                "description": "UUID v4 identifier",
                 "type": "string",
-                "maxLength": 36
+                "maxLength": 36,
+                "description": "UUID v4 identifier"
               },
               "content": {
-                "description": "Brainstorm item for threat source. The entity taking action. For example: An actor (a useful default), An internet-based actor, An internal or external actor. Plain-text",
                 "type": "string",
-                "maxLength": 200
+                "maxLength": 200,
+                "description": "Brainstorm item for threat source. The entity taking action. For example: An actor (a useful default), An internet-based actor, An internal or external actor. Plain-text"
               },
               "createdAt": {
-                "description": "ISO 8601 UTC timestamp when the item was created (e.g., \"2024-01-15T14:30:45.123Z\")",
                 "type": "string",
                 "format": "date-time",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+                "description": "ISO 8601 UTC timestamp when the item was created (e.g., \"2024-01-15T14:30:45.123Z\")"
               },
               "createdBy": {
                 "description": "Identifier of who created this item (user email, ID, display name, or \"ai-agent\"). AI agents should use \"ai-agent\" as the default value.",
@@ -748,29 +746,29 @@
               "createdAt"
             ],
             "additionalProperties": false
-          }
+          },
+          "description": "Brainstormed threat sources for the application being threat modeled"
         },
         "threatPrerequisites": {
-          "description": "Brainstormed prerequisites for threats against the application being threat modeled",
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
               "id": {
-                "description": "UUID v4 identifier",
                 "type": "string",
-                "maxLength": 36
+                "maxLength": 36,
+                "description": "UUID v4 identifier"
               },
               "content": {
-                "description": "Brainstorm item for threat prerequisite. Conditions or requirements that must be met for a threat source's action to be viable. For example: -with access to another user's token. -who has administrator access -with user permissions - in a mitm position -with a network path to the API. If no prerequistes known return empty string, if know return but first word must be lower case. Plain-text",
                 "type": "string",
-                "maxLength": 200
+                "maxLength": 200,
+                "description": "Brainstorm item for threat prerequisite. Conditions or requirements that must be met for a threat source's action to be viable. For example: -with access to another user's token. -who has administrator access -with user permissions - in a mitm position -with a network path to the API. If no prerequistes known return empty string, if know return but first word must be lower case. Plain-text"
               },
               "createdAt": {
-                "description": "ISO 8601 UTC timestamp when the item was created (e.g., \"2024-01-15T14:30:45.123Z\")",
                 "type": "string",
                 "format": "date-time",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+                "description": "ISO 8601 UTC timestamp when the item was created (e.g., \"2024-01-15T14:30:45.123Z\")"
               },
               "createdBy": {
                 "description": "Identifier of who created this item (user email, ID, display name, or \"ai-agent\"). AI agents should use \"ai-agent\" as the default value.",
@@ -789,29 +787,29 @@
               "createdAt"
             ],
             "additionalProperties": false
-          }
+          },
+          "description": "Brainstormed prerequisites for threats against the application being threat modeled"
         },
         "threatActions": {
-          "description": "Brainstormed threat actions against the application being threat modeled",
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
               "id": {
-                "description": "UUID v4 identifier",
                 "type": "string",
-                "maxLength": 36
+                "maxLength": 36,
+                "description": "UUID v4 identifier"
               },
               "content": {
-                "description": "Brainstorm item for threat action. The action being performed by the threat source. For example: -spoof another user -tamper with data stored in the database -make thousands of concurrent requests. first word must be lower case. Plain-text",
                 "type": "string",
-                "maxLength": 200
+                "maxLength": 200,
+                "description": "Brainstorm item for threat action. The action being performed by the threat source. For example: -spoof another user -tamper with data stored in the database -make thousands of concurrent requests. first word must be lower case. Plain-text"
               },
               "createdAt": {
-                "description": "ISO 8601 UTC timestamp when the item was created (e.g., \"2024-01-15T14:30:45.123Z\")",
                 "type": "string",
                 "format": "date-time",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+                "description": "ISO 8601 UTC timestamp when the item was created (e.g., \"2024-01-15T14:30:45.123Z\")"
               },
               "createdBy": {
                 "description": "Identifier of who created this item (user email, ID, display name, or \"ai-agent\"). AI agents should use \"ai-agent\" as the default value.",
@@ -830,29 +828,29 @@
               "createdAt"
             ],
             "additionalProperties": false
-          }
+          },
+          "description": "Brainstormed threat actions against the application being threat modeled"
         },
         "threatImpacts": {
-          "description": "Brainstormed threat impacts for the application being threat modeled",
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
               "id": {
-                "description": "UUID v4 identifier",
                 "type": "string",
-                "maxLength": 36
+                "maxLength": 36,
+                "description": "UUID v4 identifier"
               },
               "content": {
-                "description": "Brainstorm item for threat impact. What impact this has on the system.The direct impact of a successful threat action. For example: - unauthorized access to the user's bank account information -modifying the username for the all-time high score. -a web application being unable to handle other user requests.if know return but first word must be lower case. Plain-text",
                 "type": "string",
-                "maxLength": 200
+                "maxLength": 200,
+                "description": "Brainstorm item for threat impact. What impact this has on the system.The direct impact of a successful threat action. For example: - unauthorized access to the user's bank account information -modifying the username for the all-time high score. -a web application being unable to handle other user requests.if know return but first word must be lower case. Plain-text"
               },
               "createdAt": {
-                "description": "ISO 8601 UTC timestamp when the item was created (e.g., \"2024-01-15T14:30:45.123Z\")",
                 "type": "string",
                 "format": "date-time",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+                "description": "ISO 8601 UTC timestamp when the item was created (e.g., \"2024-01-15T14:30:45.123Z\")"
               },
               "createdBy": {
                 "description": "Identifier of who created this item (user email, ID, display name, or \"ai-agent\"). AI agents should use \"ai-agent\" as the default value.",
@@ -871,29 +869,29 @@
               "createdAt"
             ],
             "additionalProperties": false
-          }
+          },
+          "description": "Brainstormed threat impacts for the application being threat modeled"
         },
         "assets": {
-          "description": "Brainstormed assets for the application being threat modeled",
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
               "id": {
-                "description": "UUID v4 identifier",
                 "type": "string",
-                "maxLength": 36
+                "maxLength": 36,
+                "description": "UUID v4 identifier"
               },
               "content": {
-                "description": "Brainstorm item for asset. List of assets affected by this threat. If not known return empty string in array, else strings in array first word must be lower case. Plain-text",
                 "type": "string",
-                "maxLength": 200
+                "maxLength": 200,
+                "description": "Brainstorm item for asset. List of assets affected by this threat. If not known return empty string in array, else strings in array first word must be lower case. Plain-text"
               },
               "createdAt": {
-                "description": "ISO 8601 UTC timestamp when the item was created (e.g., \"2024-01-15T14:30:45.123Z\")",
                 "type": "string",
                 "format": "date-time",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+                "description": "ISO 8601 UTC timestamp when the item was created (e.g., \"2024-01-15T14:30:45.123Z\")"
               },
               "createdBy": {
                 "description": "Identifier of who created this item (user email, ID, display name, or \"ai-agent\"). AI agents should use \"ai-agent\" as the default value.",
@@ -912,29 +910,29 @@
               "createdAt"
             ],
             "additionalProperties": false
-          }
+          },
+          "description": "Brainstormed assets for the application being threat modeled"
         },
         "mitigations": {
-          "description": "Mitigations for the application being threat modeled",
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
               "id": {
-                "description": "UUID v4 identifier",
                 "type": "string",
-                "maxLength": 36
+                "maxLength": 36,
+                "description": "UUID v4 identifier"
               },
               "content": {
-                "description": "Brainstorm item for mitigation. Mitigation for the application being threat modeled. Plain-text",
                 "type": "string",
-                "maxLength": 200
+                "maxLength": 200,
+                "description": "Brainstorm item for mitigation. Mitigation for the application being threat modeled. Plain-text"
               },
               "createdAt": {
-                "description": "ISO 8601 UTC timestamp when the item was created (e.g., \"2024-01-15T14:30:45.123Z\")",
                 "type": "string",
                 "format": "date-time",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+                "description": "ISO 8601 UTC timestamp when the item was created (e.g., \"2024-01-15T14:30:45.123Z\")"
               },
               "createdBy": {
                 "description": "Identifier of who created this item (user email, ID, display name, or \"ai-agent\"). AI agents should use \"ai-agent\" as the default value.",
@@ -953,7 +951,8 @@
               "createdAt"
             ],
             "additionalProperties": false
-          }
+          },
+          "description": "Mitigations for the application being threat modeled"
         }
       },
       "additionalProperties": false
@@ -962,5 +961,6 @@
   "required": [
     "schema"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "description": "Threat Composer data exchange format schema for importing/exporting threat modeling data. This schema defines the complete structure for threat modeling sessions including application info, architecture diagrams, data flows, threats, mitigations, and assumptions. Files conforming to this schema should use the .tc.json file extension and can be imported/exported through the Threat Composer application. When generating or validating threat model data, ensure all optional fields are included when available (and additive) to provide comprehensive threat modeling coverage. For more information about Threat Composer and threat modeling best practices, visit: https://github.com/awslabs/threat-composer"
 }

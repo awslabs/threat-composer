@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
+
+import type { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
 import { useCallback } from 'react';
-import { ThreatStatementListFilter, ViewNavigationEvent } from '../../../../../customTypes';
+import type { ThreatStatementListFilter, ViewNavigationEvent } from '../../../../../customTypes';
 
 const useThreatListLinkClicked = (onThreatListView: ViewNavigationEvent['onThreatListView']) => {
   return useCallback((filter?: ThreatStatementListFilter): CancelableEventHandler<BaseNavigationDetail> => (event) => {

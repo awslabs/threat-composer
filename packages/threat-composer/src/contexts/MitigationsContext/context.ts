@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { useContext, createContext } from 'react';
 import { DEFAULT_NEW_ENTITY_ID } from '../../configs';
-import { Mitigation } from '../../customTypes';
+import type { Mitigation } from '../../customTypes';
 export type View = 'list' | 'editor';
 
 export interface MitigationsContextApi {

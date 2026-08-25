@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import Container from '@cloudscape-design/components/container';
-import { FC } from 'react';
-import { MitigationPack } from '../../../../../customTypes';
+import type { FC } from 'react';
+import type { MitigationPack } from '../../../../../customTypes';
 
 export interface GeneralInfoProps {
   mitigationPack: MitigationPack;

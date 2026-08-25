@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,14 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import Alert from '@cloudscape-design/components/alert';
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import Header from '@cloudscape-design/components/header';
 import Modal from '@cloudscape-design/components/modal';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import React, { FC, useMemo, useState } from 'react';
-import { TemplateThreatStatement, TemplateThreatStatementSchema } from '../../../customTypes';
+import type { FC } from 'react';
+import React, { useMemo, useState } from 'react';
+import type { TemplateThreatStatement } from '../../../customTypes';
+import { TemplateThreatStatementSchema } from '../../../customTypes';
 import renderThreatStatement from '../../../utils/renderThreatStatement';
 import Textarea from '../../generic/Textarea';
 

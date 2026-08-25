@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,17 +13,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { FC, useCallback, useState, useMemo, useEffect } from 'react';
-import { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
+import type { FC } from 'react';
+import { useCallback, useState, useMemo, useEffect } from 'react';
+import type { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
 import imageStyles from '../../../styles/image';
 import ContentLayout from '../../generic/ContentLayout';
 import ImageEdit from '../ImageEdit';
-import MarkdownEditor, { MarkdownEditorProps } from '../MarkdownEditor';
+import type { MarkdownEditorProps } from '../MarkdownEditor';
+import MarkdownEditor from '../MarkdownEditor';
 import MarkdownViewer from '../MarkdownViewer';
 
 export interface BaseDiagramInfoProps extends EditableComponentBaseProps {

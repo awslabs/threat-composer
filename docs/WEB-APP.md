@@ -148,8 +148,7 @@ The [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected
 ### Prerequisites
 
 - [NodeJS](https://nodejs.org/en/) (version 20 or higher)
-- [Yarn](https://yarnpkg.com/) (installed via `npm install -g yarn`)
-- [PDK](https://aws.github.io/aws-pdk/overview/index.html) (installed via `npm install -g @aws/pdk`)
+- [pnpm](https://pnpm.io/) (`npm install -g pnpm@10` -- it picks up the exact version from the packageManager field)
 - [AWS CLI](https://aws.amazon.com/cli/) (version 2 or higher)
 - [AWS CLI Configuration](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html) (configured via `aws configure`)
 - [AWS CDK v2](https://aws.amazon.com/cdk/) CLI (installed via `npm install -g aws-cdk`)
@@ -370,7 +369,7 @@ Threat packs allow you to quickly find and add bulk or selected threat statement
 6. Update the value of `id` to be a short human readable indentier for the pack (e.g. `AuthThreats`)
 7. Update the value of `description` to describe the contents of the pack (e.g. `This pack contains common authentication threats`)
 8. Update the value of `path` to point to the _relative_ path of the source `.tc.json` file (e.g. `./AuthenticationThreats.tc.json`)
-9. Generate the threat pack file by running `yarn run build:packs` from the root of the local repository
+9. Generate the threat pack file by running `pnpm run build:packs` from the root of the local repository
 10. Update `packages/threat-composer/src/data/threatPacks/threatPacks.ts` file to import the generated file. e.g. `import authenticationThreatPack './generated/AuthThreats.json';` and add it to the `threatPacks` array - for example:
     ```typescript
     const threatPacks = [
@@ -425,7 +424,7 @@ Mitigation packs allow you to quickly find and add bulk or selected mitigation c
 6. Update the value of `id` to be a short human readable indentier for the pack (e.g. `BaselineControls`)
 7. Update the value of `description` to describe the contents of the pack (e.g. `This pack contains our organizations baseline controls`)
 8. Update the value of `path` to point to the _relative_ path of the source `.tc.json` file (e.g. `./BaselineControls.tc.json`)
-9. Generate the threat pack file by running `yarn run build:packs` from the root of the local repository
+9. Generate the threat pack file by running `pnpm run build:packs` from the root of the local repository
 10. Update `packages/threat-composer/src/data/mitigationPacks/mitigationPacks.ts` file to import the generated file. e.g. `import ourBaselineControlsMitigationPack './generated/BaselineControls.json';` and add it to the `mitigationPacks` array - for example:
     ```typescript
     const mitigationPacks = [

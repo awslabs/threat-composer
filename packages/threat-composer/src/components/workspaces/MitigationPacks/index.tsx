@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,15 +13,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import ContentLayout from '@cloudscape-design/components/content-layout';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { FC, useMemo } from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { useMitigationPacksContext } from '../../../contexts/MitigationPacksContext';
-import { MitigationPack } from '../../../customTypes/referencePacks';
-import Table, { ColumnDefinition } from '../../generic/Table';
+import type { MitigationPack } from '../../../customTypes/referencePacks';
+import type { ColumnDefinition } from '../../generic/Table';
+import Table from '../../generic/Table';
 
 
 export interface MitigationPacksProps {

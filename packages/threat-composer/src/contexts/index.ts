@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 export { default as ApplicationInfoContext } from './ApplicationContext';
 export { useApplicationInfoContext } from './ApplicationContext/context';
 export { default as ArchitectureInfoContext } from './ArchitectureContext';
@@ -42,4 +43,4 @@ export { default as ContextAggregator } from './ContextAggregator';
 export { default as WorkspaceExamplesContext } from './WorkspaceExamplesContext';
 export { default as BrainstormContextProvider } from './BrainstormContext';
 export { useBrainstormContext } from './BrainstormContext/context';
-export { PromotionHandlers, ThreatCreationHandlers } from './BrainstormContext';
+export type { PromotionHandlers, ThreatCreationHandlers } from './BrainstormContext';

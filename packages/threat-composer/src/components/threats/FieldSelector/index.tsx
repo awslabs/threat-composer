@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,21 +13,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
-import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
+import type { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
+import ButtonDropdown from '@cloudscape-design/components/button-dropdown';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
-import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import type { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import { css } from '@emotion/react';
-import { ReactNode, FC, useMemo, useState, useEffect, useCallback } from 'react';
+import type { ReactNode, FC } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import ExpandableToken from './components/ExpandableToken';
 import Token from './components/Token';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
-import { ComposerMode, TemplateThreatStatement } from '../../../customTypes';
-import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
+import type { ComposerMode, TemplateThreatStatement } from '../../../customTypes';
+import type { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
 import threatStatementFormat from '../../../data/threatStatementFormat';
 

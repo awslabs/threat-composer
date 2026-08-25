@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -14,8 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { TCConfig, IntegrationTypes } from '../../popup/config';
-import { TCAmazonCodeState } from '../types';
+import type { TCConfig } from '../../popup/config';
+import { IntegrationTypes } from '../../popup/config';
+import type { TCAmazonCodeState } from '../types';
 import { BaseIntegrationHandler } from './base-handler';
 import { getTCJSONCandidate, TC_BUTTON_TEXT, TC_BUTTON_ID } from '../utils/core-utils';
 

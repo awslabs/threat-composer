@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,11 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren } from 'react';
+
+import type { FC, PropsWithChildren } from 'react';
 import ArchitectureLocalStateContextProvider from './components/LocalStateContextProvider';
 import ArchitectureLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useArchitectureInfoContext } from './context';
-import { ArchitectureContextProviderProps } from './types';
+import type { ArchitectureContextProviderProps } from './types';
 import { STORAGE_LOCAL_STATE } from '../../configs';
 import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
 

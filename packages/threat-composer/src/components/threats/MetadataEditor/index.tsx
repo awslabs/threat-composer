@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,12 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
-import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
+import type { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
+import ExpandableSection from '@cloudscape-design/components/expandable-section';
 import Grid from '@cloudscape-design/components/grid';
-import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
-import { FC, useMemo, useState } from 'react';
-import { TemplateThreatStatement } from '../../../customTypes';
+import type { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
+import type { FC } from 'react';
+import { useMemo, useState } from 'react';
+import type { TemplateThreatStatement } from '../../../customTypes';
 import threatStatus from '../../../data/status/threatStatus.json';
 import expandablePanelHeaderStyles from '../../../styles/expandablePanelHeader';
 import CommentsEdit from '../../generic/CommentsEdit';

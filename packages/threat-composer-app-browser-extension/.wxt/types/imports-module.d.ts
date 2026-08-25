@@ -2,8 +2,8 @@
 // Types for the #import virtual module
 declare module '#imports' {
   export { browser, Browser } from 'wxt/browser';
-  export { storage, StorageArea, WxtStorage, WxtStorageItem, StorageItemKey, StorageAreaChanges, MigrationError } from 'wxt/utils/storage';
-  export { useAppConfig } from 'wxt/utils/app-config';
+  export { storage, WxtStorage, WxtStorageItem, StorageArea, StorageItemKey, StorageAreaChanges, MigrationError } from 'wxt/utils/storage';
+  export { getAppConfig, useAppConfig } from 'wxt/utils/app-config';
   export { ContentScriptContext, WxtWindowEventMap } from 'wxt/utils/content-script-context';
   export { createIframeUi, IframeContentScriptUi, IframeContentScriptUiOptions } from 'wxt/utils/content-script-ui/iframe';
   export { createIntegratedUi, IntegratedContentScriptUi, IntegratedContentScriptUiOptions } from 'wxt/utils/content-script-ui/integrated';
@@ -16,5 +16,5 @@ declare module '#imports' {
   export { defineWxtPlugin } from 'wxt/utils/define-wxt-plugin';
   export { injectScript, ScriptPublicPath, InjectScriptOptions } from 'wxt/utils/inject-script';
   export { InvalidMatchPattern, MatchPattern } from 'wxt/utils/match-patterns';
-  export { fakeBrowser } from 'wxt/testing';
+  export { fakeBrowser } from 'wxt/testing/fake-browser';
 }

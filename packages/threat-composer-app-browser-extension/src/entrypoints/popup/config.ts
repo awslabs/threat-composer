@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { useState } from 'react';
 import { logDebugMessage } from '../../debugLogger';
 
@@ -78,14 +79,20 @@ export async function getExtensionConfig(): Promise<TCConfig> {
   const config = await browser.storage.local.get(['tcConfig']); //TODO: Consider if this could return an exeption or is it just undefined?
 
   if (config.tcConfig && Object.keys(config.tcConfig).length) {
-    return config.tcConfig;
+    // The cast is load-bearing rather than cosmetic: the stored value is returned
+    // verbatim with no merge against DefaultConfig and no schema validation, so a
+    // partial config really can come back missing `integrations`. That is a known
+    // defect -- see the tests in ./__tests__/config.test.ts, and the popup case in
+    // e2e/tests-extension/extension-shell.spec.ts -- and the newer WXT types now
+    // surface it as a type error instead of inferring `any`.
+    return config.tcConfig as TCConfig;
   } else {
     return DefaultConfig;
   }
 }
 
 export function setExtensionConfig(config: TCConfig) {
-  browser.storage.local.set({ tcConfig: config }).then(() => {
+  void browser.storage.local.set({ tcConfig: config }).then(() => {
     logDebugMessage(config, 'Saved config to browser storage');
   });
 }

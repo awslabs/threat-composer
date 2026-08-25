@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,8 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { useContext, createContext } from 'react';
-import { BrainstormData, BrainstormItem } from '../../customTypes/brainstorm';
+import type { BrainstormData, BrainstormItem } from '../../customTypes/brainstorm';
 
 export interface BrainstormContextApi {
   brainstormData: BrainstormData;

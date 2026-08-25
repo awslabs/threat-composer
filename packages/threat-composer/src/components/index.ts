@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 export { default as ThreatStatementEditor } from './threats/ThreatStatementEditor';
 export { default as ThreatStatementList } from './threats/ThreatStatementList';
 export { default as ApplicationInfoComponent } from './application/ApplicationInfo';
@@ -29,7 +30,8 @@ export { default as ThreatPackComponent } from './workspaces/ThreatPack';
 export { default as MitigationPacksComponent } from './workspaces/MitigationPacks';
 export { default as MitigationPackComponent } from './workspaces/MitigationPack';
 export { default as ThemeProvider } from './generic/ThemeProvider';
-export { default as MarkdownEditor, MarkdownEditorProps } from './generic/MarkdownEditor';
+export type { MarkdownEditorProps } from './generic/MarkdownEditor';
+export { default as MarkdownEditor } from './generic/MarkdownEditor';
 export { default as Loading } from './generic/Loading';
 export { default as GroupableItemCard } from './generic/GroupableItemCard';
 export { default as Modal } from './generic/Modal';

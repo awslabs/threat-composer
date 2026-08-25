@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,10 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { useMobileMediaQuery } from '@aws/threat-composer';
 import Box from '@cloudscape-design/components/box';
 import * as awsui from '@cloudscape-design/design-tokens';
-import { FC, PropsWithChildren, useMemo, ReactNode } from 'react';
+import type { FC, PropsWithChildren, ReactNode } from 'react';
+import { useMemo } from 'react';
 import NavHeader from '../NavHeader';
 
 export interface StandaloneAppLayoutProps {

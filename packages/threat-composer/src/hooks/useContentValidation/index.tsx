@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,10 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { BaseChangeDetail } from '@cloudscape-design/components/input/interfaces';
-import { NonCancelableCustomEvent, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
+
+import type { BaseChangeDetail } from '@cloudscape-design/components/input/interfaces';
+import type { NonCancelableCustomEvent, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import { useCallback, useEffect, useState } from 'react';
-import { z } from 'zod';
+import type { z } from 'zod';
 import sanitizeHtml from '../../utils/sanitizeHtml';
 
 const useContentValidation = <T extends NonCancelableEventHandler<BaseChangeDetail> | ((newValue: string) => void)>(

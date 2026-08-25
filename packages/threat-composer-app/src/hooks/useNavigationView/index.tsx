@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -16,7 +16,8 @@
 
 import { DEFAULT_WORKSPACE_ID } from '@aws/threat-composer';
 import { useCallback } from 'react';
-import { NavigateOptions, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import type { NavigateOptions } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import generateUrl from '../../utils/generateUrl';
 
 const useNavigateView = () => {

@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,14 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 import Badge from '@cloudscape-design/components/badge';
-import { SelectProps } from '@cloudscape-design/components/select';
+import type { SelectProps } from '@cloudscape-design/components/select';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC, useMemo, useState, useRef } from 'react';
+import type { FC } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import PriorityEdit from '..//PriorityEdit';
-import { TemplateThreatStatement } from '../../../customTypes';
+import type { TemplateThreatStatement } from '../../../customTypes';
 
 export interface PriorityBadgeProps {
   editingStatement: TemplateThreatStatement;
@@ -38,7 +40,7 @@ const PriorityBadge: FC<PriorityBadgeProps> = ({
   editingStatement,
   onEditMetadata,
 }) => {
-  const ref = useRef<SelectProps.Ref>();
+  const ref = useRef<SelectProps.Ref | undefined>(undefined);
   const priority = useMemo(() => {
     return (editingStatement.metadata?.find(m => m.key === 'Priority')?.value as string) || undefined;
   }, [editingStatement.metadata]);

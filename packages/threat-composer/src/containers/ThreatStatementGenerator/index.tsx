@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,13 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC } from 'react';
+
+import type { FC } from 'react';
 import ThreatStatementEditor from '../../components/threats/ThreatStatementEditor';
 import ThreatStatementList from '../../components/threats/ThreatStatementList';
 import ContextAggregator from '../../contexts/ContextAggregator';
 import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../contexts/ThreatsContext/context';
-import { ComposerMode, DataExchangeFormat } from '../../customTypes';
+import type { ComposerMode, DataExchangeFormat } from '../../customTypes';
 
 const ThreatStatementGeneratorInner: FC = () => {
   const { view } = useThreatsContext();

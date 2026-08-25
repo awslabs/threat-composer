@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,14 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { useState, useCallback, forwardRef } from 'react';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { Assumption, AssumptionSchema } from '../../../customTypes';
+import type { Assumption } from '../../../customTypes';
+import { AssumptionSchema } from '../../../customTypes';
 import getNewAssumption from '../../../utils/getNewAssumption';
 import getNewMitigation from '../../../utils/getNewMitigation';
-import GenericEntityCreationCard, { GenericEntityCreationCardRefProps } from '../../generic/GenericEntityCreationCard';
+import type { GenericEntityCreationCardRefProps } from '../../generic/GenericEntityCreationCard';
+import GenericEntityCreationCard from '../../generic/GenericEntityCreationCard';
 import MitigationLinkView from '../../mitigations/MitigationLinkView';
 import ThreatLinkView from '../../threats/ThreatLinkView';
 

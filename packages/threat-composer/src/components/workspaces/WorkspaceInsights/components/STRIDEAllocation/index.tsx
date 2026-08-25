@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
+import type { BarChartProps } from '@cloudscape-design/components';
 import {
   Button,
   Box,
@@ -20,9 +22,9 @@ import {
   Select,
   ColumnLayout,
   BarChart,
-  BarChartProps,
 } from '@cloudscape-design/components';
-import { useState, useMemo, useCallback, FC } from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   ALL_LEVELS,
   LEVEL_NOT_SET,
@@ -33,7 +35,7 @@ import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 import DashboardNumber from '../../../../generic/DashboardNumber';
 import useThreatListLinkClicked from '../../hooks/useThreatListLinkClicked';
-import { WorkspaceInsightsProps } from '../../types';
+import type { WorkspaceInsightsProps } from '../../types';
 
 const STRIDEAllocation: FC<WorkspaceInsightsProps> = ({
   onThreatEditorView,

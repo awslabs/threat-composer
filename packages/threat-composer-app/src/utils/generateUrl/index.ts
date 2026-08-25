@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { generatePath } from 'react-router-dom';
 import { SEARCH_PARAM_FEATURES, SEARCH_PARAM_MODE } from '../../config/searchParams';
 const SEARCH_PARAMS_KEPT = [SEARCH_PARAM_MODE, SEARCH_PARAM_FEATURES];

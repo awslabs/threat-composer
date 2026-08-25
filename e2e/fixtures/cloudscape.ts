@@ -1,7 +1,19 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  SPDX-License-Identifier: Apache-2.0
+
+  Licensed under the Apache License, Version 2.0 (the "License").
+  You may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
  ******************************************************************************************************************** */
+
 import { createRequire } from 'node:module';
 
 /**
@@ -40,6 +52,15 @@ import { createRequire } from 'node:module';
  * A plain ESM `import` yields the namespace object rather than the factory
  * ("createWrapper is not a function"), so it is loaded through createRequire,
  * which resolves the interop unambiguously.
+ *
+ * `@cloudscape-design/components` is declared in this package's own
+ * devDependencies even though only the selectors helper is used. It has to be:
+ * `e2e` is a standalone npm project rather than a workspace member, so it
+ * cannot rely on the monorepo hoisting the copy packages/threat-composer
+ * depends on -- and pnpm does not hoist at all. The version is kept in step
+ * with that package deliberately, because these selectors encode Cloudscape's
+ * internal class names and a mismatch would produce selectors that silently
+ * match nothing.
  */
 const require = createRequire(import.meta.url);
 const createWrapper = require('@cloudscape-design/components/test-utils/selectors')

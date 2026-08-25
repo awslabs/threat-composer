@@ -12,15 +12,15 @@ This monorepo hosts multiple packages that make up the Threat Composer ecosystem
 - **threat-composer-infra**: AWS CDK infrastructure code
 - **threat-composer-ai**: AI-powered CLI and MCP server for automated threat modeling
 
-The repository is defined and maintained using [projen](https://github.com/projen/projen) and [aws-prototyping-sdk](https://github.com/aws/aws-prototyping-sdk).
+The repository is a [pnpm workspaces](https://pnpm.io/workspaces) monorepo with [nx](https://nx.dev) as the task runner. Each package owns its own `package.json` scripts; nx fans the root scripts out to them in dependency order and caches the results.
 
 ## Repository Structure
 
 | Project                               | Path                                           | Description                                                                                            | Tech Stack                                                                          |
 | ------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
 | threat-composer                       | packages/threat-composer                       | UI components for threat-composer                                                                      | [React](https://react.dev/), [CloudScape design system](https://cloudscape.design/) |
-| threat-composer-app                   | packages/threat-composer-app                   | threat-composer Single Page App (SPA) bootstrapped by [create-react-app](https://create-react-app.dev/) | React                                                                               |
-| threat-composer-infra                 | packages/threat-composer-infra                 | threat-composer Infrastructure CDK App                                                                 | [aws-prototyping-sdk constructs](https://github.com/aws/aws-prototyping-sdk)        |
+| threat-composer-app                   | packages/threat-composer-app                   | threat-composer Single Page App (SPA) built with [Vite](https://vite.dev/) | React                                                                               |
+| threat-composer-infra                 | packages/threat-composer-infra                 | threat-composer Infrastructure CDK App                                                                 | [AWS CDK](https://aws.amazon.com/cdk/)                                              |
 | threat-composer-app-browser-extension | packages/threat-composer-app-browser-extension | threat-composer browser extension                                                                      | [wxt](https://wxt.dev/), React                                                      |
 | threat-composer-ai                    | packages/threat-composer-ai                    | AI-powered CLI and MCP server                                                                          | Python, [Strands](https://github.com/awslabs/strands), FastMCP                      |
 
@@ -28,9 +28,14 @@ The repository is defined and maintained using [projen](https://github.com/proje
 
 ### Required Tools
 
-- [NodeJS](https://nodejs.org/en/) (version 20 or higher)
-- [Yarn](https://yarnpkg.com/) - Install via `npm install -g yarn`
-- [PDK](https://aws.github.io/aws-pdk/overview/index.html) - Install via `npm install -g @aws/pdk`
+- [NodeJS](https://nodejs.org/en/) — `^20.19.0 || ^22.13.0 || >=24`, declared as
+  `engines.node` in the root `package.json`. CI and the `Dockerfile` both use 24.
+
+  This is deliberately not "20 or higher": 20.0–20.18 and the odd-numbered releases
+  are outside the range, because Vite requires `^20.19.0 || >=22.12.0` and ESLint
+  requires `^20.19.0 || ^22.13.0 || >=24`. A `.nvmrc` is provided, so `nvm use`
+  picks a supported version.
+- [pnpm](https://pnpm.io/) - Install with `npm install -g pnpm@10`; it picks up the exact version from the packageManager field
 - [git-secrets](https://github.com/awslabs/git-secrets#installing-git-secrets)
 - [oss-attribution-generator](https://www.npmjs.com/package/oss-attribution-generator) - Install via `npm install -g oss-attribution-generator`
 
@@ -53,7 +58,7 @@ cd threat-composer
 ### Install Dependencies
 
 ```bash
-pdk install --frozen-lockfile
+pnpm install --frozen-lockfile
 ```
 
 This will install all dependencies for all packages in the monorepo.
@@ -61,7 +66,7 @@ This will install all dependencies for all packages in the monorepo.
 ### Build All Projects
 
 ```bash
-pdk build
+pnpm build
 ```
 
 This builds all packages in the correct dependency order.
@@ -75,7 +80,7 @@ The threat-composer package contains the core UI components. The recommended dev
 #### Run Storybook
 
 ```bash
-pdk run storybook
+pnpm storybook
 ```
 
 Open [http://localhost:6006](http://localhost:6006/) to view it in the browser. The page will reload if you make edits.
@@ -86,7 +91,7 @@ Open [http://localhost:6006](http://localhost:6006/) to view it in the browser. 
 
 ```bash
 cd packages/threat-composer
-yarn test
+pnpm test
 ```
 
 ### Working with the Web App (threat-composer-app)
@@ -94,7 +99,7 @@ yarn test
 #### Start Development Server
 
 ```bash
-pdk run dev
+pnpm dev
 ```
 
 This starts the web application in development mode. Open [http://localhost:3000](http://localhost:3000/) to view it in the browser.
@@ -103,7 +108,7 @@ This starts the web application in development mode. Open [http://localhost:3000
 
 ```bash
 cd packages/threat-composer-app
-yarn build
+pnpm build
 ```
 
 The build artifacts will be in the `build/` directory.
@@ -118,10 +123,10 @@ Quick start:
 cd packages/threat-composer-app-browser-extension
 
 # Chrome development
-yarn run dev
+pnpm run dev
 
 # Firefox development
-yarn run dev:firefox
+pnpm run dev:firefox
 ```
 
 ### Working with Infrastructure (threat-composer-infra)
@@ -175,42 +180,42 @@ uv run pytest
 
 ```bash
 # Install all dependencies
-pdk install --frozen-lockfile
+pnpm install --frozen-lockfile
 
 # Build all packages
-pdk build
+pnpm build
 
 # Run Storybook
-pdk run storybook
+pnpm storybook
 
 # Start web app dev server
-pdk run dev
+pnpm dev
 
 # Run all tests
-pdk test
+pnpm test
 
 # Lint all packages
-pdk run lint
+pnpm eslint
 
 # Format code
-pdk run format
+pnpm eslint
 ```
 
 ### Package-Specific Commands
 
-Navigate to the package directory and use yarn/npm commands:
+Navigate to the package directory and use pnpm/npm commands:
 
 ```bash
 cd packages/threat-composer
 
 # Run tests
-yarn test
+pnpm test
 
 # Build package
-yarn build
+pnpm build
 
 # Lint
-yarn lint
+pnpm lint
 ```
 
 ## Code Organization
@@ -262,17 +267,17 @@ src/
 
 ```bash
 # Run all tests
-pdk test
+pnpm test
 
 # Run tests for specific package
 cd packages/threat-composer
-yarn test
+pnpm test
 
 # Run tests in watch mode
-yarn test --watch
+pnpm test --watch
 
 # Run tests with coverage
-yarn test --coverage
+pnpm test --coverage
 ```
 
 ## Code Quality
@@ -281,7 +286,7 @@ yarn test --coverage
 
 ```bash
 # Lint all packages
-pdk run eslint
+pnpm eslint
 ```
 
 ### Formatting
@@ -290,33 +295,53 @@ The project uses Prettier for code formatting:
 
 ```bash
 # Format all code
-pdk run format
+pnpm eslint
 ```
 
 ### Type Checking
 
 ```bash
 # Type check all packages
-pdk run type-check
+pnpm typecheck
 
-# Type check specific package
+# Type check a specific package
 cd packages/threat-composer
-yarn type-check
+pnpm typecheck
 ```
+
+#### Two TypeScript compilers are installed
+
+Both TypeScript 6 and 7 are installed side by side, so it matters which binary you
+invoke:
+
+| Command | Compiler | Provided by |
+|---------|----------|-------------|
+| `tsc`   | TypeScript 7 (the native Go compiler) | `@typescript/native` → `npm:typescript` |
+| `tsc6`  | TypeScript 6 | `typescript` → `npm:@typescript/typescript6` |
+
+The `typescript` package name is aliased to TypeScript 6 because typescript-eslint and
+Vite consume its programmatic API, which TypeScript 7 does not yet expose — that API is
+expected in 7.1. Anything doing `import ... from 'typescript'` therefore still gets 6,
+while `tsc` on your PATH is 7.
+
+Most `typecheck` scripts run `tsc` (7) for the speed. Two packages deliberately run
+`tsc6` instead: `packages/threat-composer` and `packages/threat-composer-app` pin
+`moduleResolution: node10` for Cloudscape's subpath type imports, and TypeScript 7
+removes node10. The reasoning is recorded in their `tsconfig.json` files.
 
 ## Building for Production
 
 ### Build All Packages
 
 ```bash
-pdk build
+pnpm build
 ```
 
 ### Build Specific Package
 
 ```bash
 cd packages/threat-composer
-yarn build
+pnpm build
 ```
 
 ### Build Browser Extension
@@ -325,14 +350,14 @@ yarn build
 cd packages/threat-composer-app-browser-extension
 
 # Build for Chrome
-yarn build
+pnpm build
 
 # Build for Firefox
-yarn build:firefox
+pnpm build:firefox
 
 # Create distribution ZIP
-yarn run zip
-yarn run zip:firefox
+pnpm run zip
+pnpm run zip:firefox
 ```
 
 ## Deployment
@@ -358,8 +383,8 @@ Quick deploy:
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/my-feature`
 3. Make your changes
-4. Run tests: `pdk test`
-5. Run linting: `pdk run lint`
+4. Run tests: `pnpm test`
+5. Run linting: `pnpm eslint`
 6. Commit your changes: `git commit -m "Add my feature"`
 7. Push to your fork: `git push origin feature/my-feature`
 8. Create a Pull Request
@@ -400,7 +425,7 @@ Types:
 
 ```bash
 git clean -fXd
-pdk install --frozen-lockfile
+pnpm install --frozen-lockfile
 ```
 
 ### Getting Help

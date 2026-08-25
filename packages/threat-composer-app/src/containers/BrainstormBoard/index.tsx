@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,11 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
+import type { NavigateToThreatHandler } from '@aws/threat-composer';
 import {
   BrainstormBoard,
-  NavigateToThreatHandler,
 } from '@aws/threat-composer';
-import { FC, useCallback } from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -33,7 +35,7 @@ const BrainstormBoardContainer: FC = () => {
    */
   const handleNavigateToThreat: NavigateToThreatHandler = useCallback((workspaceName, itemId, fieldKey, fieldValue) => {
     const params = `fieldKey=${fieldKey}&fieldValue=${encodeURIComponent(fieldValue)}`;
-    navigate(`/workspaces/${workspaceName}/threats/${itemId}?${params}`);
+    void navigate(`/workspaces/${workspaceName}/threats/${itemId}?${params}`);
   }, [navigate]);
 
   return (

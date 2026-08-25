@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,11 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC } from 'react';
+
+import type { FC } from 'react';
 import WorkspacesLocalStateContextProvider from './components/LocalStateContextProvider';
 import WorkspacesLocalStorageContextProvider from './components/LocalStorageContextProvider';
 import { useWorkspacesContext } from './context';
-import { WorkspacesContextProviderProps } from './types';
+import type { WorkspacesContextProviderProps } from './types';
 import { APP_MODE_IDE_EXTENSION, DEFAULT_WORKSPACE_ID } from '../../configs';
 import { useGlobalSetupContext } from '../GlobalSetupContext';
 
@@ -33,7 +34,5 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = (props) =>
 
 export default WorkspacesContextProvider;
 
-export {
-  useWorkspacesContext,
-  WorkspacesContextProviderProps,
-};
+export type { WorkspacesContextProviderProps };
+export { useWorkspacesContext };

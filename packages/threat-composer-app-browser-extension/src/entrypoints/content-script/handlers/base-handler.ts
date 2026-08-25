@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -15,8 +15,8 @@
  ******************************************************************************************************************** */
 
 import { logDebugMessage } from '../../../debugLogger';
-import { TCConfig } from '../../popup/config';
-import { BaseIntegrationState, IntegrationHandler } from '../types';
+import type { TCConfig } from '../../popup/config';
+import type { BaseIntegrationState, IntegrationHandler } from '../types';
 import { matchesAnyRegex, threatComposerButtonExists } from '../utils/core-utils';
 import { isActualRawSite, handleRaw } from '../utils/raw-file-utils';
 

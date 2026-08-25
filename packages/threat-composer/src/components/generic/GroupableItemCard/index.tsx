@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,15 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import Textarea from '@cloudscape-design/components/textarea';
 import { colorBorderDividerDefault, colorBackgroundButtonPrimaryActive } from '@cloudscape-design/design-tokens';
-import { FC, useCallback, useState, useRef, useEffect, DragEvent } from 'react';
-import { PromotionHandlers, ThreatCreationHandlers } from '../../../contexts/BrainstormContext/types';
-import { BrainstormItem, BrainstormData } from '../../../customTypes/brainstorm';
+import type { FC, DragEvent } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
+import type { PromotionHandlers, ThreatCreationHandlers } from '../../../contexts/BrainstormContext/types';
+import type { BrainstormItem, BrainstormData } from '../../../customTypes/brainstorm';
 
 // Item Card Component
 interface GroupableItemCardProps {
@@ -212,7 +214,7 @@ const GroupableItemCard: FC<GroupableItemCardProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const isGrouped = groupedItems.length > 1;

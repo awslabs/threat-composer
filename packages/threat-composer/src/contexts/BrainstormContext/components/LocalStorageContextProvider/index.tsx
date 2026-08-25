@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,10 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback } from 'react';
+
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_BRAINSTORM_DATA } from '../../../../configs/localStorageKeys';
-import { BrainstormData } from '../../../../customTypes/brainstorm';
+import type { BrainstormData } from '../../../../customTypes/brainstorm';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { BrainstormContext } from '../../context';
 import useBrainstorm, { initialState } from '../../useBrainstorm';

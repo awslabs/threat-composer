@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,8 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { Button, Container, ContentLayout, Header, SpaceBetween, TextContent } from '@cloudscape-design/components';
-import { FC, useCallback, useState } from 'react';
+import type { FC } from 'react';
+import { useCallback, useState } from 'react';
 // Navigation will be handled via props instead of direct router dependency
 import ColumnVisibilityToggles from './components/ColumnVisibilityToggles';
 import DiagramModal from './components/DiagramModal';
@@ -22,11 +24,11 @@ import ItemColumn, { columnConfig } from './components/ItemColumn';
 import { useArchitectureInfoContext } from '../../../contexts/ArchitectureContext';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext';
 import BrainstormContextProvider from '../../../contexts/BrainstormContext';
-import { PromotionHandlers, ThreatCreationHandlers } from '../../../contexts/BrainstormContext/types';
+import type { PromotionHandlers, ThreatCreationHandlers } from '../../../contexts/BrainstormContext/types';
 import { useDataflowInfoContext } from '../../../contexts/DataflowContext';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext';
-import { BrainstormItem } from '../../../customTypes/brainstorm';
+import type { BrainstormItem } from '../../../customTypes/brainstorm';
 
 /**
  * Navigation handler for creating threats with specific field values

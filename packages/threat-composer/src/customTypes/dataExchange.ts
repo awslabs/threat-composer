@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { z } from 'zod';
 import { ApplicationInfoSchema } from './application';
 import { ArchitectureInfoSchema } from './architecture';
@@ -21,8 +22,9 @@ import { BrainstormDataSchema } from './brainstorm';
 import { DataflowInfoSchema } from './dataflow';
 import { MitigationSchema, MitigationLinkSchema } from './mitigations';
 import { TemplateThreatStatementSchema } from './threats';
-import { WorkspaceSchema, Workspace } from './workspaces';
-import { EventHandler } from '../utils/EventController';
+import type { Workspace } from './workspaces';
+import { WorkspaceSchema } from './workspaces';
+import type { EventHandler } from '../utils/EventController';
 
 export const DataExchangeFormatSchema = z.object({
   schema: z.number().max(1).describe('Schema version identifier'),

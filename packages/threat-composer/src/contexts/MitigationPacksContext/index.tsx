@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,11 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback, useMemo } from 'react';
+
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback, useMemo } from 'react';
 import { MitigationPacksContext, useMitigationPacksContext } from './context';
-import { MitigationPacksContextProviderProps } from './types';
+import type { MitigationPacksContextProviderProps } from './types';
 import { METADATA_KEY_SOURCE, METADATA_KEY_SOURCE_MITIGATION_PACK, METADATA_KEY_SOURCE_MITIGATION_PACK_MITIGATION, METADATA_SOURCE_MITIGATION_PACK } from '../../configs';
-import { MitigationPack, MitigationPackUsage, Mitigation } from '../../customTypes';
+import type { MitigationPack, MitigationPackUsage, Mitigation } from '../../customTypes';
 import mitigationPacks from '../../data/mitigationPacks/mitigationPacks';
 import getMetadata from '../../utils/getMetadata';
 import getNewMitigation from '../../utils/getNewMitigation';
