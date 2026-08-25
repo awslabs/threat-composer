@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,15 +13,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import FormField from '@cloudscape-design/components/form-field';
 import Header from '@cloudscape-design/components/header';
-import { InputProps } from '@cloudscape-design/components/input';
+import type { InputProps } from '@cloudscape-design/components/input';
 import Modal from '@cloudscape-design/components/modal';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import React, { FC, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { WorkspaceSchema, Workspace } from '../../../customTypes';
+import type { FC, RefObject } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { Workspace } from '../../../customTypes';
+import { WorkspaceSchema } from '../../../customTypes';
 import Input from '../../generic/Input';
 
 export interface EditWorkspaceProps {
@@ -57,7 +60,7 @@ const EditWorkspace: FC<EditWorkspaceProps> = ({
   currentWorkspace,
   ...props
 }) => {
-  const inputRef = useRef<InputProps.Ref>();
+  const inputRef = useRef<InputProps.Ref | undefined>(undefined);
   const [value, setValue] = useState(props.value || '');
   const [errorText, setErrorText] = useState('');
 

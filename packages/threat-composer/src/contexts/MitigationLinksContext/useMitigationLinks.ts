@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,8 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { useCallback } from 'react';
-import { MitigationLink } from '../../customTypes';
+import type { MitigationLink } from '../../customTypes';
 
 export const isSameMitigationLink = (entity1: MitigationLink, entity2: MitigationLink) => {
   return entity1.mitigationId === entity2.mitigationId

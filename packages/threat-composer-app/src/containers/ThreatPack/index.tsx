@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,8 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { ThreatPackComponent, DEFAULT_WORKSPACE_ID, DEFAULT_NEW_ENTITY_ID, TemplateThreatStatement } from '@aws/threat-composer';
-import { FC, useCallback } from 'react';
+
+import type { TemplateThreatStatement } from '@aws/threat-composer';
+import { ThreatPackComponent, DEFAULT_WORKSPACE_ID, DEFAULT_NEW_ENTITY_ID } from '@aws/threat-composer';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ROUTE_THREAT_EDITOR } from '../../config/routes';
 import generateUrl from '../../utils/generateUrl';
@@ -32,7 +35,7 @@ const ThreatPack: FC = () => {
         threatPackId: selectedThreatPackId,
         threatPackThreatId: threat.id,
       });
-    navigate(url, {
+    void navigate(url, {
       state: {
         threatPackId: selectedThreatPackId,
         threatPackThreatId: threat.id,

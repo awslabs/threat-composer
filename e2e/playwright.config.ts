@@ -1,14 +1,26 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  SPDX-License-Identifier: Apache-2.0
+
+  Licensed under the Apache License, Version 2.0 (the "License").
+  You may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
  ******************************************************************************************************************** */
+
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 
 /**
  * Default config: runs the functional suite against the Vite **dev** server
- * (`yarn dev` -> http://localhost:3000).
+ * (`pnpm dev` -> http://localhost:3000).
  *
  * Notes on the migration this suite guards (see report.html):
  *  - The dev server does NOT set VITE_APP_MODE and does NOT register the
@@ -36,7 +48,7 @@ const BASE_URL = process.env.TC_BASE_URL ?? 'http://localhost:3000';
 const CAPTURE_ALL = !!process.env.TC_CAPTURE;
 
 // Allow pointing the suite at an already-running server (CI or a manually
-// started `yarn dev`) instead of having Playwright spawn one.
+// started `pnpm dev`) instead of having Playwright spawn one.
 const REUSE_SERVER = !process.env.CI;
 
 export default defineConfig({
@@ -78,7 +90,7 @@ export default defineConfig({
     ? undefined
     : {
         // Run the app's dev server from the repo root via the workspace.
-        command: 'yarn workspace @aws/threat-composer-app run dev',
+        command: 'pnpm --filter @aws/threat-composer-app run dev',
         cwd: REPO_ROOT,
         url: BASE_URL,
         reuseExistingServer: REUSE_SERVER,

@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,8 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { ThreatPacksComponent } from '@aws/threat-composer';
-import { FC, useCallback } from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ROUTE_THREAT_PACK } from '../../config/routes';
 import generateUrl from '../../utils/generateUrl';
@@ -25,7 +27,7 @@ const ThreatPacks: FC = () => {
   const navigate = useNavigate();
 
   const handleThreatPackLinkClick = useCallback((threatPackId: string) => {
-    workspaceId && navigate(generateUrl(
+    workspaceId && void navigate(generateUrl(
       ROUTE_THREAT_PACK,
       searchParms,
       workspaceId,

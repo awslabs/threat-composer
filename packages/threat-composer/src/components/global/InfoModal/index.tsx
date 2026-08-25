@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,9 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 import { ClassNames } from '@emotion/react';
-import React, { FC, useState, useEffect, useRef, useMemo } from 'react';
+import type { FC } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Carousel from 'react-simply-carousel';
 import InfoModalCopy from './components/Copy';
 import InfoModalEditor from './components/Editor';

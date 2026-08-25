@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { APP_MODE_IDE_EXTENSION, APP_MODE_BROWSER_EXTENSION } from '@aws/threat-composer';
 
-const appMode = process.env.REACT_APP_APP_MODE;
+const appMode = import.meta.env.VITE_APP_MODE;
 
 const isMemoryRouterUsed = () => {
   return appMode === APP_MODE_IDE_EXTENSION || appMode === APP_MODE_BROWSER_EXTENSION;

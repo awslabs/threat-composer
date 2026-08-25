@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import {
   Button,
   Modal,
@@ -22,7 +23,8 @@ import {
   Grid,
   SegmentedControl,
 } from '@cloudscape-design/components';
-import { FC, useState, useEffect, useCallback, CSSProperties } from 'react';
+import type { FC, CSSProperties } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 /**
  * Props interface for DiagramModal component

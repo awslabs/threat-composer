@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,13 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 import Badge from '@cloudscape-design/components/badge';
 import Box from '@cloudscape-design/components/box';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
-import { LinkProps } from '@cloudscape-design/components/link';
+import type { LinkProps } from '@cloudscape-design/components/link';
 import { css } from '@emotion/react';
-import { useMemo, FC, ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
+import { useMemo } from 'react';
 import { LEVEL_HIGH, LEVEL_LOW, LEVEL_MEDIUM, LEVEL_NOT_SET, MITIGATION_STATUS_IDENTIFIED, MITIGATION_STATUS_IN_PROGRESS, MITIGATION_STATUS_RESOLVED, MITIGATION_STATUS_RESOLVED_WILLNOTACTION, STATUS_NOT_SET, THREAT_STATUS_IDENTIFIED, THREAT_STATUS_NOT_USEFUL, THREAT_STATUS_RESOLVED } from '../../../../../configs';
 import { useAssumptionLinksContext, useMitigationsContext } from '../../../../../contexts';
 import { useMitigationLinksContext } from '../../../../../contexts/MitigationLinksContext';
@@ -28,7 +30,7 @@ import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadat
 import DashboardNumber from '../../../../generic/DashboardNumber';
 import useMitigationListLinkClicked from '../../hooks/useMitigationListLinkClicked';
 import useThreatListLinkClicked from '../../hooks/useThreatListLinkClicked';
-import { WorkspaceInsightsProps } from '../../types';
+import type { WorkspaceInsightsProps } from '../../types';
 
 const styles = {
   container: css({

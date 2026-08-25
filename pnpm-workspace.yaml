@@ -1,0 +1,16 @@
+packages:
+  - packages/threat-composer
+  - packages/threat-composer-app
+  - packages/threat-composer-app-browser-extension
+  - packages/threat-composer-infra
+
+# packages/threat-composer-ai is intentionally absent. It is a uv/Python project
+# with no package.json, so pnpm has nothing to install for it; it takes part in
+# the task graph through its project.json instead.
+#
+# e2e/ is also intentionally absent. It is a standalone npm project so that the
+# app's Vitest config never collects its Playwright specs, and so a Playwright
+# bump cannot perturb the app's dependency tree.
+#
+# Dependency build-script policy (onlyBuiltDependencies) lives in the root
+# package.json under the "pnpm" key: pnpm 10.34 does not read it from here.

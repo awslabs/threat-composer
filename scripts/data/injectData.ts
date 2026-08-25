@@ -1,16 +1,19 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 /**
  * Inject data into threat ThreatPack/MitigationPack/WorkspaceExample dynamically in build time.
- * Usage: npx ts-node ./scripts/data/injectData.ts <ThreatPack|MitigationPack|WorkspaceExample> <SourceDir-relative path to the relative data folder>
+ * Usage: tsx ./scripts/data/injectData.ts <ThreatPack|MitigationPack|WorkspaceExample> <SourceDir-relative path to the relative data folder>
  */
 
 const IMPORT_PLACEHOLDER = "// {IMPORT_PLACEHOLDER}";
 const ENTRY_PLACEHOLDER = "// {ENTRY_PLACEHOLDER}";
 
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+
 const DATA_FOLDER = path.join(
-  __dirname,
+  SCRIPT_DIR,
   "..",
   "..",
   "packages",
@@ -133,7 +136,7 @@ const main = () => {
 
   if (lenArgs !== 4) {
     console.log(
-      "Usage: npx ts-node ./scripts/data/injectData.ts <ThreatPack|MitigationPack|WorkspaceExample> <SourceDir-relative path to the relative data folder>"
+      "Usage: tsx ./scripts/data/injectData.ts <ThreatPack|MitigationPack|WorkspaceExample> <SourceDir-relative path to the relative data folder>"
     );
     return -1;
   }

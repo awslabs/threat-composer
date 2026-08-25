@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -22,7 +22,7 @@ import { getAssumptionsContent } from './utils/getAssumptions';
 import { getDataflowContent } from './utils/getDataFlow';
 import { getMitigationsContent } from './utils/getMitigations';
 import { getThreatsContent } from './utils/getThreats';
-import { DataExchangeFormat } from '../../customTypes';
+import type { DataExchangeFormat } from '../../customTypes';
 import hasContent from '../hasContent';
 import sanitizeHtml from '../sanitizeHtml';
 

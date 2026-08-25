@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,10 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { useMemo } from 'react';
 import Notifications from '../../components/Notifications';
 
-const toDisplayNotification = (process.env.REACT_APP_GITHUB_PAGES === 'true');
+const toDisplayNotification = (import.meta.env.VITE_GITHUB_PAGES === 'true');
 
 const useNotifications = (addPadding?: boolean) => {
   return useMemo(() => toDisplayNotification ? <Notifications addPadding={addPadding}/> : undefined, []);

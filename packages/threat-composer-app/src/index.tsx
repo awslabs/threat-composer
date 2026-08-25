@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { ThemeProvider, Mode } from '@aws/threat-composer';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import App from './containers/App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
@@ -28,13 +29,22 @@ let initialTheme = initialThemeString ?
   (initialThemeString === 'true' ? Mode.Dark : Mode.Light) :
   undefined;
 
-ReactDOM.render(
+// React 19 removed the legacy ReactDOM.render entirely, so this is now createRoot.
+// It was overdue regardless: under React 18 the old call put the whole app into
+// React-17 compatibility mode and logged a warning on every load, which the e2e
+// console guard had to allow-list.
+const container = document.getElementById('root');
+
+if (!container) {
+  throw new Error('Cannot mount threat-composer: no #root element in the document');
+}
+
+createRoot(container).render(
   <React.StrictMode>
-    <ThemeProvider theme={initialTheme} appMode={process.env.REACT_APP_APP_MODE || undefined}>
+    <ThemeProvider theme={initialTheme} appMode={import.meta.env.VITE_APP_MODE || undefined}>
       <App />
     </ThemeProvider>
   </React.StrictMode>,
-  document.getElementById('root'),
 );
 
 // If you want your app to work offline and load faster, you can change

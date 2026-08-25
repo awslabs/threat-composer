@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,12 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { SpaceBetween } from '@cloudscape-design/components';
 import Autosuggest from '@cloudscape-design/components/autosuggest';
-import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
+import type { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
+import ExpandableSection from '@cloudscape-design/components/expandable-section';
 import TokenGroup from '@cloudscape-design/components/token-group';
-import React, { FC, PropsWithChildren, useMemo } from 'react';
-import { Mitigation } from '../../../customTypes';
+import type { FC, PropsWithChildren } from 'react';
+import React, { useMemo } from 'react';
+import type { Mitigation } from '../../../customTypes';
 
 export interface MitigationLinkProps {
   variant?: ExpandableSectionProps['variant'];

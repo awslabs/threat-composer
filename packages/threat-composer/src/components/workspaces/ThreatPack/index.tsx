@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,16 +13,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import Button from '@cloudscape-design/components/button';
 import ContentLayout from '@cloudscape-design/components/content-layout';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
-import { useMemo, FC, useCallback, useState } from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import GeneralInfo from './components/GeneralInfo';
 import { useThreatPacksContext } from '../../../contexts/ThreatPacksContext';
-import { TemplateThreatStatement } from '../../../customTypes/threats';
-import Table, { ColumnDefinition } from '../../generic/Table';
+import type { TemplateThreatStatement } from '../../../customTypes/threats';
+import type { ColumnDefinition } from '../../generic/Table';
+import Table from '../../generic/Table';
 
 export interface ThreatPackProp {
   threatPackId: string;

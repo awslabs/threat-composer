@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
 import Grid from '@cloudscape-design/components/grid';
@@ -24,7 +25,7 @@ import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { useCallback, useMemo, useState } from 'react';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { PerFieldExample } from '../../../customTypes';
+import type { PerFieldExample } from '../../../customTypes';
 import renderArrayField from '../../../utils/renderArrayField';
 import shuffle from '../../../utils/shuffle';
 

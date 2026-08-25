@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,9 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
-import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
-import { FC, useCallback } from 'react';
+
+import type { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
+import ButtonDropdown from '@cloudscape-design/components/button-dropdown';
+import type { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 
 export interface GenericListMoreActionsProps {
   enabledRemoveAll: boolean;

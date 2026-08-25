@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,9 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC } from 'react';
+
+import type { FC } from 'react';
 import { useArchitectureInfoContext } from '../../../contexts/ArchitectureContext/context';
-import { ArchitectureInfoSchema, EditableComponentBaseProps } from '../../../customTypes';
+import type { EditableComponentBaseProps } from '../../../customTypes';
+import { ArchitectureInfoSchema } from '../../../customTypes';
 import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
 
 const ArchitectureInfo: FC<EditableComponentBaseProps> = (props) => {

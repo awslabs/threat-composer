@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import sanitizeHtmlString from 'sanitize-html';
 
 const sanitizeHtml: any = (data: any) => {
@@ -22,6 +23,10 @@ const sanitizeHtml: any = (data: any) => {
     } else if (typeof data === 'string') {
       return sanitizeHtmlString(data, {
         allowedTags: [],
+        // Style parsing is backed by postcss, which sanitize-html itself
+        // documents as node-only. It is redundant here anyway: allowedTags is
+        // empty, so every tag and its attributes are stripped regardless.
+        parseStyleAttributes: false,
       });
     } else if (typeof data === 'object') {
       return Object.keys(data).reduce(

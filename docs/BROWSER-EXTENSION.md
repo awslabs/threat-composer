@@ -64,7 +64,7 @@ Each integration can be individually enabled/disabled and configured with custom
 ### Prerequisites
 
 - Node.js (version 20 or higher)
-- Yarn package manager
+- pnpm package manager (`npm install -g pnpm@10` -- it picks up the exact version from the packageManager field)
 
 ### Build Instructions
 
@@ -89,7 +89,7 @@ Each integration can be individually enabled/disabled and configured with custom
 
 ```bash
 cd ./packages/threat-composer-app-browser-extension
-yarn run zip
+pnpm run zip
 ```
 
 The ZIP file will be created in `./.output/`
@@ -98,7 +98,7 @@ The ZIP file will be created in `./.output/`
 
 ```bash
 cd ./packages/threat-composer-app-browser-extension
-yarn run zip:firefox
+pnpm run zip:firefox
 ```
 
 The ZIP file will be created in `./.output/`
@@ -111,7 +111,7 @@ The ZIP file will be created in `./.output/`
 
 ```bash
 cd ./packages/threat-composer-app-browser-extension
-yarn run dev
+pnpm run dev
 ```
 
 Then navigate to a supported integration to test: [Example 1](https://github.com/awslabs/threat-composer/blob/main/packages/threat-composer/src/data/workspaceExamples/ThreatComposer.tc.json), [Example 2](https://github.com/awslabs/threat-composer/blob/main/packages/threat-composer/src/data/workspaceExamples/GenAIChatbot.tc.json), [Example 3](https://raw.githubusercontent.com/awslabs/threat-composer/main/packages/threat-composer/src/data/workspaceExamples/GenAIChatbot.tc.json)
@@ -120,7 +120,7 @@ Then navigate to a supported integration to test: [Example 1](https://github.com
 
 ```bash
 cd ./packages/threat-composer-app-browser-extension
-yarn run dev:firefox
+pnpm run dev:firefox
 ```
 
 ### Project Structure

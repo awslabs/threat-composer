@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,15 +13,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
+import type {
+  TemplateThreatStatement,
+  ThreatPack,
+  ThreatFieldTypes,
+} from '@aws/threat-composer';
 import {
   useThreatsContext,
   getThreatFromThreatPacksThreat,
-  TemplateThreatStatement,
   useThreatPacksContext,
   DEFAULT_NEW_ENTITY_ID,
-  ThreatPack,
   getNewThreatStatement,
-  ThreatFieldTypes,
   ThreatStatementEditor as ThreatStatementEditorComponent,
 } from '@aws/threat-composer';
 import { useEffect, useState } from 'react';

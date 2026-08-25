@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,11 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { AssumptionLink } from '../../../../customTypes';
-import { LocalStateContextProviderBaseProps } from '../../../types';
+
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback, useState } from 'react';
+import type { AssumptionLink } from '../../../../customTypes';
+import type { LocalStateContextProviderBaseProps } from '../../../types';
 import { AssumptionLinksContext } from '../../context';
-import { AssumptionLinksContextProviderProps } from '../../types';
+import type { AssumptionLinksContextProviderProps } from '../../types';
 import useAssumptionLinks from '../../useAssumptionLinks';
 
 const AssumptionLinksLocalStorageContextProvider: FC<PropsWithChildren<

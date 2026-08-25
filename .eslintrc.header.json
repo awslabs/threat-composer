@@ -1,0 +1,6 @@
+{
+  "plugins": ["license-header"],
+  "rules": {
+    "license-header/header": ["error", "../../header.js"]
+  }
+}

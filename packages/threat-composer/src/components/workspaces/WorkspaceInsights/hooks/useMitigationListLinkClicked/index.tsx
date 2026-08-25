@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
+
+import type { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
 import { useCallback } from 'react';
-import { MitigationListFilter, ViewNavigationEvent } from '../../../../../customTypes';
+import type { MitigationListFilter, ViewNavigationEvent } from '../../../../../customTypes';
 
 const useMitigationListLinkClicked = (onMitigationListView: ViewNavigationEvent['onMitigationListView']) => {
   return useCallback((filter?: MitigationListFilter): CancelableEventHandler<BaseNavigationDetail> => (event) => {

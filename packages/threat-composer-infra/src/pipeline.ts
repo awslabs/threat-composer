@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,13 +13,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { PDKNag } from '@aws/pdk/pdk-nag';
+
+import { App, Aspects } from 'aws-cdk-lib';
 import { ManualApprovalStep } from 'aws-cdk-lib/pipelines';
+import { AwsSolutionsChecks } from 'cdk-nag';
 import { ApplicationStage } from './application-stage';
 import { STAGE_PREFIX_IDE_EXTENSION_ENV } from './constants';
 import { PipelineStack } from './pipeline-stack';
 
-const app = PDKNag.app();
+// Replaces PDKNag.app(): a plain CDK App with the cdk-nag AwsSolutions rule
+// pack applied to every construct in the tree.
+const app = new App();
+Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
 
 const pipelineAccount =
   app.node.tryGetContext('accountPipeline') || process.env.CDK_DEFAULT_ACCOUNT;
@@ -82,5 +87,9 @@ if (ideExtensionProdAccount) {
 }
 
 pipelineStack.pipeline.buildPipeline(); // Needed for CDK Nag
+
+// The pipeline's own roles and buckets only exist once buildPipeline() has run,
+// so their nag suppressions have to be applied afterwards.
+pipelineStack.suppressPipelineNagFindings();
 
 app.synth();

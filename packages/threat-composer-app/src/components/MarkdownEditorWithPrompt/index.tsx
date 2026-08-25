@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,9 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
-import { MarkdownEditorProps, MarkdownEditor } from '@aws/threat-composer';
-import { FC, useState } from 'react';
+import type { MarkdownEditorProps } from '@aws/threat-composer';
+import { MarkdownEditor } from '@aws/threat-composer';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { unstable_usePrompt } from 'react-router-dom';
 
 const MarkdownEditorWithPrompt: FC<MarkdownEditorProps> = ({

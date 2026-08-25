@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,11 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { Mitigation } from '../../../../customTypes';
-import { LocalStateContextProviderBaseProps } from '../../../types';
+
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback, useState } from 'react';
+import type { Mitigation } from '../../../../customTypes';
+import type { LocalStateContextProviderBaseProps } from '../../../types';
 import { MitigationsContext } from '../../context';
-import { MitigationsContextProviderProps } from '../../types';
+import type { MitigationsContextProviderProps } from '../../types';
 import useMitigations from '../../useMitigations';
 
 const MitigationsLocalStateContextProvider: FC<PropsWithChildren<

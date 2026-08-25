@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,11 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
-import { TextareaProps } from '@cloudscape-design/components/textarea';
-import { FC, forwardRef, useCallback, useRef, RefObject, useImperativeHandle } from 'react';
+import type { TextareaProps } from '@cloudscape-design/components/textarea';
+import type { FC, RefObject } from 'react';
+import { forwardRef, useCallback, useRef, useImperativeHandle } from 'react';
 import { useBrainstormContext } from '../../../contexts/BrainstormContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { TemplateThreatStatementSchema } from '../../../customTypes';
@@ -27,12 +29,12 @@ import EditorLayout from '../EditorLayout';
 import styles from '../EditorLayout/styles';
 import ExampleList from '../ExampleList';
 import PreviousInputList from '../PreviousInputList';
-import { EditorProps } from '../ThreatStatementEditor/types';
+import type { EditorProps } from '../ThreatStatementEditor/types';
 
 const EditorThreatImpact: FC<EditorProps> = forwardRef<TextareaProps.Ref, EditorProps>(({
   statement, setStatement, fieldData,
 }, ref) => {
-  const inputRef = useRef<TextareaProps.Ref>();
+  const inputRef = useRef<TextareaProps.Ref | undefined>(undefined);
   const { perFieldExamples, previousInputs } = useThreatsContext();
   const { brainstormData } = useBrainstormContext();
 

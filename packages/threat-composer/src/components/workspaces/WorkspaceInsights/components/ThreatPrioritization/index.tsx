@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import {
   Button,
   Box,
@@ -25,7 +26,8 @@ import {
   colorChartsStatusHigh,
   colorChartsStatusNeutral,
 } from '@cloudscape-design/design-tokens';
-import { useMemo, useCallback, FC } from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback } from 'react';
 import {
   LEVEL_HIGH,
   LEVEL_LOW,
@@ -37,7 +39,7 @@ import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 import DashboardNumber from '../../../../generic/DashboardNumber';
 import useThreatListLinkClicked from '../../hooks/useThreatListLinkClicked';
-import { WorkspaceInsightsProps } from '../../types';
+import type { WorkspaceInsightsProps } from '../../types';
 
 const ThreatPrioritization: FC<WorkspaceInsightsProps> = ({
   onThreatEditorView,
