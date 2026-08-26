@@ -20,19 +20,30 @@ import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 
-# Build output and dependency trees, which are not properties of the fixture:
-# hashing them would make the pin depend on whether anyone had run a build.
+# Directories that git tracks but a build or install regenerates, so their committed
+# content is not what is on disk after ordinary work. Excluded from the hash, and
+# named separately from the rest so the exception is visible and so
+# tests/eval/test_fixture.py can account for it when comparing against git.
 #
-# The test to apply when adding to this list is not "is it generated" but "could the
-# analyser read it". Anything the agent can see is part of its input and belongs in
-# the hash, however it came to exist. `.wxt/` is a case in point: WXT generates those
-# type declarations, but they are committed, so the agent reads them and they are
-# hashed. Excluding them would leave a gap where the fixture could change without the
-# pin noticing, which is the one thing this module exists to prevent.
+# `.wxt` is the browser extension's case, and it took a CI failure to find. Eight of
+# its files are committed, which is why they were originally hashed, but the package
+# declares `postinstall: wxt prepare` and `clean: rm -rf .output .wxt ...`. So
+# `pnpm install` rewrites it and the package's own tooling treats it as output. In CI
+# that produced a different file count from a fresh checkout and failed the pin for a
+# reason that had nothing to do with the fixture changing.
 #
-# tests/eval/test_fixture.py asserts that the hashed set matches the set of
-# git-tracked files for the fixture, so a drift between these exclusions and what the
-# repository actually holds fails rather than passing quietly.
+# The agent does read these files, so excluding them means the pin does not describe
+# the input in full. That is an acceptable trade: their content is derived from
+# configuration that IS hashed, and once fixture.commit is set the eval reads committed
+# content without running an install, so the instability cannot arise.
+GENERATED_TRACKED_DIRS = frozenset({".wxt"})
+
+# Paths that are not stable properties of the fixture. The test to apply is whether
+# the content is reproducible from the commit alone: anything a build or an install
+# can rewrite makes the pin depend on what has been run, which defeats it.
+#
+# Most of these are untracked build output and so never reach the hash anyway. They
+# are listed for the case where the eval is pointed at a tree someone has built in.
 EXCLUDED_DIRS = frozenset(
     {
         ".git",
@@ -47,6 +58,7 @@ EXCLUDED_DIRS = frozenset(
         "node_modules",
         "playwright-report",
         "test-results",
+        *GENERATED_TRACKED_DIRS,
     }
 )
 EXCLUDED_SUFFIXES = frozenset({".pyc", ".pyo", ".log"})

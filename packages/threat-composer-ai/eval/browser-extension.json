@@ -41,10 +41,18 @@
     "            edit, or a pin left stale. Checked before the CLI runs, so a",
     "            mismatch costs nothing rather than eighteen minutes of inference.",
     "",
-    "The hash covers relative paths and file bytes for all 49 tracked files,",
-    "excluding build output and dependency trees. tests/eval/test_fixture.py asserts",
-    "the hashed set matches what git tracks, so those exclusions cannot silently",
-    "diverge from the repository.",
+    "The hash covers relative paths and file bytes for 41 files: everything git",
+    "tracks apart from .wxt/, plus nothing untracked. tests/eval/test_fixture.py",
+    "asserts the hashed set matches what git tracks minus that documented exception,",
+    "so the exclusions cannot silently diverge from the repository.",
+    "",
+    ".wxt/ is committed but excluded, which took a CI failure to work out. The package",
+    "declares postinstall: wxt prepare and clean: rm -rf .output .wxt, so pnpm install",
+    "rewrites it. Hashing it made the pin depend on whether an install had run: a fresh",
+    "checkout gave 49 files and CI, after installing, gave 50. The agent does read",
+    "those files, so the pin is not a complete description of the input, but their",
+    "content derives from configuration that is hashed, and once commit is set the eval",
+    "reads committed content without installing.",
     "",
     "commit is null until this stack lands. The bands below were measured against the",
     "fixture as it exists on this branch, which differs from main because the Vite",
@@ -65,9 +73,9 @@
   "fixture": {
     "path": "packages/threat-composer-app-browser-extension",
     "commit": null,
-    "tree_sha256": "02f39718f292ebaefb644b9b6b345dbff853da520577e3acad163347402101ec",
-    "file_count": 49,
-    "byte_count": 185987
+    "tree_sha256": "743c722ab94116ddf435207ee7a8121fb4438c35c9c7e42127fd8f23dc8bd72e",
+    "file_count": 41,
+    "byte_count": 174853
   },
 
   "bands": {
