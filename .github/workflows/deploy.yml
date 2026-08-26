@@ -6,6 +6,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # The only job here without an explicit scope. It checks out, installs from
+    # public registries and uploads the built site as an artifact, so it needs
+    # nothing beyond read. The deploy and release jobs below declare their own
+    # wider scopes, and a job-level block overrides the workflow default, so
+    # this is kept per job to match them rather than hoisted to workflow level.
+    # upload-pages-artifact authenticates with the Actions runtime token, not
+    # GITHUB_TOKEN, so the upload is unaffected.
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v3
