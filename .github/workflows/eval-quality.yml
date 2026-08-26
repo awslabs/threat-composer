@@ -19,11 +19,11 @@ name: eval-quality
 # package is a fixture, an input rather than the subject. Triggering only on
 # threat-composer-ai means the agent is what moves between runs.
 #
-# The filter is not what holds the fixture still, though. That is done by a content
-# hash recorded in the expectations file and checked before the CLI is invoked, so a
-# fixture that has drifted stops the run rather than quietly producing figures that
-# cannot be compared to the bands. The filter decides when to run; the hash decides
-# whether the run means anything.
+# The filter is not what holds the fixture still. That is done by the pin in the
+# expectations file: a commit, which is checked out below so the eval analyses the
+# same bytes on every run whatever has since happened on main, and a content hash,
+# which is verified before the CLI is invoked so a mismatch costs nothing. The filter
+# decides when to run; the pin decides whether the run means anything.
 #
 # Why also on a schedule: the dependencies are locked and the fixture is pinned, so
 # the significant remaining variable is Bedrock. The default model is hosted and can
@@ -102,20 +102,46 @@ jobs:
         run: uv sync --extra eval
         working-directory: packages/threat-composer-ai
 
-      # The expectations file owns the fixture path as well as its hash, so the two
-      # cannot drift apart by being stated in two places.
+      # The expectations file owns the fixture's path, commit and hash, so they
+      # cannot drift apart by being stated in more than one place.
       - name: Resolve the pinned fixture
         id: fixture
         run: |
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import json, os
-          config = json.load(open(os.environ["CONFIG"]))
-          fixture = config["fixture"]
+          fixture = json.load(open(os.environ["CONFIG"]))["fixture"]
           print(f"path={fixture['path']}")
           print(f"sha256={fixture['tree_sha256']}")
+          print(f"commit={fixture.get('commit') or ''}")
           PY
         env:
           CONFIG: ${{ inputs.config || 'packages/threat-composer-ai/eval/browser-extension.json' }}
+
+      # Fetches the pinned commit so the eval analyses the same bytes on every run,
+      # regardless of what has happened to the fixture on main since. This is what
+      # keeps the eval working rather than merely detecting that it should not.
+      #
+      # Skipped while commit is null, in which case the checked-out tree is used and
+      # the hash check below is the only thing holding the input still.
+      - name: Check out the pinned fixture
+        if: steps.fixture.outputs.commit != ''
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.fixture.outputs.commit }}
+          path: _pinned-fixture
+          sparse-checkout: ${{ steps.fixture.outputs.path }}
+          sparse-checkout-cone-mode: false
+
+      - name: Select the fixture to analyse
+        id: target
+        run: |
+          if [ -n "${{ steps.fixture.outputs.commit }}" ]; then
+            echo "dir=${{ github.workspace }}/_pinned-fixture/${{ steps.fixture.outputs.path }}" >> "$GITHUB_OUTPUT"
+            echo "analysing fixture pinned at ${{ steps.fixture.outputs.commit }}"
+          else
+            echo "dir=${{ github.workspace }}/${{ steps.fixture.outputs.path }}" >> "$GITHUB_OUTPUT"
+            echo "::warning::fixture.commit is null, analysing the checked-out tree. Results stay comparable only while its hash matches the recorded pin."
+          fi
 
       # Fails before spending anything if the role or model access is wrong, which
       # is a far clearer signal than the graph dying part way through.
@@ -132,7 +158,7 @@ jobs:
         id: eval
         run: |
           uv run python -m threat_composer_ai.eval.quality \
-            --target "${{ github.workspace }}/${{ steps.fixture.outputs.path }}" \
+            --target "${{ steps.target.outputs.dir }}" \
             --config "${{ github.workspace }}/${{ inputs.config || 'packages/threat-composer-ai/eval/browser-extension.json' }}" \
             --output-dir "${{ runner.temp }}/eval-run" \
             --aws-region us-west-2 \
