@@ -47,6 +47,13 @@ class AppConfig:
     telemetry_endpoint_host: str = "localhost"
     telemetry_endpoint_port: int = 4318
     telemetry_service_name: str = "threat-composer-ai"
+    # Where spans go. "otlp" posts to telemetry_endpoint_host:port, which needs a
+    # collector listening. "file" writes them into the run's own output tree
+    # instead, which needs nothing running and makes the spans an artifact of the
+    # run like the logs and hashes already are.
+    telemetry_export: str = "otlp"
+    telemetry_output_sub_dir: str = "telemetry"
+    telemetry_spans_filename: str = "spans.jsonl"
 
     # Rich display configuration
     show_assistant_messages: bool = True
@@ -79,6 +86,7 @@ class AppConfig:
         output_directory: Path | None = None,
         verbose: bool | None = None,
         enable_telemetry: bool | None = None,
+        telemetry_export: str | None = None,
         aws_region: str | None = None,
         aws_model_id: str | None = None,
         aws_profile: str | None = None,
@@ -96,6 +104,7 @@ class AppConfig:
             output_directory: Optional output directory override
             verbose: Optional verbose logging override
             enable_telemetry: Optional telemetry enablement override
+            telemetry_export: Optional span destination override, "otlp" or "file"
             aws_region: Optional AWS region override
             aws_model_id: Optional AWS model ID override
             execution_timeout: Optional execution timeout override
@@ -110,6 +119,7 @@ class AppConfig:
         env_output_dir = cls._get_env_path("THREAT_COMPOSER_OUTPUT_DIR")
         env_verbose = cls._get_env_bool("THREAT_COMPOSER_VERBOSE")
         env_enable_telemetry = cls._get_env_bool("THREAT_COMPOSER_ENABLE_TELEMETRY")
+        env_telemetry_export = os.getenv("THREAT_COMPOSER_TELEMETRY_EXPORT")
         env_aws_region = os.getenv("AWS_REGION") or os.getenv("AWS_DEFAULT_REGION")
         env_aws_model_id = os.getenv("THREAT_COMPOSER_AWS_MODEL_ID")
         env_aws_profile = os.getenv("AWS_PROFILE")
@@ -139,6 +149,7 @@ class AppConfig:
             enable_telemetry=enable_telemetry
             if enable_telemetry is not None
             else (env_enable_telemetry if env_enable_telemetry is not None else False),
+            telemetry_export=telemetry_export or env_telemetry_export or "otlp",
             aws_region=aws_region or env_aws_region or cls.aws_region,
             aws_model_id=aws_model_id or env_aws_model_id or cls.aws_model_id,
             aws_profile=aws_profile or env_aws_profile,
@@ -267,6 +278,7 @@ class AppConfig:
         for key in [
             "verbose",
             "enable_telemetry",
+            "telemetry_export",
             "execution_timeout",
             "node_timeout",
         ]:
