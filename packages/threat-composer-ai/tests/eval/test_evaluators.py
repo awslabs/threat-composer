@@ -24,6 +24,7 @@ from threat_composer_ai.eval.evaluators import (  # noqa: E402
     ArtifactsComplete,
     ConceptCoverage,
     CountWithinBand,
+    DefaultsExercised,
     DiagramsUsable,
     ExecutionOrderValid,
     GraphCompleted,
@@ -203,6 +204,104 @@ class TestSpansCaptured:
 
     def test_is_operational_tier(self):
         assert SpansCaptured().tier == OPERATIONAL
+
+
+class TestDefaultsExercised:
+    SETTINGS = ["aws_model_id", "execution_timeout", "node_timeout"]
+
+    def sources(self, **overrides):
+        base = dict.fromkeys(self.SETTINGS, "default")
+        base.update(overrides)
+        return base
+
+    def test_passes_when_every_setting_came_from_a_default(self):
+        out = verdict(
+            DefaultsExercised(self.SETTINGS),
+            data(
+                **{
+                    "config.sources": self.sources(),
+                    "config.aws_model_id": "global.anthropic.claude-sonnet-5",
+                }
+            ),
+        )
+        assert out.test_pass
+
+    def test_fails_when_the_model_was_overridden(self):
+        # The case this evaluator exists for. A run with a pinned model is not
+        # measuring default behaviour, so every other result becomes misleading.
+        out = verdict(
+            DefaultsExercised(self.SETTINGS),
+            data(
+                **{
+                    "config.sources": self.sources(aws_model_id="invocation argument"),
+                    "config.aws_model_id": "some.other.model",
+                }
+            ),
+        )
+        assert not out.test_pass
+        assert "aws_model_id came from invocation argument" in out.reason
+
+    def test_fails_when_a_setting_came_from_the_environment(self):
+        out = verdict(
+            DefaultsExercised(self.SETTINGS),
+            data(
+                **{
+                    "config.sources": self.sources(
+                        execution_timeout="environment variable"
+                    ),
+                    "config.aws_model_id": "m",
+                }
+            ),
+        )
+        assert not out.test_pass
+        assert "environment variable" in out.reason
+
+    def test_reports_the_resolved_model_either_way(self):
+        # When a default model changes, this is the first thing anyone reading a
+        # failed run needs to see, so it belongs in the reason on pass and on fail.
+        passing = verdict(
+            DefaultsExercised(self.SETTINGS),
+            data(
+                **{"config.sources": self.sources(), "config.aws_model_id": "model-x"}
+            ),
+        )
+        failing = verdict(
+            DefaultsExercised(self.SETTINGS),
+            data(
+                **{
+                    "config.sources": self.sources(node_timeout="invocation argument"),
+                    "config.aws_model_id": "model-x",
+                }
+            ),
+        )
+        assert "model-x" in passing.reason
+        assert "model-x" in failing.reason
+
+    def test_fails_when_provenance_was_not_recorded(self):
+        out = verdict(DefaultsExercised(self.SETTINGS), data(**{"config.sources": {}}))
+        assert not out.test_pass
+        assert "cannot confirm" in out.reason
+
+    def test_fails_when_a_setting_is_absent_from_the_record(self):
+        sources = self.sources()
+        del sources["node_timeout"]
+        out = verdict(
+            DefaultsExercised(self.SETTINGS),
+            data(**{"config.sources": sources, "config.aws_model_id": "m"}),
+        )
+        assert not out.test_pass
+        assert "not recorded" in out.reason
+
+    def test_region_is_not_asserted_by_default(self):
+        # Region is deployment configuration, and in CI it necessarily comes from the
+        # environment, so listing it would fail every run for no useful reason.
+        from threat_composer_ai.eval.quality import DEFAULT_SETTINGS
+
+        assert "aws_region" not in DEFAULT_SETTINGS
+        assert "aws_model_id" in DEFAULT_SETTINGS
+
+    def test_is_operational_tier(self):
+        assert DefaultsExercised(self.SETTINGS).tier == OPERATIONAL
 
 
 class TestCountWithinBand:

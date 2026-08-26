@@ -39,6 +39,7 @@ from .evaluators import (
     ArtifactsComplete,
     ConceptCoverage,
     CountWithinBand,
+    DefaultsExercised,
     DiagramsUsable,
     ExecutionOrderValid,
     GraphCompleted,
@@ -60,6 +61,16 @@ DEFAULT_EDGES = [
     ["mitigations", "threat_model"],
     ["architecture", "architecture_diagram"],
     ["dataflow", "dataflow_diagram"],
+]
+# Settings that must come from the CLI's own defaults for a run to be measuring
+# default behaviour. These are the ones that change what the agent does, as opposed
+# to where its output lands. aws_region is excluded deliberately: it is deployment
+# configuration rather than behaviour, and in CI it necessarily comes from the
+# environment because credentials and model access are region scoped.
+DEFAULT_SETTINGS = [
+    "aws_model_id",
+    "execution_timeout",
+    "node_timeout",
 ]
 DEFAULT_NODES = [
     "application_info",
@@ -88,6 +99,7 @@ def build_evaluators(config: dict[str, Any]) -> list[Any]:
     """
     bands = config.get("bands") or {}
     evaluators: list[Any] = [
+        DefaultsExercised(settings=config.get("default_settings") or DEFAULT_SETTINGS),
         GraphCompleted(expected_nodes=config.get("expected_nodes") or DEFAULT_NODES),
         ExecutionOrderValid(edges=config.get("graph_edges") or DEFAULT_EDGES),
         ArtifactsComplete(),
@@ -126,23 +138,46 @@ def build_evaluators(config: dict[str, Any]) -> list[Any]:
     return evaluators
 
 
-def run_cli(
-    target: Path, output_dir: Path, region: str, model_id: str | None, timeout: int
-) -> int:
-    """Invoke the shipped console script against the fixture."""
+def run_cli(target: Path, output_dir: Path, model_id: str | None, timeout: int) -> int:
+    """Invoke the shipped console script against the fixture, on its own defaults.
+
+    Overriding a setting here would exempt it from the eval. If the default model
+    changes, or a default timeout is retuned, that is exactly the kind of change
+    whose effect on output quality needs measuring, and it can only be measured by
+    letting the default apply. So the flags passed are kept to the minimum that does
+    not touch behaviour:
+
+    --output-dir       so the run can be found afterwards. Changes where files are
+                       written, not what the agent does.
+    --enable-telemetry so the trajectory can be observed. Adds instrumentation, not
+                       decisions.
+
+    Notably absent is --aws-region, which was previously passed and made the region
+    an invocation argument rather than a default. Region still comes from the
+    environment in CI, since credentials and model access are region scoped, but it
+    is no longer overridden here.
+
+    model_id is threaded through only for deliberate manual comparison between
+    models. Passing it makes the run stop testing the default, which the
+    DefaultsExercised evaluator will report as a failure. That is intended: a run
+    with an overridden model is measuring something else.
+    """
     command = [
         "threat-composer-ai-cli",
         str(target),
         "--output-dir",
         str(output_dir),
-        "--aws-region",
-        region,
         "--enable-telemetry",
         "--telemetry-export",
         "file",
     ]
     if model_id:
         command += ["--aws-model-id", model_id]
+        print(
+            "warning: --aws-model-id overrides the default, so this run does not "
+            "measure default behaviour",
+            flush=True,
+        )
     print(f"running: {' '.join(command)}", flush=True)
     completed = subprocess.run(command, timeout=timeout, check=False)
     print(f"cli exit: {completed.returncode}", flush=True)
@@ -257,8 +292,11 @@ def main(argv: list[str] | None = None) -> int:
         "--config", type=Path, help="JSON file of bands, concepts and expectations."
     )
     parser.add_argument("--output-dir", type=Path, default=Path("eval-run"))
-    parser.add_argument("--aws-region", default="us-west-2")
-    parser.add_argument("--aws-model-id", default=None)
+    parser.add_argument(
+        "--aws-model-id",
+        default=None,
+        help="Override the CLI's default model. For deliberate comparison only: doing so means the run no longer measures default behaviour, and defaults_exercised will fail to say so.",
+    )
     parser.add_argument(
         "--timeout", type=int, default=3600, help="Seconds to allow the CLI run."
     )
@@ -298,7 +336,6 @@ def main(argv: list[str] | None = None) -> int:
         code = run_cli(
             target=args.target,
             output_dir=args.output_dir,
-            region=args.aws_region,
             model_id=args.aws_model_id,
             timeout=args.timeout,
         )

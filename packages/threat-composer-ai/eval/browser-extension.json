@@ -76,6 +76,26 @@
     "assumptions": [8, 45]
   },
 
+  "_default_settings": [
+    "Settings that must come from the CLI's own defaults for a run to count as",
+    "measuring default behaviour. Asserted against the provenance the CLI records in",
+    "run-metadata.json, so this is a direct check rather than an inference.",
+    "",
+    "This exists because the most likely cause of a quality change is a change to a",
+    "default: a new default model, a retuned timeout, an edited prompt. Pinning the",
+    "model in the eval would make it blind to exactly that. The eval follows the",
+    "default so that when the default moves, the effect on output is measured.",
+    "",
+    "aws_region is deliberately not listed. It is deployment configuration rather",
+    "than behaviour, and in CI it necessarily comes from the environment because",
+    "credentials and model access are region scoped."
+  ],
+  "default_settings": [
+    "aws_model_id",
+    "execution_timeout",
+    "node_timeout"
+  ],
+
   "min_statement_chars": 40,
   "min_diagram_text_nodes": 10,
 
