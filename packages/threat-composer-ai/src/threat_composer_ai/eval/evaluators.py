@@ -220,6 +220,68 @@ class SpansCaptured(_StateEvaluator):
         )
 
 
+class DefaultsExercised(_StateEvaluator):
+    """The run used the CLI's own defaults for the settings that govern behaviour.
+
+    Operational, because a run that overrode its own defaults is not measuring the
+    thing this eval exists to measure, and every other result in the report becomes
+    misleading rather than merely wrong.
+
+    The point is regression cover for changes to the defaults themselves. If someone
+    bumps the default model, retunes a default timeout, or changes a default prompt,
+    the effect on output quality only shows up if the default is what actually
+    applied. Pinning the model in the eval would make the eval blind to precisely the
+    change most likely to move quality.
+
+    The CLI records the provenance of each setting in run-metadata.json, so this is a
+    direct assertion rather than an inference. The resolved model is reported either
+    way, since when a default model changes that is the first thing anyone reading a
+    failed run needs to know.
+    """
+
+    tier = OPERATIONAL
+
+    def __init__(self, settings: list[str], name: str | None = None):
+        super().__init__(name=name or "defaults_exercised")
+        self.settings = settings
+
+    def evaluate(self, evaluation_case: EvaluationData) -> list[EvaluationOutput]:
+        sources = _state(evaluation_case, "config.sources") or {}
+        model = _state(evaluation_case, "config.aws_model_id")
+        detail = f"model {model}" if model else "model unknown"
+
+        if not sources:
+            return _verdict(
+                False,
+                f"no configuration provenance recorded, cannot confirm defaults were used ({detail})",
+                self.get_name(),
+            )
+
+        overridden = {
+            setting: sources.get(setting)
+            for setting in self.settings
+            if sources.get(setting) != "default"
+        }
+        missing = [s for s in self.settings if s not in sources]
+        problems = []
+        if overridden:
+            problems.append(
+                "not default: "
+                + ", ".join(f"{k} came from {v}" for k, v in sorted(overridden.items()))
+            )
+        if missing:
+            problems.append(f"not recorded: {missing}")
+
+        passed = not problems
+        return _verdict(
+            passed,
+            f"{len(self.settings)} settings came from defaults, {detail}"
+            if passed
+            else f"{'; '.join(problems)} ({detail})",
+            self.get_name(),
+        )
+
+
 class CountWithinBand(_StateEvaluator):
     """An entity count falls inside an inclusive band.
 

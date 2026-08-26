@@ -81,6 +81,7 @@ class LoadedSession:
     threat_model: dict[str, Any] | None = None
     graph_state: dict[str, Any] | None = None
     run_metadata: dict[str, Any] | None = None
+    resolved_config: dict[str, Any] | None = None
     spans: list[dict[str, Any]] = field(default_factory=list)
     missing: list[str] = field(default_factory=list)
     unparseable: list[str] = field(default_factory=list)
@@ -177,14 +178,17 @@ def load_session(path: Path) -> LoadedSession:
                 loaded.threat_model = parsed
 
     loaded.graph_state = _find_graph_state(session_dir)
-    metadata_path = (
-        session_dir / defaults["config_output_sub_dir"] / "run-metadata.json"
-    )
-    if metadata_path.is_file():
-        try:
-            loaded.run_metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
-            loaded.run_metadata = None
+    config_dir = session_dir / defaults["config_output_sub_dir"]
+    for attribute, filename in (
+        ("run_metadata", "run-metadata.json"),
+        ("resolved_config", "config.json"),
+    ):
+        path = config_dir / filename
+        if path.is_file():
+            try:
+                setattr(loaded, attribute, json.loads(path.read_text(encoding="utf-8")))
+            except (OSError, json.JSONDecodeError):
+                setattr(loaded, attribute, None)
     loaded.spans = _load_spans(session_dir, defaults)
     return loaded
 
@@ -323,6 +327,17 @@ def to_environment_state(
     state["usage.output_tokens"] = usage.get("outputTokens")
     state["usage.total_tokens"] = usage.get("totalTokens")
     state["usage.execution_time_ms"] = graph.get("execution_time")
+
+    # Where each setting came from, and what it resolved to. The CLI records this
+    # itself, which is what lets the eval prove it measured default behaviour rather
+    # than a configuration peculiar to CI. Recording the resolved model matters as
+    # much as the sources: when a default model changes, that is the first thing
+    # anyone reading a failed run will want to see.
+    metadata = loaded.run_metadata or {}
+    state["config.sources"] = metadata.get("configuration_sources") or {}
+    aws = (loaded.resolved_config or {}).get("aws") or {}
+    state["config.aws_model_id"] = aws.get("model_id")
+    state["config.aws_region"] = aws.get("region")
 
     state["diagrams"] = {
         name: _diagram_facts(loaded.artifact_paths[name])

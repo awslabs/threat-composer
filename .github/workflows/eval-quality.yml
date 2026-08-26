@@ -154,6 +154,13 @@ jobs:
           "
         working-directory: packages/threat-composer-ai
 
+      # No --aws-region and no --aws-model-id: the CLI runs on its own defaults so
+      # that a change to a default is measured rather than bypassed. That is the most
+      # likely cause of a quality shift, a new default model above all, and pinning
+      # either here would make the eval blind to it. Region reaches the CLI through
+      # AWS_REGION, set by configure-aws-credentials above, because credentials and
+      # model access are region scoped. The defaults_exercised check asserts all of
+      # this from the provenance the CLI records, and reports the model it resolved.
       - name: Run the quality eval
         id: eval
         run: |
@@ -161,7 +168,6 @@ jobs:
             --target "${{ steps.target.outputs.dir }}" \
             --config "${{ github.workspace }}/${{ inputs.config || 'packages/threat-composer-ai/eval/browser-extension.json' }}" \
             --output-dir "${{ runner.temp }}/eval-run" \
-            --aws-region us-west-2 \
             ${{ inputs.aws-model-id && format('--aws-model-id {0}', inputs.aws-model-id) || '' }} \
             --json-report "${{ runner.temp }}/eval-report.json" \
             ${{ inputs.allow-quality-failures == true && '--allow-quality-failures' || '' }} \
