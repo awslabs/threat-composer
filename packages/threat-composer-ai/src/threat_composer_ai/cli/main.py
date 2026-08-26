@@ -55,7 +55,13 @@ _active_workflow_ref = {"workflow": None}
 @click.option(
     "--enable-telemetry",
     is_flag=True,
-    help="Enable Jaeger telemetry tracing (disabled by default)",
+    help="Enable OpenTelemetry tracing (disabled by default)",
+)
+@click.option(
+    "--telemetry-export",
+    type=click.Choice(["otlp", "file"]),
+    default=None,
+    help="Where --enable-telemetry sends spans. 'otlp' (default) posts to a collector; 'file' writes them to telemetry/spans.jsonl in the output directory, needing nothing running.",
 )
 @click.option(
     "--rerun-from",
@@ -73,6 +79,7 @@ def main(
     node_timeout: float | None,
     skip_validation: bool,
     enable_telemetry: bool,
+    telemetry_export: str | None,
     rerun_from: Path | None,
 ):
     """
@@ -104,6 +111,7 @@ def main(
         previous_session_path=previous_session_path_str,
         verbose=verbose,
         enable_telemetry=enable_telemetry,
+        telemetry_export=telemetry_export,
         aws_region=aws_region,
         aws_model_id=aws_model_id,
         aws_profile=aws_profile,
@@ -121,7 +129,14 @@ def main(
         log_debug(f"AWS region: {runner.config.aws_region}")
         log_debug(f"Log level: {runner.config.get_log_level_name()}")
         if runner.config.enable_telemetry:
-            log_debug("Telemetry enabled - traces will be sent to Jaeger")
+            if runner.config.telemetry_export == "file":
+                log_debug(
+                    f"Telemetry enabled - spans will be written to {runner.config.telemetry_output_sub_dir}/{runner.config.telemetry_spans_filename}"
+                )
+            else:
+                log_debug(
+                    "Telemetry enabled - traces will be sent to the OTLP endpoint"
+                )
         else:
             log_debug(
                 "Telemetry disabled (use --enable-telemetry or THREAT_COMPOSER_ENABLE_TELEMETRY=true to enable)"
@@ -174,6 +189,7 @@ def main(
             "node_timeout": node_timeout,
             "skip_validation": skip_validation,
             "enable_telemetry": enable_telemetry,
+            "telemetry_export": telemetry_export,
         }
 
         success, error = runner.setup(

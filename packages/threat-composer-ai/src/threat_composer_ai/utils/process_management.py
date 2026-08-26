@@ -167,3 +167,59 @@ def setup_local_telemetry(
     except Exception as e:
         log_error(f"Could not set up telemetry: {e}")
         return False
+
+
+# Held for the process lifetime. The span exporter writes through this handle, so
+# dropping the only reference would let it be garbage collected and closed while
+# the run is still emitting spans.
+_spans_file = None
+
+
+def setup_file_telemetry(spans_path, service_name: str) -> bool:
+    """Set up telemetry that writes spans to a file instead of to a collector.
+
+    The OTLP path needs something listening on a port, which is fine for
+    interactive use with Jaeger but awkward in CI and impossible to rely on
+    unattended. This writes one JSON object per line into the run's output tree,
+    so the spans become an artifact of the run alongside its logs and hashes and
+    can be read back afterwards by anything that consumes OTel spans.
+
+    Args:
+        spans_path: File to write spans to. Parent directories are created.
+        service_name: Service name stamped on the spans.
+
+    Returns:
+        bool: True if telemetry was configured, False otherwise.
+    """
+    global _spans_file
+    try:
+        from pathlib import Path
+
+        from strands.telemetry import StrandsTelemetry
+
+        from ..logging import log_success
+
+        spans_path = Path(spans_path)
+        spans_path.parent.mkdir(parents=True, exist_ok=True)
+
+        os.environ["OTEL_SERVICE_NAME"] = service_name
+
+        # Line buffered, because a run that is killed part way through should
+        # still leave behind the spans it had already emitted.
+        _spans_file = open(spans_path, "w", buffering=1, encoding="utf-8")
+
+        # ConsoleSpanExporter defaults to pretty-printed JSON, which is
+        # unparseable line by line. Forcing indent=None gives one span per line.
+        # It is wired through a SimpleSpanProcessor rather than a batching one, so
+        # each span is written and flushed as it ends and no explicit shutdown is
+        # needed for the file to be complete.
+        StrandsTelemetry().setup_console_exporter(
+            out=_spans_file,
+            formatter=lambda span: span.to_json(indent=None) + "\n",
+        )
+
+        log_success(f"Telemetry writing spans to {spans_path}")
+        return True
+    except Exception as e:
+        log_error(f"Could not set up file telemetry: {e}")
+        return False
