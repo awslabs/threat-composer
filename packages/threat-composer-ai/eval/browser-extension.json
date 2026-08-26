@@ -1,0 +1,126 @@
+{
+  "_comment": [
+    "Quality eval expectations for the threat-composer-app-browser-extension fixture.",
+    "",
+    "Kept as data rather than code so that retuning a band is a reviewable one line",
+    "change instead of a patch to Python.",
+    "",
+    "Two reference runs, both on strands-agents 1.53.0 and",
+    "global.anthropic.claude-sonnet-5, against the same unchanged fixture:",
+    "",
+    "            threats  mitigations  assumptions  total tokens  wall clock",
+    "  run 1          19           31           20     1,255,735       1066s",
+    "  run 2          20           25           20       823,319        550s",
+    "",
+    "Bands are wide on purpose, and those two runs are why. Same input, same model,",
+    "same code: mitigations moved by 19% and token spend by 34%. Pinning anywhere",
+    "near run 1's figures would have failed run 2 for no reason at all. A band's job",
+    "is to catch collapse or runaway, not to pin a figure, so each is set roughly",
+    "half to double."
+  ],
+
+  "case_name": "browser-extension-threat-model",
+
+  "bands": {
+    "threats": [10, 40],
+    "mitigations": [15, 65],
+    "assumptions": [8, 45]
+  },
+
+  "min_statement_chars": 40,
+  "min_diagram_text_nodes": 10,
+
+  "_allow_incomplete_threats": [
+    "Number of threats permitted to leave grammar fields empty. Zero to begin with,",
+    "on the basis that the schema models the grammar and the agent should fill it.",
+    "Raise it if the reference run shows this is unrealistically strict rather than",
+    "quietly dropping the check."
+  ],
+  "allow_incomplete_threats": 0,
+
+  "_max_total_tokens": [
+    "Cost regression guard, at roughly double the reference run. Nothing in the",
+    "artifacts notices a prompt change that doubles spend, and at over a million",
+    "tokens a run that is worth catching."
+  ],
+  "max_total_tokens": 2500000,
+
+  "_telemetry": [
+    "require_spans asserts telemetry actually produced spans. Without it, every",
+    "tool assertion below passes vacuously the moment telemetry breaks, which is",
+    "worse than not having them. expected_tools are the tools the workflow cannot",
+    "complete without."
+  ],
+  "require_spans": true,
+  "min_spans": 20,
+  "expected_tools": [
+    "threat_composer_workdir_file_write"
+  ],
+
+  "_concept_groups": [
+    "Ideas any competent threat model of this extension ought to raise. Each group",
+    "holds alternative phrasings and matches if ANY one appears, case-insensitively.",
+    "That is deliberate: a model says 'background service worker' one run and",
+    "'background script' the next, so exact strings would fail for reasons that have",
+    "nothing to do with quality.",
+    "",
+    "Occurrence counts in the reference run are given below, and are why these groups",
+    "were chosen over weaker signals such as CSP or DOMPurify, which appeared once",
+    "each and would make the check brittle.",
+    "",
+    "min_concept_groups is 6 of 8, leaving room for phrasing to drift while still",
+    "failing if the output collapses into text that would fit any codebase."
+  ],
+  "min_concept_groups": 6,
+  "concept_groups": {
+    "background execution context": [
+      "service worker",
+      "background worker",
+      "background script",
+      "background page"
+    ],
+    "content script injection": [
+      "content script",
+      "content-script",
+      "injected script"
+    ],
+    "extension message passing": [
+      "runtime.onMessage",
+      "onMessage",
+      "sendMessage",
+      "postMessage",
+      "message passing",
+      "runtime message"
+    ],
+    "execution world isolation": [
+      "isolated world",
+      "main world",
+      "page context"
+    ],
+    "manifest and host permissions": [
+      "manifest",
+      "host permission",
+      "match pattern",
+      "permissions"
+    ],
+    "manifest version differences": [
+      "MV3",
+      "MV2",
+      "manifest v3",
+      "manifest v2",
+      "manifest_version"
+    ],
+    "untrusted threat model input": [
+      ".tc.json",
+      "threat model json",
+      "threat composer json",
+      "threat model file"
+    ],
+    "extension user interface surface": [
+      "popup",
+      "options page",
+      "action popup",
+      "new tab"
+    ]
+  }
+}

@@ -1,0 +1,135 @@
+name: eval-quality
+
+# Scheduled and manual only, deliberately never on pull_request.
+#
+# Two reasons, and the second is the stronger one.
+#
+# A fork pull request cannot get AWS credentials. Even after a maintainer approves
+# the run, GitHub gives it a read-only token, withholds repository and environment
+# secrets, and caps id-token at "none", so there is no OIDC token to exchange for a
+# role. Approval controls whether the workflow runs, not what it can reach.
+#
+# More importantly, this eval measures the agent, not the pull request. The browser
+# extension package is a fixture. If a pull request changes that fixture, the eval's
+# input moves underneath it and a score change becomes ambiguous: agent regression,
+# or just different input? Running on main against a pinned fixture is what makes
+# results comparable between runs.
+#
+# Weekly rather than per-commit because a run is real inference: roughly 18 minutes
+# and 1.3 million tokens against Bedrock.
+
+on:
+  schedule:
+    # Mondays 06:00 UTC. Scheduled runs always use the default branch, which is
+    # what the OIDC role's trust policy is scoped to.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Package directory to analyse
+        default: packages/threat-composer-app-browser-extension
+      config:
+        description: Expectations file
+        default: packages/threat-composer-ai/eval/browser-extension.json
+      aws-model-id:
+        description: Bedrock model id, blank for the CLI default
+        default: ''
+      allow-quality-failures:
+        description: Report quality failures without failing the job
+        type: boolean
+        default: false
+
+# Least privilege. id-token is required to mint the OIDC token exchanged for the
+# AWS role; contents is required to check out. Nothing here writes to the repo.
+permissions:
+  contents: read
+  id-token: write
+
+# One run at a time. Overlapping runs would double the inference bill and race on
+# the same output directory for no benefit.
+concurrency:
+  group: eval-quality
+  cancel-in-progress: false
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    # The CLI's own default execution timeout is 2400s and a reference run took
+    # 1066s. This is the outer bound, sized so a slow run reports rather than
+    # being cut off mid-graph.
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      # The two diagram nodes render through graphviz. Installed explicitly rather
+      # than relying on the runner image, because a missing `dot` would fail those
+      # nodes and read as an agent regression rather than a missing binary.
+      - name: Install graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_EVAL_ROLE_ARN }}
+          aws-region: us-west-2
+          role-session-name: threat-composer-eval-quality
+
+      - name: Install threat-composer-ai with the eval extra
+        run: uv sync --extra eval
+        working-directory: packages/threat-composer-ai
+
+      # Fails before spending anything if the role or model access is wrong, which
+      # is a far clearer signal than the graph dying part way through.
+      - name: Confirm Bedrock is reachable
+        run: |
+          uv run python -c "
+          import boto3
+          models = boto3.client('bedrock', region_name='us-west-2').list_foundation_models()
+          print(f\"bedrock reachable, {len(models['modelSummaries'])} models visible\")
+          "
+        working-directory: packages/threat-composer-ai
+
+      - name: Run the quality eval
+        id: eval
+        run: |
+          uv run python -m threat_composer_ai.eval.quality \
+            --target "${{ github.workspace }}/${{ inputs.target || 'packages/threat-composer-app-browser-extension' }}" \
+            --config "${{ github.workspace }}/${{ inputs.config || 'packages/threat-composer-ai/eval/browser-extension.json' }}" \
+            --output-dir "${{ runner.temp }}/eval-run" \
+            --aws-region us-west-2 \
+            ${{ inputs.aws-model-id && format('--aws-model-id {0}', inputs.aws-model-id) || '' }} \
+            --json-report "${{ runner.temp }}/eval-report.json" \
+            ${{ inputs.allow-quality-failures == true && '--allow-quality-failures' || '' }} \
+            | tee "${{ runner.temp }}/eval-output.txt"
+          exit "${PIPESTATUS[0]}"
+        working-directory: packages/threat-composer-ai
+
+      # Always, because a failed run is when the report and the spans matter most.
+      - name: Summarise
+        if: always()
+        run: |
+          {
+            echo '## Quality eval'
+            echo
+            echo '```'
+            sed -n '/threat-composer-ai quality eval/,$p' "${{ runner.temp }}/eval-output.txt" 2>/dev/null || echo 'no output captured'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the run
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-quality-run
+          # The session tree carries the threat model, the strands graph state and
+          # telemetry/spans.jsonl, which together are enough to re-run every
+          # assertion offline with --session-dir and no inference cost.
+          path: |
+            ${{ runner.temp }}/eval-run/
+            ${{ runner.temp }}/eval-report.json
+            ${{ runner.temp }}/eval-output.txt
+          retention-days: 30
