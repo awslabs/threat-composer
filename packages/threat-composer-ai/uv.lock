@@ -3331,6 +3331,28 @@ wheels = [
 ]
 
 [[package]]
+name = "strands-agents-evals"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "boto3" },
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-instrumentation-threading" },
+    { name = "opentelemetry-sdk" },
+    { name = "pydantic" },
+    { name = "pyyaml" },
+    { name = "rich" },
+    { name = "strands-agents" },
+    { name = "strands-agents-tools" },
+    { name = "tenacity" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/3e/7e/04abe150aa5edca4494ff40c272daa8889004bcb5bf0078c47287f0824d2/strands_agents_evals-1.2.0.tar.gz", hash = "sha256:a680bb7cbeaac0d072a971b8c25453639f5a67e11a01dcf656ba587c8491e66f", size = 606561, upload-time = "2026-08-21T16:33:13.253Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1d/31/b6a8e08de3895c1bf06d86042086abf4d77f32bb266f6c337ae20d567057/strands_agents_evals-1.2.0-py3-none-any.whl", hash = "sha256:64947b9aba65e256084c5e571a599f7ba0b856ac95f8f15ecd5b5a9af89aee8b", size = 416507, upload-time = "2026-08-21T16:33:11.756Z" },
+]
+
+[[package]]
 name = "strands-agents-tools"
 version = "0.8.6"
 source = { registry = "https://pypi.org/simple" }
@@ -3406,6 +3428,11 @@ dependencies = [
     { name = "strands-agents-tools" },
 ]
 
+[package.optional-dependencies]
+eval = [
+    { name = "strands-agents-evals" },
+]
+
 [package.dev-dependencies]
 dev = [
     { name = "pytest" },
@@ -3436,8 +3463,10 @@ requires-dist = [
     { name = "rich" },
     { name = "sarif-om" },
     { name = "strands-agents" },
+    { name = "strands-agents-evals", marker = "extra == 'eval'" },
     { name = "strands-agents-tools" },
 ]
+provides-extras = ["eval"]
 
 [package.metadata.requires-dev]
 dev = [
