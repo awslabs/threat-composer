@@ -91,13 +91,6 @@ jobs:
       - name: Install graphviz
         run: sudo apt-get update && sudo apt-get install -y graphviz
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ vars.AWS_EVAL_ROLE_ARN }}
-          aws-region: us-west-2
-          role-session-name: threat-composer-eval-quality
-
       - name: Install threat-composer-ai with the eval extra
         run: uv sync --extra eval
         working-directory: packages/threat-composer-ai
@@ -142,6 +135,19 @@ jobs:
             echo "dir=${{ github.workspace }}/${{ steps.fixture.outputs.path }}" >> "$GITHUB_OUTPUT"
             echo "::warning::fixture.commit is null, analysing the checked-out tree. Results stay comparable only while its hash matches the recorded pin."
           fi
+
+      # Credentials come after everything that does not need them. The steps above
+      # are cheap and are where mistakes actually tend to be: shell expressions, the
+      # config read, the sparse checkout, path assembly. Getting those wrong should
+      # not cost a role assumption, and more usefully it means a push from a branch
+      # exercises all of them for real before reaching the one step a branch cannot
+      # pass, since the role's trust policy is scoped to main.
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_EVAL_ROLE_ARN }}
+          aws-region: us-west-2
+          role-session-name: threat-composer-eval-quality
 
       # Fails before spending anything if the role or model access is wrong, which
       # is a far clearer signal than the graph dying part way through.
