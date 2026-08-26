@@ -1,5 +1,14 @@
 name: build
 on: [push, pull_request]
+# Least privilege for GITHUB_TOKEN, declared at workflow level so it also covers
+# any job added later. Both jobs only ever read the repository: they check out,
+# install from public registries and clone a public repo. Nothing here writes to
+# the repo, and nothing resolves from GitHub Packages, so `contents: read` is
+# sufficient. This matches what the token is already granted in practice, so it
+# is a guard against the repository default widening rather than a change in
+# behaviour. deploy.yml already scopes its jobs this way.
+permissions:
+  contents: read
 jobs:
   build-test:
     runs-on: ubuntu-latest
