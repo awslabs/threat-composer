@@ -111,6 +111,23 @@ class TestRecordedPinMatchesTheFixture:
         assert config["fixture"]["tree_sha256"]
         assert config["fixture"]["path"]
 
+    def test_config_declares_a_commit_key_even_when_unset(self):
+        """The commit pin is what supplies the source, so its absence should be
+        visible in the config rather than implicit.
+
+        A null value is legitimate while this stack is unmerged: the fixture the
+        bands were measured against only reaches main as a squash commit that does
+        not exist yet, and this repository deletes branches on merge so a branch
+        commit would be orphaned. Null means the workflow analyses the checked-out
+        tree and the hash is the only thing holding the input still, which it warns
+        about. The key must still be present so that state is explicit.
+        """
+        config = json.loads(CONFIG.read_text())
+        assert "commit" in config["fixture"], (
+            "fixture.commit must be declared, even as null, so an unpinned source is "
+            "an explicit state rather than a missing key"
+        )
+
     def test_fixture_matches_its_recorded_pin(self):
         config = json.loads(CONFIG.read_text())
         target = REPO_ROOT / config["fixture"]["path"]
