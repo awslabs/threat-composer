@@ -21,6 +21,31 @@
 
   "case_name": "browser-extension-threat-model",
 
+  "_fixture": [
+    "The eval's input, held still so that the agent is the only thing that moves.",
+    "Without this the eval cannot do its job: if the fixture drifts, a score change",
+    "means either the agent regressed or the input changed, and the result cannot",
+    "tell you which.",
+    "",
+    "Pinned by content hash rather than by commit. A commit pin can be orphaned by a",
+    "squash merge, and it says nothing about whether the tree actually materialised",
+    "is the tree the bands were measured against. The hash covers relative paths and",
+    "file bytes for all 49 tracked files, excluding build output and dependency",
+    "trees. tests/eval/test_fixture.py asserts the hashed set matches what git",
+    "tracks, so the exclusions cannot silently diverge from the repository.",
+    "",
+    "This does not forbid changing the fixture. It makes changing it deliberate: the",
+    "eval refuses to run and says the input moved, rather than reporting a quality",
+    "drop. To re-baseline, re-run, sanity check the new figures, then update this",
+    "hash and the bands together in one reviewable change."
+  ],
+  "fixture": {
+    "path": "packages/threat-composer-app-browser-extension",
+    "tree_sha256": "02f39718f292ebaefb644b9b6b345dbff853da520577e3acad163347402101ec",
+    "file_count": 49,
+    "byte_count": 185987
+  },
+
   "bands": {
     "threats": [10, 40],
     "mitigations": [15, 65],

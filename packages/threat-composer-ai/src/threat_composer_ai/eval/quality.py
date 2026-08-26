@@ -33,6 +33,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from . import fixture as fixture_module
 from .evaluators import (
     OPERATIONAL,
     ArtifactsComplete,
@@ -267,6 +268,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Exit 0 on quality-only failures. Operational failures still exit 1.",
     )
+    parser.add_argument(
+        "--allow-fixture-drift",
+        action="store_true",
+        help="Run even if the fixture does not match its recorded hash. For local experimentation; results are not comparable to the recorded bands.",
+    )
     args = parser.parse_args(argv)
 
     config = load_config(args.config)
@@ -274,6 +280,21 @@ def main(argv: list[str] | None = None) -> int:
         print("note: no --config, running structural checks only with default bands")
 
     if args.target:
+        # Checked before the CLI runs, not after. A drifted fixture makes the whole
+        # run unattributable, so there is no sense spending eighteen minutes and a
+        # million tokens to produce numbers nobody can interpret.
+        expected = (config.get("fixture") or {}).get("tree_sha256")
+        ok, message, identity = fixture_module.verify(args.target, expected)
+        print(f"fixture: {message}")
+        if not ok:
+            if not args.allow_fixture_drift:
+                print(
+                    "refusing to run. Pass --allow-fixture-drift to override, "
+                    "understanding that the result cannot be compared to the bands."
+                )
+                return 1
+            print("continuing anyway because --allow-fixture-drift was given")
+
         code = run_cli(
             target=args.target,
             output_dir=args.output_dir,

@@ -1,33 +1,49 @@
 name: eval-quality
 
-# Scheduled and manual only, deliberately never on pull_request.
+# Runs when the agent changes, plus a periodic run to catch drift we did not cause.
+# Deliberately never on pull_request.
 #
-# Two reasons, and the second is the stronger one.
+# Why not pull_request: a fork pull request cannot obtain AWS credentials. GitHub
+# gives it a read-only token, withholds repository and environment secrets, and caps
+# id-token at "none", so there is no OIDC token to exchange for a role. Approval
+# controls whether a run executes, not what it can reach. As a required check it
+# would go green for us and be permanently unrunnable for every external
+# contributor. Restricting it to same-repo pull requests would instead mean widening
+# the OIDC trust policy from refs/heads/main to pull request refs, which is a real
+# loosening in exchange for pre-merge coverage of maintainer branches only.
 #
-# A fork pull request cannot get AWS credentials. Even after a maintainer approves
-# the run, GitHub gives it a read-only token, withholds repository and environment
-# secrets, and caps id-token at "none", so there is no OIDC token to exchange for a
-# role. Approval controls whether the workflow runs, not what it can reach.
+# So detection is post-merge. That is the best available here, and it still
+# attributes a regression to a single merge commit rather than to a week of them.
 #
-# More importantly, this eval measures the agent, not the pull request. The browser
-# extension package is a fixture. If a pull request changes that fixture, the eval's
-# input moves underneath it and a score change becomes ambiguous: agent regression,
-# or just different input? Running on main against a pinned fixture is what makes
-# results comparable between runs.
+# Why the path filter: this eval measures the agent, and the browser extension
+# package is a fixture, an input rather than the subject. Triggering only on
+# threat-composer-ai means the agent is what moves between runs.
 #
-# Weekly rather than per-commit because a run is real inference: roughly 18 minutes
-# and 1.3 million tokens against Bedrock.
+# The filter is not what holds the fixture still, though. That is done by a content
+# hash recorded in the expectations file and checked before the CLI is invoked, so a
+# fixture that has drifted stops the run rather than quietly producing figures that
+# cannot be compared to the bands. The filter decides when to run; the hash decides
+# whether the run means anything.
+#
+# Why also on a schedule: the dependencies are locked and the fixture is pinned, so
+# the significant remaining variable is Bedrock. The default model is hosted and can
+# change underneath us, and a push filtered to our own source would never notice.
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/threat-composer-ai/**'
+      # Documentation cannot change agent behaviour, and a run is real inference.
+      - '!packages/threat-composer-ai/**/*.md'
+      # Changes to the eval itself should exercise the eval.
+      - '.github/workflows/eval-quality.yml'
   schedule:
-    # Mondays 06:00 UTC. Scheduled runs always use the default branch, which is
-    # what the OIDC role's trust policy is scoped to.
+    # Mondays 06:00 UTC. Scheduled runs always use the default branch, which is what
+    # the OIDC role's trust policy is scoped to.
     - cron: '0 6 * * 1'
   workflow_dispatch:
     inputs:
-      target:
-        description: Package directory to analyse
-        default: packages/threat-composer-app-browser-extension
       config:
         description: Expectations file
         default: packages/threat-composer-ai/eval/browser-extension.json
@@ -45,11 +61,15 @@ permissions:
   contents: read
   id-token: write
 
-# One run at a time. Overlapping runs would double the inference bill and race on
-# the same output directory for no benefit.
+# One run at a time. Overlapping runs would double the inference bill for no benefit.
+#
+# Superseded push runs are cancelled, because when several commits land in quick
+# succession the only state worth measuring is the latest one, and each run costs
+# real tokens. Scheduled and manual runs are never cancelled: they are deliberate,
+# and discarding one halfway wastes everything already spent on it.
 concurrency:
   group: eval-quality
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 
 jobs:
   quality:
@@ -82,6 +102,21 @@ jobs:
         run: uv sync --extra eval
         working-directory: packages/threat-composer-ai
 
+      # The expectations file owns the fixture path as well as its hash, so the two
+      # cannot drift apart by being stated in two places.
+      - name: Resolve the pinned fixture
+        id: fixture
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os
+          config = json.load(open(os.environ["CONFIG"]))
+          fixture = config["fixture"]
+          print(f"path={fixture['path']}")
+          print(f"sha256={fixture['tree_sha256']}")
+          PY
+        env:
+          CONFIG: ${{ inputs.config || 'packages/threat-composer-ai/eval/browser-extension.json' }}
+
       # Fails before spending anything if the role or model access is wrong, which
       # is a far clearer signal than the graph dying part way through.
       - name: Confirm Bedrock is reachable
@@ -97,7 +132,7 @@ jobs:
         id: eval
         run: |
           uv run python -m threat_composer_ai.eval.quality \
-            --target "${{ github.workspace }}/${{ inputs.target || 'packages/threat-composer-app-browser-extension' }}" \
+            --target "${{ github.workspace }}/${{ steps.fixture.outputs.path }}" \
             --config "${{ github.workspace }}/${{ inputs.config || 'packages/threat-composer-ai/eval/browser-extension.json' }}" \
             --output-dir "${{ runner.temp }}/eval-run" \
             --aws-region us-west-2 \
