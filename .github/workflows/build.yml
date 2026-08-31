@@ -22,3 +22,9 @@ jobs:
       - run: pdk install --frozen-lockfile
       - run: PATH=/tmp/git-secrets/bin:$PATH pdk run build
       - run: pdk workspaces run eslint
+      # threat-composer-ai is an nx project, not a yarn workspace, so the line
+      # above does not reach it. Its pytest suite already runs as part of
+      # `pdk run build` (threat-composer-ai:build spawns test), but nothing
+      # invokes its ruff target, so lint has been enforced only by the
+      # pre-commit hook. This gives CI parity with the hook.
+      - run: yarn nx run threat-composer-ai:lint
