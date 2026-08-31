@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { DataExchangeFormat } from '@aws/threat-composer';
+
+import type { DataExchangeFormat } from '@aws/threat-composer';
 import { Document, Packer } from 'docx';
 import { ORDERED_LIST_REF, DEFAULT_NUMBERINGS, SPACING, LIST_PARA_SPACING } from './config';
 import getApplicationInfo from './getApplicationInfo';

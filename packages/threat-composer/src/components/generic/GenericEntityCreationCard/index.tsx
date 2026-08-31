@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,15 +13,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import Button from '@cloudscape-design/components/button';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { ReactNode, useCallback, forwardRef, useRef, useImperativeHandle } from 'react';
+import type { ReactNode } from 'react';
+import { useCallback, forwardRef, useRef, useImperativeHandle } from 'react';
 import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
-import { ContentEntityBase, EntityBase } from '../../../customTypes';
+import type { ContentEntityBase, EntityBase } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
-import Textarea, { TextAreaProps } from '../../generic/Textarea';
+import type { TextAreaProps } from '../../generic/Textarea';
+import Textarea from '../../generic/Textarea';
 import MetadataEditor from '../EntityMetadataEditor';
 import GenericCard from '../GenericCard';
 

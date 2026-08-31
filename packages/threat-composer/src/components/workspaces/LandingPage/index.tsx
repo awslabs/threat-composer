@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
@@ -22,7 +23,7 @@ import Header from '@cloudscape-design/components/header';
 import Link from '@cloudscape-design/components/link';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
-import { FC } from 'react';
+import type { FC } from 'react';
 import HowItWorks from '../../../assets/how-it-works.png';
 import SwitchToExample from '../../../assets/switch-to-example-workspace.gif';
 import { useGlobalSetupContext } from '../../../contexts';

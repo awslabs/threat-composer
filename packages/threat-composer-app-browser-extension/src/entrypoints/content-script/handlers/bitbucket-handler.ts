@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -14,8 +14,9 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { TCConfig, IntegrationTypes } from '../../popup/config';
-import { TCBitbucketState } from '../types';
+import type { TCConfig } from '../../popup/config';
+import { IntegrationTypes } from '../../popup/config';
+import type { TCBitbucketState } from '../types';
 import { SPAIntegrationHandler } from './spa-handler';
 import { waitForCondition, retryWithBackoff, getTCJSONCandidate, TC_BUTTON_ID, TC_BUTTON_TEXT } from '../utils/core-utils';
 

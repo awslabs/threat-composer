@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,12 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import Button from '@cloudscape-design/components/button';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
-import { FC, useState, useCallback } from 'react';
-import { Assumption, AssumptionSchema } from '../../../customTypes';
+import type { FC } from 'react';
+import { useState, useCallback } from 'react';
+import type { Assumption } from '../../../customTypes';
+import { AssumptionSchema } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import MetadataEditor from '../../generic/EntityMetadataEditor';

@@ -228,6 +228,7 @@ This project is licensed under the Apache-2.0 License. See the [LICENSE](./LICEN
 
 Built with:
 - [React](https://react.dev/) and [CloudScape Design System](https://cloudscape.design/)
-- [AWS CDK](https://aws.amazon.com/cdk/) and [AWS Prototyping SDK](https://aws.github.io/aws-pdk/)
-- [Projen](https://projen.io/) for project management
+- [AWS CDK](https://aws.amazon.com/cdk/) for infrastructure
+- [Vite](https://vite.dev/) for the web app and browser extension builds
+- [pnpm workspaces](https://pnpm.io/workspaces) with [nx](https://nx.dev) for monorepo management
 - [Strands](https://github.com/awslabs/strands) for AI agent orchestration

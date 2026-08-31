@@ -22,16 +22,16 @@ Built with:
 
 ### Prerequisites
 - Node.js 20 or higher
-- Yarn package manager
+- pnpm package manager (`npm install -g pnpm@10` -- it picks up the exact version from the packageManager field)
 
 ### Setup
 
 ```bash
 # From repository root
-pdk install --frozen-lockfile
+pnpm install --frozen-lockfile
 
 # Run Storybook for component development
-pdk run storybook
+pnpm storybook
 ```
 
 Storybook will open at [http://localhost:6006](http://localhost:6006)
@@ -42,11 +42,11 @@ Storybook will open at [http://localhost:6006](http://localhost:6006)
 
 ```bash
 # From repository root
-pdk build
+pnpm build
 
 # Or from package directory
 cd packages/threat-composer
-yarn build
+pnpm build
 ```
 
 Build output will be in the `dist/` directory.
@@ -75,16 +75,16 @@ src/
 
 ```bash
 # Run Storybook
-yarn storybook
+pnpm storybook
 
 # Build library
-yarn build
+pnpm build
 
 # Run tests
-yarn test
+pnpm test
 
 # Run linter
-yarn eslint
+pnpm eslint
 ```
 
 ## Component Development
@@ -124,7 +124,7 @@ Add threat packs in `src/data/threatPacks/`:
 
 1. Create `.tc.json` file with threats
 2. Create `.metadata.json` file
-3. Run `yarn run build:packs`
+3. Run `pnpm run build:packs`
 4. Import generated pack in `threatPacks.ts`
 
 ### Mitigation Packs
@@ -133,23 +133,23 @@ Add mitigation packs in `src/data/mitigationPacks/`:
 
 1. Create `.tc.json` file with mitigations
 2. Create `.metadata.json` file
-3. Run `yarn run build:packs`
+3. Run `pnpm run build:packs`
 4. Import generated pack in `mitigationPacks.ts`
 
 ## Testing
 
 ```bash
 # Run all tests
-yarn test
+pnpm test
 
 # Run with coverage
-yarn test --coverage
+pnpm test --coverage
 
 # Run in watch mode
-yarn test --watch
+pnpm test --watch
 
 # Run specific test
-yarn test MyComponent
+pnpm test MyComponent
 ```
 
 ## Contributing
@@ -167,7 +167,7 @@ When contributing to this package:
 
 - **Main README**: [README.md](../../README.md)
 - **Development Guide**: [docs/DEVELOPMENT.md](../../docs/DEVELOPMENT.md)
-- **Storybook**: Run `yarn storybook` for interactive component docs
+- **Storybook**: Run `pnpm storybook` for interactive component docs
 
 ## License
 

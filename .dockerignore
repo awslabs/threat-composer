@@ -1,0 +1,36 @@
+# The Dockerfile does `COPY . .` and then runs a clean
+# `yarn install --frozen-lockfile`, so nothing installed or built on the host
+# should be shipped into the image. Copying host node_modules in particular
+# drags platform-specific native binaries into a Linux image.
+
+.git
+.github
+
+# Installed / generated on the host
+node_modules
+packages/*/node_modules
+packages/*/lib
+packages/*/dist
+packages/*/build
+packages/*/storybook.out
+packages/*/coverage
+packages/*/test-reports
+packages/*/cdk.out
+packages/*/.output
+packages/*/.wxt
+packages/*/dev-dist
+*.tsbuildinfo
+.eslintcache
+
+# Python virtualenvs (packages/threat-composer-ai is synced by uv in-image)
+.venv
+packages/*/.venv
+__pycache__
+.pytest_cache
+
+# Local noise
+.DS_Store
+*.log
+oss-attribution
+scripts/.temp
+.threat-composer

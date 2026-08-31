@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,13 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import { useCollection } from '@cloudscape-design/collection-hooks';
 import Button from '@cloudscape-design/components/button';
-import { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import type { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import Pagination from '@cloudscape-design/components/pagination';
-import TableComponent, { TableProps as CloudscapeTableProps } from '@cloudscape-design/components/table';
+import type { TableProps as CloudscapeTableProps } from '@cloudscape-design/components/table';
+import TableComponent from '@cloudscape-design/components/table';
 import TextFilter from '@cloudscape-design/components/text-filter';
-import { FC, useCallback, useEffect } from 'react';
+import type { FC } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   DEFAULT_TRACK_BY,
   DEFAULT_LOADING_TEXT,
@@ -28,7 +31,7 @@ import {
   DEFAULT_FILTERING_ARIA_LABEL,
   getAriaLabels,
 } from '../../config';
-import { TableProps, InternalTableProps } from '../../types';
+import type { TableProps, InternalTableProps } from '../../types';
 import EmptyState from '../EmptyState';
 import Header from '../Header';
 

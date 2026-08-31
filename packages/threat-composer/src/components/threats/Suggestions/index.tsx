@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,14 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
 import ExpandableSection from '@cloudscape-design/components/expandable-section';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import { css } from '@emotion/react';
-import { FC, useMemo, useCallback, useState } from 'react';
-import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
+import type { FC } from 'react';
+import { useMemo, useCallback, useState } from 'react';
+import type { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
 import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
 

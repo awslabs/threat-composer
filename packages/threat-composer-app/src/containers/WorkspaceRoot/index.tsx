@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,14 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
+import type { ThreatStatementListFilter } from '@aws/threat-composer';
 import {
   DEFAULT_WORKSPACE_ID,
   WorkspaceContextAggregator,
   WorkspacesContext,
-  ThreatStatementListFilter,
   WorkspaceExamplesContext,
 } from '@aws/threat-composer';
-import { useCallback, FC } from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { useNavigate, useParams, useSearchParams, Outlet } from 'react-router-dom';
 import {
   ROUTE_THREAT_EDITOR_PATH,
@@ -36,7 +38,7 @@ const WorkspaceRoot: FC = () => {
   const navigate = useNavigate();
 
   const handleThreatListView = useCallback((filter?: ThreatStatementListFilter) => {
-    navigate(generateUrl(ROUTE_THREAT_LIST_PATH, searchParams, workspaceId), {
+    void navigate(generateUrl(ROUTE_THREAT_LIST_PATH, searchParams, workspaceId), {
       state: filter ? {
         filter,
       } : undefined,
@@ -44,7 +46,7 @@ const WorkspaceRoot: FC = () => {
   }, [navigate, workspaceId, searchParams]);
 
   const handleThreatEditorView = useCallback((newThreatId: string, idToCopy?: string) => {
-    navigate(generateUrl(ROUTE_THREAT_EDITOR_PATH, searchParams, workspaceId, newThreatId, undefined, idToCopy ? {
+    void navigate(generateUrl(ROUTE_THREAT_EDITOR_PATH, searchParams, workspaceId, newThreatId, undefined, idToCopy ? {
       idToCopy,
     } : undefined), {
       state: {
@@ -55,7 +57,7 @@ const WorkspaceRoot: FC = () => {
 
   const handleWorkspaceChanged = useCallback((newWorkspaceId: string) => {
     const url = generateUrl(ROUTE_WORKSPACE_HOME, searchParams, newWorkspaceId);
-    navigate(url);
+    void navigate(url);
   }, [navigate, workspaceId, searchParams]);
 
   return (

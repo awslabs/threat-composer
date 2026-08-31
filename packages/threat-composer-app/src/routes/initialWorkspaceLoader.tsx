@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,11 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { LOCAL_STORAGE_KEY_CURRENT_WORKSPACE, Workspace } from '@aws/threat-composer';
+
+import type { Workspace } from '@aws/threat-composer';
+import { LOCAL_STORAGE_KEY_CURRENT_WORKSPACE } from '@aws/threat-composer';
 import { generatePath, redirect } from 'react-router-dom';
 import { ROUTE_WORKSPACE_DEFAULT, ROUTE_WORKSPACE_PATH } from '../config/routes';
 
-const isGithubPages = process.env.REACT_APP_GITHUB_PAGES === 'true';
+const isGithubPages = import.meta.env.VITE_GITHUB_PAGES === 'true';
 
 const requiredRewriteUrl = (search: string) => {
   return search && (search.startsWith('?/') || search.startsWith('?%2F'));

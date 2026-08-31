@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import {
   Button,
   Box,
@@ -26,7 +27,8 @@ import {
   colorChartsStatusNeutral,
   colorChartsStatusLow,
 } from '@cloudscape-design/design-tokens';
-import { useMemo, useCallback, FC } from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback } from 'react';
 import {
   MITIGATION_STATUS_IDENTIFIED,
   MITIGATION_STATUS_IN_PROGRESS,
@@ -38,7 +40,7 @@ import { useMitigationsContext } from '../../../../../contexts/MitigationsContex
 import { mitigationStatus } from '../../../../../data';
 import DashboardNumber from '../../../../generic/DashboardNumber';
 import useMitigationListLinkClicked from '../../hooks/useMitigationListLinkClicked';
-import { WorkspaceInsightsProps } from '../../types';
+import type { WorkspaceInsightsProps } from '../../types';
 
 const MitigationStatus: FC<WorkspaceInsightsProps> = ({
   onMitigationListView,

@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 export * from './assumptions';
 export * from './brainstorm';
 export * from './mitigations';
@@ -25,8 +26,8 @@ export * from './application';
 export * from './architecture';
 export * from './dataflow';
 export * from './dataExchange';
-export * from './events';
-export * from './components';
+export type * from './events';
+export type * from './components';
 export * from './referencePacks';
-export * from './windowAPI';
+export type * from './windowAPI';
 export * from './appMode';

@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,8 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import React, { useContext, createContext } from 'react';
-import { AppMode, ComposerMode } from '../../customTypes';
+
+import type React from 'react';
+import { useContext, createContext } from 'react';
+import type { AppMode, ComposerMode } from '../../customTypes';
 
 export interface GlobalSetupContextApi {
   hasVisitBefore: boolean;

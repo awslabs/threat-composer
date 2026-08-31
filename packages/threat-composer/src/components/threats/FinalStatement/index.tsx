@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,11 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 import TextContent from '@cloudscape-design/components/text-content';
 import { css } from '@emotion/react';
-import { FC, ReactNode } from 'react';
-import { TemplateThreatStatement } from '../../../customTypes';
+import type { FC, ReactNode } from 'react';
+import type { TemplateThreatStatement } from '../../../customTypes';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 
 export interface FinalStatementProps {

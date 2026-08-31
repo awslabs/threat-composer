@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,7 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { AssumptionLink, DataExchangeFormat, MitigationLink, TemplateThreatStatement, standardizeNumericId, threatStatus, STATUS_NOT_SET } from '@aws/threat-composer';
+
+import type { AssumptionLink, DataExchangeFormat, MitigationLink, TemplateThreatStatement } from '@aws/threat-composer';
+import { standardizeNumericId, threatStatus, STATUS_NOT_SET } from '@aws/threat-composer';
 import { Paragraph, HeadingLevel, TextRun, TableRow, TableCell } from 'docx';
 import Table from './components/Table';
 import getAnchorLink from './getAnchorLink';

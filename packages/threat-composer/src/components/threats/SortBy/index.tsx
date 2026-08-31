@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,13 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 import FormField from '@cloudscape-design/components/form-field';
 import RadioGroup from '@cloudscape-design/components/radio-group';
 import Select from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { css } from '@emotion/react';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 const styles = {
   selector: css({

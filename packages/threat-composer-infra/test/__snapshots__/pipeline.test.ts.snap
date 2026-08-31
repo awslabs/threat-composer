@@ -1,159 +1,7 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Snapshot 1`] = `
 {
-  "Mappings": {
-    "LatestNodeRuntimeMap": {
-      "af-south-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-east-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-east-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-northeast-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-northeast-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-northeast-3": {
-        "value": "nodejs20.x",
-      },
-      "ap-south-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-south-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-1": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-2": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-3": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-4": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-5": {
-        "value": "nodejs20.x",
-      },
-      "ap-southeast-7": {
-        "value": "nodejs20.x",
-      },
-      "ca-central-1": {
-        "value": "nodejs20.x",
-      },
-      "ca-west-1": {
-        "value": "nodejs20.x",
-      },
-      "cn-north-1": {
-        "value": "nodejs20.x",
-      },
-      "cn-northwest-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-central-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-central-2": {
-        "value": "nodejs20.x",
-      },
-      "eu-isoe-west-1": {
-        "value": "nodejs18.x",
-      },
-      "eu-north-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-south-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-south-2": {
-        "value": "nodejs20.x",
-      },
-      "eu-west-1": {
-        "value": "nodejs20.x",
-      },
-      "eu-west-2": {
-        "value": "nodejs20.x",
-      },
-      "eu-west-3": {
-        "value": "nodejs20.x",
-      },
-      "il-central-1": {
-        "value": "nodejs20.x",
-      },
-      "me-central-1": {
-        "value": "nodejs20.x",
-      },
-      "me-south-1": {
-        "value": "nodejs20.x",
-      },
-      "mx-central-1": {
-        "value": "nodejs20.x",
-      },
-      "sa-east-1": {
-        "value": "nodejs20.x",
-      },
-      "us-east-1": {
-        "value": "nodejs20.x",
-      },
-      "us-east-2": {
-        "value": "nodejs20.x",
-      },
-      "us-gov-east-1": {
-        "value": "nodejs20.x",
-      },
-      "us-gov-west-1": {
-        "value": "nodejs20.x",
-      },
-      "us-iso-east-1": {
-        "value": "nodejs18.x",
-      },
-      "us-iso-west-1": {
-        "value": "nodejs18.x",
-      },
-      "us-isob-east-1": {
-        "value": "nodejs18.x",
-      },
-      "us-isob-west-1": {
-        "value": "nodejs18.x",
-      },
-      "us-west-1": {
-        "value": "nodejs20.x",
-      },
-      "us-west-2": {
-        "value": "nodejs20.x",
-      },
-    },
-  },
-  "Outputs": {
-    "ApplicationPipelineCodeRepositoryGRCUrl52F51C17": {
-      "Value": {
-        "Fn::Join": [
-          "",
-          [
-            "codecommit::",
-            {
-              "Ref": "AWS::Region",
-            },
-            "://",
-            {
-              "Fn::GetAtt": [
-                "ApplicationPipelineCodeRepositoryA734F3FA",
-                "Name",
-              ],
-            },
-          ],
-        ],
-      },
-    },
-  },
   "Parameters": {
     "BootstrapVersion": {
       "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -162,22 +10,21 @@ exports[`Snapshot 1`] = `
     },
   },
   "Resources": {
-    "ApplicationPipelineAccessLogsBucketAFC4E2E4": {
-      "DeletionPolicy": "Delete",
+    "ApplicationPipelineArtifactsBucket4027023B": {
+      "DeletionPolicy": "Retain",
       "Properties": {
         "BucketEncryption": {
           "ServerSideEncryptionConfiguration": [
             {
               "ServerSideEncryptionByDefault": {
-                "SSEAlgorithm": "AES256",
+                "KMSMasterKeyID": {
+                  "Fn::GetAtt": [
+                    "ApplicationPipelineArtifactsBucketEncryptionKeyA1456BAF",
+                    "Arn",
+                  ],
+                },
+                "SSEAlgorithm": "aws:kms",
               },
-            },
-          ],
-        },
-        "OwnershipControls": {
-          "Rules": [
-            {
-              "ObjectOwnership": "ObjectWriter",
             },
           ],
         },
@@ -187,161 +34,13 @@ exports[`Snapshot 1`] = `
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true,
         },
-        "Tags": [
-          {
-            "Key": "aws-cdk:auto-delete-objects",
-            "Value": "true",
-          },
-        ],
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
-    "ApplicationPipelineAccessLogsBucketAutoDeleteObjectsCustomResource86C84D8B": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "ApplicationPipelineAccessLogsBucketPolicy9D7CCAB8",
-      ],
-      "Properties": {
-        "BucketName": {
-          "Ref": "ApplicationPipelineAccessLogsBucketAFC4E2E4",
-        },
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::S3AutoDeleteObjects",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ApplicationPipelineAccessLogsBucketPolicy9D7CCAB8": {
-      "Properties": {
-        "Bucket": {
-          "Ref": "ApplicationPipelineAccessLogsBucketAFC4E2E4",
-        },
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "s3:*",
-              "Condition": {
-                "Bool": {
-                  "aws:SecureTransport": "false",
-                },
-              },
-              "Effect": "Deny",
-              "Principal": {
-                "AWS": "*",
-              },
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "ApplicationPipelineAccessLogsBucketAFC4E2E4",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "ApplicationPipelineAccessLogsBucketAFC4E2E4",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": [
-                "s3:PutBucketPolicy",
-                "s3:GetBucket*",
-                "s3:List*",
-                "s3:DeleteObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": {
-                  "Fn::GetAtt": [
-                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "ApplicationPipelineAccessLogsBucketAFC4E2E4",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "ApplicationPipelineAccessLogsBucketAFC4E2E4",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": "s3:PutObject",
-              "Condition": {
-                "ArnLike": {
-                  "aws:SourceArn": {
-                    "Fn::GetAtt": [
-                      "ApplicationPipelineArtifactsBucketD6B45A16",
-                      "Arn",
-                    ],
-                  },
-                },
-                "StringEquals": {
-                  "aws:SourceAccount": {
-                    "Ref": "AWS::AccountId",
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "logging.s3.amazonaws.com",
-              },
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    {
-                      "Fn::GetAtt": [
-                        "ApplicationPipelineAccessLogsBucketAFC4E2E4",
-                        "Arn",
-                      ],
-                    },
-                    "/access-logs*",
-                  ],
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-      },
-      "Type": "AWS::S3::BucketPolicy",
-    },
-    "ApplicationPipelineArtifactKey284E3A3C": {
+    "ApplicationPipelineArtifactsBucketEncryptionKeyA1456BAF": {
       "DeletionPolicy": "Delete",
       "Properties": {
-        "EnableKeyRotation": true,
         "KeyPolicy": {
           "Statement": [
             {
@@ -374,76 +73,24 @@ exports[`Snapshot 1`] = `
       "Type": "AWS::KMS::Key",
       "UpdateReplacePolicy": "Delete",
     },
-    "ApplicationPipelineArtifactsBucketAutoDeleteObjectsCustomResource349BB700": {
+    "ApplicationPipelineArtifactsBucketEncryptionKeyAlias83127E63": {
       "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "ApplicationPipelineArtifactsBucketPolicy0F22EB48",
-      ],
       "Properties": {
-        "BucketName": {
-          "Ref": "ApplicationPipelineArtifactsBucketD6B45A16",
-        },
-        "ServiceToken": {
+        "AliasName": "alias/codepipeline-pipelinetestapplicationpipeline9313b6a9",
+        "TargetKeyId": {
           "Fn::GetAtt": [
-            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+            "ApplicationPipelineArtifactsBucketEncryptionKeyA1456BAF",
             "Arn",
           ],
         },
       },
-      "Type": "Custom::S3AutoDeleteObjects",
+      "Type": "AWS::KMS::Alias",
       "UpdateReplacePolicy": "Delete",
     },
-    "ApplicationPipelineArtifactsBucketD6B45A16": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "BucketEncryption": {
-          "ServerSideEncryptionConfiguration": [
-            {
-              "ServerSideEncryptionByDefault": {
-                "KMSMasterKeyID": {
-                  "Fn::GetAtt": [
-                    "ApplicationPipelineArtifactKey284E3A3C",
-                    "Arn",
-                  ],
-                },
-                "SSEAlgorithm": "aws:kms",
-              },
-            },
-          ],
-        },
-        "LoggingConfiguration": {
-          "DestinationBucketName": {
-            "Ref": "ApplicationPipelineAccessLogsBucketAFC4E2E4",
-          },
-          "LogFilePrefix": "access-logs",
-        },
-        "OwnershipControls": {
-          "Rules": [
-            {
-              "ObjectOwnership": "BucketOwnerEnforced",
-            },
-          ],
-        },
-        "PublicAccessBlockConfiguration": {
-          "BlockPublicAcls": true,
-          "BlockPublicPolicy": true,
-          "IgnorePublicAcls": true,
-          "RestrictPublicBuckets": true,
-        },
-        "Tags": [
-          {
-            "Key": "aws-cdk:auto-delete-objects",
-            "Value": "true",
-          },
-        ],
-      },
-      "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ApplicationPipelineArtifactsBucketPolicy0F22EB48": {
+    "ApplicationPipelineArtifactsBucketPolicyABE78175": {
       "Properties": {
         "Bucket": {
-          "Ref": "ApplicationPipelineArtifactsBucketD6B45A16",
+          "Ref": "ApplicationPipelineArtifactsBucket4027023B",
         },
         "PolicyDocument": {
           "Statement": [
@@ -461,7 +108,7 @@ exports[`Snapshot 1`] = `
               "Resource": [
                 {
                   "Fn::GetAtt": [
-                    "ApplicationPipelineArtifactsBucketD6B45A16",
+                    "ApplicationPipelineArtifactsBucket4027023B",
                     "Arn",
                   ],
                 },
@@ -471,46 +118,7 @@ exports[`Snapshot 1`] = `
                     [
                       {
                         "Fn::GetAtt": [
-                          "ApplicationPipelineArtifactsBucketD6B45A16",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": [
-                "s3:PutBucketPolicy",
-                "s3:GetBucket*",
-                "s3:List*",
-                "s3:DeleteObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": {
-                  "Fn::GetAtt": [
-                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "ApplicationPipelineArtifactsBucketD6B45A16",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "ApplicationPipelineArtifactsBucketD6B45A16",
+                          "ApplicationPipelineArtifactsBucket4027023B",
                           "Arn",
                         ],
                       },
@@ -526,220 +134,7 @@ exports[`Snapshot 1`] = `
       },
       "Type": "AWS::S3::BucketPolicy",
     },
-    "ApplicationPipelineCodeBuildActionRole98AD1444": {
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": {
-                  "Fn::GetAtt": [
-                    "ApplicationPipelineCodePipelineRole53E5791D",
-                    "Arn",
-                  ],
-                },
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "ApplicationPipelineCodeBuildActionRoleDefaultPolicyFE7AFEF3": {
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "codebuild:BatchGetBuilds",
-                "codebuild:StartBuild",
-                "codebuild:StopBuild",
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectEE7ED66A",
-                  "Arn",
-                ],
-              },
-            },
-            {
-              "Action": [
-                "codebuild:BatchGetBuilds",
-                "codebuild:StartBuild",
-                "codebuild:StopBuild",
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "ApplicationPipelineUpdatePipelineSelfMutation66D95DA8",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ApplicationPipelineCodeBuildActionRoleDefaultPolicyFE7AFEF3",
-        "Roles": [
-          {
-            "Ref": "ApplicationPipelineCodeBuildActionRole98AD1444",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "ApplicationPipelineCodePipeline92ED701F": {
-      "DependsOn": [
-        "ApplicationPipelineCodePipelineRoleDefaultPolicy02E04067",
-        "ApplicationPipelineCodePipelineRole53E5791D",
-      ],
-      "Properties": {
-        "ArtifactStore": {
-          "EncryptionKey": {
-            "Id": {
-              "Fn::GetAtt": [
-                "ApplicationPipelineArtifactKey284E3A3C",
-                "Arn",
-              ],
-            },
-            "Type": "KMS",
-          },
-          "Location": {
-            "Ref": "ApplicationPipelineArtifactsBucketD6B45A16",
-          },
-          "Type": "S3",
-        },
-        "PipelineType": "V1",
-        "RestartExecutionOnUpdate": true,
-        "RoleArn": {
-          "Fn::GetAtt": [
-            "ApplicationPipelineCodePipelineRole53E5791D",
-            "Arn",
-          ],
-        },
-        "Stages": [
-          {
-            "Actions": [
-              {
-                "ActionTypeId": {
-                  "Category": "Source",
-                  "Owner": "AWS",
-                  "Provider": "CodeCommit",
-                  "Version": "1",
-                },
-                "Configuration": {
-                  "BranchName": "main",
-                  "PollForSourceChanges": false,
-                  "RepositoryName": {
-                    "Fn::GetAtt": [
-                      "ApplicationPipelineCodeRepositoryA734F3FA",
-                      "Name",
-                    ],
-                  },
-                },
-                "Name": {
-                  "Fn::GetAtt": [
-                    "ApplicationPipelineCodeRepositoryA734F3FA",
-                    "Name",
-                  ],
-                },
-                "OutputArtifacts": [
-                  {
-                    "Name": "c8dccfc7b4b06e6314cb1dc9e5680d002e559b8933_Source",
-                  },
-                ],
-                "RoleArn": {
-                  "Fn::GetAtt": [
-                    "ApplicationPipelineCodePipelineSourceCodeCommitCodePipelineActionRole0900531A",
-                    "Arn",
-                  ],
-                },
-                "RunOrder": 1,
-              },
-            ],
-            "Name": "Source",
-          },
-          {
-            "Actions": [
-              {
-                "ActionTypeId": {
-                  "Category": "Build",
-                  "Owner": "AWS",
-                  "Provider": "CodeBuild",
-                  "Version": "1",
-                },
-                "Configuration": {
-                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"c55664b4d6b4761290ce83fbc020e68862081c6e348282c01070cb2e197951e4"}]",
-                  "ProjectName": {
-                    "Ref": "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectEE7ED66A",
-                  },
-                },
-                "InputArtifacts": [
-                  {
-                    "Name": "c8dccfc7b4b06e6314cb1dc9e5680d002e559b8933_Source",
-                  },
-                ],
-                "Name": "Synth",
-                "OutputArtifacts": [
-                  {
-                    "Name": "Synth_Output",
-                  },
-                  {
-                    "Name": "Synth__",
-                  },
-                ],
-                "RoleArn": {
-                  "Fn::GetAtt": [
-                    "ApplicationPipelineCodeBuildActionRole98AD1444",
-                    "Arn",
-                  ],
-                },
-                "RunOrder": 1,
-              },
-            ],
-            "Name": "Build",
-          },
-          {
-            "Actions": [
-              {
-                "ActionTypeId": {
-                  "Category": "Build",
-                  "Owner": "AWS",
-                  "Provider": "CodeBuild",
-                  "Version": "1",
-                },
-                "Configuration": {
-                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"5e31e24fdbb994d05b38e6db7b18077e050642f59a5eebbd8a6ac7ab159a0ca8"}]",
-                  "ProjectName": {
-                    "Ref": "ApplicationPipelineUpdatePipelineSelfMutation66D95DA8",
-                  },
-                },
-                "InputArtifacts": [
-                  {
-                    "Name": "Synth_Output",
-                  },
-                ],
-                "Name": "SelfMutate",
-                "RoleArn": {
-                  "Fn::GetAtt": [
-                    "ApplicationPipelineCodeBuildActionRole98AD1444",
-                    "Arn",
-                  ],
-                },
-                "RunOrder": 1,
-              },
-            ],
-            "Name": "UpdatePipeline",
-          },
-        ],
-      },
-      "Type": "AWS::CodePipeline::Pipeline",
-    },
-    "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectEE7ED66A": {
+    "ApplicationPipelineBuildSynthCdkBuildProject5CE66381": {
       "Properties": {
         "Artifacts": {
           "Type": "CODEPIPELINE",
@@ -747,10 +142,10 @@ exports[`Snapshot 1`] = `
         "Cache": {
           "Type": "NO_CACHE",
         },
-        "Description": "Pipeline step pipeline-test/CodePipeline/Build/Synth",
+        "Description": "Pipeline step pipeline-test/Pipeline/Build/Synth",
         "EncryptionKey": {
           "Fn::GetAtt": [
-            "ApplicationPipelineArtifactKey284E3A3C",
+            "ApplicationPipelineArtifactsBucketEncryptionKeyA1456BAF",
             "Arn",
           ],
         },
@@ -763,7 +158,7 @@ exports[`Snapshot 1`] = `
         },
         "ServiceRole": {
           "Fn::GetAtt": [
-            "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectRole75D1C6E6",
+            "ApplicationPipelineBuildSynthCdkBuildProjectRoleC9663957",
             "Arn",
           ],
         },
@@ -772,35 +167,25 @@ exports[`Snapshot 1`] = `
   "phases": {
     "install": {
       "runtime-versions": {
-        "nodejs": "20.x"
+        "nodejs": "24"
       },
       "commands": [
-        "npm install -g aws-cdk pnpm",
-        "npx projen install"
+        "npm install -g pnpm@10",
+        "pnpm install --frozen-lockfile"
       ]
     },
     "build": {
       "commands": [
-        "npx projen build"
+        "pnpm build"
       ]
     }
   },
   "version": "0.2",
   "artifacts": {
-    "secondary-artifacts": {
-      "Synth_Output": {
-        "base-directory": "packages/threat-composer-infra/cdk.out",
-        "files": [
-          "**/*"
-        ]
-      },
-      "Synth__": {
-        "base-directory": ".",
-        "files": [
-          "**/*"
-        ]
-      }
-    }
+    "base-directory": "packages/threat-composer-infra/cdk.out",
+    "files": [
+      "**/*"
+    ]
   }
 }",
           "Type": "CODEPIPELINE",
@@ -808,7 +193,7 @@ exports[`Snapshot 1`] = `
       },
       "Type": "AWS::CodeBuild::Project",
     },
-    "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectRole75D1C6E6": {
+    "ApplicationPipelineBuildSynthCdkBuildProjectRoleC9663957": {
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Statement": [
@@ -825,7 +210,7 @@ exports[`Snapshot 1`] = `
       },
       "Type": "AWS::IAM::Role",
     },
-    "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectRoleDefaultPolicy4B9195CC": {
+    "ApplicationPipelineBuildSynthCdkBuildProjectRoleDefaultPolicyF8AC335E": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -855,7 +240,7 @@ exports[`Snapshot 1`] = `
                       },
                       ":log-group:/aws/codebuild/",
                       {
-                        "Ref": "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectEE7ED66A",
+                        "Ref": "ApplicationPipelineBuildSynthCdkBuildProject5CE66381",
                       },
                     ],
                   ],
@@ -878,7 +263,7 @@ exports[`Snapshot 1`] = `
                       },
                       ":log-group:/aws/codebuild/",
                       {
-                        "Ref": "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectEE7ED66A",
+                        "Ref": "ApplicationPipelineBuildSynthCdkBuildProject5CE66381",
                       },
                       ":*",
                     ],
@@ -913,7 +298,7 @@ exports[`Snapshot 1`] = `
                     },
                     ":report-group/",
                     {
-                      "Ref": "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectEE7ED66A",
+                      "Ref": "ApplicationPipelineBuildSynthCdkBuildProject5CE66381",
                     },
                     "-*",
                   ],
@@ -937,7 +322,7 @@ exports[`Snapshot 1`] = `
               "Resource": [
                 {
                   "Fn::GetAtt": [
-                    "ApplicationPipelineArtifactsBucketD6B45A16",
+                    "ApplicationPipelineArtifactsBucket4027023B",
                     "Arn",
                   ],
                 },
@@ -947,7 +332,7 @@ exports[`Snapshot 1`] = `
                     [
                       {
                         "Fn::GetAtt": [
-                          "ApplicationPipelineArtifactsBucketD6B45A16",
+                          "ApplicationPipelineArtifactsBucket4027023B",
                           "Arn",
                         ],
                       },
@@ -968,7 +353,7 @@ exports[`Snapshot 1`] = `
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "ApplicationPipelineArtifactKey284E3A3C",
+                  "ApplicationPipelineArtifactsBucketEncryptionKeyA1456BAF",
                   "Arn",
                 ],
               },
@@ -983,7 +368,7 @@ exports[`Snapshot 1`] = `
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "ApplicationPipelineArtifactKey284E3A3C",
+                  "ApplicationPipelineArtifactsBucketEncryptionKeyA1456BAF",
                   "Arn",
                 ],
               },
@@ -991,16 +376,82 @@ exports[`Snapshot 1`] = `
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectRoleDefaultPolicy4B9195CC",
+        "PolicyName": "ApplicationPipelineBuildSynthCdkBuildProjectRoleDefaultPolicyF8AC335E",
         "Roles": [
           {
-            "Ref": "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectRole75D1C6E6",
+            "Ref": "ApplicationPipelineBuildSynthCdkBuildProjectRoleC9663957",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ApplicationPipelineCodePipelineEventsRoleCF718FC7": {
+    "ApplicationPipelineCodeBuildActionRole155C9984": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "ApplicationPipelineRoleB318A89A",
+                    "Arn",
+                  ],
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ApplicationPipelineCodeBuildActionRoleDefaultPolicyC8190973": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild",
+                "codebuild:StopBuild",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ApplicationPipelineBuildSynthCdkBuildProject5CE66381",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild",
+                "codebuild:StopBuild",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ApplicationPipelineUpdatePipelineSelfMutation36D37AA8",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ApplicationPipelineCodeBuildActionRoleDefaultPolicyC8190973",
+        "Roles": [
+          {
+            "Ref": "ApplicationPipelineCodeBuildActionRole155C9984",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ApplicationPipelineEventsRole6CB12042": {
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Statement": [
@@ -1017,7 +468,7 @@ exports[`Snapshot 1`] = `
       },
       "Type": "AWS::IAM::Role",
     },
-    "ApplicationPipelineCodePipelineEventsRoleDefaultPolicy4A96451E": {
+    "ApplicationPipelineEventsRoleDefaultPolicyE2D4B6B1": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -1042,7 +493,7 @@ exports[`Snapshot 1`] = `
                     },
                     ":",
                     {
-                      "Ref": "ApplicationPipelineCodePipeline92ED701F",
+                      "Ref": "ApplicationPipelineF4864186",
                     },
                   ],
                 ],
@@ -1051,16 +502,160 @@ exports[`Snapshot 1`] = `
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ApplicationPipelineCodePipelineEventsRoleDefaultPolicy4A96451E",
+        "PolicyName": "ApplicationPipelineEventsRoleDefaultPolicyE2D4B6B1",
         "Roles": [
           {
-            "Ref": "ApplicationPipelineCodePipelineEventsRoleCF718FC7",
+            "Ref": "ApplicationPipelineEventsRole6CB12042",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ApplicationPipelineCodePipelineRole53E5791D": {
+    "ApplicationPipelineF4864186": {
+      "DependsOn": [
+        "ApplicationPipelineRoleDefaultPolicy7B82848B",
+        "ApplicationPipelineRoleB318A89A",
+      ],
+      "Properties": {
+        "ArtifactStore": {
+          "EncryptionKey": {
+            "Id": {
+              "Fn::GetAtt": [
+                "ApplicationPipelineArtifactsBucketEncryptionKeyA1456BAF",
+                "Arn",
+              ],
+            },
+            "Type": "KMS",
+          },
+          "Location": {
+            "Ref": "ApplicationPipelineArtifactsBucket4027023B",
+          },
+          "Type": "S3",
+        },
+        "PipelineType": "V1",
+        "RestartExecutionOnUpdate": true,
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "ApplicationPipelineRoleB318A89A",
+            "Arn",
+          ],
+        },
+        "Stages": [
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Source",
+                  "Owner": "AWS",
+                  "Provider": "CodeCommit",
+                  "Version": "1",
+                },
+                "Configuration": {
+                  "BranchName": "main",
+                  "PollForSourceChanges": false,
+                  "RepositoryName": {
+                    "Fn::GetAtt": [
+                      "CodeRepositoryBA42F94A",
+                      "Name",
+                    ],
+                  },
+                },
+                "Name": {
+                  "Fn::GetAtt": [
+                    "CodeRepositoryBA42F94A",
+                    "Name",
+                  ],
+                },
+                "OutputArtifacts": [
+                  {
+                    "Name": "c825c34765dfb5e99261fa6cab9fea074f8881c7c4_Source",
+                  },
+                ],
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "ApplicationPipelineSourceCodeCommitCodePipelineActionRoleD8186B88",
+                    "Arn",
+                  ],
+                },
+                "RunOrder": 1,
+              },
+            ],
+            "Name": "Source",
+          },
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Build",
+                  "Owner": "AWS",
+                  "Provider": "CodeBuild",
+                  "Version": "1",
+                },
+                "Configuration": {
+                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"0f1e39d9a986a50656737c2fcb33fbdca780841c0e0ab71d7eb1c9e015fb369d"}]",
+                  "ProjectName": {
+                    "Ref": "ApplicationPipelineBuildSynthCdkBuildProject5CE66381",
+                  },
+                },
+                "InputArtifacts": [
+                  {
+                    "Name": "c825c34765dfb5e99261fa6cab9fea074f8881c7c4_Source",
+                  },
+                ],
+                "Name": "Synth",
+                "OutputArtifacts": [
+                  {
+                    "Name": "Synth_Output",
+                  },
+                ],
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "ApplicationPipelineCodeBuildActionRole155C9984",
+                    "Arn",
+                  ],
+                },
+                "RunOrder": 1,
+              },
+            ],
+            "Name": "Build",
+          },
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Build",
+                  "Owner": "AWS",
+                  "Provider": "CodeBuild",
+                  "Version": "1",
+                },
+                "Configuration": {
+                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"bd8166accf9a54df3373152135aed6acbf775c34b3bf353d2ee7571a5c05b14b"}]",
+                  "ProjectName": {
+                    "Ref": "ApplicationPipelineUpdatePipelineSelfMutation36D37AA8",
+                  },
+                },
+                "InputArtifacts": [
+                  {
+                    "Name": "Synth_Output",
+                  },
+                ],
+                "Name": "SelfMutate",
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "ApplicationPipelineCodeBuildActionRole155C9984",
+                    "Arn",
+                  ],
+                },
+                "RunOrder": 1,
+              },
+            ],
+            "Name": "UpdatePipeline",
+          },
+        ],
+      },
+      "Type": "AWS::CodePipeline::Pipeline",
+    },
+    "ApplicationPipelineRoleB318A89A": {
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Statement": [
@@ -1077,7 +672,7 @@ exports[`Snapshot 1`] = `
       },
       "Type": "AWS::IAM::Role",
     },
-    "ApplicationPipelineCodePipelineRoleDefaultPolicy02E04067": {
+    "ApplicationPipelineRoleDefaultPolicy7B82848B": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -1098,7 +693,7 @@ exports[`Snapshot 1`] = `
               "Resource": [
                 {
                   "Fn::GetAtt": [
-                    "ApplicationPipelineArtifactsBucketD6B45A16",
+                    "ApplicationPipelineArtifactsBucket4027023B",
                     "Arn",
                   ],
                 },
@@ -1108,7 +703,7 @@ exports[`Snapshot 1`] = `
                     [
                       {
                         "Fn::GetAtt": [
-                          "ApplicationPipelineArtifactsBucketD6B45A16",
+                          "ApplicationPipelineArtifactsBucket4027023B",
                           "Arn",
                         ],
                       },
@@ -1129,7 +724,7 @@ exports[`Snapshot 1`] = `
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "ApplicationPipelineArtifactKey284E3A3C",
+                  "ApplicationPipelineArtifactsBucketEncryptionKeyA1456BAF",
                   "Arn",
                 ],
               },
@@ -1139,7 +734,7 @@ exports[`Snapshot 1`] = `
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "ApplicationPipelineCodePipelineSourceCodeCommitCodePipelineActionRole0900531A",
+                  "ApplicationPipelineSourceCodeCommitCodePipelineActionRoleD8186B88",
                   "Arn",
                 ],
               },
@@ -1149,7 +744,7 @@ exports[`Snapshot 1`] = `
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "ApplicationPipelineCodeBuildActionRole98AD1444",
+                  "ApplicationPipelineCodeBuildActionRole155C9984",
                   "Arn",
                 ],
               },
@@ -1157,16 +752,16 @@ exports[`Snapshot 1`] = `
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ApplicationPipelineCodePipelineRoleDefaultPolicy02E04067",
+        "PolicyName": "ApplicationPipelineRoleDefaultPolicy7B82848B",
         "Roles": [
           {
-            "Ref": "ApplicationPipelineCodePipelineRole53E5791D",
+            "Ref": "ApplicationPipelineRoleB318A89A",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ApplicationPipelineCodePipelineSourceCodeCommitCodePipelineActionRole0900531A": {
+    "ApplicationPipelineSourceCodeCommitCodePipelineActionRoleD8186B88": {
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Statement": [
@@ -1176,7 +771,7 @@ exports[`Snapshot 1`] = `
               "Principal": {
                 "AWS": {
                   "Fn::GetAtt": [
-                    "ApplicationPipelineCodePipelineRole53E5791D",
+                    "ApplicationPipelineRoleB318A89A",
                     "Arn",
                   ],
                 },
@@ -1188,7 +783,7 @@ exports[`Snapshot 1`] = `
       },
       "Type": "AWS::IAM::Role",
     },
-    "ApplicationPipelineCodePipelineSourceCodeCommitCodePipelineActionRoleDefaultPolicyE92AF83A": {
+    "ApplicationPipelineSourceCodeCommitCodePipelineActionRoleDefaultPolicy89E449CD": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -1209,7 +804,7 @@ exports[`Snapshot 1`] = `
               "Resource": [
                 {
                   "Fn::GetAtt": [
-                    "ApplicationPipelineArtifactsBucketD6B45A16",
+                    "ApplicationPipelineArtifactsBucket4027023B",
                     "Arn",
                   ],
                 },
@@ -1219,7 +814,7 @@ exports[`Snapshot 1`] = `
                     [
                       {
                         "Fn::GetAtt": [
-                          "ApplicationPipelineArtifactsBucketD6B45A16",
+                          "ApplicationPipelineArtifactsBucket4027023B",
                           "Arn",
                         ],
                       },
@@ -1240,7 +835,7 @@ exports[`Snapshot 1`] = `
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "ApplicationPipelineArtifactKey284E3A3C",
+                  "ApplicationPipelineArtifactsBucketEncryptionKeyA1456BAF",
                   "Arn",
                 ],
               },
@@ -1256,7 +851,7 @@ exports[`Snapshot 1`] = `
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "ApplicationPipelineCodeRepositoryA734F3FA",
+                  "CodeRepositoryBA42F94A",
                   "Arn",
                 ],
               },
@@ -1264,89 +859,16 @@ exports[`Snapshot 1`] = `
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ApplicationPipelineCodePipelineSourceCodeCommitCodePipelineActionRoleDefaultPolicyE92AF83A",
+        "PolicyName": "ApplicationPipelineSourceCodeCommitCodePipelineActionRoleDefaultPolicy89E449CD",
         "Roles": [
           {
-            "Ref": "ApplicationPipelineCodePipelineSourceCodeCommitCodePipelineActionRole0900531A",
+            "Ref": "ApplicationPipelineSourceCodeCommitCodePipelineActionRoleD8186B88",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ApplicationPipelineCodeRepositoryA734F3FA": {
-      "DeletionPolicy": "Retain",
-      "Properties": {
-        "RepositoryName": "threat_composer_monorepo",
-      },
-      "Type": "AWS::CodeCommit::Repository",
-      "UpdateReplacePolicy": "Retain",
-    },
-    "ApplicationPipelineCodeRepositorypipelinetestApplicationPipelineCodePipeline31AB4045mainEventRuleF535C809": {
-      "Properties": {
-        "EventPattern": {
-          "detail": {
-            "event": [
-              "referenceCreated",
-              "referenceUpdated",
-            ],
-            "referenceName": [
-              "main",
-            ],
-          },
-          "detail-type": [
-            "CodeCommit Repository State Change",
-          ],
-          "resources": [
-            {
-              "Fn::GetAtt": [
-                "ApplicationPipelineCodeRepositoryA734F3FA",
-                "Arn",
-              ],
-            },
-          ],
-          "source": [
-            "aws.codecommit",
-          ],
-        },
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {
-              "Fn::Join": [
-                "",
-                [
-                  "arn:",
-                  {
-                    "Ref": "AWS::Partition",
-                  },
-                  ":codepipeline:",
-                  {
-                    "Ref": "AWS::Region",
-                  },
-                  ":",
-                  {
-                    "Ref": "AWS::AccountId",
-                  },
-                  ":",
-                  {
-                    "Ref": "ApplicationPipelineCodePipeline92ED701F",
-                  },
-                ],
-              ],
-            },
-            "Id": "Target0",
-            "RoleArn": {
-              "Fn::GetAtt": [
-                "ApplicationPipelineCodePipelineEventsRoleCF718FC7",
-                "Arn",
-              ],
-            },
-          },
-        ],
-      },
-      "Type": "AWS::Events::Rule",
-    },
-    "ApplicationPipelineUpdatePipelineSelfMutation66D95DA8": {
+    "ApplicationPipelineUpdatePipelineSelfMutation36D37AA8": {
       "Properties": {
         "Artifacts": {
           "Type": "CODEPIPELINE",
@@ -1354,10 +876,10 @@ exports[`Snapshot 1`] = `
         "Cache": {
           "Type": "NO_CACHE",
         },
-        "Description": "Pipeline step pipeline-test/CodePipeline/UpdatePipeline/SelfMutate",
+        "Description": "Pipeline step pipeline-test/Pipeline/UpdatePipeline/SelfMutate",
         "EncryptionKey": {
           "Fn::GetAtt": [
-            "ApplicationPipelineArtifactKey284E3A3C",
+            "ApplicationPipelineArtifactsBucketEncryptionKeyA1456BAF",
             "Arn",
           ],
         },
@@ -1370,7 +892,7 @@ exports[`Snapshot 1`] = `
         },
         "ServiceRole": {
           "Fn::GetAtt": [
-            "ApplicationPipelineUpdatePipelineSelfMutationRoleD476D3E4",
+            "ApplicationPipelineUpdatePipelineSelfMutationRole59A20D82",
             "Arn",
           ],
         },
@@ -1379,7 +901,7 @@ exports[`Snapshot 1`] = `
   "phases": {
     "install": {
       "runtime-versions": {
-        "nodejs": "20.x"
+        "nodejs": "24"
       },
       "commands": [
         "npm install -g aws-cdk@2"
@@ -1398,7 +920,7 @@ exports[`Snapshot 1`] = `
       },
       "Type": "AWS::CodeBuild::Project",
     },
-    "ApplicationPipelineUpdatePipelineSelfMutationRoleD476D3E4": {
+    "ApplicationPipelineUpdatePipelineSelfMutationRole59A20D82": {
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Statement": [
@@ -1415,7 +937,7 @@ exports[`Snapshot 1`] = `
       },
       "Type": "AWS::IAM::Role",
     },
-    "ApplicationPipelineUpdatePipelineSelfMutationRoleDefaultPolicyE74ACD15": {
+    "ApplicationPipelineUpdatePipelineSelfMutationRoleDefaultPolicy88A56583": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -1445,7 +967,7 @@ exports[`Snapshot 1`] = `
                       },
                       ":log-group:/aws/codebuild/",
                       {
-                        "Ref": "ApplicationPipelineUpdatePipelineSelfMutation66D95DA8",
+                        "Ref": "ApplicationPipelineUpdatePipelineSelfMutation36D37AA8",
                       },
                     ],
                   ],
@@ -1468,7 +990,7 @@ exports[`Snapshot 1`] = `
                       },
                       ":log-group:/aws/codebuild/",
                       {
-                        "Ref": "ApplicationPipelineUpdatePipelineSelfMutation66D95DA8",
+                        "Ref": "ApplicationPipelineUpdatePipelineSelfMutation36D37AA8",
                       },
                       ":*",
                     ],
@@ -1503,7 +1025,7 @@ exports[`Snapshot 1`] = `
                     },
                     ":report-group/",
                     {
-                      "Ref": "ApplicationPipelineUpdatePipelineSelfMutation66D95DA8",
+                      "Ref": "ApplicationPipelineUpdatePipelineSelfMutation36D37AA8",
                     },
                     "-*",
                   ],
@@ -1555,7 +1077,7 @@ exports[`Snapshot 1`] = `
               "Resource": [
                 {
                   "Fn::GetAtt": [
-                    "ApplicationPipelineArtifactsBucketD6B45A16",
+                    "ApplicationPipelineArtifactsBucket4027023B",
                     "Arn",
                   ],
                 },
@@ -1565,7 +1087,7 @@ exports[`Snapshot 1`] = `
                     [
                       {
                         "Fn::GetAtt": [
-                          "ApplicationPipelineArtifactsBucketD6B45A16",
+                          "ApplicationPipelineArtifactsBucket4027023B",
                           "Arn",
                         ],
                       },
@@ -1583,7 +1105,7 @@ exports[`Snapshot 1`] = `
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "ApplicationPipelineArtifactKey284E3A3C",
+                  "ApplicationPipelineArtifactsBucketEncryptionKeyA1456BAF",
                   "Arn",
                 ],
               },
@@ -1598,7 +1120,7 @@ exports[`Snapshot 1`] = `
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "ApplicationPipelineArtifactKey284E3A3C",
+                  "ApplicationPipelineArtifactsBucketEncryptionKeyA1456BAF",
                   "Arn",
                 ],
               },
@@ -1606,80 +1128,86 @@ exports[`Snapshot 1`] = `
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ApplicationPipelineUpdatePipelineSelfMutationRoleDefaultPolicyE74ACD15",
+        "PolicyName": "ApplicationPipelineUpdatePipelineSelfMutationRoleDefaultPolicy88A56583",
         "Roles": [
           {
-            "Ref": "ApplicationPipelineUpdatePipelineSelfMutationRoleD476D3E4",
+            "Ref": "ApplicationPipelineUpdatePipelineSelfMutationRole59A20D82",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
-      "DependsOn": [
-        "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
-      ],
+    "CodeRepositoryBA42F94A": {
       "Properties": {
-        "Code": {
-          "S3Bucket": {
-            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-          },
-          "S3Key": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip",
-        },
-        "Description": {
-          "Fn::Join": [
-            "",
-            [
-              "Lambda function for auto-deleting objects in ",
-              {
-                "Ref": "ApplicationPipelineAccessLogsBucketAFC4E2E4",
-              },
-              " S3 bucket.",
-            ],
-          ],
-        },
-        "Handler": "index.handler",
-        "MemorySize": 128,
-        "Role": {
-          "Fn::GetAtt": [
-            "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
-            "Arn",
-          ],
-        },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "LatestNodeRuntimeMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
-        "Timeout": 900,
+        "RepositoryDescription": "Threat Composer monorepo",
+        "RepositoryName": "threat_composer_monorepo",
       },
-      "Type": "AWS::Lambda::Function",
+      "Type": "AWS::CodeCommit::Repository",
     },
-    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+    "CodeRepositorypipelinetestApplicationPipeline9313B6A9mainEventRuleF5B3706C": {
       "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
+        "EventPattern": {
+          "detail": {
+            "event": [
+              "referenceCreated",
+              "referenceUpdated",
+            ],
+            "referenceName": [
+              "main",
+            ],
+          },
+          "detail-type": [
+            "CodeCommit Repository State Change",
+          ],
+          "resources": [
             {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
+              "Fn::GetAtt": [
+                "CodeRepositoryBA42F94A",
+                "Arn",
+              ],
             },
           ],
-          "Version": "2012-10-17",
+          "source": [
+            "aws.codecommit",
+          ],
         },
-        "ManagedPolicyArns": [
+        "State": "ENABLED",
+        "Targets": [
           {
-            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+            "Arn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":codepipeline:",
+                  {
+                    "Ref": "AWS::Region",
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":",
+                  {
+                    "Ref": "ApplicationPipelineF4864186",
+                  },
+                ],
+              ],
+            },
+            "Id": "Target0",
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "ApplicationPipelineEventsRole6CB12042",
+                "Arn",
+              ],
+            },
           },
         ],
       },
-      "Type": "AWS::IAM::Role",
+      "Type": "AWS::Events::Rule",
     },
   },
   "Rules": {

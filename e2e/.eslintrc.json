@@ -1,0 +1,31 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "env": {
+    "node": true,
+    "browser": true
+  },
+  "plugins": [
+    "license-header",
+    "@typescript-eslint"
+  ],
+  "ignorePatterns": [
+    "node_modules/",
+    "test-results/",
+    "test-results-preview/",
+    "playwright-report/",
+    "playwright-report-preview/",
+    "playwright-report-variants/",
+    "playwright-report-extension/"
+  ],
+  "rules": {
+    "license-header/header": [
+      "error",
+      "header.js"
+    ]
+  }
+}

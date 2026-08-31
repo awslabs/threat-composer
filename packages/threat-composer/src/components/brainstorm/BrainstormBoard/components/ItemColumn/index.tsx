@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,16 +13,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { FC, useCallback, useState, useMemo } from 'react';
+import type { FC } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import { useBrainstormContext } from '../../../../../contexts/BrainstormContext';
-import { PromotionHandlers, ThreatCreationHandlers } from '../../../../../contexts/BrainstormContext/types';
-import { BrainstormItem, BrainstormData } from '../../../../../customTypes/brainstorm';
+import type { PromotionHandlers, ThreatCreationHandlers } from '../../../../../contexts/BrainstormContext/types';
+import type { BrainstormItem, BrainstormData } from '../../../../../customTypes/brainstorm';
 import GroupableItemCard from '../../../../generic/GroupableItemCard';
 import EntityCreationCard from '../EntityCreationCard';
 
 // Export column configuration for use by parent components
-export { columnConfig, ColumnConfig, getThreatInputColumns, getPromotableColumns, getThreatCreationColumns, getColumnById } from './columnConfig';
+export type { ColumnConfig } from './columnConfig';
+export { columnConfig, getThreatInputColumns, getPromotableColumns, getThreatCreationColumns, getColumnById } from './columnConfig';
 
 export interface ItemColumnProps {
   title: string;

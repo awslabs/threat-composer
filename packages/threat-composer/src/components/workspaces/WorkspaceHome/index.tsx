@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,11 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC } from 'react';
+
+import type { FC } from 'react';
 import useImportExport from '../../../hooks/useExportImport';
 import hasContent from '../../../utils/hasContent';
-import LandingPage, { LandingPageProps } from '../LandingPage';
-import WorkspaceInsight, { WorkspaceInsightsProps } from '../WorkspaceInsights';
+import type { LandingPageProps } from '../LandingPage';
+import LandingPage from '../LandingPage';
+import type { WorkspaceInsightsProps } from '../WorkspaceInsights';
+import WorkspaceInsight from '../WorkspaceInsights';
 
 const WorkspaceHome: FC<WorkspaceInsightsProps & LandingPageProps> = (props) => {
   const { getWorkspaceData } = useImportExport();

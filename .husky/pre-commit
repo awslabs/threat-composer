@@ -1,11 +1,15 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-# Run ESLint on JavaScript/TypeScript packages
-yarn workspaces run eslint
-
-# Run Ruff on Python package - CHECK ONLY (no auto-fix)
-# If checks fail, run manually: cd packages/threat-composer-ai && uv run ruff check . --fix && uv run ruff format .
-cd packages/threat-composer-ai && \
-  uv run ruff check . && \
-  uv run ruff format --check .
+# ESLint across the TypeScript packages and the e2e suite, and Ruff across the
+# Python package. `lint` fans out to all of it: nx runs the `eslint` target on
+# each TypeScript package and the `lint` target (ruff) on threat-composer-ai,
+# and the root script adds e2e, which is a standalone package rather than a
+# workspace and so is not reachable through the workspace filter.
+#
+# This is exactly what CI runs, so the hook and CI cannot drift.
+#
+# Note the two halves behave differently, as they did before this change. The
+# per-package eslint scripts pass --fix, so TypeScript problems are corrected
+# in place -- and because that happens after staging, the fixes are NOT in the
+# commit; re-stage and amend if it edits anything. Ruff is check-only; fix
+# Python with
+# `cd packages/threat-composer-ai && uv run ruff check . --fix && uv run ruff format .`
+pnpm lint

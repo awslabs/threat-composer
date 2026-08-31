@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,10 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, useCallback, useEffect, useState } from 'react';
+
+import type { FC } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useMitigationLinksContext } from '../../../contexts/MitigationLinksContext/context';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
-import { MitigationLink } from '../../../customTypes';
+import type { MitigationLink } from '../../../customTypes';
 import getNewMitigation from '../../../utils/getNewMitigation';
 import MitigationLinkView from '../MitigationLinkView';
 

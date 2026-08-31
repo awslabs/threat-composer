@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,11 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import CollectionPreferences, {
+
+import type {
   CollectionPreferencesProps,
 } from '@cloudscape-design/components/collection-preferences';
-import { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
-import { FC, useMemo, useState, useCallback } from 'react';
+import CollectionPreferences from '@cloudscape-design/components/collection-preferences';
+import type { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import type { FC } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 
 import FullDataTable from './components/FullDataTable';
 import {
@@ -26,7 +29,7 @@ import {
   DEFAULT_COLLECTION_PREFERENCES_CANCEL_LABEL,
   DEFAULT_PAGE_SIZE_OPTIONS,
 } from './config';
-import { TableProps } from './types';
+import type { TableProps } from './types';
 
 /**
  * A table presents data in a two-dimensional format, arranged in columns and rows in a rectangular form.
@@ -106,5 +109,5 @@ const Table: FC<TableProps> = ({ disableSettings, preferences: collectionPrefere
 };
 
 export default Table;
-export * from './types';
+export type * from './types';
 export * from './config';

@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,26 +13,29 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
+import type {
+  ParagraphChild,
+  TableOfContents,
+  IImageOptions,
+  ILevelsOptions,
+  IPropertiesOptions,
+} from 'docx';
 import {
   convertInchesToTwip,
   Packer,
   Document,
   Paragraph,
-  ParagraphChild,
   TableRow,
   TableCell,
-  TableOfContents,
   TextRun,
   ExternalHyperlink,
   HeadingLevel,
   LevelFormat,
   AlignmentType,
-  IImageOptions,
-  ILevelsOptions,
   FootnoteReferenceRun,
   CheckBox,
 } from 'docx';
-import type { IPropertiesOptions } from 'docx/build/file/core-properties';
 import type * as mdast from './mdast';
 import { invariant } from './utils';
 import Table from '../components/Table';
@@ -309,9 +312,8 @@ const convertNodes = (
       case 'imageReference':
         // FIXME: unimplemented
         break;
-      case 'footnote':
-        results.push(buildFootnote(node, ctx));
-        break;
+      // No `case 'footnote'`: mdast 4 removed the inline footnote node, so it
+      // can no longer occur. GFM footnotes arrive as the two cases below.
       case 'footnoteReference':
         // do we need context here?
         results.push(buildFootnoteReference(node));
@@ -557,14 +559,6 @@ const buildImage = (
   const imageRun = getImageRun (image, type, width, height);
 
   return imageRun;
-};
-
-const buildFootnote = ({ children }: mdast.Footnote, ctx: Context) => {
-  // FIXME: transform to paragraph for now
-  const { nodes } = convertNodes(children, ctx);
-  return new Paragraph({
-    children: nodes,
-  });
 };
 
 const buildFootnoteDefinition = (

@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
@@ -22,22 +23,26 @@ import Multiselect from '@cloudscape-design/components/multiselect';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { css } from '@emotion/react';
-import { FC, PropsWithChildren, useCallback, useMemo, useState } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { LEVEL_SELECTOR_OPTIONS, DEFAULT_NEW_ENTITY_ID, LEVEL_NOT_SET, STATUS_NOT_SET } from '../../../configs';
 import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
-import { GlobalSetupContextApi, useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
+import type { GlobalSetupContextApi } from '../../../contexts/GlobalSetupContext/context';
+import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
-import { TemplateThreatStatement, ThreatStatementListFilter, ViewNavigationEvent } from '../../../customTypes';
+import type { TemplateThreatStatement, ThreatStatementListFilter, ViewNavigationEvent } from '../../../customTypes';
 import threatStatus from '../../../data/status/threatStatus.json';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
 import AssetSelector from '../../generic/AssetSelector';
-import ContentLayoutComponent, { ContentLayoutProps } from '../../generic/ContentLayout';
+import type { ContentLayoutProps } from '../../generic/ContentLayout';
+import ContentLayoutComponent from '../../generic/ContentLayout';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
 import { OPTIONS as STRIDEOptions } from '../../generic/STRIDESelector';
 import TagSelector from '../../generic/TagSelector';
 import WorkspaceSelector from '../../workspaces/WorkspaceSelector';
-import SortByComponent, { SortByOption, DEFAULT_SORT_BY } from '../SortBy';
+import type { SortByOption } from '../SortBy';
+import SortByComponent, { DEFAULT_SORT_BY } from '../SortBy';
 import ThreatStatementCard from '../ThreatStatementCard';
 
 const LevelOptionsWithNoValue = [...LEVEL_SELECTOR_OPTIONS, {

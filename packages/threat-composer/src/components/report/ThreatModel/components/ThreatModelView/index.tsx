@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,21 +13,25 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
-import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
+import type { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
+import ButtonDropdown from '@cloudscape-design/components/button-dropdown';
 import ContentLayoutComponent from '@cloudscape-design/components/content-layout';
-import Header, { HeaderProps } from '@cloudscape-design/components/header';
-import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import type { HeaderProps } from '@cloudscape-design/components/header';
+import Header from '@cloudscape-design/components/header';
+import type { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import Popover from '@cloudscape-design/components/popover';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import Spinner from '@cloudscape-design/components/spinner';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC, useEffect, useCallback, useState, ReactNode, PropsWithChildren, useMemo } from 'react';
-import { DataExchangeFormat, HasContentDetails, ViewNavigationEvent } from '../../../../../customTypes';
+import type { FC, ReactNode, PropsWithChildren } from 'react';
+import { useEffect, useCallback, useState, useMemo } from 'react';
+import type { DataExchangeFormat, HasContentDetails, ViewNavigationEvent } from '../../../../../customTypes';
 import printStyles from '../../../../../styles/print';
 import convertToMarkdown from '../../../../../utils/convertToMarkdown';
 import convertToYaml from '../../../../../utils/convertToYaml';

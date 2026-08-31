@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,13 +13,30 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 import type * as mdast from 'mdast';
 import type { Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
-import { mdastToDocx, DocxOptions, ImageDataMap } from './transformer';
+import type { DocxChild, DocxOptions, ImageDataMap } from './transformer';
+import { mdastToDocx } from './transformer';
 import { invariant } from './utils';
 
 export type { DocxOptions };
+
+// unified 11 constrains a compiler's return type to `CompileResults`, which is
+// derived from the `CompileResultMap` interface it exposes for exactly this
+// purpose: a plugin compiling to something other than text registers that type
+// here. See the augmentation example in unified's own index.d.ts.
+//
+// This compiler is deliberately asynchronous, and what it resolves to depends on
+// `DocxOptions.output` -- docx sections, a Buffer, or a Blob. unified surfaces
+// whatever the compiler returns on `VFile.result`, which ./index.ts awaits.
+// Declaring it here is what lets `this.Compiler` typecheck without a cast.
+declare module 'unified' {
+  interface CompileResultMap {
+    docx: Promise<DocxChild[] | Buffer | Blob>;
+  }
+}
 
 const plugin: Plugin<[DocxOptions?]> = function (opts = {}) {
   let images: ImageDataMap = {};

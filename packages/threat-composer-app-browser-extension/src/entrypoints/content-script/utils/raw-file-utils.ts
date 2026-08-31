@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -16,7 +16,7 @@
 
 import { createTCButton, extractContentDirectly, processTCCandidate, getTCJSONCandidate } from './core-utils';
 import { logDebugMessage } from '../../../debugLogger';
-import { TCConfig, IntegrationTypes } from '../../popup/config';
+import type { TCConfig } from '../../popup/config';
 
 /**
  * Check if current page is a raw site (has <pre> tag)

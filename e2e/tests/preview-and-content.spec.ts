@@ -1,7 +1,19 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  SPDX-License-Identifier: Apache-2.0
+
+  Licensed under the Apache License, Version 2.0 (the "License").
+  You may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
  ******************************************************************************************************************** */
+
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -158,7 +170,12 @@ test.describe('diagram images', () => {
     // upload still works — but the browser logs the refusal. The CSP is
     // byte-identical to origin/main, so this is pre-existing, not a migration
     // regression. Allow exactly that one message.
-    allowConsoleError(page, /Refused to create a worker from 'blob:/);
+    //
+    // The wording is browser-version dependent: older Chromium said "Refused to
+    // create a worker from 'blob:…'", newer builds say "Creating a worker from
+    // 'blob:…' violates the following Content Security Policy directive". Match
+    // both, anchored on the worker-from-blob phrasing so it stays narrow.
+    allowConsoleError(page, /(Refused to create|Creating) a worker from 'blob:/);
 
     await gotoWorkspace(page, DEFAULT_WORKSPACE, 'architecture');
     await page.getByRole('radio', { name: 'From file upload' }).check();
@@ -238,7 +255,9 @@ test.describe('diagram images', () => {
   });
 
   test('switching back to "No Image" clears the diagram but keeps the text', async ({ page }) => {
-    allowConsoleError(page, /Refused to create a worker from 'blob:/);
+    // See the note above: the CSP worker message is worded differently across
+    // Chromium versions.
+    allowConsoleError(page, /(Refused to create|Creating) a worker from 'blob:/);
 
     await gotoWorkspace(page, DEFAULT_WORKSPACE, 'architecture');
 

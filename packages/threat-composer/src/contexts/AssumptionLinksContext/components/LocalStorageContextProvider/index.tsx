@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,13 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { FC, PropsWithChildren, useCallback } from 'react';
+
+import type { FC, PropsWithChildren } from 'react';
+import { useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_ASSUMPTION_LINK_LIST } from '../../../../configs/localStorageKeys';
-import { AssumptionLink } from '../../../../customTypes';
+import type { AssumptionLink } from '../../../../customTypes';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { AssumptionLinksContext } from '../../context';
-import { AssumptionLinksContextProviderProps } from '../../types';
+import type { AssumptionLinksContextProviderProps } from '../../types';
 import useAssumptionLinks from '../../useAssumptionLinks';
 
 export const getLocalStorageKey = (workspaceId: string | null) => {

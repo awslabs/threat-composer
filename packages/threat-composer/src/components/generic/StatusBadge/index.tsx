@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,13 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
-import Badge, { BadgeProps } from '@cloudscape-design/components/badge';
-import { SelectProps } from '@cloudscape-design/components/select';
+import type { BadgeProps } from '@cloudscape-design/components/badge';
+import Badge from '@cloudscape-design/components/badge';
+import type { SelectProps } from '@cloudscape-design/components/select';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC, useMemo, useState, useRef } from 'react';
-import StatusSelector, { StatusSelectorProps } from '../StatusSelector';
+import type { FC } from 'react';
+import { useMemo, useState, useRef } from 'react';
+import type { StatusSelectorProps } from '../StatusSelector';
+import StatusSelector from '../StatusSelector';
 
 export interface StatusBadgeProps extends Omit<StatusSelectorProps, 'showLabel'> {
   statusColorMapping: {
@@ -33,7 +37,7 @@ const StatusBadge: FC<StatusBadgeProps> = ({
   options,
   statusColorMapping,
 }) => {
-  const ref = useRef<SelectProps.Ref>();
+  const ref = useRef<SelectProps.Ref | undefined>(undefined);
 
   const [editMode, setEditMode] = useState(false);
 

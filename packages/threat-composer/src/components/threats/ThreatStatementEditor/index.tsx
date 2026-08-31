@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 import ContentLayoutComponent from '@cloudscape-design/components/content-layout';
 import Grid from '@cloudscape-design/components/grid';
@@ -20,19 +21,21 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import React, { FC, useCallback, useMemo, useState, useRef, useEffect, ReactNode, PropsWithChildren } from 'react';
-import { EditorProps } from './types';
+import type { FC, ReactNode, PropsWithChildren } from 'react';
+import React, { useCallback, useMemo, useState, useRef, useEffect } from 'react';
+import type { EditorProps } from './types';
 import { METADATA_KEY_SOURCE, METADATA_KEY_SOURCE_THREAT_PACK, METADATA_KEY_SOURCE_THREAT_PACK_MITIGATION_CANDIDATE, METADATA_KEY_SOURCE_THREAT_PACK_THREAT } from '../../../configs';
 import { DEFAULT_NEW_ENTITY_ID, DEFAULT_WORKSPACE_LABEL } from '../../../configs/constants';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
-import { GlobalSetupContextApi, useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
+import type { GlobalSetupContextApi } from '../../../contexts/GlobalSetupContext/context';
+import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useMitigationLinksContext } from '../../../contexts/MitigationLinksContext/context';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
-import { Mitigation, TemplateThreatStatement, ViewNavigationEvent } from '../../../customTypes';
-import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
+import type { Mitigation, TemplateThreatStatement, ViewNavigationEvent } from '../../../customTypes';
+import type { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
 import threatStatementExamples from '../../../data/threatStatementExamples.json';
 import threatStatementFormat from '../../../data/threatStatementFormat';
@@ -134,8 +137,8 @@ export const ThreatStatementEditorInner: FC<ThreatStatementEditorProps & { editi
   ...props
 }) => {
   const { setEditingStatement, saveStatement, addStatement } = useThreatsContext();
-  const inputRef = useRef<{ focus(): void }>();
-  const fullExamplesRef = useRef<{ collapse(): void }>();
+  const inputRef = useRef<{ focus(): void } | undefined>(undefined);
+  const fullExamplesRef = useRef<{ collapse(): void } | undefined>(undefined);
   const { currentWorkspace, workspaceList } = useWorkspacesContext();
   const [editor, setEditor] = useState<ThreatFieldTypes | undefined>(props.initialEditorField ?? getRecommendedEditor(editingStatement));
   const [suggestions, setSuggestions] = useState<string[]>([]);

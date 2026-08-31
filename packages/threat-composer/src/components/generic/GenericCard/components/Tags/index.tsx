@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,13 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
-import { CancelableEventHandler, BaseKeyDetail } from '@cloudscape-design/components/internal/events';
+import type { CancelableEventHandler, BaseKeyDetail } from '@cloudscape-design/components/internal/events';
 import TokenGroup from '@cloudscape-design/components/token-group';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC, useCallback, useState } from 'react';
+import type { FC } from 'react';
+import { useCallback, useState } from 'react';
 import { TagSchema } from '../../../../../customTypes';
 import { useMobileMediaQuery } from '../../../../../hooks/useMediaQuery';
 import getMobileMediaQuery from '../../../../../utils/getMobileMediaQuery';

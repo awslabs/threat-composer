@@ -1,4 +1,4 @@
-/** *******************************************************************************************************************
+/* ********************************************************************************************************************
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,22 +13,26 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+
 /** @jsxImportSource @emotion/react */
 
 import DeleteConfirmationDialog from '@aws-northstar/ui/components/DeleteConfirmationDialog';
 import Alert from '@cloudscape-design/components/alert';
 import Button from '@cloudscape-design/components/button';
-import ButtonDropdown, {
+import type {
   ButtonDropdownProps,
 } from '@cloudscape-design/components/button-dropdown';
-import {
+import ButtonDropdown from '@cloudscape-design/components/button-dropdown';
+import type {
   CancelableEventHandler,
   NonCancelableEventHandler,
 } from '@cloudscape-design/components/internal/events';
-import Select, { SelectProps } from '@cloudscape-design/components/select';
+import type { SelectProps } from '@cloudscape-design/components/select';
+import Select from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { css } from '@emotion/react';
-import { FC, useMemo, useState, useCallback, PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { APP_MODE_IDE_EXTENSION } from '../../../configs';
 import {
   DEFAULT_WORKSPACE_ID,
@@ -38,7 +42,7 @@ import {
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext';
 import { useWorkspaceExamplesContext } from '../../../contexts/WorkspaceExamplesContext';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext';
-import {
+import type {
   DataExchangeFormat,
   TemplateThreatStatement,
 } from '../../../customTypes';
