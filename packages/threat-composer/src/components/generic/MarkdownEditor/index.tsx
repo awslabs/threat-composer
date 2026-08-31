@@ -20,7 +20,10 @@ import { Mode } from '@cloudscape-design/global-styles';
 import { css } from '@emotion/react';
 import { MDXEditor, MDXEditorMethods, DiffSourceToggleWrapper, ListsToggle, toolbarPlugin, diffSourcePlugin, linkPlugin, thematicBreakPlugin, linkDialogPlugin, UndoRedo, headingsPlugin, codeBlockPlugin, codeMirrorPlugin, markdownShortcutPlugin, BoldItalicUnderlineToggles, BlockTypeSelect, CodeToggle, CreateLink, InsertCodeBlock, InsertImage, imagePlugin, InsertTable, tablePlugin, listsPlugin, HEADING_LEVEL } from '@mdxeditor/editor';
 import { FC, useState, useRef } from 'react';
+import InsertMermaidDiagram from './components/InsertMermaidDiagram';
+import { mermaidCodeBlockEditorDescriptor } from './components/MermaidCodeBlockEditor';
 import { useContentValidation } from '../../../hooks';
+import { MERMAID_LANGUAGE } from '../../../utils/mermaidCodeBlock';
 import { TextAreaProps } from '../Textarea';
 import { useThemeContext } from '../ThemeProvider';
 
@@ -109,14 +112,19 @@ const MarkdownEditor: FC<MarkdownEditorProps> = ({
                 <InsertTable />
                 <ListsToggle options={['bullet', 'number']} />
                 <InsertCodeBlock />
+                <InsertMermaidDiagram />
                 <UndoRedo />
               </DiffSourceToggleWrapper>
             ),
           }),
-          codeBlockPlugin({ defaultCodeBlockLanguage: '' }),
+          codeBlockPlugin({
+            defaultCodeBlockLanguage: '',
+            codeBlockEditorDescriptors: [mermaidCodeBlockEditorDescriptor],
+          }),
           codeMirrorPlugin({
             codeBlockLanguages: {
               '': 'text',
+              [MERMAID_LANGUAGE]: 'Mermaid diagram',
             },
           }),
           tablePlugin(),
