@@ -69,18 +69,19 @@ jobs:
           rsync -ar --prune-empty-dirs --include='*/' --include='*.css'
           --include='*.png' --include='*.gif' --exclude='*' ./src/* ./lib
         working-directory: packages/threat-composer
-      # e2e is a standalone npm package rather than a yarn workspace, so that the
-      # app's own test runner never picks up these specs.
+      # e2e sits outside the yarn workspaces, so that the app's own test runner
+      # never picks up these specs. It still uses yarn, to match the rest of the
+      # repository, and carries its own yarn.lock.
       - name: Install e2e dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
         working-directory: e2e
       - name: Typecheck e2e specs
-        run: npm run typecheck
+        run: yarn typecheck
         working-directory: e2e
       # BROWSER=none stops react-scripts opening a browser when Playwright boots
       # the dev server through the app's `dev` script.
       - name: Run web app suite
-        run: npm test
+        run: yarn test
         working-directory: e2e
         env:
           BROWSER: none
