@@ -67,6 +67,7 @@ AssumptionCreationCardProps
     editingEntity={editingEntity}
     setEditingEntity={setEditingEntity}
     header='Add new assumption'
+    contentAriaLabel='Assumption content'
     onSave={handleSave}
     onReset={handleReset}
     validateData={AssumptionSchema.shape.content.safeParse}
