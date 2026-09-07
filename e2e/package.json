@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.62.1",
+    "mammoth": "^1.12.2",
     "typescript": "5.8.3"
   }
 }
