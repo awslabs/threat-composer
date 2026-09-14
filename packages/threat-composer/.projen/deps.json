@@ -219,6 +219,11 @@
       "type": "runtime"
     },
     {
+      "name": "mermaid",
+      "version": "^11",
+      "type": "runtime"
+    },
+    {
       "name": "react-markdown",
       "type": "runtime"
     },
