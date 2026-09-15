@@ -25,14 +25,16 @@ jobs:
         uses: astral-sh/setup-uv@v5
       - run: pushd /tmp && git clone --depth 1 https://github.com/awslabs/git-secrets.git && cd ./git-secrets && PREFIX=/tmp/git-secrets make install && popd
       - run: npm install -g typescript
-      - run: npm install -g yarn
+      # pnpm is installed directly rather than through corepack: pnpm 10 manages
+      # its own exact version from the packageManager field in package.json.
+      - run: npm install -g pnpm@10
       - run: npm install -g oss-attribution-generator
-      - run: yarn install --frozen-lockfile
-      # `yarn build` runs every project's nx `build` target. Each package's
+      - run: pnpm install --frozen-lockfile
+      # `pnpm build` runs every project's nx `build` target. Each package's
       # build depends on its eslint and test targets (and ruff/pytest for
       # threat-composer-ai), so lint and tests are part of the build graph
       # rather than separate steps.
-      - run: PATH=/tmp/git-secrets/bin:$PATH yarn build
+      - run: PATH=/tmp/git-secrets/bin:$PATH pnpm build
 
   e2e:
     # Playwright functional tests for the web app. Kept as a separate job from
@@ -49,14 +51,16 @@ jobs:
           node-version: '20'
       - name: Install uv
         uses: astral-sh/setup-uv@v5
-      - run: npm install -g yarn
-      # e2e is a yarn workspace and an nx project (e2e/project.json), so one
+      # pnpm is installed directly rather than through corepack: pnpm 10 manages
+      # its own exact version from the packageManager field in package.json.
+      - run: npm install -g pnpm@10
+      # e2e is a pnpm workspace and an nx project (e2e/project.json), so one
       # install covers it. Browsers are an explicit target rather than a
-      # postinstall hook, so a plain `yarn install` does not download Chromium.
-      - run: yarn install --frozen-lockfile
-      - run: yarn nx run @aws/threat-composer-e2e:install-browsers
+      # postinstall hook, so a plain `pnpm install` does not download Chromium.
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm nx run @aws/threat-composer-e2e:install-browsers
       - name: Typecheck e2e specs
-        run: yarn nx run @aws/threat-composer-e2e:typecheck
+        run: pnpm nx run @aws/threat-composer-e2e:typecheck
       # The e2e target depends on @aws/threat-composer:copy-assets, which in
       # turn depends on compile, so nx compiles the library and copies its
       # CSS/PNG/GIF into lib before Playwright boots the app's dev server. The
@@ -66,7 +70,7 @@ jobs:
       # BROWSER=none stops react-scripts opening a browser when Playwright boots
       # the dev server through the app's `dev` target.
       - name: Run web app suite
-        run: yarn nx run @aws/threat-composer-e2e:e2e
+        run: pnpm nx run @aws/threat-composer-e2e:e2e
         env:
           BROWSER: none
       - name: Upload Playwright report

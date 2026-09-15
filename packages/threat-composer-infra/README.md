@@ -16,7 +16,7 @@ This package contains AWS CDK infrastructure code for deploying Threat Composer 
 
 ### Prerequisites
 - Node.js 20 or higher
-- Yarn package manager
+- pnpm 10 (`npm install -g pnpm@10`)
 - AWS CLI configured
 - AWS CDK CLI (`npm install -g aws-cdk`)
 - CDK bootstrapped in target account
@@ -25,7 +25,7 @@ This package contains AWS CDK infrastructure code for deploying Threat Composer 
 
 ```bash
 # From repository root
-pdk install --frozen-lockfile
+pnpm install --frozen-lockfile
 
 # Bootstrap CDK (if not already done)
 cdk bootstrap aws://<account-id>/<region>
@@ -103,12 +103,11 @@ Deploys full CI/CD infrastructure (CodePipeline + Application):
 ## Testing
 
 ```bash
-# Run infrastructure tests
-cd packages/threat-composer-infra
-yarn test
+# Run infrastructure tests (from repository root)
+pnpm nx run @aws/threat-composer-infra:test
 
 # Run with coverage
-yarn test --coverage
+pnpm nx run @aws/threat-composer-infra:test -- --coverage
 ```
 
 ## Contributing

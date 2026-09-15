@@ -673,7 +673,7 @@ exports[`Snapshot 1`] = `
                   "Version": "1",
                 },
                 "Configuration": {
-                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"c55664b4d6b4761290ce83fbc020e68862081c6e348282c01070cb2e197951e4"}]",
+                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"c41b9f1ebec724726973a9ba4eaea5aad9a8b3c7f4edeef6f0bc46cc0fd7d3d1"}]",
                   "ProjectName": {
                     "Ref": "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectEE7ED66A",
                   },
@@ -775,13 +775,13 @@ exports[`Snapshot 1`] = `
         "nodejs": "20.x"
       },
       "commands": [
-        "npm install -g aws-cdk pnpm",
-        "npx projen install"
+        "npm install -g pnpm@10",
+        "pnpm install --frozen-lockfile"
       ]
     },
     "build": {
       "commands": [
-        "npx projen build"
+        "pnpm build"
       ]
     }
   },

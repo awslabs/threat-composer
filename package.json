@@ -22,7 +22,7 @@
     "storybook": "GENERATE_SOURCEMAP=false nx run @aws/threat-composer:storybook",
     "test": "nx run-many -t test --nx-bail",
     "typecheck": "nx run-many -t typecheck --nx-bail",
-    "upgrade-deps": "npm-check-updates --deep --rejectVersion 0.0.0 -u --dep prod,dev,peer,optional,bundle --target=minor && syncpack fix-mismatches && rm yarn.lock && yarn install"
+    "upgrade-deps": "npm-check-updates --deep --rejectVersion 0.0.0 -u --dep prod,dev,peer,optional --target=minor && syncpack fix-mismatches && rm -f pnpm-lock.yaml && pnpm install"
   },
   "devDependencies": {
     "@babel/helper-split-export-declaration": "^7.24.7",
@@ -42,52 +42,57 @@
     "prettier": "2.8.8",
     "syncpack": "^13",
     "ts-node": "10.9.2",
-    "typescript": "5.8.3"
+    "typescript": "5.8.3",
+    "zod": "^4"
   },
   "dependencies": {
     "@aws-cdk/aws-cognito-identitypool-alpha": "latest",
     "aws-cdk-lib": "2.194.0",
     "cdk-nag": "2.35.88"
   },
-  "resolutions": {
-    "@types/babel__traverse": "7.18.2",
-    "@zkochan/js-yaml": "npm:js-yaml@4.1.0",
-    "wrap-ansi": "^7.0.0",
-    "@types/react": "^18.0.27",
-    "react": "^18.2.0",
-    "nth-check": "^2.1.1",
-    "yaml": "^2.2.2",
-    "js-yaml": "^3.14.2",
-    "semver": "^7.5.3",
-    "@babel/traverse": "^7.25.0",
-    "postcss": "^8.4.31",
-    "esbuild": "^0.25.4",
-    "tar": "^7.5.9",
-    "lodash": "^4.18.0",
-    "qs": "^6.15.0",
-    "nx/**/minimatch": "^9.0.9",
-    "syncpack/**/minimatch": "^9.0.9"
-  },
   "engines": {
-    "node": ">=16",
-    "yarn": ">=1 <2"
+    "node": ">=20",
+    "pnpm": ">=10"
   },
   "license": "Apache-2.0",
   "version": "0.0.0",
   "private": true,
-  "workspaces": {
-    "packages": [
-      "packages/threat-composer",
-      "packages/threat-composer-app",
-      "packages/threat-composer-app-browser-extension",
-      "packages/threat-composer-infra",
-      "e2e"
-    ],
-    "nohoist": [
-      "**/wxt"
-    ]
-  },
   "nx": {
     "includedScripts": []
+  },
+  "packageManager": "pnpm@10.34.5",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ],
+    "ignoredBuiltDependencies": [
+      "@swc/core",
+      "core-js",
+      "core-js-pure",
+      "es5-ext",
+      "nx",
+      "sharp",
+      "spawn-sync",
+      "unrs-resolver"
+    ],
+    "overrides": {
+      "@types/babel__traverse": "7.18.2",
+      "@zkochan/js-yaml": "npm:js-yaml@4.1.0",
+      "wrap-ansi": "^7.0.0",
+      "@types/react": "^18.0.27",
+      "react": "^18.2.0",
+      "nth-check": "^2.1.1",
+      "yaml": "^2.2.2",
+      "js-yaml": "^3.14.2",
+      "semver": "^7.5.3",
+      "@babel/traverse": "^7.25.0",
+      "postcss": "^8.4.31",
+      "esbuild": "^0.25.4",
+      "tar": "^7.5.9",
+      "lodash": "^4.18.0",
+      "qs": "^6.15.0",
+      "nx>minimatch": "^9.0.9",
+      "syncpack>minimatch": "^9.0.9"
+    }
   }
 }

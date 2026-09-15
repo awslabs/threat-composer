@@ -64,7 +64,7 @@ Each integration can be individually enabled/disabled and configured with custom
 ### Prerequisites
 
 - Node.js (version 20 or higher)
-- Yarn package manager
+- pnpm 10 (`npm install -g pnpm@10`)
 
 ### Build Instructions
 
@@ -88,20 +88,18 @@ Each integration can be individually enabled/disabled and configured with custom
 #### Chrome ZIP
 
 ```bash
-cd ./packages/threat-composer-app-browser-extension
-yarn run zip
+pnpm nx run @aws/threat-composer-app-browser-extension:zip
 ```
 
-The ZIP file will be created in `./.output/`
+The ZIP file will be created in `packages/threat-composer-app-browser-extension/.output/`
 
 #### Firefox ZIP
 
 ```bash
-cd ./packages/threat-composer-app-browser-extension
-yarn run zip:firefox
+pnpm nx run @aws/threat-composer-app-browser-extension:zip:firefox
 ```
 
-The ZIP file will be created in `./.output/`
+The ZIP file will be created in `packages/threat-composer-app-browser-extension/.output/`
 
 ## Development
 
@@ -110,8 +108,7 @@ The ZIP file will be created in `./.output/`
 #### Chrome
 
 ```bash
-cd ./packages/threat-composer-app-browser-extension
-yarn run dev
+pnpm dev:extension
 ```
 
 Then navigate to a supported integration to test: [Example 1](https://github.com/awslabs/threat-composer/blob/main/packages/threat-composer/src/data/workspaceExamples/ThreatComposer.tc.json), [Example 2](https://github.com/awslabs/threat-composer/blob/main/packages/threat-composer/src/data/workspaceExamples/GenAIChatbot.tc.json), [Example 3](https://raw.githubusercontent.com/awslabs/threat-composer/main/packages/threat-composer/src/data/workspaceExamples/GenAIChatbot.tc.json)
@@ -119,8 +116,7 @@ Then navigate to a supported integration to test: [Example 1](https://github.com
 #### Firefox
 
 ```bash
-cd ./packages/threat-composer-app-browser-extension
-yarn run dev:firefox
+pnpm nx run @aws/threat-composer-app-browser-extension:dev:firefox
 ```
 
 ### Project Structure

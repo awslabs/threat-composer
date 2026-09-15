@@ -22,16 +22,16 @@ Built with:
 
 ### Prerequisites
 - Node.js 20 or higher
-- Yarn package manager
+- pnpm 10 (`npm install -g pnpm@10`)
 
 ### Setup
 
 ```bash
 # From repository root
-pdk install --frozen-lockfile
+pnpm install --frozen-lockfile
 
 # Run Storybook for component development
-pdk run storybook
+pnpm storybook
 ```
 
 Storybook will open at [http://localhost:6006](http://localhost:6006)
@@ -41,15 +41,14 @@ Storybook will open at [http://localhost:6006](http://localhost:6006)
 ## Build
 
 ```bash
-# From repository root
-pdk build
+# From repository root, everything
+pnpm build
 
-# Or from package directory
-cd packages/threat-composer
-yarn build
+# Or just this package
+pnpm nx run @aws/threat-composer:build
 ```
 
-Build output will be in the `dist/` directory.
+Compiled output will be in the `lib/` directory and the packed tarball in `dist/js/`.
 
 ## Project Structure
 
@@ -73,18 +72,20 @@ src/
 
 ## Development Commands
 
+All commands run from the repository root.
+
 ```bash
 # Run Storybook
-yarn storybook
+pnpm storybook
 
 # Build library
-yarn build
+pnpm nx run @aws/threat-composer:build
 
 # Run tests
-yarn test
+pnpm nx run @aws/threat-composer:test
 
 # Run linter
-yarn eslint
+pnpm nx run @aws/threat-composer:eslint
 ```
 
 ## Component Development
@@ -124,7 +125,7 @@ Add threat packs in `src/data/threatPacks/`:
 
 1. Create `.tc.json` file with threats
 2. Create `.metadata.json` file
-3. Run `yarn run build:packs`
+3. Run `pnpm build:packs` from the repository root
 4. Import generated pack in `threatPacks.ts`
 
 ### Mitigation Packs
@@ -133,23 +134,23 @@ Add mitigation packs in `src/data/mitigationPacks/`:
 
 1. Create `.tc.json` file with mitigations
 2. Create `.metadata.json` file
-3. Run `yarn run build:packs`
+3. Run `pnpm build:packs` from the repository root
 4. Import generated pack in `mitigationPacks.ts`
 
 ## Testing
 
 ```bash
 # Run all tests
-yarn test
+pnpm nx run @aws/threat-composer:test
 
 # Run with coverage
-yarn test --coverage
+pnpm nx run @aws/threat-composer:test -- --coverage
 
 # Run in watch mode
-yarn test --watch
+pnpm nx run @aws/threat-composer:test:watch
 
 # Run specific test
-yarn test MyComponent
+pnpm nx run @aws/threat-composer:test -- MyComponent
 ```
 
 ## Contributing
@@ -167,7 +168,7 @@ When contributing to this package:
 
 - **Main README**: [README.md](../../README.md)
 - **Development Guide**: [docs/DEVELOPMENT.md](../../docs/DEVELOPMENT.md)
-- **Storybook**: Run `yarn storybook` for interactive component docs
+- **Storybook**: Run `pnpm storybook` for interactive component docs
 
 ## License
 

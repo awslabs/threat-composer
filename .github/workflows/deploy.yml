@@ -19,10 +19,12 @@ jobs:
         uses: astral-sh/setup-uv@v5
       - run: pushd /tmp && git clone --depth 1 https://github.com/awslabs/git-secrets.git && cd ./git-secrets && PREFIX=/tmp/git-secrets make install && popd
       - run: npm install -g typescript
-      - run: npm install -g yarn
+      # pnpm is installed directly rather than through corepack: pnpm 10 manages
+      # its own exact version from the packageManager field in package.json.
+      - run: npm install -g pnpm@10
       - run: npm install -g oss-attribution-generator
-      - run: yarn install --frozen-lockfile
-      - run: REACT_APP_ROUTE_BASE_PATH=/threat-composer REACT_APP_GITHUB_PAGES=true PUBLIC_URL=https://awslabs.github.io/threat-composer PATH=/tmp/git-secrets/bin:$PATH yarn build
+      - run: pnpm install --frozen-lockfile
+      - run: REACT_APP_ROUTE_BASE_PATH=/threat-composer REACT_APP_GITHUB_PAGES=true PUBLIC_URL=https://awslabs.github.io/threat-composer PATH=/tmp/git-secrets/bin:$PATH pnpm build
       - run: sed -i "s/<\/body>/<img\ src=\"https:\/\/assets.threat-composer.aws.dev\/1x1.png\"\ style=\"visibility:hidden;\">&/g" packages/threat-composer-app/build/website/index.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

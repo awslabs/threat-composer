@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 # eslint across the TypeScript packages, ruff (check only) for threat-composer-ai.
-# To fix ruff findings: yarn nx run threat-composer-ai:lint:fix
-yarn lint
+# To fix ruff findings: pnpm nx run threat-composer-ai:lint:fix
+pnpm lint

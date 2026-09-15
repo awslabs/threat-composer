@@ -6,7 +6,7 @@ module.exports = {
   // ace-builds/worker-coffee.js, which is enough to trigger it.
   //
   // Disabling only the client overlay leaves the warnings on stdout, so nothing
-  // is hidden from a developer running `yarn dev`; it just stops the overlay
+  // is hidden from a developer running `pnpm dev`; it just stops the overlay
   // intercepting input. Vite has no equivalent overlay-on-warning behaviour, so
   // this goes away with the Vite migration.
   devServer: (config) => ({

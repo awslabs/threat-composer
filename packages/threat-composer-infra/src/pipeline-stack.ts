@@ -35,6 +35,16 @@ export class PipelineStack extends Stack {
       publishAssetsInParallel: false,
       crossAccountKeys: true,
       synth: {},
+      // PDKPipeline's default synth step runs `npx projen install` and
+      // `npx projen build`, which no longer exist here. CodeBuild's standard
+      // images ship yarn but not pnpm, so install it first; pnpm 10 then
+      // manages its own exact version from the packageManager field in the
+      // root package.json. `pnpm build` runs every nx build target, which
+      // includes lint and tests, and leaves cdk.out in primarySynthDirectory.
+      synthShellStepPartialProps: {
+        installCommands: ['npm install -g pnpm@10', 'pnpm install --frozen-lockfile'],
+        commands: ['pnpm build'],
+      },
       sonarCodeScannerConfig: this.node.tryGetContext('sonarqubeScannerConfig'),
       codeBuildDefaults: {
         buildEnvironment: {

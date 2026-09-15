@@ -7,6 +7,7 @@
     "@testing-library/react": "14.3.1",
     "@testing-library/user-event": "14.6.1",
     "@types/jest": "29.5.14",
+    "@types/mdast": "^3.0.15",
     "@types/node": "^18",
     "@types/react": "18.3.20",
     "@types/react-dom": "18.3.7",
@@ -23,7 +24,7 @@
   },
   "dependencies": {
     "@aws-northstar/ui": "1.4.2",
-    "@aws/threat-composer": "0.0.0",
+    "@aws/threat-composer": "workspace:*",
     "@cloudscape-design/components": "3.0.956",
     "@cloudscape-design/design-tokens": "3.0.56",
     "@cloudscape-design/global-styles": "1.0.42",
@@ -39,11 +40,12 @@
     "unified": "^10",
     "unist-util-visit": "5.0.0",
     "uuid": "14.0.0",
-    "web-vitals": "3.5.2"
-  },
-  "resolutions": {
-    "@types/express-serve-static-core": "4.17.30",
-    "@types/express": "4.17.13"
+    "web-vitals": "3.5.2",
+    "workbox-core": "6.6.1",
+    "workbox-expiration": "6.6.1",
+    "workbox-precaching": "6.6.1",
+    "workbox-routing": "6.6.1",
+    "workbox-strategies": "6.6.1"
   },
   "license": "Apache-2.0",
   "version": "0.0.0",

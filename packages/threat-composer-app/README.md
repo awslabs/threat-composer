@@ -16,20 +16,16 @@ This package contains the Threat Composer web application built with Create Reac
 
 ### Prerequisites
 - Node.js 20 or higher
-- Yarn package manager
+- pnpm 10 (`npm install -g pnpm@10`)
 
 ### Setup
 
 ```bash
 # From repository root
-pdk install --frozen-lockfile
+pnpm install --frozen-lockfile
 
 # Start development server
-pdk run dev
-
-# Or from package directory
-cd packages/threat-composer-app
-yarn run dev
+pnpm dev
 ```
 
 The app will open at [http://localhost:3000](http://localhost:3000)
@@ -37,15 +33,14 @@ The app will open at [http://localhost:3000](http://localhost:3000)
 ## Build
 
 ```bash
-# From repository root
-pdk build
+# From repository root, everything
+pnpm build
 
-# Or from package directory
-cd packages/threat-composer-app
-yarn build
+# Or just this package
+pnpm nx run @aws/threat-composer-app:compile
 ```
 
-Build output will be in the `build/` directory.
+Build output will be in the `build/` directory, with one subdirectory per variant (`website`, `browser-extension`, `ide-extension`).
 
 ## Project Structure
 
@@ -62,18 +57,20 @@ src/
 
 ## Development Commands
 
+All commands run from the repository root.
+
 ```bash
 # Start dev server
-yarn start
+pnpm dev
 
 # Build for production
-yarn build
+pnpm nx run @aws/threat-composer-app:compile
 
 # Run tests
-yarn test
+pnpm nx run @aws/threat-composer-app:test
 
 # Run linter
-yarn eslint
+pnpm nx run @aws/threat-composer-app:eslint
 ```
 
 ## Contributing

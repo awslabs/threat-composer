@@ -12,7 +12,7 @@ This monorepo hosts multiple packages that make up the Threat Composer ecosystem
 - **threat-composer-infra**: AWS CDK infrastructure code
 - **threat-composer-ai**: AI-powered CLI and MCP server for automated threat modeling
 
-The repository is defined and maintained using [projen](https://github.com/projen/projen) and [aws-prototyping-sdk](https://github.com/aws/aws-prototyping-sdk).
+The repository is a [pnpm workspace](https://pnpm.io/workspaces) with [nx](https://nx.dev/) as the task runner. pnpm handles dependency management and nx handles the task graph. Each package declares its targets in a `project.json`, and `pnpm build` runs the whole graph with caching.
 
 ## Repository Structure
 
@@ -20,7 +20,7 @@ The repository is defined and maintained using [projen](https://github.com/proje
 | ------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
 | threat-composer                       | packages/threat-composer                       | UI components for threat-composer                                                                      | [React](https://react.dev/), [CloudScape design system](https://cloudscape.design/) |
 | threat-composer-app                   | packages/threat-composer-app                   | threat-composer Single Page App (SPA) bootstrapped by [create-react-app](https://create-react-app.dev/) | React                                                                               |
-| threat-composer-infra                 | packages/threat-composer-infra                 | threat-composer Infrastructure CDK App                                                                 | [aws-prototyping-sdk constructs](https://github.com/aws/aws-prototyping-sdk)        |
+| threat-composer-infra                 | packages/threat-composer-infra                 | threat-composer Infrastructure CDK App                                                                 | [AWS CDK](https://aws.amazon.com/cdk/)                                              |
 | threat-composer-app-browser-extension | packages/threat-composer-app-browser-extension | threat-composer browser extension                                                                      | [wxt](https://wxt.dev/), React                                                      |
 | threat-composer-ai                    | packages/threat-composer-ai                    | AI-powered CLI and MCP server                                                                          | Python, [Strands](https://github.com/awslabs/strands), FastMCP                      |
 
@@ -29,8 +29,8 @@ The repository is defined and maintained using [projen](https://github.com/proje
 ### Required Tools
 
 - [NodeJS](https://nodejs.org/en/) (version 20 or higher)
-- [Yarn](https://yarnpkg.com/) - Install via `npm install -g yarn`
-- [PDK](https://aws.github.io/aws-pdk/overview/index.html) - Install via `npm install -g @aws/pdk`
+- [pnpm](https://pnpm.io/) (version 10) - Install via `npm install -g pnpm@10`
+- [uv](https://github.com/astral-sh/uv) - Python package manager, needed for packages/threat-composer-ai
 - [git-secrets](https://github.com/awslabs/git-secrets#installing-git-secrets)
 - [oss-attribution-generator](https://www.npmjs.com/package/oss-attribution-generator) - Install via `npm install -g oss-attribution-generator`
 
@@ -39,7 +39,6 @@ The repository is defined and maintained using [projen](https://github.com/proje
 - [AWS CLI](https://aws.amazon.com/cli/) (version 2 or higher) - For infrastructure deployment
 - [AWS CDK v2](https://aws.amazon.com/cdk/) - Install via `npm install -g aws-cdk`
 - [Python 3.10+](https://www.python.org/) - For threat-composer-ai package
-- [UV](https://github.com/astral-sh/uv) - Python package manager for threat-composer-ai
 
 ## Getting Started
 
@@ -53,18 +52,18 @@ cd threat-composer
 ### Install Dependencies
 
 ```bash
-pdk install --frozen-lockfile
+pnpm install --frozen-lockfile
 ```
 
-This will install all dependencies for all packages in the monorepo.
+This will install all dependencies for all packages in the monorepo. The `postinstall` step also runs `uv sync` for the Python package.
 
 ### Build All Projects
 
 ```bash
-pdk build
+pnpm build
 ```
 
-This builds all packages in the correct dependency order.
+This runs every nx `build` target in dependency order. `build` includes compilation, eslint, ruff, unit tests, pytest and the e2e typecheck, so a green build is also a green lint and test run. Results are cached, so unchanged packages are skipped on the next run.
 
 ## Development Workflows
 
@@ -75,7 +74,7 @@ The threat-composer package contains the core UI components. The recommended dev
 #### Run Storybook
 
 ```bash
-pdk run storybook
+pnpm storybook
 ```
 
 Open [http://localhost:6006](http://localhost:6006/) to view it in the browser. The page will reload if you make edits.
@@ -85,8 +84,7 @@ Open [http://localhost:6006](http://localhost:6006/) to view it in the browser. 
 #### Run Tests
 
 ```bash
-cd packages/threat-composer
-yarn test
+pnpm nx run @aws/threat-composer:test
 ```
 
 ### Working with the Web App (threat-composer-app)
@@ -94,7 +92,7 @@ yarn test
 #### Start Development Server
 
 ```bash
-pdk run dev
+pnpm dev
 ```
 
 This starts the web application in development mode. Open [http://localhost:3000](http://localhost:3000/) to view it in the browser.
@@ -102,26 +100,23 @@ This starts the web application in development mode. Open [http://localhost:3000
 #### Build for Production
 
 ```bash
-cd packages/threat-composer-app
-yarn build
+pnpm nx run @aws/threat-composer-app:compile
 ```
 
-The build artifacts will be in the `build/` directory.
+The build artifacts will be in the `packages/threat-composer-app/build/` directory.
 
 ### Working with the Browser Extension
 
 See the [Browser Extension README](../packages/threat-composer-app-browser-extension/README.md) for detailed instructions.
 
-Quick start:
+Quick start (from the repository root):
 
 ```bash
-cd packages/threat-composer-app-browser-extension
-
 # Chrome development
-yarn run dev
+pnpm dev:extension
 
 # Firefox development
-yarn run dev:firefox
+pnpm nx run @aws/threat-composer-app-browser-extension:dev:firefox
 ```
 
 ### Working with Infrastructure (threat-composer-infra)
@@ -175,42 +170,43 @@ uv run pytest
 
 ```bash
 # Install all dependencies
-pdk install --frozen-lockfile
+pnpm install --frozen-lockfile
 
-# Build all packages
-pdk build
+# Build all packages (compile, eslint, ruff, unit tests, pytest, e2e typecheck)
+pnpm build
 
 # Run Storybook
-pdk run storybook
+pnpm storybook
 
 # Start web app dev server
-pdk run dev
+pnpm dev
 
 # Run all tests
-pdk test
+pnpm test
 
-# Lint all packages
-pdk run lint
+# Lint all packages (eslint for TypeScript, ruff for Python)
+pnpm lint
 
-# Format code
-pdk run format
+# Type check all packages
+pnpm typecheck
+
+# Show the nx task graph
+pnpm graph
 ```
 
 ### Package-Specific Commands
 
-Navigate to the package directory and use yarn/npm commands:
+Packages do not have their own scripts. Run a single package's nx target from the repository root with `pnpm nx run <package>:<target>`. The package name is the `name` in its `project.json` and the targets are listed there too.
 
 ```bash
-cd packages/threat-composer
-
 # Run tests
-yarn test
+pnpm nx run @aws/threat-composer:test
 
 # Build package
-yarn build
+pnpm nx run @aws/threat-composer:build
 
 # Lint
-yarn lint
+pnpm nx run @aws/threat-composer:eslint
 ```
 
 ## Code Organization
@@ -262,17 +258,31 @@ src/
 
 ```bash
 # Run all tests
-pdk test
+pnpm test
 
 # Run tests for specific package
-cd packages/threat-composer
-yarn test
+pnpm nx run @aws/threat-composer:test
 
 # Run tests in watch mode
-yarn test --watch
+pnpm nx run @aws/threat-composer:test:watch
 
 # Run tests with coverage
-yarn test --coverage
+pnpm nx run @aws/threat-composer:test -- --coverage
+```
+
+### End-to-end tests
+
+Playwright tests for the web app live in `e2e/`. See the [e2e README](../e2e/README.md).
+
+```bash
+# Once: download Chromium
+pnpm e2e:install-browsers
+
+# Run the suite (Playwright starts the dev server itself)
+BROWSER=none pnpm e2e
+
+# Playwright UI mode
+pnpm e2e:ui
 ```
 
 ## Code Quality
@@ -280,28 +290,29 @@ yarn test --coverage
 ### Linting
 
 ```bash
-# Lint all packages
-pdk run eslint
+# Lint all packages (eslint for TypeScript, ruff for Python)
+pnpm lint
+
+# eslint only
+pnpm eslint
 ```
 
 ### Formatting
 
-The project uses Prettier for code formatting:
+The TypeScript packages run eslint with `--fix`, so `pnpm eslint` also applies Prettier formatting. For the Python package:
 
 ```bash
-# Format all code
-pdk run format
+pnpm nx run threat-composer-ai:lint:fix
 ```
 
 ### Type Checking
 
 ```bash
 # Type check all packages
-pdk run type-check
+pnpm typecheck
 
 # Type check specific package
-cd packages/threat-composer
-yarn type-check
+pnpm nx run @aws/threat-composer-e2e:typecheck
 ```
 
 ## Building for Production
@@ -309,30 +320,28 @@ yarn type-check
 ### Build All Packages
 
 ```bash
-pdk build
+pnpm build
 ```
 
 ### Build Specific Package
 
 ```bash
-cd packages/threat-composer
-yarn build
+pnpm nx run @aws/threat-composer:build
 ```
 
 ### Build Browser Extension
 
 ```bash
-cd packages/threat-composer-app-browser-extension
+# Build for Chrome and Firefox
+pnpm nx run @aws/threat-composer-app-browser-extension:compile
 
-# Build for Chrome
-yarn build
-
-# Build for Firefox
-yarn build:firefox
+# Build for one browser only
+pnpm nx run @aws/threat-composer-app-browser-extension:compile:chrome
+pnpm nx run @aws/threat-composer-app-browser-extension:compile:firefox
 
 # Create distribution ZIP
-yarn run zip
-yarn run zip:firefox
+pnpm nx run @aws/threat-composer-app-browser-extension:zip
+pnpm nx run @aws/threat-composer-app-browser-extension:zip:firefox
 ```
 
 ## Deployment
@@ -358,8 +367,8 @@ Quick deploy:
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/my-feature`
 3. Make your changes
-4. Run tests: `pdk test`
-5. Run linting: `pdk run lint`
+4. Run tests: `pnpm test`
+5. Run linting: `pnpm lint`
 6. Commit your changes: `git commit -m "Add my feature"`
 7. Push to your fork: `git push origin feature/my-feature`
 8. Create a Pull Request
@@ -400,7 +409,7 @@ Types:
 
 ```bash
 git clean -fXd
-pdk install --frozen-lockfile
+pnpm install --frozen-lockfile
 ```
 
 ### Getting Help

@@ -12,7 +12,7 @@ They live **outside `packages/*`** so that the app's own test runner never picks
 up these specs. `e2e` is a workspace member and an nx project (`project.json`),
 so it installs with the rest of the repository and its targets take part in the
 nx graph. The browser download is an explicit `install-browsers` target rather
-than a postinstall hook, so a plain `yarn install` does not fetch Chromium.
+than a postinstall hook, so a plain `pnpm install` does not fetch Chromium.
 
 ## Layout
 
@@ -42,9 +42,9 @@ arrive with the build-system migration.
 ## Running
 
 ```bash
-yarn install --frozen-lockfile
-yarn e2e:install-browsers       # once: playwright install chromium
-BROWSER=none yarn e2e           # the suite (Playwright starts the dev server itself)
+pnpm install --frozen-lockfile
+pnpm e2e:install-browsers       # once: playwright install chromium
+BROWSER=none pnpm e2e           # the suite (Playwright starts the dev server itself)
 ```
 
 The `e2e` target depends on `@aws/threat-composer:copy-assets`, which depends on
@@ -59,11 +59,11 @@ build is not in this dependency chain because the suite does not need it.
 The other targets, all run from the repository root:
 
 ```bash
-yarn nx run @aws/threat-composer-e2e:typecheck    # tsc --noEmit over the specs
-BROWSER=none yarn nx run @aws/threat-composer-e2e:e2e:headed   # watch it drive a visible browser
-yarn e2e:ui                                       # Playwright UI mode
-yarn nx run @aws/threat-composer-e2e:e2e:debug    # step through with the inspector
-yarn nx run @aws/threat-composer-e2e:report       # open the HTML report from the last run
+pnpm nx run @aws/threat-composer-e2e:typecheck    # tsc --noEmit over the specs
+BROWSER=none pnpm nx run @aws/threat-composer-e2e:e2e:headed   # watch it drive a visible browser
+pnpm e2e:ui                                       # Playwright UI mode
+pnpm nx run @aws/threat-composer-e2e:e2e:debug    # step through with the inspector
+pnpm nx run @aws/threat-composer-e2e:report       # open the HTML report from the last run
 ```
 
 `BROWSER=none` stops react-scripts opening a browser tab of its own each time
@@ -71,11 +71,11 @@ Playwright boots the dev server. It is not required, just much less irritating.
 
 There is one config (`playwright.config.ts`) and one project, `chromium-dev`.
 Playwright brings up the app itself with
-`yarn nx run @aws/threat-composer-app:dev`, so no separate terminal is
+`pnpm nx run @aws/threat-composer-app:dev`, so no separate terminal is
 needed. To run against a server you already have up, skip Playwright's own:
 
 ```bash
-TC_BASE_URL=http://localhost:3000 yarn e2e
+TC_BASE_URL=http://localhost:3000 pnpm e2e
 ```
 
 Expect **126 passed, 5 skipped**. The five are the GitHub Pages deep-link tests
@@ -94,7 +94,7 @@ One test reports as failed-and-expected: see Known defects below.
 server.** After changing library source you must recompile it:
 
 ```bash
-yarn nx run @aws/threat-composer:copy-assets   # compiles first, then copies images
+pnpm nx run @aws/threat-composer:copy-assets   # compiles first, then copies images
 ```
 
 and restart the dev server. This is good for fidelity, because the suite
@@ -109,7 +109,7 @@ roughly best-first.
 ### UI mode, the one to reach for
 
 ```bash
-yarn e2e:ui
+pnpm e2e:ui
 ```
 
 Pick any test and step through it. For each action you get the DOM snapshot as it
@@ -131,7 +131,7 @@ renders a paginated 37-row table off a 152 KB JSON module.
 ### Watch it drive a real browser
 
 ```bash
-yarn nx run @aws/threat-composer-e2e:e2e:headed     # whole suite, visible
+pnpm nx run @aws/threat-composer-e2e:e2e:headed     # whole suite, visible
 cd e2e && npx playwright test status-and-tags --headed --workers=1
 ```
 
@@ -146,7 +146,7 @@ Artefacts are only kept on failure by default, and since `retries` is 0 locally
 run**. To force them:
 
 ```bash
-yarn nx run @aws/threat-composer-e2e:e2e:trace -- journey-threat-model
+pnpm nx run @aws/threat-composer-e2e:e2e:trace -- journey-threat-model
 cd e2e && npx playwright show-trace test-results/<test-dir>/trace.zip
 ```
 
@@ -157,7 +157,7 @@ screenshot and DOM snapshot at each one.
 ### HTML report
 
 ```bash
-yarn nx run @aws/threat-composer-e2e:report
+pnpm nx run @aws/threat-composer-e2e:report
 ```
 
 Written to `playwright-report/` on every run. Failures embed the screenshot,
