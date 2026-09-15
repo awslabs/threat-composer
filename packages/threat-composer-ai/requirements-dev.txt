@@ -1,0 +1,10 @@
+pytest
+pytest-asyncio
+pytest-cov
+pytest-mock
+ruff
+pytest-asyncio
+pytest-cov
+pytest-mock
+pytest==7.4.3
+ruff
