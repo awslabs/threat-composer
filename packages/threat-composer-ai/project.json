@@ -1,72 +1,52 @@
 {
   "name": "threat-composer-ai",
   "root": "packages/threat-composer-ai",
+  "sourceRoot": "packages/threat-composer-ai/src",
+  "projectType": "library",
   "targets": {
     "install": {
-      "dependsOn": [
-        "^install"
-      ],
-      "executor": "nx:run-commands",
+      "command": "uv sync",
       "options": {
-        "command": "scripts/run-task install",
         "cwd": "packages/threat-composer-ai"
-      }
-    },
-    "pre-compile": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task pre-compile",
-        "cwd": "packages/threat-composer-ai"
-      }
-    },
-    "compile": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task compile",
-        "cwd": "packages/threat-composer-ai"
-      }
-    },
-    "post-compile": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task post-compile",
-        "cwd": "packages/threat-composer-ai"
-      }
-    },
-    "test": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task test",
-        "cwd": "packages/threat-composer-ai"
-      }
-    },
-    "package": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task package",
-        "cwd": "packages/threat-composer-ai"
-      }
-    },
-    "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task build",
-        "cwd": "packages/threat-composer-ai"
-      }
+      },
+      "cache": false
     },
     "lint": {
-      "executor": "nx:run-commands",
+      "command": "uv run ruff check . && uv run ruff format --check .",
       "options": {
-        "command": "scripts/run-task lint",
         "cwd": "packages/threat-composer-ai"
-      }
+      },
+      "dependsOn": [
+        "install"
+      ]
     },
     "lint:fix": {
-      "executor": "nx:run-commands",
+      "command": "uv run ruff check --fix . && uv run ruff format .",
       "options": {
-        "command": "scripts/run-task lint:fix",
         "cwd": "packages/threat-composer-ai"
-      }
+      },
+      "dependsOn": [
+        "install"
+      ],
+      "cache": false
+    },
+    "test": {
+      "command": "uv run pytest tests/",
+      "options": {
+        "cwd": "packages/threat-composer-ai"
+      },
+      "dependsOn": [
+        "install"
+      ],
+      "outputs": []
+    },
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "install",
+        "lint",
+        "test"
+      ]
     }
   }
 }

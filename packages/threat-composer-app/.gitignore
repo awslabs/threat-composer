@@ -1,5 +1,4 @@
 !/.gitattributes
-!/.projen/tasks.json
 !/package.json
 !/.npmignore
 logs

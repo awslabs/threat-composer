@@ -1,4 +1,3 @@
-/.projen/
 /test-reports/
 junit.xml
 /jest.config.json
@@ -14,7 +13,6 @@ dist
 /.github/
 /.vscode/
 /.idea/
-/.projenrc.js
 tsconfig.tsbuildinfo
 /.eslintrc.json
 /.gitattributes

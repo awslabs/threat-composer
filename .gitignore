@@ -1,5 +1,4 @@
 !/.gitattributes
-!/.projen/tasks.json
 !/package.json
 !/.npmignore
 logs
@@ -57,5 +56,4 @@ __pycache__/
 .venv/
 venv/
 !/.syncpackrc.json
-!/.projenrc.ts
 !/LICENSE

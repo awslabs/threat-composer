@@ -1,6 +1,4 @@
 #!/bin/bash
-
 set -e
-pdk install --frozen-lockfile
-pdk build
-pdk workspaces run eslint
+yarn install --frozen-lockfile
+yarn build

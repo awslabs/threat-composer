@@ -28,8 +28,7 @@
   },
   "include": [
     "src/**/*.ts",
-    "**/*.ts",
-    ".projenrc.ts"
+    "scripts/**/*.ts"
   ],
   "exclude": []
 }

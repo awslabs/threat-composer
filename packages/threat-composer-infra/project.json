@@ -1,128 +1,97 @@
 {
   "name": "@aws/threat-composer-infra",
   "root": "packages/threat-composer-infra",
+  "sourceRoot": "packages/threat-composer-infra/src",
+  "projectType": "application",
+  "implicitDependencies": [
+    "@aws/threat-composer-app"
+  ],
   "targets": {
-    "pre-compile": {
-      "executor": "nx:run-commands",
+    "clean": {
+      "command": "rm -rf cdk.out coverage test-reports",
       "options": {
-        "command": "scripts/run-task pre-compile",
-        "cwd": "packages/threat-composer-infra"
-      }
-    },
-    "compile": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task compile",
-        "cwd": "packages/threat-composer-infra"
-      }
-    },
-    "post-compile": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task post-compile",
-        "cwd": "packages/threat-composer-infra"
-      }
-    },
-    "test": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task test",
-        "cwd": "packages/threat-composer-infra"
-      }
-    },
-    "package": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task package",
-        "cwd": "packages/threat-composer-infra"
-      }
-    },
-    "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task build",
-        "cwd": "packages/threat-composer-infra"
-      }
-    },
-    "test:watch": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task test:watch",
-        "cwd": "packages/threat-composer-infra"
-      }
-    },
-    "post-upgrade": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task post-upgrade",
-        "cwd": "packages/threat-composer-infra"
-      }
-    },
-    "upgrade": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task upgrade",
-        "cwd": "packages/threat-composer-infra"
-      }
-    },
-    "watch": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task watch",
-        "cwd": "packages/threat-composer-infra"
-      }
-    },
-    "eslint": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task eslint",
         "cwd": "packages/threat-composer-infra"
       }
     },
     "synth": {
-      "executor": "nx:run-commands",
+      "command": "cdk synth -q",
       "options": {
-        "command": "scripts/run-task synth",
+        "cwd": "packages/threat-composer-infra"
+      },
+      "dependsOn": [
+        "clean",
+        "^build"
+      ],
+      "inputs": [
+        "default",
+        "^default"
+      ],
+      "outputs": [
+        "{projectRoot}/cdk.out"
+      ],
+      "cache": true
+    },
+    "eslint": {
+      "command": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools",
+      "options": {
         "cwd": "packages/threat-composer-infra"
       }
     },
-    "synth:silent": {
-      "executor": "nx:run-commands",
+    "test": {
+      "command": "jest --passWithNoTests --updateSnapshot",
       "options": {
-        "command": "scripts/run-task synth:silent",
         "cwd": "packages/threat-composer-infra"
       }
     },
-    "deploy": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task deploy",
-        "cwd": "packages/threat-composer-infra"
-      }
-    },
-    "destroy": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task destroy",
-        "cwd": "packages/threat-composer-infra"
-      }
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "^build",
+        "synth",
+        "eslint",
+        "test"
+      ]
     },
     "diff": {
-      "executor": "nx:run-commands",
+      "command": "cdk diff",
       "options": {
-        "command": "scripts/run-task diff",
         "cwd": "packages/threat-composer-infra"
-      }
+      },
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false
     },
-    "bundle": {
-      "executor": "nx:run-commands",
+    "deploy": {
+      "command": "cdk deploy",
       "options": {
-        "command": "scripts/run-task bundle",
         "cwd": "packages/threat-composer-infra"
-      }
+      },
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false
+    },
+    "destroy": {
+      "command": "cdk destroy",
+      "options": {
+        "cwd": "packages/threat-composer-infra"
+      },
+      "cache": false
+    },
+    "watch": {
+      "command": "cdk deploy --hotswap && cdk watch",
+      "options": {
+        "cwd": "packages/threat-composer-infra"
+      },
+      "cache": false
+    },
+    "test:watch": {
+      "command": "jest --watch",
+      "options": {
+        "cwd": "packages/threat-composer-infra"
+      },
+      "cache": false
     }
-  },
-  "implicitDependencies": [
-    "@aws/threat-composer-app"
-  ]
+  }
 }

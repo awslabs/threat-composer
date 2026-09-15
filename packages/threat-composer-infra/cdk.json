@@ -2,7 +2,6 @@
   "app": "npx ts-node -P tsconfig.json --prefer-ts-exts src/pipeline.ts",
   "requireApproval": "never",
   "output": "cdk.out",
-  "build": "scripts/run-task bundle",
   "watch": {
     "include": [
       "src/**/*.ts",

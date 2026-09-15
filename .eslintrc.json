@@ -35,8 +35,7 @@
   },
   "ignorePatterns": [
     "packages/**/*.*",
-    "!.projenrc.ts",
-    "!projenrc/**/*.ts"
+    "e2e/**/*.*"
   ],
   "rules": {
     "@typescript-eslint/no-require-imports": [
@@ -48,8 +47,7 @@
         "devDependencies": [
           "**/test/**",
           "**/build-tools/**",
-          ".projenrc.ts",
-          "projenrc/**/*.ts"
+          "scripts/**/*.ts"
         ],
         "optionalDependencies": false,
         "peerDependencies": true
@@ -120,16 +118,5 @@
         ]
       }
     ]
-  },
-  "overrides": [
-    {
-      "files": [
-        ".projenrc.ts"
-      ],
-      "rules": {
-        "@typescript-eslint/no-require-imports": "off",
-        "import/no-extraneous-dependencies": "off"
-      }
-    }
-  ]
+  }
 }

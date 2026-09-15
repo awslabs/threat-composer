@@ -7,8 +7,6 @@
 /.nxignore linguist-generated
 /.prettierignore linguist-generated
 /.prettierrc.json linguist-generated
-/.projen/** linguist-generated
-/.projen/tasks.json linguist-generated
 /.syncpackrc.json linguist-generated
 /LICENSE linguist-generated
 /nx.json linguist-generated

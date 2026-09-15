@@ -1,21 +1,5 @@
 {
   "name": "@aws/threat-composer-app",
-  "scripts": {
-    "build": "scripts/run-task build",
-    "compile": "scripts/run-task compile",
-    "compile:browser-extension": "scripts/run-task compile:browser-extension",
-    "compile:ide-extension": "scripts/run-task compile:ide-extension",
-    "compile:website": "scripts/run-task compile:website",
-    "dev": "scripts/run-task dev",
-    "eslint": "scripts/run-task eslint",
-    "package": "scripts/run-task package",
-    "post-compile": "scripts/run-task post-compile",
-    "post-upgrade": "scripts/run-task post-upgrade",
-    "pre-compile": "scripts/run-task pre-compile",
-    "test": "scripts/run-task test",
-    "upgrade": "scripts/run-task upgrade",
-    "watch": "scripts/run-task watch"
-  },
   "devDependencies": {
     "@cloudscape-design/jest-preset": "2.0.45",
     "@craco/craco": "^7.1.0",

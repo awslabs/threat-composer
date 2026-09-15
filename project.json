@@ -1,0 +1,58 @@
+{
+  "name": "@aws/threat-composer-monorepo",
+  "root": ".",
+  "targets": {
+    "build:packs": {
+      "command": "ts-node ./scripts/data/buildPacks.ts ThreatPack && ts-node ./scripts/data/buildPacks.ts MitigationPack",
+      "inputs": [
+        "{workspaceRoot}/scripts/data/**/*",
+        "{workspaceRoot}/packages/threat-composer/src/data/threatPacks/*.metadata.json",
+        "{workspaceRoot}/packages/threat-composer/src/data/mitigationPacks/*.metadata.json",
+        "{workspaceRoot}/packages/threat-composer/src/data/workspaceExamples/*.tc.json"
+      ],
+      "outputs": [
+        "{workspaceRoot}/packages/threat-composer/src/data/threatPacks/generated",
+        "{workspaceRoot}/packages/threat-composer/src/data/mitigationPacks/generated"
+      ],
+      "cache": true
+    },
+    "build:schema": {
+      "command": "ts-node --compiler-options '{\"lib\":[\"es2019\",\"dom\"]}' ./scripts/generateSchema.ts",
+      "inputs": [
+        "{workspaceRoot}/scripts/generateSchema.ts",
+        "{workspaceRoot}/packages/threat-composer/src/**/*.ts"
+      ],
+      "outputs": [
+        "{workspaceRoot}/schemas"
+      ],
+      "cache": true
+    },
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "build:packs",
+        "build:schema"
+      ]
+    },
+    "export:examples": {
+      "command": "node ./scripts/exportExamples.js",
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "copy-assets"
+        }
+      ],
+      "cache": false
+    },
+    "generate:attribution": {
+      "command": "git secrets --scan && generate-attribution && mv oss-attribution/attribution.txt LICENSE-THIRD-PARTY",
+      "cache": false
+    },
+    "license:checker": {
+      "command": "license-checker --summary --production --excludePrivatePackages --onlyAllow 'MIT;Apache-2.0;ISC;'",
+      "cache": false
+    }
+  }
+}

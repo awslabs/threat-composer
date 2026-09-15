@@ -8,10 +8,11 @@ alone works, in a browser. These specs are that layer. They are deliberately
 written against the app as it stands today so that later build-system work has a
 behavioural baseline to be judged against, rather than "the build still passes".
 
-They live **outside `packages/*`** so that Playwright and its browser download
-stay out of the monorepo dependency tree: `e2e` is a standalone package with its
-own lockfile and is not a workspace member. A Playwright upgrade therefore cannot
-perturb the app's dependency resolution.
+They live **outside `packages/*`** so that the app's own test runner never picks
+up these specs. `e2e` is a workspace member and an nx project (`project.json`),
+so it installs with the rest of the repository and its targets take part in the
+nx graph. The browser download is an explicit `install-browsers` target rather
+than a postinstall hook, so a plain `yarn install` does not fetch Chromium.
 
 ## Layout
 
@@ -40,46 +41,29 @@ arrive with the build-system migration.
 
 ## Running
 
-### First, build the library
-
-From a fresh clone this is required, not optional. The app resolves
-`@aws/threat-composer` through its `"main": "lib/index.js"` and `lib/` is
-gitignored, so without it the dev server cannot resolve the library at all. The
-library's images (5 PNG, 1 GIF) sit in `src` and are copied into `lib` separately
-from the TypeScript build, which does not carry non-code files across, and
-`tests/assets-and-css.spec.ts` asserts they load. The `*.css` pattern in the
-command below is inherited from CI and currently matches nothing in this package;
-the stylesheet the suite checks for comes from Cloudscape, not from `src`.
-
 ```bash
 yarn install --frozen-lockfile
-yarn nx run @aws/threat-composer:compile
-cd packages/threat-composer && rsync -ar --prune-empty-dirs --include='*/' \
-  --include='*.css' --include='*.png' --include='*.gif' --exclude='*' ./src/* ./lib
+yarn e2e:install-browsers       # once: playwright install chromium
+BROWSER=none yarn e2e           # the suite (Playwright starts the dev server itself)
 ```
 
-This mirrors what CI does. It is the first step of the package's projen
-`post-compile` task; the second step is a full Storybook build, which the suite
-does not need.
+The `e2e` target depends on `@aws/threat-composer:copy-assets`, which depends on
+`compile`, so nx builds the library first. That is required, not optional: the
+app resolves `@aws/threat-composer` through its `"main": "lib/index.js"` and
+`lib/` is gitignored, so without it the dev server cannot resolve the library at
+all. The library's images (5 PNG, 1 GIF) sit in `src` and are copied into `lib`
+separately from the TypeScript build, which does not carry non-code files
+across, and `tests/assets-and-css.spec.ts` asserts they load. A full Storybook
+build is not in this dependency chain because the suite does not need it.
 
-### Then the tests
-
-Playwright is not part of the monorepo dependencies. Install it here once:
-
-```bash
-cd e2e && yarn install     # postinstall also runs `playwright install chromium`
-```
-
-Everything then runs from `e2e/`:
+The other targets, all run from the repository root:
 
 ```bash
-cd e2e
-BROWSER=none yarn test     # the suite (Playwright starts the dev server itself)
-yarn typecheck             # tsc --noEmit over the specs
-BROWSER=none yarn test:headed   # same, but watch it drive a visible browser
-yarn test:ui               # Playwright UI mode
-yarn test:debug            # step through with the inspector
-yarn report                # open the HTML report from the last run
+yarn nx run @aws/threat-composer-e2e:typecheck    # tsc --noEmit over the specs
+BROWSER=none yarn nx run @aws/threat-composer-e2e:e2e:headed   # watch it drive a visible browser
+yarn e2e:ui                                       # Playwright UI mode
+yarn nx run @aws/threat-composer-e2e:e2e:debug    # step through with the inspector
+yarn nx run @aws/threat-composer-e2e:report       # open the HTML report from the last run
 ```
 
 `BROWSER=none` stops react-scripts opening a browser tab of its own each time
@@ -87,11 +71,11 @@ Playwright boots the dev server. It is not required, just much less irritating.
 
 There is one config (`playwright.config.ts`) and one project, `chromium-dev`.
 Playwright brings up the app itself with
-`yarn workspace @aws/threat-composer-app run dev`, so no separate terminal is
+`yarn nx run @aws/threat-composer-app:dev`, so no separate terminal is
 needed. To run against a server you already have up, skip Playwright's own:
 
 ```bash
-cd e2e && TC_BASE_URL=http://localhost:3000 yarn test
+TC_BASE_URL=http://localhost:3000 yarn e2e
 ```
 
 Expect **126 passed, 5 skipped**. The five are the GitHub Pages deep-link tests
@@ -110,13 +94,12 @@ One test reports as failed-and-expected: see Known defects below.
 server.** After changing library source you must recompile it:
 
 ```bash
-yarn workspace @aws/threat-composer run compile
+yarn nx run @aws/threat-composer:copy-assets   # compiles first, then copies images
 ```
 
-and restart the dev server. If you changed a library image rather than TypeScript,
-re-run the rsync from the section above as well, since `tsc` does not copy those. This is good for fidelity, because the suite exercises the artefact
-that actually ships, but it is an easy way to waste an hour wondering why an edit
-changed nothing.
+and restart the dev server. This is good for fidelity, because the suite
+exercises the artefact that actually ships, but it is an easy way to waste an
+hour wondering why an edit changed nothing.
 
 ## Seeing what the tests actually did
 
@@ -126,7 +109,7 @@ roughly best-first.
 ### UI mode, the one to reach for
 
 ```bash
-cd e2e && yarn test:ui
+yarn e2e:ui
 ```
 
 Pick any test and step through it. For each action you get the DOM snapshot as it
@@ -148,9 +131,8 @@ renders a paginated 37-row table off a 152 KB JSON module.
 ### Watch it drive a real browser
 
 ```bash
-cd e2e
-yarn test:headed                                    # whole suite, visible
-npx playwright test status-and-tags --headed --workers=1
+yarn nx run @aws/threat-composer-e2e:e2e:headed     # whole suite, visible
+cd e2e && npx playwright test status-and-tags --headed --workers=1
 ```
 
 Add `--workers=1` or the parallel windows are unwatchable. Note the suite forces
@@ -164,19 +146,18 @@ Artefacts are only kept on failure by default, and since `retries` is 0 locally
 run**. To force them:
 
 ```bash
-cd e2e
-yarn test:trace -- journey-threat-model
-yarn trace test-results/<test-dir>/trace.zip
+yarn nx run @aws/threat-composer-e2e:e2e:trace -- journey-threat-model
+cd e2e && npx playwright show-trace test-results/<test-dir>/trace.zip
 ```
 
-`test:trace` sets `TC_CAPTURE=1`, which turns trace, video and per-step
+`e2e:trace` sets `TC_CAPTURE=1`, which turns trace, video and per-step
 screenshots on for every test. The journey spec alone records ~200 actions with a
 screenshot and DOM snapshot at each one.
 
 ### HTML report
 
 ```bash
-cd e2e && yarn report
+yarn nx run @aws/threat-composer-e2e:report
 ```
 
 Written to `playwright-report/` on every run. Failures embed the screenshot,

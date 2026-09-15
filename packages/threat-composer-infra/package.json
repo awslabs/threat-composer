@@ -1,24 +1,5 @@
 {
   "name": "@aws/threat-composer-infra",
-  "scripts": {
-    "build": "scripts/run-task build",
-    "bundle": "scripts/run-task bundle",
-    "compile": "scripts/run-task compile",
-    "deploy": "scripts/run-task deploy",
-    "destroy": "scripts/run-task destroy",
-    "diff": "scripts/run-task diff",
-    "eslint": "scripts/run-task eslint",
-    "package": "scripts/run-task package",
-    "post-compile": "scripts/run-task post-compile",
-    "post-upgrade": "scripts/run-task post-upgrade",
-    "pre-compile": "scripts/run-task pre-compile",
-    "synth": "scripts/run-task synth",
-    "synth:silent": "scripts/run-task synth:silent",
-    "test": "scripts/run-task test",
-    "test:watch": "scripts/run-task test:watch",
-    "upgrade": "scripts/run-task upgrade",
-    "watch": "scripts/run-task watch"
-  },
   "devDependencies": {
     "@types/jest": "29.5.14",
     "@types/node": "^18",
@@ -39,7 +20,8 @@
     "@aws/pdk": "^0.26.7",
     "aws-cdk-lib": "^2.128.0",
     "cdk-nag": "2.35.88",
-    "constructs": "^10.0.5"
+    "constructs": "^10.0.5",
+    "projen": "^0.82.8"
   },
   "license": "Apache-2.0",
   "version": "0.0.0",

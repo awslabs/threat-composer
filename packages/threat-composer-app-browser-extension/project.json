@@ -1,114 +1,156 @@
 {
   "name": "@aws/threat-composer-app-browser-extension",
   "root": "packages/threat-composer-app-browser-extension",
+  "sourceRoot": "packages/threat-composer-app-browser-extension/src",
+  "projectType": "application",
+  "implicitDependencies": [
+    "@aws/threat-composer-app"
+  ],
   "targets": {
-    "pre-compile": {
-      "executor": "nx:run-commands",
+    "clean": {
+      "command": "rm -rf .output dist coverage test-reports",
       "options": {
-        "command": "scripts/run-task pre-compile",
         "cwd": "packages/threat-composer-app-browser-extension"
       }
+    },
+    "compile:chrome": {
+      "command": "wxt build -b chrome",
+      "options": {
+        "cwd": "packages/threat-composer-app-browser-extension"
+      },
+      "dependsOn": [
+        "clean",
+        {
+          "projects": [
+            "@aws/threat-composer-app"
+          ],
+          "target": "compile:browser-extension"
+        }
+      ],
+      "inputs": [
+        "default",
+        "{workspaceRoot}/packages/threat-composer-app/build/browser-extension/**/*",
+        "{workspaceRoot}/packages/threat-composer-app/src/assets/logo-dark.svg"
+      ],
+      "outputs": [
+        "{projectRoot}/.output/chrome-mv3"
+      ],
+      "cache": true
+    },
+    "compile:firefox": {
+      "command": "wxt build -b firefox",
+      "options": {
+        "cwd": "packages/threat-composer-app-browser-extension"
+      },
+      "dependsOn": [
+        "clean",
+        "compile:chrome"
+      ],
+      "inputs": [
+        "default",
+        "{workspaceRoot}/packages/threat-composer-app/build/browser-extension/**/*",
+        "{workspaceRoot}/packages/threat-composer-app/src/assets/logo-dark.svg"
+      ],
+      "outputs": [
+        "{projectRoot}/.output/firefox-mv2"
+      ],
+      "cache": true
     },
     "compile": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task compile",
-        "cwd": "packages/threat-composer-app-browser-extension"
-      }
+      "executor": "nx:noop",
+      "dependsOn": [
+        "compile:chrome",
+        "compile:firefox"
+      ]
     },
-    "post-compile": {
-      "executor": "nx:run-commands",
+    "eslint": {
+      "command": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools",
       "options": {
-        "command": "scripts/run-task post-compile",
         "cwd": "packages/threat-composer-app-browser-extension"
       }
     },
     "test": {
-      "executor": "nx:run-commands",
+      "command": "jest --passWithNoTests --updateSnapshot",
       "options": {
-        "command": "scripts/run-task test",
         "cwd": "packages/threat-composer-app-browser-extension"
-      }
+      },
+      "dependsOn": []
     },
     "package": {
-      "executor": "nx:run-commands",
+      "command": "mkdir -p dist/js && npm pack --pack-destination dist/js",
       "options": {
-        "command": "scripts/run-task package",
         "cwd": "packages/threat-composer-app-browser-extension"
-      }
+      },
+      "dependsOn": [
+        "compile"
+      ]
     },
     "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task build",
-        "cwd": "packages/threat-composer-app-browser-extension"
-      }
-    },
-    "test:watch": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task test:watch",
-        "cwd": "packages/threat-composer-app-browser-extension"
-      }
-    },
-    "post-upgrade": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task post-upgrade",
-        "cwd": "packages/threat-composer-app-browser-extension"
-      }
-    },
-    "upgrade": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task upgrade",
-        "cwd": "packages/threat-composer-app-browser-extension"
-      }
-    },
-    "watch": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task watch",
-        "cwd": "packages/threat-composer-app-browser-extension"
-      }
-    },
-    "eslint": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task eslint",
-        "cwd": "packages/threat-composer-app-browser-extension"
-      }
-    },
-    "dev": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task dev",
-        "cwd": "packages/threat-composer-app-browser-extension"
-      }
-    },
-    "dev:firefox": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task dev:firefox",
-        "cwd": "packages/threat-composer-app-browser-extension"
-      }
+      "executor": "nx:noop",
+      "dependsOn": [
+        "^build",
+        "compile",
+        "eslint",
+        "test",
+        "package"
+      ]
     },
     "zip": {
-      "executor": "nx:run-commands",
+      "command": "wxt zip",
       "options": {
-        "command": "scripts/run-task zip",
         "cwd": "packages/threat-composer-app-browser-extension"
-      }
+      },
+      "dependsOn": [
+        "compile:chrome"
+      ],
+      "cache": false
     },
     "zip:firefox": {
-      "executor": "nx:run-commands",
+      "command": "wxt zip --browser firefox",
       "options": {
-        "command": "scripts/run-task zip:firefox",
         "cwd": "packages/threat-composer-app-browser-extension"
-      }
+      },
+      "dependsOn": [
+        "compile:firefox"
+      ],
+      "cache": false
+    },
+    "dev": {
+      "command": "wxt",
+      "options": {
+        "cwd": "packages/threat-composer-app-browser-extension"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer-app"
+          ],
+          "target": "compile:browser-extension"
+        }
+      ],
+      "cache": false
+    },
+    "dev:firefox": {
+      "command": "wxt --browser firefox",
+      "options": {
+        "cwd": "packages/threat-composer-app-browser-extension"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer-app"
+          ],
+          "target": "compile:browser-extension"
+        }
+      ],
+      "cache": false
+    },
+    "watch": {
+      "command": "tsc --build -w",
+      "options": {
+        "cwd": "packages/threat-composer-app-browser-extension"
+      },
+      "cache": false
     }
-  },
-  "implicitDependencies": [
-    "@aws/threat-composer-app"
-  ]
+  }
 }

@@ -78,7 +78,7 @@ export default defineConfig({
     ? undefined
     : {
         // Run the app's dev server from the repo root via the workspace.
-        command: 'yarn workspace @aws/threat-composer-app run dev',
+        command: 'yarn nx run @aws/threat-composer-app:dev',
         cwd: REPO_ROOT,
         url: BASE_URL,
         reuseExistingServer: REUSE_SERVER,

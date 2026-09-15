@@ -1,107 +1,170 @@
 {
   "name": "@aws/threat-composer-app",
   "root": "packages/threat-composer-app",
+  "sourceRoot": "packages/threat-composer-app/src",
+  "projectType": "application",
+  "implicitDependencies": [
+    "@aws/threat-composer"
+  ],
   "targets": {
-    "pre-compile": {
-      "executor": "nx:run-commands",
+    "clean": {
+      "command": "rm -rf build coverage test-reports",
       "options": {
-        "command": "scripts/run-task pre-compile",
-        "cwd": "packages/threat-composer-app"
-      }
-    },
-    "compile": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task compile",
-        "cwd": "packages/threat-composer-app"
-      }
-    },
-    "post-compile": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task post-compile",
-        "cwd": "packages/threat-composer-app"
-      }
-    },
-    "test": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task test",
-        "cwd": "packages/threat-composer-app"
-      }
-    },
-    "package": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task package",
-        "cwd": "packages/threat-composer-app"
-      }
-    },
-    "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task build",
-        "cwd": "packages/threat-composer-app"
-      }
-    },
-    "post-upgrade": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task post-upgrade",
-        "cwd": "packages/threat-composer-app"
-      }
-    },
-    "upgrade": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task upgrade",
-        "cwd": "packages/threat-composer-app"
-      }
-    },
-    "watch": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task watch",
-        "cwd": "packages/threat-composer-app"
-      }
-    },
-    "eslint": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task eslint",
-        "cwd": "packages/threat-composer-app"
-      }
-    },
-    "dev": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task dev",
         "cwd": "packages/threat-composer-app"
       }
     },
     "compile:website": {
-      "executor": "nx:run-commands",
+      "command": "BUILD_PATH=./build/website/ craco build",
       "options": {
-        "command": "scripts/run-task compile:website",
         "cwd": "packages/threat-composer-app"
-      }
+      },
+      "dependsOn": [
+        "clean",
+        "^build"
+      ],
+      "inputs": [
+        "default",
+        "^default",
+        {
+          "env": "REACT_APP_ROUTE_BASE_PATH"
+        },
+        {
+          "env": "REACT_APP_GITHUB_PAGES"
+        },
+        {
+          "env": "PUBLIC_URL"
+        }
+      ],
+      "outputs": [
+        "{projectRoot}/build/website"
+      ],
+      "cache": true
     },
     "compile:browser-extension": {
-      "executor": "nx:run-commands",
+      "command": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/browser-extension/ REACT_APP_APP_MODE=browser-extension craco build",
       "options": {
-        "command": "scripts/run-task compile:browser-extension",
         "cwd": "packages/threat-composer-app"
-      }
+      },
+      "dependsOn": [
+        "clean",
+        "^build"
+      ],
+      "inputs": [
+        "default",
+        "^default"
+      ],
+      "outputs": [
+        "{projectRoot}/build/browser-extension"
+      ],
+      "cache": true
     },
     "compile:ide-extension": {
-      "executor": "nx:run-commands",
+      "command": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/ide-extension/ REACT_APP_APP_MODE=ide-extension craco build",
       "options": {
-        "command": "scripts/run-task compile:ide-extension",
         "cwd": "packages/threat-composer-app"
-      }
+      },
+      "dependsOn": [
+        "clean",
+        "^build"
+      ],
+      "inputs": [
+        "default",
+        "^default"
+      ],
+      "outputs": [
+        "{projectRoot}/build/ide-extension"
+      ],
+      "cache": true
+    },
+    "compile": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "compile:website",
+        "compile:browser-extension",
+        "compile:ide-extension"
+      ]
+    },
+    "copy-storybook": {
+      "command": "mkdir -p ./build/storybook && cp -r ../threat-composer/storybook.out/ ./build/storybook/",
+      "options": {
+        "cwd": "packages/threat-composer-app"
+      },
+      "dependsOn": [
+        "clean",
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "storybook:build"
+        }
+      ],
+      "inputs": [
+        "{workspaceRoot}/packages/threat-composer/storybook.out/**/*"
+      ],
+      "outputs": [
+        "{projectRoot}/build/storybook"
+      ],
+      "cache": true
+    },
+    "eslint": {
+      "command": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools",
+      "options": {
+        "cwd": "packages/threat-composer-app"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "compile"
+        }
+      ]
+    },
+    "test": {
+      "command": "craco test --watchAll=false --passWithNoTests",
+      "options": {
+        "cwd": "packages/threat-composer-app"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "copy-assets"
+        }
+      ]
+    },
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "^build",
+        "compile",
+        "copy-storybook",
+        "eslint",
+        "test"
+      ]
+    },
+    "dev": {
+      "command": "craco start",
+      "options": {
+        "cwd": "packages/threat-composer-app"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "copy-assets"
+        }
+      ],
+      "cache": false
+    },
+    "watch": {
+      "command": "tsc --build -w",
+      "options": {
+        "cwd": "packages/threat-composer-app"
+      },
+      "cache": false
     }
-  },
-  "implicitDependencies": [
-    "@aws/threat-composer"
-  ]
+  }
 }

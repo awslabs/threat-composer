@@ -1,97 +1,123 @@
 {
   "name": "@aws/threat-composer",
   "root": "packages/threat-composer",
+  "sourceRoot": "packages/threat-composer/src",
+  "projectType": "library",
   "targets": {
-    "pre-compile": {
-      "executor": "nx:run-commands",
+    "clean": {
+      "command": "rm -rf lib dist storybook.out coverage test-reports tsconfig.tsbuildinfo",
       "options": {
-        "command": "scripts/run-task pre-compile",
         "cwd": "packages/threat-composer"
       }
     },
     "compile": {
-      "executor": "nx:run-commands",
+      "command": "tsc --build",
       "options": {
-        "command": "scripts/run-task compile",
         "cwd": "packages/threat-composer"
-      }
+      },
+      "dependsOn": [
+        "clean",
+        {
+          "projects": [
+            "@aws/threat-composer-monorepo"
+          ],
+          "target": "build:packs"
+        }
+      ],
+      "outputs": [
+        "{projectRoot}/lib"
+      ]
     },
-    "post-compile": {
-      "executor": "nx:run-commands",
+    "copy-assets": {
+      "command": "rsync -ar --prune-empty-dirs --include='*/' --include='*.css' --include='*.png' --include='*.gif' --exclude='*' ./src/ ./lib/",
       "options": {
-        "command": "scripts/run-task post-compile",
+        "cwd": "packages/threat-composer"
+      },
+      "dependsOn": [
+        "compile"
+      ],
+      "inputs": [
+        "{projectRoot}/src/**/*.css",
+        "{projectRoot}/src/**/*.png",
+        "{projectRoot}/src/**/*.gif"
+      ],
+      "outputs": [
+        "{projectRoot}/lib/**/*.css",
+        "{projectRoot}/lib/**/*.png",
+        "{projectRoot}/lib/**/*.gif"
+      ],
+      "cache": true
+    },
+    "storybook:build": {
+      "command": "storybook build -o storybook.out",
+      "options": {
+        "cwd": "packages/threat-composer"
+      },
+      "dependsOn": [
+        "clean"
+      ],
+      "inputs": [
+        "default"
+      ],
+      "outputs": [
+        "{projectRoot}/storybook.out"
+      ],
+      "cache": true
+    },
+    "eslint": {
+      "command": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools",
+      "options": {
         "cwd": "packages/threat-composer"
       }
     },
     "test": {
-      "executor": "nx:run-commands",
+      "command": "jest --passWithNoTests --updateSnapshot",
       "options": {
-        "command": "scripts/run-task test",
         "cwd": "packages/threat-composer"
-      }
+      },
+      "dependsOn": []
     },
     "package": {
-      "executor": "nx:run-commands",
+      "command": "mkdir -p dist/js && npm pack --pack-destination dist/js",
       "options": {
-        "command": "scripts/run-task package",
         "cwd": "packages/threat-composer"
-      }
+      },
+      "dependsOn": [
+        "copy-assets"
+      ]
     },
     "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task build",
-        "cwd": "packages/threat-composer"
-      }
-    },
-    "test:watch": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task test:watch",
-        "cwd": "packages/threat-composer"
-      }
-    },
-    "post-upgrade": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task post-upgrade",
-        "cwd": "packages/threat-composer"
-      }
-    },
-    "upgrade": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task upgrade",
-        "cwd": "packages/threat-composer"
-      }
-    },
-    "watch": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task watch",
-        "cwd": "packages/threat-composer"
-      }
-    },
-    "eslint": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "scripts/run-task eslint",
-        "cwd": "packages/threat-composer"
-      }
+      "executor": "nx:noop",
+      "dependsOn": [
+        "^build",
+        "compile",
+        "copy-assets",
+        "storybook:build",
+        "eslint",
+        "test",
+        "package"
+      ]
     },
     "storybook": {
-      "executor": "nx:run-commands",
+      "command": "storybook dev -p 6006",
       "options": {
-        "command": "scripts/run-task storybook",
         "cwd": "packages/threat-composer"
-      }
+      },
+      "cache": false
     },
-    "storybook:build": {
-      "executor": "nx:run-commands",
+    "test:watch": {
+      "command": "jest --watch",
       "options": {
-        "command": "scripts/run-task storybook:build",
         "cwd": "packages/threat-composer"
-      }
+      },
+      "cache": false
+    },
+    "watch": {
+      "command": "tsc --build -w",
+      "options": {
+        "cwd": "packages/threat-composer"
+      },
+      "cache": false
     }
   }
 }

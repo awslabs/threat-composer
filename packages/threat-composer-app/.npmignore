@@ -1,4 +1,3 @@
-/.projen/
 /test/
 /tsconfig.dev.json
 /src/
@@ -10,7 +9,6 @@ dist
 /.github/
 /.vscode/
 /.idea/
-/.projenrc.js
 tsconfig.tsbuildinfo
 /.eslintrc.json
 /build/

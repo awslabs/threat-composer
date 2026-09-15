@@ -1,0 +1,115 @@
+{
+  "name": "@aws/threat-composer-e2e",
+  "root": "e2e",
+  "sourceRoot": "e2e",
+  "projectType": "application",
+  "implicitDependencies": [
+    "@aws/threat-composer-app"
+  ],
+  "targets": {
+    "install-browsers": {
+      "command": "playwright install chromium",
+      "options": {
+        "cwd": "e2e"
+      },
+      "cache": false
+    },
+    "typecheck": {
+      "command": "tsc --noEmit -p tsconfig.json",
+      "options": {
+        "cwd": "e2e"
+      },
+      "inputs": [
+        "default"
+      ],
+      "cache": true
+    },
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "typecheck"
+      ]
+    },
+    "e2e": {
+      "command": "playwright test",
+      "options": {
+        "cwd": "e2e"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "copy-assets"
+        }
+      ],
+      "cache": false
+    },
+    "e2e:headed": {
+      "command": "playwright test --headed",
+      "options": {
+        "cwd": "e2e"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "copy-assets"
+        }
+      ],
+      "cache": false
+    },
+    "e2e:ui": {
+      "command": "playwright test --ui",
+      "options": {
+        "cwd": "e2e"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "copy-assets"
+        }
+      ],
+      "cache": false
+    },
+    "e2e:debug": {
+      "command": "playwright test --debug",
+      "options": {
+        "cwd": "e2e"
+      },
+      "cache": false
+    },
+    "e2e:trace": {
+      "command": "TC_CAPTURE=1 playwright test",
+      "options": {
+        "cwd": "e2e"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "copy-assets"
+        }
+      ],
+      "cache": false
+    },
+    "report": {
+      "command": "playwright show-report",
+      "options": {
+        "cwd": "e2e"
+      },
+      "cache": false
+    },
+    "trace": {
+      "command": "playwright show-trace",
+      "options": {
+        "cwd": "e2e"
+      },
+      "cache": false
+    }
+  }
+}

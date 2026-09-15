@@ -1,34 +1,30 @@
 {
   "name": "@aws/threat-composer-monorepo",
   "scripts": {
-    "ai:cli": "scripts/run-task ai:cli",
-    "build": "scripts/run-task build",
-    "build:packs": "scripts/run-task build:packs",
-    "build:schema": "scripts/run-task build:schema",
-    "clobber": "scripts/run-task clobber",
-    "compile": "scripts/run-task compile",
-    "dev": "scripts/run-task dev",
-    "eslint": "scripts/run-task eslint",
-    "export:examples": "scripts/run-task export:examples",
-    "generate:attribution": "scripts/run-task generate:attribution",
-    "graph": "scripts/run-task graph",
-    "license:checker": "scripts/run-task license:checker",
-    "package": "scripts/run-task package",
-    "post-compile": "scripts/run-task post-compile",
-    "post-upgrade": "scripts/run-task post-upgrade",
-    "postinstall": "scripts/run-task postinstall",
-    "pre-compile": "scripts/run-task pre-compile",
-    "prepare": "scripts/run-task prepare",
-    "run-many": "scripts/run-task run-many",
-    "storybook": "scripts/run-task storybook",
-    "test": "scripts/run-task test",
-    "upgrade": "scripts/run-task upgrade",
-    "upgrade-deps": "scripts/run-task upgrade-deps",
-    "watch": "scripts/run-task watch",
-    "install:ci": "scripts/run-task install:ci"
+    "ai:cli": "uv run --project packages/threat-composer-ai threat-composer-ai-cli",
+    "build": "nx run-many -t build --nx-bail",
+    "build:packs": "nx run @aws/threat-composer-monorepo:build:packs",
+    "build:schema": "nx run @aws/threat-composer-monorepo:build:schema",
+    "clean": "nx run-many -t clean",
+    "dev": "GENERATE_SOURCEMAP=false nx run @aws/threat-composer-app:dev",
+    "dev:extension": "nx run @aws/threat-composer-app-browser-extension:dev",
+    "e2e": "nx run @aws/threat-composer-e2e:e2e",
+    "e2e:install-browsers": "nx run @aws/threat-composer-e2e:install-browsers",
+    "e2e:ui": "nx run @aws/threat-composer-e2e:e2e:ui",
+    "eslint": "nx run-many -t eslint --nx-bail",
+    "export:examples": "nx run @aws/threat-composer-monorepo:export:examples",
+    "generate:attribution": "nx run @aws/threat-composer-monorepo:generate:attribution",
+    "graph": "nx graph",
+    "license:checker": "nx run @aws/threat-composer-monorepo:license:checker",
+    "lint": "nx run-many -t eslint lint --nx-bail",
+    "postinstall": "nx run threat-composer-ai:install",
+    "prepare": "husky install",
+    "storybook": "GENERATE_SOURCEMAP=false nx run @aws/threat-composer:storybook",
+    "test": "nx run-many -t test --nx-bail",
+    "typecheck": "nx run-many -t typecheck --nx-bail",
+    "upgrade-deps": "npm-check-updates --deep --rejectVersion 0.0.0 -u --dep prod,dev,peer,optional,bundle --target=minor && syncpack fix-mismatches && rm yarn.lock && yarn install"
   },
   "devDependencies": {
-    "@aws/pdk": "^0.26.7",
     "@babel/helper-split-export-declaration": "^7.24.7",
     "@types/node": "^18",
     "@typescript-eslint/eslint-plugin": "^7",
@@ -47,9 +43,6 @@
     "syncpack": "^13",
     "ts-node": "10.9.2",
     "typescript": "5.8.3"
-  },
-  "peerDependencies": {
-    "nx": "^19"
   },
   "dependencies": {
     "@aws-cdk/aws-cognito-identitypool-alpha": "latest",
@@ -79,20 +72,22 @@
     "node": ">=16",
     "yarn": ">=1 <2"
   },
-  "main": "lib/index.js",
   "license": "Apache-2.0",
   "version": "0.0.0",
-  "types": "lib/index.d.ts",
   "private": true,
   "workspaces": {
     "packages": [
       "packages/threat-composer",
       "packages/threat-composer-app",
       "packages/threat-composer-app-browser-extension",
-      "packages/threat-composer-infra"
+      "packages/threat-composer-infra",
+      "e2e"
     ],
     "nohoist": [
       "**/wxt"
     ]
+  },
+  "nx": {
+    "includedScripts": []
   }
 }
