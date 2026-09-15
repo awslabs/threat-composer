@@ -7,7 +7,7 @@
   "plugins": [
     "@typescript-eslint",
     "import",
-    "header"
+    "@tony.ganchev/header"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -216,7 +216,7 @@
         ]
       }
     ],
-    "header/header": [
+    "@tony.ganchev/header/header": [
       2,
       "../../header.js"
     ]

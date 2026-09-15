@@ -40,6 +40,9 @@ importers:
       '@babel/helper-split-export-declaration':
         specifier: ^7.24.7
         version: 7.24.7
+      '@tony.ganchev/eslint-plugin-header':
+        specifier: ^3.4.4
+        version: 3.4.4(eslint@8.57.1)
       '@types/node':
         specifier: ^18
         version: 18.19.87
@@ -58,9 +61,6 @@ importers:
       eslint-import-resolver-typescript:
         specifier: 3.10.1
         version: 3.10.1(eslint-plugin-import@2.31.0)(eslint@8.57.1)
-      eslint-plugin-header:
-        specifier: 3.1.1
-        version: 3.1.1(eslint@8.57.1)
       eslint-plugin-import:
         specifier: 2.31.0
         version: 2.31.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
@@ -4163,6 +4163,11 @@ packages:
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
 
+  '@tony.ganchev/eslint-plugin-header@3.4.4':
+    resolution: {integrity: sha512-O3PDvjikVWECu078bLdRb2HwjVgR+wa7D0GX8gN1A8axlgEc7tordHOoEYcKRVxGcAw7bxXjwiKGXaY17qXD+Q==}
+    peerDependencies:
+      eslint: '>=7.7.0'
+
   '@tootallnate/once@1.1.2':
     resolution: {integrity: sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==}
     engines: {node: '>= 6'}
@@ -6798,11 +6803,6 @@ packages:
       '@babel/plugin-syntax-flow': ^7.14.5
       '@babel/plugin-transform-react-jsx': ^7.14.9
       eslint: ^8.1.0
-
-  eslint-plugin-header@3.1.1:
-    resolution: {integrity: sha512-9vlKxuJ4qf793CmeeSrZUvVClw6amtpghq3CuWcB5cUNnWHQhgcqy5eF8oVKFk1G3Y/CbchGfEaw3wiIJaNmVg==}
-    peerDependencies:
-      eslint: '>=7.7.0'
 
   eslint-plugin-import@2.31.0:
     resolution: {integrity: sha512-ixmkI62Rbc2/w8Vfxyh1jQRTdRTF52VxwRVHl/ykPAmqG+Nb7/kNn+byLP0LxPgI7zWA16Jt82SybJInmMia3A==}
@@ -17603,6 +17603,10 @@ snapshots:
     dependencies:
       '@testing-library/dom': 9.3.4
 
+  '@tony.ganchev/eslint-plugin-header@3.4.4(eslint@8.57.1)':
+    dependencies:
+      eslint: 8.57.1
+
   '@tootallnate/once@1.1.2': {}
 
   '@tsconfig/node10@1.0.11': {}
@@ -20692,10 +20696,6 @@ snapshots:
       eslint: 8.57.1
       lodash: 4.18.1
       string-natural-compare: 3.0.1
-
-  eslint-plugin-header@3.1.1(eslint@8.57.1):
-    dependencies:
-      eslint: 8.57.1
 
   eslint-plugin-import@2.31.0(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@4.9.5))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1):
     dependencies:
