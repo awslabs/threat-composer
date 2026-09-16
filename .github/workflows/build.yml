@@ -20,23 +20,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '24'
       - name: Install uv
         uses: astral-sh/setup-uv@v5
       - run: pushd /tmp && git clone --depth 1 https://github.com/awslabs/git-secrets.git && cd ./git-secrets && PREFIX=/tmp/git-secrets make install && popd
       - run: npm install -g typescript
-      - run: npm install -g yarn
+      # pnpm is installed directly rather than through corepack: pnpm 10 manages
+      # its own exact version from the packageManager field in package.json.
+      - run: npm install -g pnpm@10
       - run: npm install -g oss-attribution-generator
-      - run: npm install -g @aws/pdk
-      - run: pdk install --frozen-lockfile
-      - run: PATH=/tmp/git-secrets/bin:$PATH pdk run build
-      - run: pdk workspaces run eslint
-      # threat-composer-ai is an nx project, not a yarn workspace, so the line
-      # above does not reach it. Its pytest suite already runs as part of
-      # `pdk run build` (threat-composer-ai:build spawns test), but nothing
-      # invokes its ruff target, so lint has been enforced only by the
-      # pre-commit hook. This gives CI parity with the hook.
-      - run: yarn nx run threat-composer-ai:lint
+      - run: pnpm install --frozen-lockfile
+      # `pnpm build` runs every project's nx `build` target. Each package's
+      # build depends on its eslint and test targets (and ruff/pytest for
+      # threat-composer-ai), so lint and tests are part of the build graph
+      # rather than separate steps.
+      - run: PATH=/tmp/git-secrets/bin:$PATH pnpm build
 
   e2e:
     # Playwright functional tests for the web app. Kept as a separate job from
@@ -50,47 +48,42 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '24'
       - name: Install uv
         uses: astral-sh/setup-uv@v5
-      - run: npm install -g yarn
-      - run: yarn install --frozen-lockfile
-      # The library must be compiled before the app can be served: the app
-      # resolves @aws/threat-composer through its "main": "lib/index.js".
-      - run: yarn nx run @aws/threat-composer:compile
-      # The asset copy is required, not optional. The library's CSS/PNG/GIF are
-      # rsync'd out of src into lib and imported from there, and the suite
-      # asserts both that the app is styled and that images load. This mirrors
-      # the first step of the package's projen `post-compile` task; the second
-      # step of that task is a full Storybook build, which the suite does not
-      # need, so it is deliberately not run here.
-      - name: Copy library assets into lib
-        run: >-
-          rsync -ar --prune-empty-dirs --include='*/' --include='*.css'
-          --include='*.png' --include='*.gif' --exclude='*' ./src/* ./lib
-        working-directory: packages/threat-composer
-      # e2e sits outside the yarn workspaces, so that the app's own test runner
-      # never picks up these specs. It still uses yarn, to match the rest of the
-      # repository, and carries its own yarn.lock.
-      - name: Install e2e dependencies
-        run: yarn install --frozen-lockfile
-        working-directory: e2e
+      # pnpm is installed directly rather than through corepack: pnpm 10 manages
+      # its own exact version from the packageManager field in package.json.
+      - run: npm install -g pnpm@10
+      # e2e is a pnpm workspace and an nx project (e2e/project.json), so one
+      # install covers it. Browsers are an explicit target rather than a
+      # postinstall hook, so a plain `pnpm install` does not download Chromium.
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm nx run @aws/threat-composer-e2e:install-browsers
       - name: Typecheck e2e specs
-        run: yarn typecheck
-        working-directory: e2e
-      # BROWSER=none stops react-scripts opening a browser when Playwright boots
-      # the dev server through the app's `dev` script.
+        run: pnpm nx run @aws/threat-composer-e2e:typecheck
+      # Each suite's nx target declares what it needs built. `e2e` depends on
+      # @aws/threat-composer:copy-assets (which depends on compile), so the
+      # library is compiled and its CSS/PNG/GIF copied into lib before
+      # Playwright boots the Vite dev server; the suite asserts that the app is
+      # styled and that images load, so the asset copy is required. `e2e:preview`
+      # depends on the app's compile:website and serves the production bundle,
+      # `e2e:variants` on the browser-extension and ide-extension builds, and
+      # `e2e:extension` on the packed Chrome extension. A full Storybook build is
+      # in none of these chains.
       - name: Run web app suite
-        run: yarn test
-        working-directory: e2e
-        env:
-          BROWSER: none
+        run: pnpm nx run @aws/threat-composer-e2e:e2e
+      - name: Run production-preview suite
+        run: pnpm nx run @aws/threat-composer-e2e:e2e:preview
+      - name: Run build-variants suite
+        run: pnpm nx run @aws/threat-composer-e2e:e2e:variants
+      - name: Run browser-extension suite
+        run: pnpm nx run @aws/threat-composer-e2e:e2e:extension
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: |
-            e2e/playwright-report/
-            e2e/test-results/
+            e2e/playwright-report*/
+            e2e/test-results*/
           retention-days: 7

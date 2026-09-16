@@ -65,7 +65,7 @@ export const test = base.extend<ExtensionFixtures>({
   context: async ({}, use) => {
     if (!fs.existsSync(path.join(EXTENSION_PATH, 'manifest.json'))) {
       throw new Error(
-        `No built extension at ${EXTENSION_PATH}. Run: yarn e2e:build:extension`,
+        `No built extension at ${EXTENSION_PATH}. Run: pnpm e2e:extension, which builds it first`,
       );
     }
 

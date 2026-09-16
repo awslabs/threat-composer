@@ -1,0 +1,71 @@
+{
+  "name": "@aws/threat-composer-monorepo",
+  "root": ".",
+  "targets": {
+    "build:packs": {
+      "command": "tsx ./scripts/data/buildPacks.ts ThreatPack && tsx ./scripts/data/buildPacks.ts MitigationPack",
+      "inputs": [
+        "{workspaceRoot}/scripts/data/**/*",
+        "{workspaceRoot}/packages/threat-composer/src/data/threatPacks/*.metadata.json",
+        "{workspaceRoot}/packages/threat-composer/src/data/mitigationPacks/*.metadata.json",
+        "{workspaceRoot}/packages/threat-composer/src/data/workspaceExamples/*.tc.json"
+      ],
+      "outputs": [
+        "{workspaceRoot}/packages/threat-composer/src/data/threatPacks/generated",
+        "{workspaceRoot}/packages/threat-composer/src/data/mitigationPacks/generated"
+      ],
+      "cache": true
+    },
+    "build:schema": {
+      "command": "tsx ./scripts/generateSchema.ts",
+      "inputs": [
+        "{workspaceRoot}/scripts/generateSchema.ts",
+        "{workspaceRoot}/packages/threat-composer/src/**/*.ts"
+      ],
+      "outputs": [
+        "{workspaceRoot}/schemas"
+      ],
+      "cache": true
+    },
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "build:packs",
+        "build:schema",
+        "test"
+      ]
+    },
+    "test": {
+      "command": "node --test scripts/nx-cache.test.mjs",
+      "dependsOn": [],
+      "inputs": [
+        "{workspaceRoot}/scripts/nx-cache.test.mjs",
+        "{workspaceRoot}/nx.json",
+        "{workspaceRoot}/packages/threat-composer/project.json",
+        "{workspaceRoot}/packages/threat-composer-app/project.json",
+        "{workspaceRoot}/packages/threat-composer-app-browser-extension/project.json"
+      ],
+      "outputs": []
+    },
+    "export:examples": {
+      "command": "tsx ./scripts/exportExamples.mts",
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "copy-assets"
+        }
+      ],
+      "cache": false
+    },
+    "generate:attribution": {
+      "command": "git secrets --scan && generate-attribution && mv oss-attribution/attribution.txt LICENSE-THIRD-PARTY",
+      "cache": false
+    },
+    "license:checker": {
+      "command": "license-checker --summary --production --excludePrivatePackages --onlyAllow 'MIT;Apache-2.0;ISC;'",
+      "cache": false
+    }
+  }
+}

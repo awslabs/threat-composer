@@ -1,0 +1,11 @@
+packages:
+  - packages/threat-composer
+  - packages/threat-composer-app
+  - packages/threat-composer-app-browser-extension
+  - packages/threat-composer-infra
+  # e2e is a workspace member so one install covers it, but it lives outside
+  # packages/* so the app's own test runner never collects its Playwright specs.
+  - e2e
+# packages/threat-composer-ai is intentionally absent. It is a uv/Python project
+# with no package.json, so pnpm has nothing to install for it; it takes part in
+# the nx task graph through its project.json.

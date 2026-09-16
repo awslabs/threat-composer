@@ -128,7 +128,7 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
           e.preventDefault();
           e.stopPropagation();
           setContentType(undefined);
-          navigate(e.detail.href);
+          void navigate(e.detail.href);
         }
       },
       [navigate, setActiveBreadcrumbs, defaultBreadcrumb],
