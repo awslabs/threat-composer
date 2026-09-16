@@ -14,9 +14,11 @@ They live **outside `packages/*`** so that the app's Vitest config, which globs
 `src/**/*.{spec,test}.{ts,tsx}`, never tries to run Playwright specs as unit
 tests. `e2e` is a pnpm workspace member and an nx project (`project.json`), so
 it installs with the rest of the repository and its targets take part in the
-nx graph. It has no eslint config; its only static check is `typecheck`. The
-browser download is an explicit `install-browsers` target rather than a
-postinstall hook, so a plain `pnpm install` does not fetch Chromium.
+nx graph. Its `build` target runs ESLint and `typecheck`; root `pnpm lint` also
+includes its ESLint target. Lint checks imports, unhandled promises and the
+existing SPDX headers without modifying files. The browser download is an
+explicit `install-browsers` target rather than a postinstall hook, so a plain
+`pnpm install` does not fetch Chromium.
 
 ## Layout
 
@@ -98,6 +100,7 @@ One dev-suite test reports as failed-and-expected: see Known defects below.
 The other targets:
 
 ```bash
+pnpm nx run @aws/threat-composer-e2e:eslint        # check specs, fixtures, scripts and configs
 pnpm nx run @aws/threat-composer-e2e:typecheck     # tsc --noEmit over the specs
 pnpm nx run @aws/threat-composer-e2e:e2e:headed    # dev suite in a visible browser
 pnpm nx run @aws/threat-composer-e2e:e2e:debug     # step through with the inspector

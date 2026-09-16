@@ -65,7 +65,7 @@ This will install all dependencies for all packages in the monorepo. The `postin
 pnpm build
 ```
 
-This runs every package's nx `build` target in dependency order. `build` includes compilation, typecheck, eslint, unit tests (Vitest), ruff and pytest for the Python package, and the e2e typecheck, so a green build is also a green lint and test run. Results are cached, so unchanged packages are skipped on the next run. `pnpm typecheck`, `pnpm test` and `pnpm lint` run the corresponding subsets on their own.
+This runs every package's nx `build` target in dependency order. `build` includes compilation, typecheck, eslint, unit tests (Vitest), ruff and pytest for the Python package, and e2e lint and typecheck, so a green build is also a green lint and unit-test run. Playwright suites run separately. Results are cached, so unchanged packages are skipped on the next run. `pnpm typecheck`, `pnpm test` and `pnpm lint` run the corresponding subsets on their own.
 
 ## Development Workflows
 
@@ -189,7 +189,7 @@ uv run pytest
 # Install all dependencies
 pnpm install --frozen-lockfile
 
-# Build all packages (compile, typecheck, eslint, Vitest, ruff, pytest, e2e typecheck)
+# Build all packages (compile, typecheck, eslint, Vitest, ruff, pytest, e2e lint/typecheck)
 pnpm build
 
 # Run Storybook
@@ -326,7 +326,7 @@ pnpm eslint
 
 ### Formatting
 
-The TypeScript packages run eslint with `--fix`, so `pnpm eslint` also applies Prettier formatting. For the Python package:
+The TypeScript packages under `packages/` run eslint with `--fix`, so `pnpm eslint` also applies Prettier formatting. The e2e ESLint target is check-only. For the Python package:
 
 ```bash
 pnpm nx run threat-composer-ai:lint:fix

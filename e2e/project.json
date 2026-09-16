@@ -14,6 +14,12 @@
       },
       "cache": false
     },
+    "eslint": {
+      "command": "eslint .",
+      "options": {
+        "cwd": "e2e"
+      }
+    },
     "typecheck": {
       "command": "tsc --noEmit -p tsconfig.json",
       "options": {
@@ -27,6 +33,7 @@
     "build": {
       "executor": "nx:noop",
       "dependsOn": [
+        "eslint",
         "typecheck"
       ]
     },

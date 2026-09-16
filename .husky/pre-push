@@ -1,1 +1,1 @@
-bash ./scripts/build.sh
+pnpm build
