@@ -2,6 +2,7 @@
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
   SPDX-License-Identifier: Apache-2.0
  ******************************************************************************************************************** */
+
 /**
  * Fake code-host pages for the browser-extension tests.
  *

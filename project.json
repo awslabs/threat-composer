@@ -35,7 +35,7 @@
       ]
     },
     "export:examples": {
-      "command": "tsx ./scripts/exportExamples.ts",
+      "command": "tsx ./scripts/exportExamples.mts",
       "dependsOn": [
         {
           "projects": [

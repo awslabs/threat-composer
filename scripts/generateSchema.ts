@@ -1,17 +1,18 @@
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import fs from "fs";
+import path from "path";
 import { z } from "zod";
 import { DataExchangeFormatSchema } from "../packages/threat-composer/src/customTypes/dataExchange";
 
 /**
  * Generate JSON Schema from Zod schema definition.
- * Usage: tsx ./scripts/generateSchema.ts
+ * Usage: pnpm exec tsx ./scripts/generateSchema.ts
+ *
+ * Note: DOM types are required because the source dataExchange.ts file contains
+ * interfaces that reference DOM types like CustomEvent; the root tsconfig.json
+ * includes the dom lib for that reason.
  */
 
-const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
-
-const SCHEMAS_PATH = path.join(SCRIPT_DIR, "..", "schemas");
+const SCHEMAS_PATH = path.join(__dirname, "..", "schemas");
 
 /**
  * Extract schema version from the Zod schema definition

@@ -2,6 +2,7 @@
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
   SPDX-License-Identifier: Apache-2.0
  ******************************************************************************************************************** */
+
 /**
  * Minimal static server that mimics GitHub Pages project-page behaviour, so the
  * deep-link recovery path can actually be exercised.
