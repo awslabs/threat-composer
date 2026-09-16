@@ -1,13 +1,16 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 /**
  * Build packs from pack metadata json files.
- * Usage: npx ts-node ./scripts/data/buildPacks.ts <ThreatPack|MitigationPack> <SourceDir-relative path to the relative data folder> <DestDir-relative path to the relative data folder>
+ * Usage: tsx ./scripts/data/buildPacks.ts <ThreatPack|MitigationPack> <SourceDir-relative path to the relative data folder> <DestDir-relative path to the relative data folder>
  */
 
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+
 const DATA_FOLDER = path.join(
-  __dirname,
+  SCRIPT_DIR,
   "..",
   "..",
   "packages",
@@ -143,7 +146,7 @@ const main = () => {
 
   if (lenArgs < 3) {
     console.log(
-      "Usage: npx ts-node ./scripts/data/buildPacks.ts <ThreatPack|MitigationPack> <SourceDir-relative path to the relative data folder> <DestDir-relative path to the relative data folder>"
+      "Usage: tsx ./scripts/data/buildPacks.ts <ThreatPack|MitigationPack> <SourceDir-relative path to the relative data folder> <DestDir-relative path to the relative data folder>"
     );
     return -1;
   }

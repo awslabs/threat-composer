@@ -3,7 +3,7 @@
   "root": ".",
   "targets": {
     "build:packs": {
-      "command": "ts-node ./scripts/data/buildPacks.ts ThreatPack && ts-node ./scripts/data/buildPacks.ts MitigationPack",
+      "command": "tsx ./scripts/data/buildPacks.ts ThreatPack && tsx ./scripts/data/buildPacks.ts MitigationPack",
       "inputs": [
         "{workspaceRoot}/scripts/data/**/*",
         "{workspaceRoot}/packages/threat-composer/src/data/threatPacks/*.metadata.json",
@@ -17,7 +17,7 @@
       "cache": true
     },
     "build:schema": {
-      "command": "ts-node --compiler-options '{\"lib\":[\"es2019\",\"dom\"]}' ./scripts/generateSchema.ts",
+      "command": "tsx ./scripts/generateSchema.ts",
       "inputs": [
         "{workspaceRoot}/scripts/generateSchema.ts",
         "{workspaceRoot}/packages/threat-composer/src/**/*.ts"
@@ -35,7 +35,7 @@
       ]
     },
     "export:examples": {
-      "command": "node ./scripts/exportExamples.js",
+      "command": "tsx ./scripts/exportExamples.ts",
       "dependsOn": [
         {
           "projects": [

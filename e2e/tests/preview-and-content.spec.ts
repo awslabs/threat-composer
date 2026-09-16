@@ -155,17 +155,15 @@ test.describe('diagram images', () => {
     // KNOWN, BENIGN: browser-image-compression tries to run in a Web Worker
     // created from a blob URL, which the app's own CSP forbids (`script-src 'self'`
     // with no `worker-src`). The library falls back to the main thread, so the
-    // upload still works, but the browser logs the refusal. The CSP is
+    // upload still works — but the browser logs the refusal. The CSP is
     // byte-identical to origin/main, so this is pre-existing, not a migration
     // regression. Allow exactly that one message.
     //
-    // Matched loosely on purpose. Chromium has reworded this twice: older builds
-    // said "Refused to create a worker from 'blob:...'", newer ones say "Creating
-    // a worker from 'blob:...' violates the following Content Security Policy
-    // directive". Pinning either wording makes the suite fail on a browser bump
-    // rather than on a real regression, which is exactly what happened when
-    // Playwright went from 1.49 to 1.62.
-    allowConsoleError(page, /(?:Refused to create|Creating) a worker from 'blob:/);
+    // The wording is browser-version dependent: older Chromium said "Refused to
+    // create a worker from 'blob:…'", newer builds say "Creating a worker from
+    // 'blob:…' violates the following Content Security Policy directive". Match
+    // both, anchored on the worker-from-blob phrasing so it stays narrow.
+    allowConsoleError(page, /(Refused to create|Creating) a worker from 'blob:/);
 
     await gotoWorkspace(page, DEFAULT_WORKSPACE, 'architecture');
     await page.getByRole('radio', { name: 'From file upload' }).check();
@@ -245,9 +243,9 @@ test.describe('diagram images', () => {
   });
 
   test('switching back to "No Image" clears the diagram but keeps the text', async ({ page }) => {
-    // Same pre-existing CSP worker refusal as above, matched across both of
-    // Chromium's wordings.
-    allowConsoleError(page, /(?:Refused to create|Creating) a worker from 'blob:/);
+    // See the note above: the CSP worker message is worded differently across
+    // Chromium versions.
+    allowConsoleError(page, /(Refused to create|Creating) a worker from 'blob:/);
 
     await gotoWorkspace(page, DEFAULT_WORKSPACE, 'architecture');
 

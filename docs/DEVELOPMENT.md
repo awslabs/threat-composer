@@ -14,12 +14,14 @@ This monorepo hosts multiple packages that make up the Threat Composer ecosystem
 
 The repository is a [pnpm workspace](https://pnpm.io/workspaces) with [nx](https://nx.dev/) as the task runner. pnpm handles dependency management and nx handles the task graph. Each package declares its targets in a `project.json`, and `pnpm build` runs the whole graph with caching.
 
+The TypeScript toolchain is Vite (web app bundling and dev server), Vitest (unit tests in every TypeScript package), Storybook with the Vite builder (`@storybook/react-vite`), TypeScript 6, ESLint 10 with a flat config (`eslint.config.mjs` in each package, wrapping that package's `.eslintrc.json` through `FlatCompat`), React 19 and Node 24. Standalone TypeScript scripts run with `pnpm exec tsx`.
+
 ## Repository Structure
 
 | Project                               | Path                                           | Description                                                                                            | Tech Stack                                                                          |
 | ------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
 | threat-composer                       | packages/threat-composer                       | UI components for threat-composer                                                                      | [React](https://react.dev/), [CloudScape design system](https://cloudscape.design/) |
-| threat-composer-app                   | packages/threat-composer-app                   | threat-composer Single Page App (SPA) bootstrapped by [create-react-app](https://create-react-app.dev/) | React                                                                               |
+| threat-composer-app                   | packages/threat-composer-app                   | threat-composer Single Page App (SPA) built with [Vite](https://vite.dev/)                              | React, Vite                                                                         |
 | threat-composer-infra                 | packages/threat-composer-infra                 | threat-composer Infrastructure CDK App                                                                 | [AWS CDK](https://aws.amazon.com/cdk/)                                              |
 | threat-composer-app-browser-extension | packages/threat-composer-app-browser-extension | threat-composer browser extension                                                                      | [wxt](https://wxt.dev/), React                                                      |
 | threat-composer-ai                    | packages/threat-composer-ai                    | AI-powered CLI and MCP server                                                                          | Python, [Strands](https://github.com/awslabs/strands), FastMCP                      |
@@ -28,7 +30,7 @@ The repository is a [pnpm workspace](https://pnpm.io/workspaces) with [nx](https
 
 ### Required Tools
 
-- [NodeJS](https://nodejs.org/en/) (version 20 or higher)
+- [NodeJS](https://nodejs.org/en/) (version 24; CI runs 24, and the `engines` field in `package.json` also accepts 20.19 and 22.13 or later)
 - [pnpm](https://pnpm.io/) (version 10) - Install via `npm install -g pnpm@10`
 - [uv](https://github.com/astral-sh/uv) - Python package manager, needed for packages/threat-composer-ai
 - [git-secrets](https://github.com/awslabs/git-secrets#installing-git-secrets)
@@ -63,13 +65,13 @@ This will install all dependencies for all packages in the monorepo. The `postin
 pnpm build
 ```
 
-This runs every nx `build` target in dependency order. `build` includes compilation, eslint, ruff, unit tests, pytest and the e2e typecheck, so a green build is also a green lint and test run. Results are cached, so unchanged packages are skipped on the next run.
+This runs every package's nx `build` target in dependency order. `build` includes compilation, typecheck, eslint, unit tests (Vitest), ruff and pytest for the Python package, and the e2e typecheck, so a green build is also a green lint and test run. Results are cached, so unchanged packages are skipped on the next run. `pnpm typecheck`, `pnpm test` and `pnpm lint` run the corresponding subsets on their own.
 
 ## Development Workflows
 
 ### Working with UI Components (threat-composer)
 
-The threat-composer package contains the core UI components. The recommended development environment is Storybook.
+The threat-composer package contains the core UI components. The recommended development environment is Storybook, which uses the Vite builder.
 
 #### Run Storybook
 
@@ -95,7 +97,9 @@ pnpm nx run @aws/threat-composer:test
 pnpm dev
 ```
 
-This starts the web application in development mode. Open [http://localhost:3000](http://localhost:3000/) to view it in the browser.
+This starts the Vite dev server. Open [http://localhost:3000](http://localhost:3000/) to view it in the browser.
+
+The dev server serves the compiled library from `packages/threat-composer/lib/`, not from its `src/`. The `dev` target depends on `@aws/threat-composer:copy-assets`, so the library is compiled when the server starts, but edits to library source after that need `pnpm nx run @aws/threat-composer:copy-assets` and a restart. Storybook is the faster loop for library work.
 
 #### Build for Production
 
@@ -103,7 +107,20 @@ This starts the web application in development mode. Open [http://localhost:3000
 pnpm nx run @aws/threat-composer-app:compile
 ```
 
-The build artifacts will be in the `packages/threat-composer-app/build/` directory.
+The build artifacts will be in the `packages/threat-composer-app/build/` directory, one subdirectory per variant. `compile` runs `compile:website` (`vite build`), `compile:browser-extension` (`vite build --mode browser-extension`) and `compile:ide-extension` (`vite build --mode ide-extension`). To try the production website bundle locally, `pnpm nx run @aws/threat-composer-app:preview` builds it and serves it with `vite preview`.
+
+#### Environment variables
+
+The app reads its configuration through `import.meta.env`, so variables must carry the `VITE_` prefix to reach browser code. The old `REACT_APP_*` names are gone.
+
+| Variable | Read by | Purpose |
+| --- | --- | --- |
+| `VITE_ROUTE_BASE_PATH` | `src/routes`, `src/hooks/useOnPreview` | Router basename when the site is hosted under a sub-path |
+| `VITE_GITHUB_PAGES` | `src/hooks/useNotifications` | `true` shows the GitHub Pages notification banner |
+| `VITE_APP_MODE` | `src/index.tsx` | Set to `browser-extension` or `ide-extension` by `.env.browser-extension` / `.env.ide-extension`, which Vite loads for the matching `--mode` |
+| `PUBLIC_URL` | `vite.config.ts` | Sets Vite's `base` for the website build; extension builds always use `/` |
+
+`VITE_ROUTE_BASE_PATH`, `VITE_GITHUB_PAGES` and `PUBLIC_URL` are declared as nx inputs on the compile targets, so builds made with different values are cached separately. `.github/workflows/deploy.yml` sets all three for the GitHub Pages deployment.
 
 ### Working with the Browser Extension
 
@@ -172,7 +189,7 @@ uv run pytest
 # Install all dependencies
 pnpm install --frozen-lockfile
 
-# Build all packages (compile, eslint, ruff, unit tests, pytest, e2e typecheck)
+# Build all packages (compile, typecheck, eslint, Vitest, ruff, pytest, e2e typecheck)
 pnpm build
 
 # Run Storybook
@@ -181,7 +198,7 @@ pnpm storybook
 # Start web app dev server
 pnpm dev
 
-# Run all tests
+# Run all unit tests (Vitest, plus pytest for the Python package)
 pnpm test
 
 # Lint all packages (eslint for TypeScript, ruff for Python)
@@ -256,6 +273,8 @@ src/
 
 ### Unit Tests
 
+Unit tests in the TypeScript packages run on [Vitest](https://vitest.dev/) with a jsdom environment; each package has a `vitest.config.ts`. Vitest arguments can be passed after `--`.
+
 ```bash
 # Run all tests
 pnpm test
@@ -272,14 +291,20 @@ pnpm nx run @aws/threat-composer:test -- --coverage
 
 ### End-to-end tests
 
-Playwright tests for the web app live in `e2e/`. See the [e2e README](../e2e/README.md).
+Playwright tests for the web app, its build variants and the browser extension live in `e2e/`. See the [e2e README](../e2e/README.md). Each target depends on the nx targets that build what it tests, so no separate build step is needed.
 
 ```bash
 # Once: download Chromium
 pnpm e2e:install-browsers
 
-# Run the suite (Playwright starts the dev server itself)
-BROWSER=none pnpm e2e
+# Dev-server suite (Playwright starts the Vite dev server itself)
+pnpm e2e
+
+# Production preview, build variants, loaded extension, or all four
+pnpm e2e:preview
+pnpm e2e:variants
+pnpm e2e:extension
+pnpm e2e:all
 
 # Playwright UI mode
 pnpm e2e:ui
@@ -288,6 +313,8 @@ pnpm e2e:ui
 ## Code Quality
 
 ### Linting
+
+ESLint 10 runs with a flat config. Each TypeScript package has an `eslint.config.mjs` that loads the package's `.eslintrc.json` through `@eslint/eslintrc`'s `FlatCompat`, so the rules still live in `.eslintrc.json`.
 
 ```bash
 # Lint all packages (eslint for TypeScript, ruff for Python)

@@ -1,13 +1,10 @@
 {
-  "extends": "nx/presets/npm.json",
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "affected": {
     "defaultBase": "main"
   },
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "sharedGlobals": [
       "{workspaceRoot}/tsconfig.json",
       "{workspaceRoot}/tsconfig.dev.json",
@@ -17,31 +14,18 @@
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "default",
-        "^default"
-      ],
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"],
       "cache": true
     },
     "clean": {
-      "inputs": [
-        "default"
-      ],
+      "inputs": ["default"],
       "outputs": [],
       "cache": true
     },
     "compile": {
-      "dependsOn": [
-        "clean",
-        "^build"
-      ],
-      "inputs": [
-        "default",
-        "^default"
-      ],
+      "dependsOn": ["clean", "^build"],
+      "inputs": ["default", "^default"],
       "outputs": [
         "{projectRoot}/lib",
         "{projectRoot}/build",
@@ -50,41 +34,24 @@
       "cache": true
     },
     "eslint": {
-      "inputs": [
-        "default",
-        "^default"
-      ],
+      "inputs": ["default", "^default"],
       "cache": true
     },
     "lint": {
-      "inputs": [
-        "default"
-      ],
+      "inputs": ["default"],
       "cache": true
     },
     "test": {
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "default",
-        "^default"
-      ],
-      "outputs": [
-        "{projectRoot}/coverage",
-        "{projectRoot}/test-reports"
-      ],
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"],
+      "outputs": ["{projectRoot}/coverage", "{projectRoot}/test-reports"],
       "cache": true
     },
     "package": {
-      "inputs": [
-        "default",
-        "^default"
-      ],
-      "outputs": [
-        "{projectRoot}/dist"
-      ],
+      "inputs": ["default", "^default"],
+      "outputs": ["{projectRoot}/dist"],
       "cache": true
     }
-  }
+  },
+  "analytics": false
 }

@@ -6,9 +6,9 @@
   "description": "Playwright end-to-end / functional tests for the threat-composer web app. Kept outside packages/* so the app's own test runner never picks up these specs; run through nx (see project.json).",
   "type": "module",
   "devDependencies": {
-    "@cloudscape-design/components": "3.0.956",
+    "@cloudscape-design/components": "3.0.1352",
     "@playwright/test": "1.62.1",
     "mammoth": "^1.12.2",
-    "typescript": "5.8.3"
+    "typescript": "^6.0.3"
   }
 }

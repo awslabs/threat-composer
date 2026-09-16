@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Snapshot 1`] = `
 {
@@ -673,7 +673,7 @@ exports[`Snapshot 1`] = `
                   "Version": "1",
                 },
                 "Configuration": {
-                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"c41b9f1ebec724726973a9ba4eaea5aad9a8b3c7f4edeef6f0bc46cc0fd7d3d1"}]",
+                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"8745664e8db5105cf68f3868c83b0cb6b6d5a6ed4701c6863b0833c347c0e435"}]",
                   "ProjectName": {
                     "Ref": "ApplicationPipelineCodePipelineBuildSynthCdkBuildProjectEE7ED66A",
                   },
@@ -713,7 +713,7 @@ exports[`Snapshot 1`] = `
                   "Version": "1",
                 },
                 "Configuration": {
-                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"5e31e24fdbb994d05b38e6db7b18077e050642f59a5eebbd8a6ac7ab159a0ca8"}]",
+                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"bd8166accf9a54df3373152135aed6acbf775c34b3bf353d2ee7571a5c05b14b"}]",
                   "ProjectName": {
                     "Ref": "ApplicationPipelineUpdatePipelineSelfMutation66D95DA8",
                   },
@@ -772,7 +772,7 @@ exports[`Snapshot 1`] = `
   "phases": {
     "install": {
       "runtime-versions": {
-        "nodejs": "20.x"
+        "nodejs": "24"
       },
       "commands": [
         "npm install -g pnpm@10",
@@ -1379,7 +1379,7 @@ exports[`Snapshot 1`] = `
   "phases": {
     "install": {
       "runtime-versions": {
-        "nodejs": "20.x"
+        "nodejs": "24"
       },
       "commands": [
         "npm install -g aws-cdk@2"

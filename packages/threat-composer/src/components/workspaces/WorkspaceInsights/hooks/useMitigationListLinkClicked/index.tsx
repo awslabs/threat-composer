@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
+import type { CancelableEventHandler, BaseNavigationDetail } from '@cloudscape-design/components/internal/events';
 import { useCallback } from 'react';
 import { MitigationListFilter, ViewNavigationEvent } from '../../../../../customTypes';
 

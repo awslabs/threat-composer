@@ -8,7 +8,7 @@
   ],
   "targets": {
     "clean": {
-      "command": "rm -rf .output dist coverage test-reports",
+      "command": "rm -rf .output .wxt coverage test-reports",
       "options": {
         "cwd": "packages/threat-composer-app-browser-extension"
       }
@@ -19,7 +19,7 @@
         "cwd": "packages/threat-composer-app-browser-extension"
       },
       "dependsOn": [
-        "clean",
+        "prepare",
         {
           "projects": [
             "@aws/threat-composer-app"
@@ -43,7 +43,7 @@
         "cwd": "packages/threat-composer-app-browser-extension"
       },
       "dependsOn": [
-        "clean",
+        "prepare",
         "compile:chrome"
       ],
       "inputs": [
@@ -64,17 +64,22 @@
       ]
     },
     "eslint": {
-      "command": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools",
-      "options": {
-        "cwd": "packages/threat-composer-app-browser-extension"
-      }
-    },
-    "test": {
-      "command": "jest --passWithNoTests --updateSnapshot",
+      "command": "eslint --fix --no-error-on-unmatched-pattern src eslint.config.mjs",
       "options": {
         "cwd": "packages/threat-composer-app-browser-extension"
       },
-      "dependsOn": []
+      "dependsOn": [
+        "prepare"
+      ]
+    },
+    "test": {
+      "command": "vitest run",
+      "options": {
+        "cwd": "packages/threat-composer-app-browser-extension"
+      },
+      "dependsOn": [
+        "prepare"
+      ]
     },
     "package": {
       "command": "mkdir -p dist/js && npm pack --pack-destination dist/js",
@@ -90,6 +95,7 @@
       "dependsOn": [
         "^build",
         "compile",
+        "typecheck",
         "eslint",
         "test",
         "package"
@@ -145,8 +151,38 @@
       ],
       "cache": false
     },
-    "watch": {
-      "command": "tsc --build -w",
+    "prepare": {
+      "command": "wxt prepare",
+      "options": {
+        "cwd": "packages/threat-composer-app-browser-extension"
+      },
+      "dependsOn": [
+        "clean"
+      ],
+      "inputs": [
+        "default"
+      ],
+      "outputs": [
+        "{projectRoot}/.wxt"
+      ],
+      "cache": true
+    },
+    "typecheck": {
+      "command": "tsc --noEmit -p tsconfig.json",
+      "options": {
+        "cwd": "packages/threat-composer-app-browser-extension"
+      },
+      "dependsOn": [
+        "prepare"
+      ],
+      "inputs": [
+        "default",
+        "^default"
+      ],
+      "cache": true
+    },
+    "test:watch": {
+      "command": "vitest",
       "options": {
         "cwd": "packages/threat-composer-app-browser-extension"
       },

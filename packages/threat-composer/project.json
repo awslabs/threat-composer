@@ -5,13 +5,13 @@
   "projectType": "library",
   "targets": {
     "clean": {
-      "command": "rm -rf lib dist storybook.out coverage test-reports tsconfig.tsbuildinfo",
+      "command": "rm -rf lib dist coverage test-reports storybook.out tsconfig.tsbuildinfo",
       "options": {
         "cwd": "packages/threat-composer"
       }
     },
     "compile": {
-      "command": "tsc --build",
+      "command": "tsc -p tsconfig.json",
       "options": {
         "cwd": "packages/threat-composer"
       },
@@ -65,13 +65,13 @@
       "cache": true
     },
     "eslint": {
-      "command": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools",
+      "command": "eslint --fix --no-error-on-unmatched-pattern src eslint.config.mjs",
       "options": {
         "cwd": "packages/threat-composer"
       }
     },
     "test": {
-      "command": "jest --passWithNoTests --updateSnapshot",
+      "command": "vitest run",
       "options": {
         "cwd": "packages/threat-composer"
       },
@@ -93,6 +93,7 @@
         "compile",
         "copy-assets",
         "storybook:build",
+        "typecheck",
         "eslint",
         "test",
         "package"
@@ -106,18 +107,30 @@
       "cache": false
     },
     "test:watch": {
-      "command": "jest --watch",
+      "command": "vitest",
       "options": {
         "cwd": "packages/threat-composer"
       },
       "cache": false
     },
     "watch": {
-      "command": "tsc --build -w",
+      "command": "tsc -p tsconfig.json -w",
       "options": {
         "cwd": "packages/threat-composer"
       },
       "cache": false
+    },
+    "typecheck": {
+      "command": "tsc --noEmit -p tsconfig.dev.json && tsc --noEmit -p tsconfig.node.json",
+      "options": {
+        "cwd": "packages/threat-composer"
+      },
+      "dependsOn": [],
+      "inputs": [
+        "default",
+        "^default"
+      ],
+      "cache": true
     }
   }
 }

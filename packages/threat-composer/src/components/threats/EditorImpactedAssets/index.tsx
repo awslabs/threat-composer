@@ -16,7 +16,7 @@
 /** @jsxImportSource @emotion/react */
 import { AutosuggestProps } from '@cloudscape-design/components/autosuggest';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
-import { BaseKeyDetail, CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import type { BaseKeyDetail, CancelableEventHandler, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import TokenGroup, { TokenGroupProps } from '@cloudscape-design/components/token-group';
 import { FC, useCallback, useState, forwardRef } from 'react';
 import { useBrainstormContext } from '../../../contexts/BrainstormContext/context';

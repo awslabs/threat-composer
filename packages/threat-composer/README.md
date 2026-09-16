@@ -14,14 +14,16 @@ This package contains the core React UI components used across Threat Composer a
 - Import/export functionality
 
 Built with:
-- React
+- React 19
 - TypeScript
 - CloudScape Design System
+- Storybook (Vite builder) for component development
+- Vitest for unit tests
 
 ## Local Development Setup
 
 ### Prerequisites
-- Node.js 20 or higher
+- Node.js 24 (the root `engines` field also accepts 20.19 and 22.13 or later)
 - pnpm 10 (`npm install -g pnpm@10`)
 
 ### Setup
@@ -48,7 +50,7 @@ pnpm build
 pnpm nx run @aws/threat-composer:build
 ```
 
-Compiled output will be in the `lib/` directory and the packed tarball in `dist/js/`.
+Compiled output will be in the `lib/` directory and the packed tarball in `dist/js/`. `compile` is a plain `tsc` build; `copy-assets` then copies the CSS, PNG and GIF files from `src/` into `lib/`, since `tsc` does not carry non-code files across. The web app and the e2e suite consume `lib/`, so run `pnpm nx run @aws/threat-composer:copy-assets` after changing library source if a dev server is already running.
 
 ## Project Structure
 
@@ -138,6 +140,8 @@ Add mitigation packs in `src/data/mitigationPacks/`:
 4. Import generated pack in `mitigationPacks.ts`
 
 ## Testing
+
+Unit tests run on Vitest with a jsdom environment (`vitest.config.ts`). Arguments after `--` are passed to Vitest.
 
 ```bash
 # Run all tests

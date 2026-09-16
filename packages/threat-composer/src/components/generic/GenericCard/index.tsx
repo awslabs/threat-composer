@@ -14,7 +14,12 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { DeleteConfirmationDialog } from '@aws-northstar/ui';
+// Imported by subpath, not from the '@aws-northstar/ui' barrel: the barrel
+// re-exports every component, which drags in FormRenderer (and with it Ace's
+// webpack-only module resolver) plus the Cognito auth components (and with them
+// a Node `buffer` polyfill that references `global`). Neither works under Vite.
+// WorkspaceSelector already imports this component the same way.
+import DeleteConfirmationDialog from '@aws-northstar/ui/components/DeleteConfirmationDialog';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';

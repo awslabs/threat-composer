@@ -8,13 +8,13 @@
   ],
   "targets": {
     "clean": {
-      "command": "rm -rf build coverage test-reports",
+      "command": "rm -rf build coverage test-reports dev-dist",
       "options": {
         "cwd": "packages/threat-composer-app"
       }
     },
     "compile:website": {
-      "command": "BUILD_PATH=./build/website/ craco build",
+      "command": "vite build",
       "options": {
         "cwd": "packages/threat-composer-app"
       },
@@ -26,10 +26,10 @@
         "default",
         "^default",
         {
-          "env": "REACT_APP_ROUTE_BASE_PATH"
+          "env": "VITE_ROUTE_BASE_PATH"
         },
         {
-          "env": "REACT_APP_GITHUB_PAGES"
+          "env": "VITE_GITHUB_PAGES"
         },
         {
           "env": "PUBLIC_URL"
@@ -41,7 +41,7 @@
       "cache": true
     },
     "compile:browser-extension": {
-      "command": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/browser-extension/ REACT_APP_APP_MODE=browser-extension craco build",
+      "command": "vite build --mode browser-extension",
       "options": {
         "cwd": "packages/threat-composer-app"
       },
@@ -51,7 +51,16 @@
       ],
       "inputs": [
         "default",
-        "^default"
+        "^default",
+        {
+          "env": "VITE_ROUTE_BASE_PATH"
+        },
+        {
+          "env": "VITE_GITHUB_PAGES"
+        },
+        {
+          "env": "PUBLIC_URL"
+        }
       ],
       "outputs": [
         "{projectRoot}/build/browser-extension"
@@ -59,7 +68,7 @@
       "cache": true
     },
     "compile:ide-extension": {
-      "command": "INLINE_RUNTIME_CHUNK=false BUILD_PATH=./build/ide-extension/ REACT_APP_APP_MODE=ide-extension craco build",
+      "command": "vite build --mode ide-extension",
       "options": {
         "cwd": "packages/threat-composer-app"
       },
@@ -69,7 +78,16 @@
       ],
       "inputs": [
         "default",
-        "^default"
+        "^default",
+        {
+          "env": "VITE_ROUTE_BASE_PATH"
+        },
+        {
+          "env": "VITE_GITHUB_PAGES"
+        },
+        {
+          "env": "PUBLIC_URL"
+        }
       ],
       "outputs": [
         "{projectRoot}/build/ide-extension"
@@ -85,7 +103,7 @@
       ]
     },
     "copy-storybook": {
-      "command": "mkdir -p ./build/storybook && cp -r ../threat-composer/storybook.out/ ./build/storybook/",
+      "command": "mkdir -p ./build/storybook && cp -r ../threat-composer/storybook.out/. ./build/storybook/",
       "options": {
         "cwd": "packages/threat-composer-app"
       },
@@ -107,7 +125,7 @@
       "cache": true
     },
     "eslint": {
-      "command": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools",
+      "command": "eslint --fix --no-error-on-unmatched-pattern src eslint.config.mjs",
       "options": {
         "cwd": "packages/threat-composer-app"
       },
@@ -121,7 +139,7 @@
       ]
     },
     "test": {
-      "command": "craco test --watchAll=false --passWithNoTests",
+      "command": "vitest run --passWithNoTests",
       "options": {
         "cwd": "packages/threat-composer-app"
       },
@@ -140,12 +158,13 @@
         "^build",
         "compile",
         "copy-storybook",
+        "typecheck",
         "eslint",
         "test"
       ]
     },
     "dev": {
-      "command": "craco start",
+      "command": "vite",
       "options": {
         "cwd": "packages/threat-composer-app"
       },
@@ -159,11 +178,40 @@
       ],
       "cache": false
     },
-    "watch": {
-      "command": "tsc --build -w",
+    "typecheck": {
+      "command": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json",
       "options": {
         "cwd": "packages/threat-composer-app"
       },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "compile"
+        }
+      ],
+      "inputs": [
+        "default",
+        "^default"
+      ],
+      "cache": true
+    },
+    "test:watch": {
+      "command": "vitest",
+      "options": {
+        "cwd": "packages/threat-composer-app"
+      },
+      "cache": false
+    },
+    "preview": {
+      "command": "vite preview",
+      "options": {
+        "cwd": "packages/threat-composer-app"
+      },
+      "dependsOn": [
+        "compile:website"
+      ],
       "cache": false
     }
   }

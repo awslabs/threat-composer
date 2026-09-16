@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { Container, Header, SpaceBetween, TextContent, Input } from '@cloudscape-design/components';
-import { BaseKeyDetail } from '@cloudscape-design/components/internal/events';
+import type { BaseKeyDetail } from '@cloudscape-design/components/internal/events';
 import { FC, useCallback } from 'react';
 
 /**

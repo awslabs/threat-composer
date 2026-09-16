@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node -P tsconfig.json --prefer-ts-exts src/pipeline.ts",
+  "app": "npx tsx src/pipeline.ts",
   "requireApproval": "never",
   "output": "cdk.out",
   "watch": {

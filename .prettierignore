@@ -1,1 +1,14 @@
-
+node_modules/
+coverage/
+test-reports/
+lib/
+dist/
+build/
+storybook.out/
+cdk.out/
+.output/
+.wxt/
+dev-dist/
+yarn.lock
+packages/threat-composer/src/data/*/generated/
+schemas/

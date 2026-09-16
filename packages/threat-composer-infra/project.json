@@ -32,13 +32,13 @@
       "cache": true
     },
     "eslint": {
-      "command": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools",
+      "command": "eslint --fix --no-error-on-unmatched-pattern src test eslint.config.mjs",
       "options": {
         "cwd": "packages/threat-composer-infra"
       }
     },
     "test": {
-      "command": "jest --passWithNoTests --updateSnapshot",
+      "command": "vitest run --passWithNoTests",
       "options": {
         "cwd": "packages/threat-composer-infra"
       }
@@ -48,6 +48,7 @@
       "dependsOn": [
         "^build",
         "synth",
+        "typecheck",
         "eslint",
         "test"
       ]
@@ -87,11 +88,23 @@
       "cache": false
     },
     "test:watch": {
-      "command": "jest --watch",
+      "command": "vitest",
       "options": {
         "cwd": "packages/threat-composer-infra"
       },
       "cache": false
+    },
+    "typecheck": {
+      "command": "tsc --noEmit -p tsconfig.json",
+      "options": {
+        "cwd": "packages/threat-composer-infra"
+      },
+      "dependsOn": [],
+      "inputs": [
+        "default",
+        "^default"
+      ],
+      "cache": true
     }
   }
 }

@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import Button from '@cloudscape-design/components/button';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
-import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
+import type { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useState, useCallback } from 'react';

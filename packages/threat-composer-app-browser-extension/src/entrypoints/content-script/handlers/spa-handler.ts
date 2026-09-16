@@ -13,7 +13,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-
 import { TCConfig } from '../../popup/config';
 import { SPAIntegrationState } from '../types';
 import { BaseIntegrationHandler } from './base-handler';
@@ -45,7 +44,7 @@ export abstract class SPAIntegrationHandler extends BaseIntegrationHandler {
     }
 
     // Handle SPA navigation first
-    const navigationOccurred = handleSPANavigation(this.state, this.config, this.integrationType);
+    handleSPANavigation(this.state, this.config, this.integrationType);
 
     // Handle same-file navigation
     const regExCheck = new RegExp(this.config.fileExtension);

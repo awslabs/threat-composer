@@ -14,6 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { PDKNag } from '@aws/pdk/pdk-nag';
 import {
   StaticWebsite,
@@ -49,7 +50,9 @@ import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 import { STAGE_PREFIX_IDE_EXTENSION_ENV } from './constants';
 
-const PACKAGES_ROOT = path.join(__dirname, '..', '..');
+// The package is ESM ("type": "module"), so __dirname does not exist.
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const PACKAGES_ROOT = path.join(SCRIPT_DIR, '..', '..');
 
 const removeLeadingSlash = (value: string): string => {
   return value.slice(0, 1) == '/' ? value.slice(1) : value;

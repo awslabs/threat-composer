@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv='Content-Security-Policy'
+    content="default-src 'self'; img-src 'self' * data: blob:; connect-src 'self' data:; font-src 'self' data:; script-src 'self' https://ide-toolkits.threat-composer.aws.dev; style-src 'self' 'unsafe-inline' https://ide-toolkits.threat-composer.aws.dev; media-src 'none' ; frame-src 'none';" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="threat-composer" />
+
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
+
+  <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+  <link rel="manifest" href="/manifest.json" />
+  <!--
+      The paths above are root-relative. Vite rewrites them at build time using
+      the configured `base` (see vite.config.ts), so they resolve correctly both
+      when the app is served from the domain root and when it is published under
+      a sub-path such as https://awslabs.github.io/threat-composer.
+
+      Files that need to be referenced from here must live in `public/`.
+    -->
+  <title>threat-composer</title>
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <script type="module" src="/src/index.tsx"></script>
+</body>
+
+</html>

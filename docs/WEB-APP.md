@@ -147,7 +147,7 @@ The [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected
 
 ### Prerequisites
 
-- [NodeJS](https://nodejs.org/en/) (version 20 or higher)
+- [NodeJS](https://nodejs.org/en/) (version 24; the `engines` field in `package.json` also accepts 20.19 and 22.13 or later)
 - [pnpm](https://pnpm.io/) (version 10, installed via `npm install -g pnpm@10`)
 - [uv](https://github.com/astral-sh/uv) (the build also runs the Python package in `packages/threat-composer-ai`)
 - [AWS CLI](https://aws.amazon.com/cli/) (version 2 or higher)
@@ -341,7 +341,7 @@ Reference or example threat models are available directly in the Workspace selec
 4. Run the script below in your build from the project root to inject the example threat models entry to configuration file `packages/threat-composer/src/data/workspaceExamples/workspaceExamples.ts`:
 
     ```bash
-    npx ts-node ./scripts/data/injectData.ts WorkspaceExample <SourceDir-relative path to the workspaceExamples folder>
+    pnpm exec tsx ./scripts/data/injectData.ts WorkspaceExample <SourceDir-relative path to the workspaceExamples folder>
     ```
 5. Build the project
 
@@ -390,13 +390,13 @@ Threat packs allow you to quickly find and add bulk or selected threat statement
 6. Run the script below in your build from the project root to build the threat packs
 
     ```bash
-    npx ts-node ./scripts/data/buildPacks.ts ThreatPack <SourceDir-the relative path to the threatPacks folder for the folder containing metadata files> <DestDir-the relative path to the threatPacks folder for output threat packs files>
+    pnpm exec tsx ./scripts/data/buildPacks.ts ThreatPack <SourceDir-the relative path to the threatPacks folder for the folder containing metadata files> <DestDir-the relative path to the threatPacks folder for output threat packs files>
     ```
 
 7. Run the script below in your build from the project root to inject the generated threat packs entry to configuration file `packages/threat-composer/src/data/threatPacks/threatPacks.ts`:
 
     ```bash
-    npx ts-node ./scripts/data/injectData.ts ThreatPack <SourceDir-the value DestDir from the previous step>
+    pnpm exec tsx ./scripts/data/injectData.ts ThreatPack <SourceDir-the value DestDir from the previous step>
     ```
 8. Build the project
 
@@ -445,13 +445,13 @@ Mitigation packs allow you to quickly find and add bulk or selected mitigation c
 6. Run the script below in your build from the project root to build the mitigation packs
 
     ```bash
-    npx ts-node ./scripts/data/buildPacks.ts MitigationPack <SourceDir-the relative path to the mitigationPacks folder for the folder containing metadata files> <DestDir-the relative path to the mitigationPacks folder for output mitigation packs files>
+    pnpm exec tsx ./scripts/data/buildPacks.ts MitigationPack <SourceDir-the relative path to the mitigationPacks folder for the folder containing metadata files> <DestDir-the relative path to the mitigationPacks folder for output mitigation packs files>
     ```
 
 7. Run the script below in your build from the project root to inject the generated mitigation packs entry to configuration file `packages/threat-composer/src/data/mitigationPacks/mitigationPacks.ts`:
 
     ```bash
-    npx ts-node ./scripts/data/injectData.ts MitigationPack <SourceDir-the value DestDir from the previous step>
+    pnpm exec tsx ./scripts/data/injectData.ts MitigationPack <SourceDir-the value DestDir from the previous step>
     ```
 8. Build the project
 

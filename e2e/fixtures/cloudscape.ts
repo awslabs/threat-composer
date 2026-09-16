@@ -40,6 +40,15 @@ import { createRequire } from 'node:module';
  * A plain ESM `import` yields the namespace object rather than the factory
  * ("createWrapper is not a function"), so it is loaded through createRequire,
  * which resolves the interop unambiguously.
+ *
+ * `@cloudscape-design/components` is declared in this package's own
+ * devDependencies even though only the selectors helper is used. It has to be:
+ * `e2e` is a standalone npm project rather than a workspace member, so it
+ * cannot rely on the monorepo hoisting the copy packages/threat-composer
+ * depends on -- and pnpm does not hoist at all. The version is kept in step
+ * with that package deliberately, because these selectors encode Cloudscape's
+ * internal class names and a mismatch would produce selectors that silently
+ * match nothing.
  */
 const require = createRequire(import.meta.url);
 const createWrapper = require('@cloudscape-design/components/test-utils/selectors')

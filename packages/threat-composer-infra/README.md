@@ -15,7 +15,7 @@ This package contains AWS CDK infrastructure code for deploying Threat Composer 
 ## Local Development Setup
 
 ### Prerequisites
-- Node.js 20 or higher
+- Node.js 24 (the root `engines` field also accepts 20.19 and 22.13 or later)
 - pnpm 10 (`npm install -g pnpm@10`)
 - AWS CLI configured
 - AWS CDK CLI (`npm install -g aws-cdk`)
@@ -102,12 +102,17 @@ Deploys full CI/CD infrastructure (CodePipeline + Application):
 
 ## Testing
 
+Tests run on Vitest (`vitest run --passWithNoTests`). The `build` target also runs `synth`, `typecheck` and `eslint`.
+
 ```bash
 # Run infrastructure tests (from repository root)
 pnpm nx run @aws/threat-composer-infra:test
 
-# Run with coverage
-pnpm nx run @aws/threat-composer-infra:test -- --coverage
+# Run in watch mode
+pnpm nx run @aws/threat-composer-infra:test:watch
+
+# Type check
+pnpm nx run @aws/threat-composer-infra:typecheck
 ```
 
 ## Contributing

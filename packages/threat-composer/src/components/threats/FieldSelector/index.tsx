@@ -18,7 +18,7 @@ import Button from '@cloudscape-design/components/button';
 import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
-import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import type { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextContent from '@cloudscape-design/components/text-content';
 import { css } from '@emotion/react';

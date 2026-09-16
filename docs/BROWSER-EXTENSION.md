@@ -63,7 +63,7 @@ Each integration can be individually enabled/disabled and configured with custom
 
 ### Prerequisites
 
-- Node.js (version 20 or higher)
+- Node.js (version 24)
 - pnpm 10 (`npm install -g pnpm@10`)
 
 ### Build Instructions

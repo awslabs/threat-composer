@@ -54,7 +54,15 @@ export class PipelineStack extends Stack {
           phases: {
             install: {
               'runtime-versions': {
-                nodejs: '20.x',
+                // Matches CI and the Dockerfile. engines.node is
+                // ^20.19.0 || ^22.13.0 || >=24 and Vite 8 enforces that floor,
+                // so a 20.x runtime older than 20.19 would fail here while CI
+                // stayed green. nodejs 24 is provided by the Ubuntu 22.04
+                // standard:7.0 image that CodeBuildStep resolves to; the
+                // runtime sets are not newest-wins (18 and 20 are on 7.0 but
+                // not on 8.0), so this was checked against the CodeBuild
+                // available-runtimes documentation rather than assumed.
+                nodejs: '24',
               },
             },
           },

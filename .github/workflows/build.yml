@@ -20,7 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '24'
       - name: Install uv
         uses: astral-sh/setup-uv@v5
       - run: pushd /tmp && git clone --depth 1 https://github.com/awslabs/git-secrets.git && cd ./git-secrets && PREFIX=/tmp/git-secrets make install && popd
@@ -48,7 +48,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '24'
       - name: Install uv
         uses: astral-sh/setup-uv@v5
       # pnpm is installed directly rather than through corepack: pnpm 10 manages
@@ -61,24 +61,29 @@ jobs:
       - run: pnpm nx run @aws/threat-composer-e2e:install-browsers
       - name: Typecheck e2e specs
         run: pnpm nx run @aws/threat-composer-e2e:typecheck
-      # The e2e target depends on @aws/threat-composer:copy-assets, which in
-      # turn depends on compile, so nx compiles the library and copies its
-      # CSS/PNG/GIF into lib before Playwright boots the app's dev server. The
-      # suite asserts both that the app is styled and that images load, so the
-      # asset copy is required. A full Storybook build is not needed here and
-      # is not in this target's dependency chain.
-      # BROWSER=none stops react-scripts opening a browser when Playwright boots
-      # the dev server through the app's `dev` target.
+      # Each suite's nx target declares what it needs built. `e2e` depends on
+      # @aws/threat-composer:copy-assets (which depends on compile), so the
+      # library is compiled and its CSS/PNG/GIF copied into lib before
+      # Playwright boots the Vite dev server; the suite asserts that the app is
+      # styled and that images load, so the asset copy is required. `e2e:preview`
+      # depends on the app's compile:website and serves the production bundle,
+      # `e2e:variants` on the browser-extension and ide-extension builds, and
+      # `e2e:extension` on the packed Chrome extension. A full Storybook build is
+      # in none of these chains.
       - name: Run web app suite
         run: pnpm nx run @aws/threat-composer-e2e:e2e
-        env:
-          BROWSER: none
+      - name: Run production-preview suite
+        run: pnpm nx run @aws/threat-composer-e2e:e2e:preview
+      - name: Run build-variants suite
+        run: pnpm nx run @aws/threat-composer-e2e:e2e:variants
+      - name: Run browser-extension suite
+        run: pnpm nx run @aws/threat-composer-e2e:e2e:extension
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: |
-            e2e/playwright-report/
-            e2e/test-results/
+            e2e/playwright-report*/
+            e2e/test-results*/
           retention-days: 7

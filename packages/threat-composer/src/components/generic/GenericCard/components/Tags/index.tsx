@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
-import { CancelableEventHandler, BaseKeyDetail } from '@cloudscape-design/components/internal/events';
+import type { CancelableEventHandler, BaseKeyDetail } from '@cloudscape-design/components/internal/events';
 import TokenGroup from '@cloudscape-design/components/token-group';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
