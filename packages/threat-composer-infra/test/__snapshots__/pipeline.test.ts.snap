@@ -171,6 +171,7 @@ exports[`Snapshot 1`] = `
       },
       "commands": [
         "npm install -g pnpm@10",
+        "pip3 install uv",
         "pnpm install --frozen-lockfile"
       ]
     },
@@ -592,7 +593,7 @@ exports[`Snapshot 1`] = `
                   "Version": "1",
                 },
                 "Configuration": {
-                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"0f1e39d9a986a50656737c2fcb33fbdca780841c0e0ab71d7eb1c9e015fb369d"}]",
+                  "EnvironmentVariables": "[{"name":"_PROJECT_CONFIG_HASH","type":"PLAINTEXT","value":"2831df5698bab01223e3ea0101a4d4373254782a0f0894b756379b00234c89c0"}]",
                   "ProjectName": {
                     "Ref": "ApplicationPipelineBuildSynthCdkBuildProject5CE66381",
                   },

@@ -106,8 +106,15 @@ export class PipelineStack extends Stack {
         // version from the packageManager field in the root package.json, so
         // the major below is all that needs stating here and the exact version
         // stays declared in one place.
+        //
+        // uv is needed too: the root postinstall runs `uv sync` for
+        // packages/threat-composer-ai, and `pnpm build` runs its ruff and
+        // pytest targets. The standard image has Python and pip, and pip puts
+        // the uv binary on the PATH that later phases inherit; a curl-installed
+        // uv would land in ~/.local/bin, which they do not.
         installCommands: [
           'npm install -g pnpm@10',
+          'pip3 install uv',
           'pnpm install --frozen-lockfile',
         ],
         commands: ['pnpm build'],

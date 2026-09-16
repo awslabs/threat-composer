@@ -69,17 +69,17 @@ See [docs/WEB-APP.md](../../docs/WEB-APP.md) for complete configuration referenc
 cd packages/threat-composer-infra
 cdk synth
 
-# Deploy application stack
-cdk deploy ThreatComposerApplicationStack
+# Deploy the Dev stage (application stack plus its us-east-1 WebACL stack)
+cdk deploy 'Dev/*'
 
-# Deploy pipeline stack
-cdk deploy ThreatComposerPipelineStack
+# Deploy the pipeline stack
+cdk deploy ThreatComposerInfraStack
 
 # Diff changes
 cdk diff
 
-# Destroy stack
-cdk destroy ThreatComposerApplicationStack
+# Destroy the Dev stage
+cdk destroy 'Dev/*'
 ```
 
 ## Deployment Options
