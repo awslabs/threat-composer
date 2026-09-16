@@ -15,7 +15,7 @@ import { defineConfig, devices } from '@playwright/test';
  *   - The precache manifest / app-shell route.
  *
  * Prerequisite: the website must be built first, e.g.
- *   pnpm --filter @aws/threat-composer-app run compile:website
+ *   pnpm nx run @aws/threat-composer-app:compile:website
  * (or a full `pnpm build`). This config does not build for you beyond starting
  * `vite preview`, which fails fast if build/website is missing.
  */

@@ -10,8 +10,8 @@ import { test, expect } from '../fixtures/console-guard';
  *
  * The service worker only registers when import.meta.env.PROD. This covers SW
  * registration and the vite-plugin-pwa injectManifest output. Requires the
- * website to be built first (pnpm workspace @aws/threat-composer-app run
- * compile:website).
+ * website to be built first (pnpm nx run
+ * @aws/threat-composer-app:compile:website).
  *
  * Imports the console guard rather than @playwright/test directly: the preview
  * specs previously had no console assertions at all, which left the bundle that
