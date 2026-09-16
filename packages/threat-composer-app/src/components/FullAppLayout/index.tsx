@@ -18,7 +18,7 @@ import AppLayoutComponent, {
   AppLayoutProps as AppLayoutComponentProps,
 } from '@cloudscape-design/components/app-layout';
 import BreadcrumbGroup, { BreadcrumbGroupProps } from '@cloudscape-design/components/breadcrumb-group';
-import type { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import SideNavigation, { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
 import { TopNavigationProps } from '@cloudscape-design/components/top-navigation';
 import { Mode } from '@cloudscape-design/global-styles';

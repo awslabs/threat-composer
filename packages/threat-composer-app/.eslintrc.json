@@ -152,7 +152,13 @@
       }
     ],
     "import-x/no-unresolved": [
-      "error"
+      "error",
+      {
+        "ignore": [
+          "^@cloudscape-design/components/internal/",
+          "^@cloudscape-design/components/[a-z-]+/interfaces$"
+        ]
+      }
     ],
     "import-x/order": [
       "warn",

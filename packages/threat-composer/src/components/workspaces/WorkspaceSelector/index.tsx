@@ -21,7 +21,7 @@ import Button from '@cloudscape-design/components/button';
 import ButtonDropdown, {
   ButtonDropdownProps,
 } from '@cloudscape-design/components/button-dropdown';
-import type {
+import {
   CancelableEventHandler,
   NonCancelableEventHandler,
 } from '@cloudscape-design/components/internal/events';

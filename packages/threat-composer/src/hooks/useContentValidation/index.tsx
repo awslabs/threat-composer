@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import type { BaseChangeDetail } from '@cloudscape-design/components/input/interfaces';
-import type { NonCancelableCustomEvent, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import { BaseChangeDetail } from '@cloudscape-design/components/input/interfaces';
+import { NonCancelableCustomEvent, NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import { useCallback, useEffect, useState } from 'react';
 import { z } from 'zod';
 import sanitizeHtml from '../../utils/sanitizeHtml';

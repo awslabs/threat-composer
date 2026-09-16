@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import CloudscapeAutosuggest, { AutosuggestProps as CloudscapeAutosuggestProps } from '@cloudscape-design/components/autosuggest';
 import FormField, { FormFieldProps } from '@cloudscape-design/components/form-field';
-import type { BaseKeyDetail, CancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import { BaseKeyDetail, CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import React, { FC, useCallback, useState } from 'react';
 import { z } from 'zod';
 import useContentValidation from '../../../hooks/useContentValidation';

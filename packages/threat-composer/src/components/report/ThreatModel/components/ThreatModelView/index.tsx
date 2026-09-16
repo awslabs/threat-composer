@@ -19,7 +19,7 @@ import Button from '@cloudscape-design/components/button';
 import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
 import ContentLayoutComponent from '@cloudscape-design/components/content-layout';
 import Header, { HeaderProps } from '@cloudscape-design/components/header';
-import type { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import Popover from '@cloudscape-design/components/popover';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import Spinner from '@cloudscape-design/components/spinner';

@@ -14,8 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import FormField, { FormFieldProps } from '@cloudscape-design/components/form-field';
-import type { BaseChangeDetail } from '@cloudscape-design/components/input/interfaces';
-import type { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import { BaseChangeDetail } from '@cloudscape-design/components/input/interfaces';
+import { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import TextareaComponent, { TextareaProps as TextareaComponetProps } from '@cloudscape-design/components/textarea';
 import React, { FC, useCallback } from 'react';
 import { z } from 'zod';

@@ -16,7 +16,7 @@
 import CollectionPreferences, {
   CollectionPreferencesProps,
 } from '@cloudscape-design/components/collection-preferences';
-import type { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import { FC, useMemo, useState, useCallback } from 'react';
 
 import FullDataTable from './components/FullDataTable';

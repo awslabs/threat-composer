@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import ButtonDropdown, { ButtonDropdownProps } from '@cloudscape-design/components/button-dropdown';
-import type { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import { CancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import { FC, useCallback } from 'react';
 
 export interface GenericListMoreActionsProps {

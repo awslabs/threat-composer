@@ -47,6 +47,10 @@ export default [
   // Flat config also drops the `--ext` flag and only discovers .js/.mjs/.cjs by
   // default, so the translated configs must be scoped to the TypeScript sources
   // explicitly or nothing gets linted at all.
+  // .eslintrc.json sets `import-x/no-unresolved` to ignore Cloudscape's `internal/*`
+  // and `*/interfaces` subpaths. Those modules carry types only and are absent from
+  // the package's exports map, so the resolver cannot see them; TypeScript resolves
+  // them through node10 resolution (see tsconfig.json) and erases them on emit.
   ...compat.extends('./.eslintrc.json').map((config) => ({
     ...config,
     files: ["**/*.ts", "**/*.tsx"],

@@ -16,7 +16,7 @@
 /** @jsxImportSource @emotion/react */
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
 import Grid from '@cloudscape-design/components/grid';
-import type { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
+import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
 import { FC, useMemo, useState } from 'react';
 import { TemplateThreatStatement } from '../../../customTypes';
 import threatStatus from '../../../data/status/threatStatus.json';

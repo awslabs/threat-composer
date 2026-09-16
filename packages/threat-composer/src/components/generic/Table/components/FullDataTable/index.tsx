@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { useCollection } from '@cloudscape-design/collection-hooks';
 import Button from '@cloudscape-design/components/button';
-import type { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
+import { NonCancelableEventHandler } from '@cloudscape-design/components/internal/events';
 import Pagination from '@cloudscape-design/components/pagination';
 import TableComponent, { TableProps as CloudscapeTableProps } from '@cloudscape-design/components/table';
 import TextFilter from '@cloudscape-design/components/text-filter';
