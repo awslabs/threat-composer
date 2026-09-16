@@ -5,11 +5,9 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@aws/pdk": "^0.26.7",
-    "aws-cdk-lib": "2.194.0",
+    "aws-cdk-lib": "^2.266.0",
     "cdk-nag": "^2",
-    "constructs": "^10.8.1",
-    "projen": "^0.82.8"
+    "constructs": "^10.8.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.6",
