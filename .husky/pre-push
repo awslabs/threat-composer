@@ -1,4 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
+# Full build (install, compile, typecheck, eslint, unit tests, ruff, pytest) before
+# anything leaves the machine. This is what CI runs.
 bash ./scripts/build.sh

@@ -55,7 +55,7 @@ const TYPES = {
 
 if (!fs.existsSync(ROOT)) {
   console.error(`[serve-static] build directory not found: ${ROOT}`);
-  console.error('[serve-static] build it first, e.g. pnpm e2e:build:variants');
+  console.error('[serve-static] build it first: pnpm e2e:variants builds both variants before serving');
   process.exit(1);
 }
 
