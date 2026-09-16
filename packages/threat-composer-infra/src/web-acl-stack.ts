@@ -70,6 +70,22 @@ export class WebAclStack extends Stack {
       },
       rules: [
         {
+          name: 'AWS-AWSManagedRulesCommonRuleSet',
+          priority: 0,
+          overrideAction: { none: {} },
+          statement: {
+            managedRuleGroupStatement: {
+              vendorName: 'AWS',
+              name: 'AWSManagedRulesCommonRuleSet',
+            },
+          },
+          visibilityConfig: {
+            cloudWatchMetricsEnabled: true,
+            sampledRequestsEnabled: true,
+            metricName: 'AWS-AWSManagedRulesCommonRuleSet',
+          },
+        },
+        {
           name: `${this.stackName}-CidrAllowList`,
           priority: 1,
           action: { block: {} },

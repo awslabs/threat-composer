@@ -13,10 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { CfnOutput, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import { BuildSpec, ComputeType } from 'aws-cdk-lib/aws-codebuild';
 import { Repository } from 'aws-cdk-lib/aws-codecommit';
-import { IFileSetProducer, CodeBuildStep, CodePipeline, CodePipelineSource } from 'aws-cdk-lib/pipelines';
+import { Pipeline, PipelineType } from 'aws-cdk-lib/aws-codepipeline';
+import { PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Key } from 'aws-cdk-lib/aws-kms';
+import { BlockPublicAccess, Bucket, BucketEncryption, CfnBucket, ObjectOwnership } from 'aws-cdk-lib/aws-s3';
+import { IFileSetProducer, ShellStep, CodePipeline, CodePipelineSource } from 'aws-cdk-lib/pipelines';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -43,6 +47,11 @@ export class PipelineStack extends Stack {
     const codeConnectionArn = this.node.tryGetContext('codeConnectionArn');
     const branchName = this.node.tryGetContext('defaultBranchName') || DEFAULT_BRANCH_NAME;
 
+    // Match PDK v0.26.15's paths, including the nested ApplicationPipeline below.
+    // Moving these constructs would replace existing deployment resources.
+    const pipelineScope = new Construct(this, 'ApplicationPipeline');
+    pipelineScope.node.setContext('@aws-cdk/aws-s3:serverAccessLogsUseBucketPolicy', true);
+
     let source: IFileSetProducer;
 
     if (useCodeConnection) {
@@ -56,17 +65,58 @@ export class PipelineStack extends Stack {
         connectionArn: codeConnectionArn,
       });
     } else {
-      const repository = new Repository(this, 'CodeRepository', {
+      const repository = new Repository(pipelineScope, 'CodeRepository', {
         repositoryName,
-        description: 'Threat Composer monorepo',
       });
+      repository.applyRemovalPolicy(RemovalPolicy.RETAIN);
 
       source = CodePipelineSource.codeCommit(repository, branchName);
+      new CfnOutput(pipelineScope, 'CodeRepositoryGRCUrl', {
+        value: repository.repositoryCloneUrlGrc,
+      });
     }
 
-    this.pipeline = new CodePipeline(this, 'ApplicationPipeline', {
-      publishAssetsInParallel: false,
+    const accessLogsBucket = new Bucket(pipelineScope, 'AccessLogsBucket', {
+      versioned: false,
+      enforceSSL: true,
+      autoDeleteObjects: true,
+      removalPolicy: RemovalPolicy.DESTROY,
+      encryption: BucketEncryption.S3_MANAGED,
+      objectOwnership: ObjectOwnership.OBJECT_WRITER,
+      publicReadAccess: false,
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+    });
+    const artifactBucket = new Bucket(pipelineScope, 'ArtifactsBucket', {
+      enforceSSL: true,
+      autoDeleteObjects: true,
+      removalPolicy: RemovalPolicy.DESTROY,
+      encryption: BucketEncryption.KMS,
+      encryptionKey: new Key(pipelineScope, 'ArtifactKey', {
+        enableKeyRotation: true,
+        removalPolicy: RemovalPolicy.DESTROY,
+      }),
+      objectOwnership: ObjectOwnership.BUCKET_OWNER_ENFORCED,
+      publicReadAccess: false,
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+      serverAccessLogsPrefix: 'access-logs',
+      serverAccessLogsBucket: accessLogsBucket,
+    });
+    const codePipeline = new Pipeline(pipelineScope, 'CodePipeline', {
+      enableKeyRotation: true,
+      restartExecutionOnUpdate: true,
       crossAccountKeys: true,
+      artifactBucket,
+      pipelineType: PipelineType.V1,
+    });
+
+    NagSuppressions.addResourceSuppressions(accessLogsBucket, [{
+      id: 'AwsSolutions-S1',
+      reason: 'This is the access-log destination; logging it to itself would create recursive logs.',
+    }]);
+
+    this.pipeline = new CodePipeline(pipelineScope, 'ApplicationPipeline', {
+      codePipeline,
+      publishAssetsInParallel: false,
       codeBuildDefaults: {
         buildEnvironment: {
           computeType: ComputeType.LARGE,
@@ -99,7 +149,7 @@ export class PipelineStack extends Stack {
           },
         }),
       },
-      synth: new CodeBuildStep('Synth', {
+      synth: new ShellStep('Synth', {
         input: source,
         // CodeBuild's standard images ship yarn but not pnpm. Installed
         // directly rather than through corepack: pnpm 10 manages its own
@@ -124,41 +174,52 @@ export class PipelineStack extends Stack {
   }
 
   /**
-   * Suppress cdk-nag findings on the CI/CD scaffolding that `CodePipeline`
-   * generates for itself. PDKPipeline applied the equivalent suppressions
-   * internally.
+   * Configure generated replication logging and suppress generated IAM findings.
    *
    * Must be called after `pipeline.buildPipeline()`, because the roles and
    * policies these findings refer to do not exist until the pipeline is built.
-   * Scoped to the pipeline construct rather than the stack, so anything else
-   * added to this stack is still evaluated.
+   * S3 logging and KMS rotation are configured, not suppressed.
    */
   public suppressPipelineNagFindings() {
     NagSuppressions.addResourceSuppressions(
-      this.pipeline,
-      [
-        {
-          id: 'AwsSolutions-IAM5',
-          reason:
-            'Roles are generated by the CDK CodePipeline construct. The wildcards are inherent to it: '
-            + 'asset publishing and self-mutation must reach CloudFormation, CodeBuild report groups and '
-            + 'log streams whose names are only known at execution time, and cross-account deploy roles '
-            + 'are assumed by path.',
-        },
-        {
-          id: 'AwsSolutions-KMS5',
-          reason:
-            'The artifact bucket KMS key is created and managed by the CDK CodePipeline construct, which '
-            + 'does not expose key rotation configuration.',
-        },
-        {
-          id: 'AwsSolutions-S1',
-          reason:
-            'The pipeline artifact bucket is created and managed by the CDK CodePipeline construct. It '
-            + 'holds only build artifacts, and server access logging is not configurable on it.',
-        },
-      ],
+      this.pipeline.node.scope!,
+      [{
+        id: 'AwsSolutions-IAM5',
+        reason: 'CDK-generated pipeline roles require wildcard grants for artifact objects, imported '
+          + 'replication keys, build logs/report groups, self-mutation and bootstrap-role discovery. '
+          + 'This preserves the prior generated-pipeline IAM exception, not a stack-wide exception.',
+      }],
       true,
     );
+
+    for (const { stack, replicationBucket } of Object.values(this.pipeline.pipeline.crossRegionSupport)) {
+      const logs = new Bucket(stack, 'AccessLogsBucket', {
+        encryption: BucketEncryption.S3_MANAGED,
+        enforceSSL: true,
+        blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+        objectOwnership: ObjectOwnership.BUCKET_OWNER_ENFORCED,
+        removalPolicy: RemovalPolicy.RETAIN,
+      });
+      logs.addToResourcePolicy(new PolicyStatement({
+        actions: ['s3:PutObject'],
+        resources: [logs.arnForObjects('access-logs*')],
+        principals: [new ServicePrincipal('logging.s3.amazonaws.com')],
+        conditions: {
+          ArnLike: { 'aws:SourceArn': replicationBucket.bucketArn },
+          StringEquals: { 'aws:SourceAccount': stack.account },
+        },
+      }));
+      // CDK creates this bucket during buildPipeline(); configure its L1 in
+      // place so the replication bucket, policy, key and alias keep their IDs.
+      const bucket = replicationBucket.node.defaultChild as CfnBucket;
+      bucket.loggingConfiguration = {
+        destinationBucketName: logs.bucketName,
+        logFilePrefix: 'access-logs',
+      };
+      NagSuppressions.addResourceSuppressions(logs, [{
+        id: 'AwsSolutions-S1',
+        reason: 'This is the replication access-log destination; do not recursively log its own writes.',
+      }]);
+    }
   }
 }

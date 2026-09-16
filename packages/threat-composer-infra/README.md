@@ -102,17 +102,17 @@ Deploys full CI/CD infrastructure (CodePipeline + Application):
 
 ## Testing
 
-Tests run on Vitest (`vitest run --passWithNoTests`). The `build` target also runs `synth`, `typecheck` and `eslint`.
+Tests run on Vitest. Package-local validation does not need AWS credentials,
+bootstrapping, website build assets, or an Nx build:
 
 ```bash
-# Run infrastructure tests (from repository root)
-pnpm nx run @aws/threat-composer-infra:test
+# From repository root
+pnpm --dir packages/threat-composer-infra exec vitest run
+pnpm --dir packages/threat-composer-infra exec tsc --noEmit
+pnpm --dir packages/threat-composer-infra exec eslint src test eslint.config.mjs
 
-# Run in watch mode
-pnpm nx run @aws/threat-composer-infra:test:watch
-
-# Type check
-pnpm nx run @aws/threat-composer-infra:typecheck
+# Intentionally update snapshots only after reviewing the synthesized resources
+pnpm --dir packages/threat-composer-infra exec vitest run --update
 ```
 
 ## Migration off `@aws/pdk`
@@ -125,7 +125,7 @@ replaced with plain AWS CDK:
 | `PDKNag.app()` | `new App()` plus the `cdk-nag` `AwsSolutionsChecks` aspect |
 | `StaticWebsite` / `StaticWebsiteOrigin` | `src/static-website.ts`: private S3 bucket, CloudFront distribution with an Origin Access Control, and a `BucketDeployment` |
 | `CloudfrontWebAcl` (inside `StaticWebsite`) | `src/web-acl-stack.ts`: a plain `CfnIPSet` + `CfnWebACL` |
-| `PDKPipeline` / `PDKPipelineWithCodeConnection` | `pipelines.CodePipeline` in `src/pipeline-stack.ts` |
+| `PDKPipeline` / `PDKPipelineWithCodeConnection` | Explicit S3/KMS resources and `aws-codepipeline.Pipeline` wrapped by `pipelines.CodePipeline` in `src/pipeline-stack.ts` |
 | `PDKNag.getStackPartitionRegex()` | a partition-agnostic suppression regex |
 
 Two behavioural consequences worth knowing:
@@ -140,6 +140,23 @@ Two behavioural consequences worth knowing:
   the `sonarqubeScannerConfig` context value. That value is unset in
   `cdk.context.json`; if it is needed again, add a `CodeBuildStep` to the
   pipeline's `post` steps.
+
+### Existing Deployments
+
+The replacement was compared with main commit `f2d84e15` using its frozen PDK
+dependencies. It preserves resource identities and security settings, including
+CodeCommit retention, key rotation, artifact logging and WAF managed rules.
+The website keeps PDK's OAC, HTTP/2, default price class and 2048 MiB deployment
+provider. The primary artifact/log buckets and key retain their original
+**destroy-on-removal** behavior.
+
+Focused tests cover resource identities, security controls and both pipeline
+sources with same-account and cross-account mixed-region deployments. The full
+PDK comparison was a one-off migration check, not a permanent test dependency.
+
+Review the deployed diff/change set before upgrading, especially WAF
+reassociation, cross-region references, provider upgrades and rollback. These
+offline checks do not guarantee a replacement-free upgrade for every deployment.
 
 ## Contributing
 

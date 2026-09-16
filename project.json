@@ -31,8 +31,21 @@
       "executor": "nx:noop",
       "dependsOn": [
         "build:packs",
-        "build:schema"
+        "build:schema",
+        "test"
       ]
+    },
+    "test": {
+      "command": "node --test scripts/nx-cache.test.mjs",
+      "dependsOn": [],
+      "inputs": [
+        "{workspaceRoot}/scripts/nx-cache.test.mjs",
+        "{workspaceRoot}/nx.json",
+        "{workspaceRoot}/packages/threat-composer/project.json",
+        "{workspaceRoot}/packages/threat-composer-app/project.json",
+        "{workspaceRoot}/packages/threat-composer-app-browser-extension/project.json"
+      ],
+      "outputs": []
     },
     "export:examples": {
       "command": "tsx ./scripts/exportExamples.mts",

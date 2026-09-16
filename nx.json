@@ -16,7 +16,8 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["default", "^default"],
-      "cache": true
+      "outputs": [],
+      "cache": false
     },
     "clean": {
       "inputs": ["default"],

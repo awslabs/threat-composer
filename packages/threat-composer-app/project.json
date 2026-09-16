@@ -96,6 +96,8 @@
     },
     "compile": {
       "executor": "nx:noop",
+      "outputs": [],
+      "cache": false,
       "dependsOn": [
         "compile:website",
         "compile:browser-extension",
@@ -117,7 +119,9 @@
         }
       ],
       "inputs": [
-        "{workspaceRoot}/packages/threat-composer/storybook.out/**/*"
+        {
+          "dependentTasksOutputFiles": "packages/threat-composer/storybook.out/**/*"
+        }
       ],
       "outputs": [
         "{projectRoot}/build/storybook"

@@ -67,6 +67,8 @@ pnpm build
 
 This runs every package's nx `build` target in dependency order. `build` includes compilation, typecheck, eslint, unit tests (Vitest), ruff and pytest for the Python package, and e2e lint and typecheck, so a green build is also a green lint and unit-test run. Playwright suites run separately. Results are cached, so unchanged packages are skipped on the next run. `pnpm typecheck`, `pnpm test` and `pnpm lint` run the corresponding subsets on their own.
 
+The no-op `build` targets and the app/extension `compile` aggregators do not cache or own output directories; their artifact-producing dependencies do. Consumers of generated bundles use dependency-output hashes, including the Storybook copy and both browser-extension builds. The root test target exercises these cache boundaries in isolated Nx workspaces and runs through both `pnpm build` and `pnpm test`.
+
 ## Development Workflows
 
 ### Working with UI Components (threat-composer)

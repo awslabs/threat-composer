@@ -13,13 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { CfnOutput, Duration, RemovalPolicy } from 'aws-cdk-lib';
+import { CfnOutput, RemovalPolicy } from 'aws-cdk-lib';
 import {
- BehaviorOptions, Distribution, DistributionProps,
-  Distribution as CloudFrontDistribution,
+  BehaviorOptions,
+  Distribution,
+  DistributionProps,
   HttpVersion,
-  PriceClass,
-  SecurityPolicyProtocol,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
 import { S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
@@ -29,7 +28,7 @@ import {
   BucketEncryption,
   ObjectOwnership,
 } from 'aws-cdk-lib/aws-s3';
-import { BucketDeployment, CacheControl, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { Construct } from 'constructs';
 
 /**
@@ -56,9 +55,8 @@ export interface StaticWebsiteProps {
  * A private S3 bucket fronted by a CloudFront distribution, replacing
  * `@aws/pdk`'s `StaticWebsite`.
  *
- * Differences from the PDK construct, all deliberate:
- * - Origin access uses an Origin Access Control rather than the legacy Origin
- *   Access Identity.
+ * Preserves PDK v0.26.15's Origin Access Control and website defaults.
+ * Differences from the PDK construct:
  * - The WAF WebACL is a plain `CfnWebACL` in a us-east-1 stack instead of a
  *   Lambda-backed custom resource (see {@link WebAclStack}).
  * - There is no `runtime-config.json` generation; this app does not use it.
@@ -97,7 +95,7 @@ export class StaticWebsite extends Construct {
       serverAccessLogsBucket: accessLogsBucket,
     });
 
-    const distributionLogBucket = new Bucket(this, 'DistributionLogBucket', {
+    const distributionLogBucket = props.distributionProps?.logBucket ?? new Bucket(this, 'DistributionLogBucket', {
       enforceSSL: true,
       autoDeleteObjects: true,
       removalPolicy: RemovalPolicy.DESTROY,
@@ -112,34 +110,28 @@ export class StaticWebsite extends Construct {
     const { defaultBehavior, ...distributionOverrides } = props.distributionProps ?? {};
     const defaultRootObject = props.distributionProps?.defaultRootObject ?? 'index.html';
 
-    this.cloudFrontDistribution = new CloudFrontDistribution(this, 'CloudfrontDistribution', {
+    this.cloudFrontDistribution = new Distribution(this, 'CloudfrontDistribution', {
+      httpVersion: HttpVersion.HTTP2,
+      ...distributionOverrides,
       enableLogging: true,
       logBucket: distributionLogBucket,
-      webAclId: props.webAclArn,
-      // Only meaningful alongside a custom certificate; with the default
-      // CloudFront certificate the security policy is fixed and CDK warns.
-      ...(props.distributionProps?.certificate
-        ? { minimumProtocolVersion: SecurityPolicyProtocol.TLS_V1_2_2021 }
-        : {}),
-      httpVersion: HttpVersion.HTTP2_AND_3,
-      priceClass: PriceClass.PRICE_CLASS_100,
-      ...distributionOverrides,
+      webAclId: distributionOverrides.webAclId ?? props.webAclArn,
       defaultRootObject,
       defaultBehavior: {
-        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         ...defaultBehavior,
         origin: S3BucketOrigin.withOriginAccessControl(this.websiteBucket),
+        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       },
       // The app is a client-side-routed SPA: unknown paths must be served the
       // shell document so the router can resolve them.
       errorResponses: props.distributionProps?.errorResponses ?? [
         {
-          httpStatus: 404,
+          httpStatus: 403,
           responseHttpStatus: 200,
           responsePagePath: `/${defaultRootObject}`,
         },
         {
-          httpStatus: 403,
+          httpStatus: 404,
           responseHttpStatus: 200,
           responsePagePath: `/${defaultRootObject}`,
         },
@@ -147,10 +139,11 @@ export class StaticWebsite extends Construct {
     });
 
     new BucketDeployment(this, 'WebsiteDeployment', {
+      // PDK's explicit memory size also determines the provider's logical IDs.
+      memoryLimit: 2048,
       sources: [Source.asset(props.websiteContentPath)],
       destinationBucket: this.websiteBucket,
       distribution: this.cloudFrontDistribution,
-      cacheControl: [CacheControl.maxAge(Duration.minutes(5))],
     });
 
     new CfnOutput(this, 'DistributionDomainName', {

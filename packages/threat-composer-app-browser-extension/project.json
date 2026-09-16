@@ -29,7 +29,10 @@
       ],
       "inputs": [
         "default",
-        "{workspaceRoot}/packages/threat-composer-app/build/browser-extension/**/*",
+        {
+          "dependentTasksOutputFiles": "packages/threat-composer-app/build/browser-extension/**/*",
+          "transitive": true
+        },
         "{workspaceRoot}/packages/threat-composer-app/src/assets/logo-dark.svg"
       ],
       "outputs": [
@@ -48,7 +51,10 @@
       ],
       "inputs": [
         "default",
-        "{workspaceRoot}/packages/threat-composer-app/build/browser-extension/**/*",
+        {
+          "dependentTasksOutputFiles": "packages/threat-composer-app/build/browser-extension/**/*",
+          "transitive": true
+        },
         "{workspaceRoot}/packages/threat-composer-app/src/assets/logo-dark.svg"
       ],
       "outputs": [
@@ -58,6 +64,8 @@
     },
     "compile": {
       "executor": "nx:noop",
+      "outputs": [],
+      "cache": false,
       "dependsOn": [
         "compile:chrome",
         "compile:firefox"
