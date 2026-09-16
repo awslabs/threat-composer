@@ -52,6 +52,7 @@ exclude = [
   ".git",
   "__pycache__",
   ".venv",
+  ".env",
   ".eggs",
   "*.egg",
   "dist",
