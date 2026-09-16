@@ -1,4 +1,1 @@
-# eslint across the TypeScript packages, ruff (check only) for threat-composer-ai.
-# eslint runs with --fix, so anything it corrects lands after staging: re-stage
-# if it edits a file. To fix ruff findings: pnpm nx run threat-composer-ai:lint:fix
 pnpm lint
