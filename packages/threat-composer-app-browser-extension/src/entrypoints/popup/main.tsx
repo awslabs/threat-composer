@@ -14,12 +14,19 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { MemoryRouter } from 'react-router-dom';
 import App from './App.tsx';
 import { ExtensionConfigProvider } from './ExtensionConfigProvider.js';
 
-ReactDOM.render(
+// React 19 removed the legacy ReactDOM.render, so the popup mounts via createRoot.
+const container = document.getElementById('root');
+
+if (!container) {
+  throw new Error('Cannot mount the extension popup: no #root element');
+}
+
+createRoot(container).render(
   <React.StrictMode>
     <ExtensionConfigProvider>
       <MemoryRouter>
@@ -27,5 +34,4 @@ ReactDOM.render(
       </MemoryRouter>
     </ExtensionConfigProvider>
   </React.StrictMode>,
-  document.getElementById('root'),
 );

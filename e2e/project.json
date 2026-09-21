@@ -1,0 +1,234 @@
+{
+  "name": "@aws/threat-composer-e2e",
+  "root": "e2e",
+  "sourceRoot": "e2e",
+  "projectType": "application",
+  "implicitDependencies": [
+    "@aws/threat-composer-app"
+  ],
+  "targets": {
+    "install-browsers": {
+      "command": "playwright install chromium",
+      "options": {
+        "cwd": "e2e"
+      },
+      "cache": false
+    },
+    "eslint": {
+      "command": "eslint .",
+      "options": {
+        "cwd": "e2e"
+      }
+    },
+    "typecheck": {
+      "command": "tsc --noEmit -p tsconfig.json",
+      "options": {
+        "cwd": "e2e"
+      },
+      "inputs": [
+        "default"
+      ],
+      "cache": true
+    },
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "eslint",
+        "typecheck"
+      ]
+    },
+    "e2e": {
+      "command": "playwright test",
+      "options": {
+        "cwd": "e2e"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "copy-assets"
+        }
+      ],
+      "cache": false
+    },
+    "e2e:headed": {
+      "command": "playwright test --headed",
+      "options": {
+        "cwd": "e2e"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "copy-assets"
+        }
+      ],
+      "cache": false
+    },
+    "e2e:ui": {
+      "command": "playwright test --ui",
+      "options": {
+        "cwd": "e2e"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "copy-assets"
+        }
+      ],
+      "cache": false
+    },
+    "e2e:debug": {
+      "command": "playwright test --debug",
+      "options": {
+        "cwd": "e2e"
+      },
+      "cache": false
+    },
+    "e2e:trace": {
+      "command": "TC_CAPTURE=1 playwright test",
+      "options": {
+        "cwd": "e2e"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer"
+          ],
+          "target": "copy-assets"
+        }
+      ],
+      "cache": false
+    },
+    "report": {
+      "command": "playwright show-report",
+      "options": {
+        "cwd": "e2e"
+      },
+      "cache": false
+    },
+    "trace": {
+      "command": "playwright show-trace",
+      "options": {
+        "cwd": "e2e"
+      },
+      "cache": false
+    },
+    "e2e:preview": {
+      "command": "playwright test --config=playwright.preview.config.ts",
+      "options": {
+        "cwd": "e2e"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer-app"
+          ],
+          "target": "compile:website"
+        }
+      ],
+      "cache": false
+    },
+    "e2e:variants": {
+      "command": "playwright test --config=playwright.variants.config.ts",
+      "options": {
+        "cwd": "e2e"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer-app"
+          ],
+          "target": "compile:browser-extension"
+        },
+        {
+          "projects": [
+            "@aws/threat-composer-app"
+          ],
+          "target": "compile:ide-extension"
+        }
+      ],
+      "cache": false
+    },
+    "e2e:extension": {
+      "command": "playwright test --config=playwright.extension.config.ts",
+      "options": {
+        "cwd": "e2e"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer-app-browser-extension"
+          ],
+          "target": "compile:chrome"
+        }
+      ],
+      "cache": false
+    },
+    "e2e:all": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "e2e",
+        "e2e:preview",
+        "e2e:variants",
+        "e2e:extension"
+      ],
+      "cache": false
+    },
+    "e2e:ui:preview": {
+      "command": "playwright test --config=playwright.preview.config.ts --ui",
+      "options": {
+        "cwd": "e2e"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer-app"
+          ],
+          "target": "compile:website"
+        }
+      ],
+      "cache": false
+    },
+    "e2e:ui:variants": {
+      "command": "playwright test --config=playwright.variants.config.ts --ui",
+      "options": {
+        "cwd": "e2e"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer-app"
+          ],
+          "target": "compile:browser-extension"
+        },
+        {
+          "projects": [
+            "@aws/threat-composer-app"
+          ],
+          "target": "compile:ide-extension"
+        }
+      ],
+      "cache": false
+    },
+    "e2e:ui:extension": {
+      "command": "playwright test --config=playwright.extension.config.ts --ui",
+      "options": {
+        "cwd": "e2e"
+      },
+      "dependsOn": [
+        {
+          "projects": [
+            "@aws/threat-composer-app-browser-extension"
+          ],
+          "target": "compile:chrome"
+        }
+      ],
+      "cache": false
+    }
+  }
+}

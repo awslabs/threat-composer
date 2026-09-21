@@ -8,7 +8,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 /**
  * Default config: runs the functional suite against the Vite **dev** server
- * (`yarn dev` -> http://localhost:3000).
+ * (`pnpm dev` -> http://localhost:3000).
  *
  * Notes on the migration this suite guards (see report.html):
  *  - The dev server does NOT set VITE_APP_MODE and does NOT register the
@@ -36,7 +36,7 @@ const BASE_URL = process.env.TC_BASE_URL ?? 'http://localhost:3000';
 const CAPTURE_ALL = !!process.env.TC_CAPTURE;
 
 // Allow pointing the suite at an already-running server (CI or a manually
-// started `yarn dev`) instead of having Playwright spawn one.
+// started `pnpm dev`) instead of having Playwright spawn one.
 const REUSE_SERVER = !process.env.CI;
 
 export default defineConfig({
@@ -78,7 +78,7 @@ export default defineConfig({
     ? undefined
     : {
         // Run the app's dev server from the repo root via the workspace.
-        command: 'yarn workspace @aws/threat-composer-app run dev',
+        command: 'pnpm nx run @aws/threat-composer-app:dev',
         cwd: REPO_ROOT,
         url: BASE_URL,
         reuseExistingServer: REUSE_SERVER,

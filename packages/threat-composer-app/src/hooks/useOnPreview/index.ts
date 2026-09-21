@@ -19,7 +19,7 @@ import { generatePath } from 'react-router-dom';
 import { ROUTE_PREVIEW } from '../../config/routes';
 
 const TEMP_PREVIEW_DATA_KEY = 'ThreatStatementGenerator.TempPreviewData';
-const ROUTE_BASE_PATH = process.env.REACT_APP_ROUTE_BASE_PATH;
+const ROUTE_BASE_PATH = import.meta.env.VITE_ROUTE_BASE_PATH;
 
 const useOnPreview = () => {
   const handlePreview = useCallback((data: DataExchangeFormat) => {

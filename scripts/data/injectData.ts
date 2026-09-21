@@ -3,7 +3,7 @@ import path from "path";
 
 /**
  * Inject data into threat ThreatPack/MitigationPack/WorkspaceExample dynamically in build time.
- * Usage: npx ts-node ./scripts/data/injectData.ts <ThreatPack|MitigationPack|WorkspaceExample> <SourceDir-relative path to the relative data folder>
+ * Usage: pnpm exec tsx ./scripts/data/injectData.ts <ThreatPack|MitigationPack|WorkspaceExample> <SourceDir-relative path to the relative data folder>
  */
 
 const IMPORT_PLACEHOLDER = "// {IMPORT_PLACEHOLDER}";
@@ -133,7 +133,7 @@ const main = () => {
 
   if (lenArgs !== 4) {
     console.log(
-      "Usage: npx ts-node ./scripts/data/injectData.ts <ThreatPack|MitigationPack|WorkspaceExample> <SourceDir-relative path to the relative data folder>"
+      "Usage: pnpm exec tsx ./scripts/data/injectData.ts <ThreatPack|MitigationPack|WorkspaceExample> <SourceDir-relative path to the relative data folder>"
     );
     return -1;
   }

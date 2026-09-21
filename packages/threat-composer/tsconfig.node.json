@@ -1,0 +1,36 @@
+{
+  // Type-checks the Node-side build config files, which cannot live in the main
+  // project. tsconfig.json pins "moduleResolution": "node" (node10) because of
+  // Cloudscape subpath type imports -- see the note there -- and node10 cannot
+  // resolve packages that ship only an "exports" map, which is what Vite and
+  // @vitejs/plugin-react now do. Splitting them out is the standard Vite
+  // arrangement and lets these files use "bundler" resolution.
+  //
+  // Deliberately NOT extending ./tsconfig.json, so none of the node10 settings
+  // leak in. This project has no Cloudscape imports, so it is also free to be
+  // checked with TypeScript 7 (`tsc`) while the main project uses `tsc6`.
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": [
+      "es2020"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": [
+      "node"
+    ],
+    "strict": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": [
+    "vitest.config.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
