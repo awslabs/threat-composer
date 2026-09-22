@@ -15,7 +15,6 @@
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
 
-import DeleteConfirmationDialog from '@aws-northstar/ui/components/DeleteConfirmationDialog';
 import Alert from '@cloudscape-design/components/alert';
 import Button from '@cloudscape-design/components/button';
 import ButtonDropdown, {
@@ -47,6 +46,7 @@ import useImportExport from '../../../hooks/useExportImport';
 import useRemoveData from '../../../hooks/useRemoveData';
 import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
 import isWorkspaceExample from '../../../utils/isWorkspaceExample';
+import DeleteConfirmationDialog from '../../generic/DeleteConfirmationDialog';
 import ThemeToggle from '../../generic/ThemeToggle';
 import EditWorkspace from '../../workspaces/EditWorkspace';
 import FileImport from '../../workspaces/FileImport';

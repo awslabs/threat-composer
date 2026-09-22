@@ -10,7 +10,6 @@
     "lib"
   ],
   "dependencies": {
-    "@aws-northstar/ui": "1.4.2",
     "@cloudscape-design/board-components": "3.0.220",
     "@cloudscape-design/collection-hooks": "1.0.107",
     "@cloudscape-design/components": "3.0.1352",
@@ -46,6 +45,9 @@
     "@storybook/addon-links": "^10.5.10",
     "@storybook/react": "^10.5.10",
     "@storybook/react-vite": "^10.5.10",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/indefinite": "2.3.4",
     "@types/node": "^26",
     "@types/react": "19.2.18",

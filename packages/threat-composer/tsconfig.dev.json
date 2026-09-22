@@ -32,8 +32,13 @@
   // vitest.config.ts is checked by tsconfig.node.json instead: it imports Vite
   // and @vitejs/plugin-react, which ship only an "exports" map and so cannot be
   // resolved under this project's node10 setting.
+  // "test" carries the Vitest setup file, whose side-effect import of
+  // "@testing-library/jest-dom/vitest" is what augments Vitest's `Assertion` with
+  // the jest-dom matchers. Without it in the program, `toBeVisible` and friends
+  // are type errors in the component tests even though they work at runtime.
   "include": [
     "src",
+    "test",
     ".storybook"
   ],
   "exclude": [
