@@ -22,7 +22,7 @@ import useWorkspaceStorage from '../../hooks/useWorkspaceStorage';
 
 export * from './context';
 export * from './types';
-export { BrainstormItem, BrainstormData } from '../../customTypes/brainstorm';
+export type { BrainstormItem, BrainstormData } from '../../customTypes/brainstorm';
 
 export interface BrainstormContextProviderProps {
   workspaceId: string | null;

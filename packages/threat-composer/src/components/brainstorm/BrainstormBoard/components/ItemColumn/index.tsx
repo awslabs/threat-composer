@@ -22,7 +22,8 @@ import GroupableItemCard from '../../../../generic/GroupableItemCard';
 import EntityCreationCard from '../EntityCreationCard';
 
 // Export column configuration for use by parent components
-export { columnConfig, ColumnConfig, getThreatInputColumns, getPromotableColumns, getThreatCreationColumns, getColumnById } from './columnConfig';
+export type { ColumnConfig } from './columnConfig';
+export { columnConfig, getThreatInputColumns, getPromotableColumns, getThreatCreationColumns, getColumnById } from './columnConfig';
 
 export interface ItemColumnProps {
   title: string;

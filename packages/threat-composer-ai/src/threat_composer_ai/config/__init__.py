@@ -11,9 +11,25 @@ from .global_config import (
     validate_path_in_output_directory,
     validate_path_security,
 )
+from .model_capabilities import (
+    ModelCapabilities,
+    accepts_sampling_params,
+    is_known_model,
+    is_sampling_param_error,
+    mark_model_no_sampling_support,
+    model_capabilities,
+    resolve_max_output_tokens,
+)
 
 __all__ = [
     "AppConfig",
+    "ModelCapabilities",
+    "model_capabilities",
+    "accepts_sampling_params",
+    "mark_model_no_sampling_support",
+    "resolve_max_output_tokens",
+    "is_sampling_param_error",
+    "is_known_model",
     "register_global_config",
     "get_global_config",
     "get_global_working_directory",
