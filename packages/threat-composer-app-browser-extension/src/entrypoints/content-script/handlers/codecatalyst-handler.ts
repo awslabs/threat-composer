@@ -13,7 +13,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-
 import { logDebugMessage } from '../../../debugLogger';
 import { TCConfig, IntegrationTypes } from '../../popup/config';
 import { TCCodeCatalystState, TCJSONSimplifiedSchema } from '../types';
@@ -86,7 +85,7 @@ export class CodeCatalystHandler extends SPAIntegrationHandler {
         this.logDebug('Successfully found CodeCatalyst action element with retry mechanism');
 
         // Smart button insertion with dynamic styling
-        const tcButton = this.insertCodeCatalystThreatComposerButton(actionElement);
+        this.insertCodeCatalystThreatComposerButton(actionElement);
 
         this.logDebug('CodeCatalyst button inserted and configured');
       } else if (!actionElement) {

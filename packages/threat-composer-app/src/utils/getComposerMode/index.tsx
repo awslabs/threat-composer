@@ -13,10 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-
 import { SEARCH_PARAM_MODE } from '../../config/searchParams';
 
-const DEFAULT_MODE = process.env.REACT_APP_DEFAULT_MODE;
+const DEFAULT_MODE = import.meta.env.VITE_DEFAULT_MODE;
 
 const getComposerMode = () => {
   const searchParams = new URLSearchParams(window.location.search);
