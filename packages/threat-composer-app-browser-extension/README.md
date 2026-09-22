@@ -15,7 +15,7 @@ The extension supports the following integrations where a ‘View in Threat Comp
 1. Clone this repo
 1. Run the main build script (`./scripts/build.sh`) to build everything (including the browser extension)
 
-For any other guidance see the [Development](../../README.md#development) section of the main [README](../../README.md)
+For any other guidance see the [Development Guide](../../docs/DEVELOPMENT.md)
 
 ## Load locally
 
@@ -36,25 +36,21 @@ For any other guidance see the [Development](../../README.md#development) sectio
 
 ### Google Chrome
 
-1. Go to the root of the extension package - `cd ./packages/threat-composer-app-browser-extension`
-1. Run `yarn run zip` - look in `./.output/` for ZIP file
+1. From the repository root run `pnpm nx run @aws/threat-composer-app-browser-extension:zip` - look in `./packages/threat-composer-app-browser-extension/.output/` for ZIP file
 1. To load locally open Chrome, then goto `chrome://extensions`, enable developer mode, then drag-and-drop the ZIP file onto the page to load.
 
 ### Mozilla Firefox
 
-1. Go to the root of the extension package - `cd ./packages/threat-composer-app-browser-extension`
-1. Run `yarn run zip:firefox` - look in `./.output/` for ZIP file
+1. From the repository root run `pnpm nx run @aws/threat-composer-app-browser-extension:zip:firefox` - look in `./packages/threat-composer-app-browser-extension/.output/` for ZIP file
 
 ## Development
 
 ### Google Chrome
 
-1. Go to the root of the extension package - `cd ./packages/threat-composer-app-browser-extension`
-1. Run `yarn run dev`
+1. From the repository root run `pnpm dev:extension`
 1. In your browser navigate to a hosted Threat Composer file on a supported integration - [example1](https://github.com/awslabs/threat-composer/blob/main/packages/threat-composer/src/data/workspaceExamples/ThreatComposer.tc.json), [example2](https://github.com/awslabs/threat-composer/blob/main/packages/threat-composer/src/data/workspaceExamples/GenAIChatbot.tc.json) and [example3](https://raw.githubusercontent.com/awslabs/threat-composer/main/packages/threat-composer/src/data/workspaceExamples/GenAIChatbot.tc.json)
 
 ### Mozilla Firefox
 
-1. Go to the root of the extension package - `cd ./packages/threat-composer-app-browser-extension`
-1. Run `yarn run dev:firefox`
+1. From the repository root run `pnpm nx run @aws/threat-composer-app-browser-extension:dev:firefox`
 1. In your browser navigate to a hosted Threat Composer file on a supported integration - [example1](https://github.com/awslabs/threat-composer/blob/main/packages/threat-composer/src/data/workspaceExamples/ThreatComposer.tc.json) and [example2](https://github.com/awslabs/threat-composer/blob/main/packages/threat-composer/src/data/workspaceExamples/GenAIChatbot.tc.json). Note: on Firefox it does not work on `githubusercontent.com` due to the `sandbox` CSP directive.

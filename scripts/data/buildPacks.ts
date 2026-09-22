@@ -3,7 +3,7 @@ import path from "path";
 
 /**
  * Build packs from pack metadata json files.
- * Usage: npx ts-node ./scripts/data/buildPacks.ts <ThreatPack|MitigationPack> <SourceDir-relative path to the relative data folder> <DestDir-relative path to the relative data folder>
+ * Usage: pnpm exec tsx ./scripts/data/buildPacks.ts <ThreatPack|MitigationPack> <SourceDir-relative path to the relative data folder> <DestDir-relative path to the relative data folder>
  */
 
 const DATA_FOLDER = path.join(
@@ -143,7 +143,7 @@ const main = () => {
 
   if (lenArgs < 3) {
     console.log(
-      "Usage: npx ts-node ./scripts/data/buildPacks.ts <ThreatPack|MitigationPack> <SourceDir-relative path to the relative data folder> <DestDir-relative path to the relative data folder>"
+      "Usage: pnpm exec tsx ./scripts/data/buildPacks.ts <ThreatPack|MitigationPack> <SourceDir-relative path to the relative data folder> <DestDir-relative path to the relative data folder>"
     );
     return -1;
   }

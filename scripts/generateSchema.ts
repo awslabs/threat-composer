@@ -5,10 +5,11 @@ import { DataExchangeFormatSchema } from "../packages/threat-composer/src/custom
 
 /**
  * Generate JSON Schema from Zod schema definition.
- * Usage: npx ts-node --compiler-options '{"lib":["es2019","dom"]}' scripts/generateSchema.ts
+ * Usage: pnpm exec tsx ./scripts/generateSchema.ts
  *
  * Note: DOM types are required because the source dataExchange.ts file contains
- * interfaces that reference DOM types like CustomEvent.
+ * interfaces that reference DOM types like CustomEvent; the root tsconfig.json
+ * includes the dom lib for that reason.
  */
 
 const SCHEMAS_PATH = path.join(__dirname, "..", "schemas");
