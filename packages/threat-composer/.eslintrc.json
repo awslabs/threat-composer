@@ -138,7 +138,9 @@
       {
         "devDependencies": [
           "**/test/**",
-          "**/build-tools/**"
+          "**/build-tools/**",
+          "**/*.test.ts",
+          "**/*.test.tsx"
         ],
         "optionalDependencies": false,
         "peerDependencies": true

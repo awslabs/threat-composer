@@ -37,12 +37,14 @@ export const byTooltip = (scope: Page | Locator, tooltip: string): Locator =>
   scope.locator(`span:has(> span.tooltipText:text-is("${tooltip}")) button`);
 
 /**
- * Confirm button of an @aws-northstar/ui DeleteConfirmationDialog.
+ * Confirm button of a DeleteConfirmationDialog.
  *
  * The button renders visible text ("Remove", "Delete workspace", "Remove data")
  * but also carries `aria-label="delete"`, which OVERRIDES the text for the
  * accessible name. So matching on the visible text fails and this is the only
  * name that resolves. Cancel is likewise `aria-label="close"`.
+ *
+ * @see packages/threat-composer/src/components/generic/DeleteConfirmationDialog/index.tsx
  */
 export const confirmDeleteButton = (page: Page): Locator =>
   page.getByRole('button', { name: 'delete', exact: true });
