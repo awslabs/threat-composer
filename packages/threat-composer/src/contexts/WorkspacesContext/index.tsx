@@ -33,7 +33,5 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = (props) =>
 
 export default WorkspacesContextProvider;
 
-export {
-  useWorkspacesContext,
-  WorkspacesContextProviderProps,
-};
+export type { WorkspacesContextProviderProps };
+export { useWorkspacesContext };

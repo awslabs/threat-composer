@@ -1,5 +1,14 @@
 name: build
 on: [push, pull_request]
+# Least privilege for GITHUB_TOKEN, declared at workflow level so it also covers
+# any job added later. Both jobs only ever read the repository: they check out,
+# install from public registries and clone a public repo. Nothing here writes to
+# the repo, and nothing resolves from GitHub Packages, so `contents: read` is
+# sufficient. This matches what the token is already granted in practice, so it
+# is a guard against the repository default widening rather than a change in
+# behaviour. deploy.yml already scopes its jobs this way.
+permissions:
+  contents: read
 jobs:
   build-test:
     runs-on: ubuntu-latest
@@ -11,14 +20,70 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '24'
       - name: Install uv
         uses: astral-sh/setup-uv@v5
       - run: pushd /tmp && git clone --depth 1 https://github.com/awslabs/git-secrets.git && cd ./git-secrets && PREFIX=/tmp/git-secrets make install && popd
       - run: npm install -g typescript
-      - run: npm install -g yarn
+      # pnpm is installed directly rather than through corepack: pnpm 10 manages
+      # its own exact version from the packageManager field in package.json.
+      - run: npm install -g pnpm@10
       - run: npm install -g oss-attribution-generator
-      - run: npm install -g @aws/pdk
-      - run: pdk install --frozen-lockfile
-      - run: PATH=/tmp/git-secrets/bin:$PATH pdk run build
-      - run: pdk workspaces run eslint
+      - run: pnpm install --frozen-lockfile
+      # `pnpm build` runs every project's nx `build` target. Each package's
+      # build depends on its eslint and test targets (and ruff/pytest for
+      # threat-composer-ai), so lint and tests are part of the build graph
+      # rather than separate steps.
+      - run: PATH=/tmp/git-secrets/bin:$PATH pnpm build
+
+  e2e:
+    # Playwright functional tests for the web app. Kept as a separate job from
+    # build-test: it needs a browser installed and is the only job that exercises
+    # the app at runtime, so a failure here is distinguishable at a glance from a
+    # compile or lint failure.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '24'
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      # pnpm is installed directly rather than through corepack: pnpm 10 manages
+      # its own exact version from the packageManager field in package.json.
+      - run: npm install -g pnpm@10
+      # e2e is a pnpm workspace and an nx project (e2e/project.json), so one
+      # install covers it. Browsers are an explicit target rather than a
+      # postinstall hook, so a plain `pnpm install` does not download Chromium.
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm nx run @aws/threat-composer-e2e:install-browsers
+      - name: Typecheck e2e specs
+        run: pnpm nx run @aws/threat-composer-e2e:typecheck
+      # Each suite's nx target declares what it needs built. `e2e` depends on
+      # @aws/threat-composer:copy-assets (which depends on compile), so the
+      # library is compiled and its CSS/PNG/GIF copied into lib before
+      # Playwright boots the Vite dev server; the suite asserts that the app is
+      # styled and that images load, so the asset copy is required. `e2e:preview`
+      # depends on the app's compile:website and serves the production bundle,
+      # `e2e:variants` on the browser-extension and ide-extension builds, and
+      # `e2e:extension` on the packed Chrome extension. A full Storybook build is
+      # in none of these chains.
+      - name: Run web app suite
+        run: pnpm nx run @aws/threat-composer-e2e:e2e
+      - name: Run production-preview suite
+        run: pnpm nx run @aws/threat-composer-e2e:e2e:preview
+      - name: Run build-variants suite
+        run: pnpm nx run @aws/threat-composer-e2e:e2e:variants
+      - name: Run browser-extension suite
+        run: pnpm nx run @aws/threat-composer-e2e:e2e:extension
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            e2e/playwright-report*/
+            e2e/test-results*/
+          retention-days: 7
