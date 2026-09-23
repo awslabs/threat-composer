@@ -18,7 +18,7 @@ import { FC } from 'react';
 import StandaloneAppLayout from '../../../../components/StandaloneAppLayout';
 import useNotifications from '../../../../hooks/useNotifications';
 
-const defaultHref = process.env.PUBLIC_URL || '/';
+const defaultHref = import.meta.env.BASE_URL || '/';
 
 export interface StandaloneProps {
   composeMode: string | null;

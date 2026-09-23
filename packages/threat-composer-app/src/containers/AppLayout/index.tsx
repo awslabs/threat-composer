@@ -37,7 +37,7 @@ import useNotifications from '../../hooks/useNotifications';
 import generateUrl from '../../utils/generateUrl';
 import WorkspaceSelector from '../WorkspaceSelector';
 
-const defaultHref = process.env.PUBLIC_URL || '/';
+const defaultHref = import.meta.env.BASE_URL || '/';
 
 const AppLayout: FC<PropsWithChildren<{}>> = ({
   children,

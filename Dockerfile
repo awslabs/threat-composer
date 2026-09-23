@@ -3,7 +3,10 @@ FROM public.ecr.aws/amazonlinux/amazonlinux:latest as build
 RUN dnf install tar gzip python3 gcc-c++ make python3-pip rsync shadow-utils graphviz -y
 
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 20
+# Matches the node-version used by .github/workflows/build.yml and deploy.yml, so the
+# image is built on the runtime CI actually validates. The supported range is declared
+# as `engines.node` in the root package.json.
+ENV NODE_VERSION 24
 
 # Use bash for the shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -19,8 +22,11 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | P
 RUN echo node > .nvmrc
 RUN nvm install $NODE_VERSION
 
-# Required to build the threat-composer app
-RUN npm install -g @aws/pdk yarn
+# Required to build the threat-composer app. Installed directly rather than
+# through corepack: pnpm 10 manages its own version from the packageManager
+# field in the root package.json, so the exact version stays declared in one
+# place and the image cannot drift from what CI and developers use.
+RUN npm install -g pnpm@10
 
 # uv (required by packages/threat-composer-ai postinstall hook)
 COPY --from=ghcr.io/astral-sh/uv:0.11.26 /uv /uvx /usr/local/bin/
@@ -34,8 +40,6 @@ RUN mkdir /app && chown app:app /app
 
 # # Switch to the 'app' user
 USER app
-# Set the path so we can use pdk
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
 
 # # Set the working directory to the app directory

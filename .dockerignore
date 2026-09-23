@@ -1,0 +1,43 @@
+# The Dockerfile does `COPY . .` and then runs a clean
+# `pnpm install --frozen-lockfile`, so nothing installed or built on the host
+# should be shipped into the image. Copying host node_modules in particular
+# drags platform-specific native binaries into a Linux image.
+
+.git
+.github
+
+# Installed / generated on the host
+node_modules
+packages/*/node_modules
+packages/*/lib
+packages/*/dist
+packages/*/build
+packages/*/storybook.out
+packages/*/coverage
+packages/*/test-reports
+packages/*/cdk.out
+packages/*/.output
+packages/*/.wxt
+packages/*/dev-dist
+*.tsbuildinfo
+.eslintcache
+
+# Python virtualenvs (packages/threat-composer-ai is synced by uv in-image).
+# .env is a common virtualenv name too; the app's .env.* mode files are
+# different names and are not matched by this pattern. .git is excluded above,
+# so ruff cannot fall back on .gitignore to skip a copied virtualenv.
+.venv
+packages/*/.venv
+.env
+packages/*/.env
+.ruff_cache
+packages/*/.ruff_cache
+__pycache__
+.pytest_cache
+
+# Local noise
+.DS_Store
+*.log
+oss-attribution
+scripts/.temp
+.threat-composer
