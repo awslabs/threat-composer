@@ -1,0 +1,14 @@
+{
+  "name": "@aws/threat-composer-e2e",
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "description": "Playwright end-to-end / functional tests for the threat-composer web app. Kept outside packages/* so the app's own test runner never picks up these specs; run through nx (see project.json).",
+  "type": "module",
+  "devDependencies": {
+    "@cloudscape-design/components": "3.0.1352",
+    "@playwright/test": "1.62.1",
+    "mammoth": "^1.12.2",
+    "typescript": "^6.0.3"
+  }
+}

@@ -14,7 +14,6 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
-import { DeleteConfirmationDialog } from '@aws-northstar/ui';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
@@ -24,6 +23,7 @@ import { css } from '@emotion/react';
 import { FC, PropsWithChildren, useMemo, useRef, ReactNode, useState } from 'react';
 import Tags from './components/Tags';
 import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
+import DeleteConfirmationDialog from '../DeleteConfirmationDialog';
 import Tooltip from '../Tooltip';
 
 export interface GenericCardProps {

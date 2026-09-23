@@ -72,7 +72,7 @@ const Config: FC<ConfigProps> = ({ }) => {
                 >
                   Amazon Code
                 </Toggle>
-                <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.CODEAMAZON}`); }} />
+                <Button iconName="settings" variant="inline-icon" ariaLabel="Amazon Code settings" onClick={() => { void navigate(`/integration/${IntegrationTypes.CODEAMAZON}`); }} />
               </SpaceBetween>
               <SpaceBetween size="xxs" direction="horizontal">
                 <Toggle
@@ -92,7 +92,7 @@ const Config: FC<ConfigProps> = ({ }) => {
                 >
                 Amazon CodeCatalyst
                 </Toggle>
-                <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.CODECATALYST}`); }} />
+                <Button iconName="settings" variant="inline-icon" ariaLabel="Amazon CodeCatalyst settings" onClick={() => { void navigate(`/integration/${IntegrationTypes.CODECATALYST}`); }} />
               </SpaceBetween>
               <SpaceBetween size="xxs" direction="horizontal">
                 <Toggle
@@ -111,7 +111,7 @@ const Config: FC<ConfigProps> = ({ }) => {
                   checked={config.integrations[IntegrationTypes.BITBUCKET].enabled}
                 >Bitbucket
                 </Toggle>
-                <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.BITBUCKET}`); }} />
+                <Button iconName="settings" variant="inline-icon" ariaLabel="Bitbucket settings" onClick={() => { void navigate(`/integration/${IntegrationTypes.BITBUCKET}`); }} />
               </SpaceBetween>
               <SpaceBetween size="xxs" direction="horizontal">
                 <Toggle
@@ -130,7 +130,7 @@ const Config: FC<ConfigProps> = ({ }) => {
                   checked={config.integrations[IntegrationTypes.GITHUB].enabled}
                 >GitHub
                 </Toggle>
-                <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.GITHUB}`); }} />
+                <Button iconName="settings" variant="inline-icon" ariaLabel="GitHub settings" onClick={() => { void navigate(`/integration/${IntegrationTypes.GITHUB}`); }} />
               </SpaceBetween>
               <SpaceBetween size="xxs" direction="horizontal">
                 <Toggle
@@ -149,7 +149,7 @@ const Config: FC<ConfigProps> = ({ }) => {
                   checked={config.integrations[IntegrationTypes.GITLAB].enabled}
                 >GitLab
                 </Toggle>
-                <Button iconName="settings" variant="inline-icon" onClick={() => { navigate(`/integration/${IntegrationTypes.GITLAB}`); }} />
+                <Button iconName="settings" variant="inline-icon" ariaLabel="GitLab settings" onClick={() => { void navigate(`/integration/${IntegrationTypes.GITLAB}`); }} />
               </SpaceBetween>
 
             </SpaceBetween>

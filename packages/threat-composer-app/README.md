@@ -6,7 +6,7 @@ React-based web application for threat modeling with browser-based storage.
 
 ## Package Overview
 
-This package contains the Threat Composer web application built with Create React App. It provides:
+This package contains the Threat Composer web application built with Vite. It provides:
 - Full threat modeling capabilities in the browser
 - Local storage for threat models
 - Import/export functionality
@@ -15,37 +15,32 @@ This package contains the Threat Composer web application built with Create Reac
 ## Local Development Setup
 
 ### Prerequisites
-- Node.js 20 or higher
-- Yarn package manager
+- Node.js 24 (the root `engines` field also accepts 20.19 and 22.13 or later)
+- pnpm 10 (`npm install -g pnpm@10`)
 
 ### Setup
 
 ```bash
 # From repository root
-pdk install --frozen-lockfile
+pnpm install --frozen-lockfile
 
-# Start development server
-pdk run dev
-
-# Or from package directory
-cd packages/threat-composer-app
-yarn run dev
+# Start the Vite dev server
+pnpm dev
 ```
 
-The app will open at [http://localhost:3000](http://localhost:3000)
+The app will open at [http://localhost:3000](http://localhost:3000). Configuration is read from `import.meta.env` and must use the `VITE_` prefix: `VITE_ROUTE_BASE_PATH`, `VITE_GITHUB_PAGES` and `VITE_APP_MODE` (the last is set by `.env.browser-extension` / `.env.ide-extension` for the variant builds). `PUBLIC_URL` is read by `vite.config.ts` to set the base path of the website build.
 
 ## Build
 
 ```bash
-# From repository root
-pdk build
+# From repository root, everything
+pnpm build
 
-# Or from package directory
-cd packages/threat-composer-app
-yarn build
+# Or just this package
+pnpm nx run @aws/threat-composer-app:compile
 ```
 
-Build output will be in the `build/` directory.
+Build output will be in the `build/` directory, with one subdirectory per variant (`website`, `browser-extension`, `ide-extension`). Each variant is a `vite build` with a different `--mode`; see `vite.config.ts`. `pnpm nx run @aws/threat-composer-app:preview` serves the website build with `vite preview`.
 
 ## Project Structure
 
@@ -62,19 +57,26 @@ src/
 
 ## Development Commands
 
+All commands run from the repository root.
+
 ```bash
 # Start dev server
-yarn start
+pnpm dev
 
 # Build for production
-yarn build
+pnpm nx run @aws/threat-composer-app:compile
 
-# Run tests
-yarn test
+# Run unit tests (Vitest)
+pnpm nx run @aws/threat-composer-app:test
+
+# Type check
+pnpm nx run @aws/threat-composer-app:typecheck
 
 # Run linter
-yarn eslint
+pnpm nx run @aws/threat-composer-app:eslint
 ```
+
+Browser tests for this app live in the repository's `e2e/` project; see [e2e/README.md](../../e2e/README.md).
 
 ## Contributing
 
