@@ -256,20 +256,37 @@ def _assemble_components(
 
 def _load_diagram_image(diagram_path: str) -> str:
     """
-    Load an SVG diagram file and convert it to a data URL.
+    Load a diagram file and convert it to a data URL.
+    Tries mermaid format first, then falls back to SVG.
 
     Args:
-        diagram_path: Path to the SVG diagram file (can be relative or absolute)
+        diagram_path: Path to the diagram file (can be relative or absolute)
 
     Returns:
-        Data URL string for the SVG image, or empty string if loading fails
+        Data URL string for the diagram, or empty string if loading fails
     """
     from threat_composer_ai.logging import log_debug, log_warning
 
     try:
         # Resolve relative path to absolute path for file operations
         resolved_diagram_path = resolve_relative_path(diagram_path)
-        log_debug(f"Loading diagram from: {resolved_diagram_path}")
+        
+        # Try mermaid format first
+        mermaid_path = Path(resolved_diagram_path).with_suffix('.mermaid')
+        try:
+            validate_output_directory_path(str(mermaid_path), operation="read")
+            if mermaid_path.exists():
+                log_debug(f"Found mermaid diagram: {mermaid_path}")
+                with open(mermaid_path, encoding="utf-8") as f:
+                    mermaid_content = f.read().strip()
+                if mermaid_content:
+                    log_debug(f"Successfully loaded mermaid diagram ({len(mermaid_content)} chars)")
+                    return mermaid_content
+        except Exception as e:
+            log_debug(f"Mermaid diagram not available: {e}")
+        
+        # Fall back to SVG
+        log_debug(f"Loading SVG diagram from: {resolved_diagram_path}")
 
         # Validate that the path is within the output directory
         try:
