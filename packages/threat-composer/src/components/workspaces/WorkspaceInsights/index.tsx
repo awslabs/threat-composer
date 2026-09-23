@@ -16,7 +16,8 @@
 import Board, { BoardProps } from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
 import Header from '@cloudscape-design/components/header';
-import { useState, ReactNode, useCallback, FC } from 'react';
+// React 19 removed the GLOBAL JSX namespace, so JSX.Element must now be imported.
+import { ReactNode, FC, JSX, useState, useCallback } from 'react';
 import MitigationStatus from './components/MitigationStatus';
 import Overview from './components/Overview';
 import STRIDEAllocation from './components/STRIDEAllocation';

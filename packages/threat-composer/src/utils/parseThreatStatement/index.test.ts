@@ -32,7 +32,7 @@ describe('parseThreatStatement', () => {
     };
     const template = 'A [threat_source] [prerequisites] can [threat_action], which leads to [threat_impact] of [impacted_assets]';
 
-    const outputProcessor = jest.fn().mockImplementation((_token, content, before, _filled) => [
+    const outputProcessor = vi.fn().mockImplementation((_token, content, before, _filled) => [
       before,
       content,
     ]);
