@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "applicationInfo": {
+    "name": "E2E Sample Workload",
+    "description": "## Overview\n\nA **small** threat model used by the Playwright suite to exercise JSON import, markdown rendering (`sanitizeHtml` + the postcss stub) and Word/docx export.\n\n- item one\n- item two\n\n> Data is stored client-side only."
+  },
+  "architecture": {
+    "description": "A single-page app served from a CDN with no backend. All state lives in browser storage.",
+    "image": ""
+  },
+  "dataflow": {
+    "description": "User browser GETs static assets from the CDN. There are no server-side APIs.",
+    "image": ""
+  },
+  "assumptions": [
+    {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "numericId": 1,
+      "displayOrder": 1,
+      "metadata": [],
+      "content": "TLS 1.2+ protects data in transit."
+    }
+  ],
+  "mitigations": [
+    {
+      "id": "22222222-2222-2222-2222-222222222222",
+      "numericId": 1,
+      "displayOrder": 1,
+      "metadata": [],
+      "content": "Enforce a restrictive Content-Security-Policy on all responses."
+    }
+  ],
+  "assumptionLinks": [],
+  "mitigationLinks": [],
+  "threats": [
+    {
+      "id": "33333333-3333-3333-3333-333333333333",
+      "numericId": 1,
+      "displayOrder": 1,
+      "threatSource": "an external actor",
+      "prerequisites": "with a network path to the CDN",
+      "threatAction": "inject a malicious response",
+      "threatImpact": "the user's browser executes untrusted script",
+      "impactedGoal": ["integrity"],
+      "impactedAssets": ["user data"],
+      "statement": "An external actor with a network path to the CDN can inject a malicious response, which leads to the user's browser executing untrusted script, resulting in reduced integrity of user data",
+      "metadata": [
+        {
+          "key": "Priority",
+          "value": "High"
+        },
+        {
+          "key": "STRIDE",
+          "value": ["T"]
+        }
+      ],
+      "tags": ["e2e"]
+    }
+  ]
+}
