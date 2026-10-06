@@ -36,3 +36,7 @@ export { default as GroupableItemCard } from './generic/GroupableItemCard';
 export { default as Modal } from './generic/Modal';
 export * from './generic/ThemeProvider';
 export * from './brainstorm';
+export type { AttackTreesProps } from './attackTrees/AttackTrees';
+export { default as AttackTrees } from './attackTrees/AttackTrees';
+export type { AttackTreeDiagramProps } from './attackTrees/AttackTreeDiagram';
+export { default as AttackTreeDiagram } from './attackTrees/AttackTreeDiagram';

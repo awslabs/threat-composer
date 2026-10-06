@@ -17,3 +17,13 @@ export { default as getThreatFromThreatPacksThreat } from './getThreatFromThreat
 export { default as getNewThreatStatement } from './getNewThreatStatement';
 export { default as escapeMarkdown } from './escapeMarkdown';
 export { default as standardizeNumericId } from './standardizeNumericId';
+export { default as buildAttackTrees } from './buildAttackTrees';
+export * from './buildAttackTrees';
+export { default as layoutAttackTree } from './layoutAttackTree';
+export * from './layoutAttackTree';
+export { default as attackTreeToMermaid } from './attackTreeToMermaid';
+export * from './attackTreeToMermaid';
+export { default as getMitreAttackTechniques } from './getMitreAttackTechniques';
+export * from './getMitreAttackTechniques';
+export { default as sortStrideValues } from './sortStrideValues';
+export { default as parseNumericIdFilter } from './parseNumericIdFilter';

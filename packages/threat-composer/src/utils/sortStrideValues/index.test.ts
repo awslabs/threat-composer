@@ -13,22 +13,27 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export * from './assumptions';
-export * from './brainstorm';
-export * from './mitigations';
-export * from './threats';
-export * from './threatFieldTypes';
-export * from './workspaces';
-export * from './entities';
-export * from './composerMode';
-export * from './application';
-export * from './architecture';
-export * from './dataflow';
-export * from './dataExchange';
-export * from './events';
-export * from './components';
-export * from './referencePacks';
-export * from './windowAPI';
-export * from './appMode';
+import sortStrideValues, { STRIDE_ORDER } from '.';
 
-export * from './attackTrees';
+describe('sortStrideValues', () => {
+  test('returns an empty array for missing or empty input', () => {
+    expect(sortStrideValues()).toEqual([]);
+    expect(sortStrideValues([])).toEqual([]);
+  });
+
+  test('sorts values into canonical STRIDE order', () => {
+    expect(sortStrideValues(['E', 'I', 'S', 'D', 'R', 'T'])).toEqual(['S', 'T', 'R', 'I', 'D', 'E']);
+  });
+
+  test('canonical order matches the STRIDE data', () => {
+    expect(STRIDE_ORDER).toEqual(['S', 'T', 'R', 'I', 'D', 'E']);
+  });
+
+  test('removes duplicates', () => {
+    expect(sortStrideValues(['I', 'S', 'I'])).toEqual(['S', 'I']);
+  });
+
+  test('keeps unknown values after the STRIDE values', () => {
+    expect(sortStrideValues(['Z', 'E', 'A', 'S'])).toEqual(['S', 'E', 'A', 'Z']);
+  });
+});
