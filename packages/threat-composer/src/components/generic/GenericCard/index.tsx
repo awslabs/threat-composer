@@ -86,7 +86,7 @@ const GenericCard: FC<PropsWithChildren<GenericCardProps>> = ({
     </SpaceBetween>);
   }, [onRemove, onEdit, entityId]);
 
-  return (<div ref={ref}>
+  return (<div ref={ref} id={`entity-${entityId}`}>
     <Container
       header={<Header actions={actions}
       ><div css={styles.header}>

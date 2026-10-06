@@ -24,6 +24,7 @@ import {
   ROUTE_APPLICATION_INFO_PATH,
   ROUTE_ARCHITECTURE_INFO_PATH,
   ROUTE_ASSUMPTION_LIST_PATH,
+  ROUTE_ATTACK_TREES_PATH,
   ROUTE_BRAINSTORM_PATH,
   ROUTE_DATAFLOW_INFO_PATH,
   ROUTE_THREAT_PACKS_PATH,
@@ -84,6 +85,11 @@ const AppLayout: FC<PropsWithChildren<{}>> = ({
         type: 'link',
       },
       { type: 'divider' },
+      {
+        text: 'Attack trees',
+        href: generateUrl(ROUTE_ATTACK_TREES_PATH, searchParams, workspaceId),
+        type: 'link',
+      },
       {
         text: 'Threat model',
         href: generateUrl(ROUTE_VIEW_THREAT_MODEL_PATH, searchParams, workspaceId),

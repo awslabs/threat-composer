@@ -33,6 +33,7 @@ import {
   ROUTE_WORKSPACE_PATH,
   ROUTE_PREVIEW_PATH,
   ROUTE_BRAINSTORM_PATH,
+  ROUTE_ATTACK_TREES_PATH,
 } from '../config/routes';
 import isMemoryRouterUsed from '../utils/isMemoryRouterUsed';
 
@@ -42,6 +43,7 @@ const AppRoot = React.lazy(() => import('../containers/AppRoot'));
 const WorkspaceRoot = React.lazy(() => import('../containers/WorkspaceRoot'));
 const Architecture = React.lazy(() => import('../containers/Architecture'));
 const Application = React.lazy(() => import('../containers/Application'));
+const AttackTrees = React.lazy(() => import('../containers/AttackTrees'));
 const BrainstormBoard = React.lazy(() => import('../containers/BrainstormBoard'));
 const Dataflow = React.lazy(() => import('../containers/Dataflow'));
 const AssumptionList = React.lazy(() => import('../containers/AssumptionList'));
@@ -116,6 +118,10 @@ const workspaceRoutes = [
   {
     path: ROUTE_BRAINSTORM_PATH,
     element: <BrainstormBoard />,
+  },
+  {
+    path: ROUTE_ATTACK_TREES_PATH,
+    element: <AttackTrees />,
   },
 ];
 

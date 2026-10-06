@@ -23,15 +23,21 @@ const AttackTrees: FC = () => {
 
   const handleNodeSelect = useCallback(
     (node: AttackTreeNode) => {
+      // react-router 7 returns a promise from navigate; nothing here depends on
+      // the transition completing, so it is explicitly not awaited.
       if (node.type === 'threat' && node.entityId) {
-        navigateView(ROUTE_THREAT_EDITOR, node.entityId);
+        void navigateView(ROUTE_THREAT_EDITOR, node.entityId);
         return;
       }
 
       if (node.type === 'mitigation' && node.entityId) {
-        navigateView(ROUTE_MITIGATION_LIST, undefined, undefined, undefined, {
-          state: { scrollToEntityId: node.entityId },
-        });
+        void navigateView(
+          ROUTE_MITIGATION_LIST,
+          undefined,
+          undefined,
+          undefined,
+          { state: { scrollToEntityId: node.entityId } },
+        );
       }
     },
     [navigateView],

@@ -47,3 +47,5 @@ export const ROUTE_PREVIEW = `/${ROUTE_PREVIEW_PATH}`;
 export const ROUTE_WORKSPACE_DEFAULT = 'workspaces/default';
 export const ROUTE_BRAINSTORM_PATH = 'brainstorm';
 export const ROUTE_BRAINSTORM = `/${ROUTE_WORKSPACE_PATH}/${ROUTE_BRAINSTORM_PATH}`;
+export const ROUTE_ATTACK_TREES_PATH = 'attackTrees';
+export const ROUTE_ATTACK_TREES = `/${ROUTE_WORKSPACE_PATH}/${ROUTE_ATTACK_TREES_PATH}`;

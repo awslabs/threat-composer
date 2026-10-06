@@ -14,10 +14,50 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { MitigationList as MitigationListComponent } from '@aws/threat-composer';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+
+/**
+ * How long to keep looking for the requested card before giving up. The list
+ * renders asynchronously, so the element is usually absent on the first frame.
+ */
+const SCROLL_TO_ENTITY_TIMEOUT_MS = 2000;
 
 const MitigationList = () => {
   const { state } = useLocation();
+
+  // Deep link support: other views, such as the attack trees, navigate here
+  // asking for one mitigation to be brought into view.
+  useEffect(() => {
+    const entityId = state?.scrollToEntityId;
+
+    if (!entityId) {
+      return;
+    }
+
+    let frame = 0;
+    const deadline = Date.now() + SCROLL_TO_ENTITY_TIMEOUT_MS;
+
+    // Retried per frame rather than after a fixed delay, so this neither races a
+    // slow render nor waits longer than it has to on a fast one.
+    const findAndScroll = () => {
+      const element = document.getElementById(`entity-${entityId}`);
+
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      if (Date.now() < deadline) {
+        frame = requestAnimationFrame(findAndScroll);
+      }
+    };
+
+    frame = requestAnimationFrame(findAndScroll);
+
+    return () => cancelAnimationFrame(frame);
+  }, [state?.scrollToEntityId]);
+
   return <MitigationListComponent
     initialFilter={state?.filter}
   />;
