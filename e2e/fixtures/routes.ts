@@ -89,6 +89,14 @@ export const WORKSPACE_ROUTES: WorkspaceRoute[] = [
     control: 'Add new mitigation',
   },
   {
+    path: 'attackTrees',
+    navLink: 'Attack trees',
+    heading: /^Attack trees \(\d+\)/,
+    // Disabled on an empty workspace (nothing to export) but still rendered,
+    // and unique to this route.
+    control: 'Export to Mermaid',
+  },
+  {
     path: 'threatModel',
     navLink: 'Threat model',
     // The report page header renders no title of its own, and its "Threats"
