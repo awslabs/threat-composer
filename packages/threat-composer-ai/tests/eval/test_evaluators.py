@@ -227,8 +227,7 @@ class TestDefaultsExercised:
         assert out.test_pass
 
     def test_fails_when_the_model_was_overridden(self):
-        # The case this evaluator exists for. A run with a pinned model is not
-        # measuring default behaviour, so every other result becomes misleading.
+        # The case this evaluator exists for: a pinned model.
         out = verdict(
             DefaultsExercised(self.SETTINGS),
             data(
@@ -257,8 +256,7 @@ class TestDefaultsExercised:
         assert "environment variable" in out.reason
 
     def test_reports_the_resolved_model_either_way(self):
-        # When a default model changes, this is the first thing anyone reading a
-        # failed run needs to see, so it belongs in the reason on pass and on fail.
+        # The resolved model belongs in the reason on pass and on fail.
         passing = verdict(
             DefaultsExercised(self.SETTINGS),
             data(
@@ -293,8 +291,7 @@ class TestDefaultsExercised:
         assert "not recorded" in out.reason
 
     def test_region_is_not_asserted_by_default(self):
-        # Region is deployment configuration, and in CI it necessarily comes from the
-        # environment, so listing it would fail every run for no useful reason.
+        # Region comes from the environment in CI, so it is not a default setting.
         from threat_composer_ai.eval.quality import DEFAULT_SETTINGS
 
         assert "aws_region" not in DEFAULT_SETTINGS

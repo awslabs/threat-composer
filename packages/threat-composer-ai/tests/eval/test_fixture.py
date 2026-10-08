@@ -1,9 +1,7 @@
 """Tests for fixture pinning.
 
-The pin is what makes the quality eval able to attribute a regression. If the
-fixture can drift, a score change is ambiguous between the agent getting worse and
-the input changing. These tests cover the hashing itself, and one guard that the
-exclusion list has not diverged from what the repository actually tracks.
+Covers the hashing itself, and a guard that the exclusion list has not diverged
+from what the repository tracks. See fixture.py for why the fixture is pinned.
 
 Most of these need nothing beyond the standard library, so they run whether or not
 the eval extra is installed. The exception is the gate tests at the end, which
@@ -146,8 +144,7 @@ class TestRecordedPinMatchesTheFixture:
 
         If someone commits a file inside a directory this module excludes, the agent
         would read it while the pin ignored it, leaving a gap where the input could
-        change without the hash noticing. That happened during development with
-        `.wxt/`, which WXT generates but the repository commits.
+        change without the hash noticing.
         """
         config = json.loads(CONFIG.read_text())
         relative = config["fixture"]["path"]
@@ -202,9 +199,8 @@ class TestRecordedPinMatchesTheFixture:
 class TestTheGateRefusesBeforeSpendingAnything:
     """The pre-flight must block before the CLI runs, not after.
 
-    A drifted fixture makes the whole run unattributable, so discovering it after
-    a full inference run would be pointless. These assert on
-    whether run_cli was reached, which is the only thing that actually costs money.
+    These assert on whether run_cli was reached, which is the step that costs
+    inference.
 
     Unlike the rest of this module, these do require strands-agents-evals, because
     they exercise main(), which imports the evaluators. Guarded rather than left to

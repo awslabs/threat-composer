@@ -62,11 +62,8 @@ DEFAULT_EDGES = [
     ["architecture", "architecture_diagram"],
     ["dataflow", "dataflow_diagram"],
 ]
-# Settings that must come from the CLI's own defaults for a run to be measuring
-# default behaviour. These are the ones that change what the agent does, as opposed
-# to where its output lands. aws_region is excluded deliberately: it is deployment
-# configuration rather than behaviour, and in CI it necessarily comes from the
-# environment because credentials and model access are region scoped.
+# Settings that must come from the CLI's defaults. See DefaultsExercised. aws_region
+# is excluded: it is deployment configuration, and in CI it comes from the environment.
 DEFAULT_SETTINGS = [
     "aws_model_id",
     "execution_timeout",
@@ -141,24 +138,10 @@ def build_evaluators(config: dict[str, Any]) -> list[Any]:
 def run_cli(target: Path, output_dir: Path, model_id: str | None, timeout: int) -> int:
     """Invoke the shipped console script against the fixture, on its own defaults.
 
-    Overriding a setting here would exempt it from the eval. If the default model
-    changes, or a default timeout is retuned, that is exactly the kind of change
-    whose effect on output quality needs measuring, and it can only be measured by
-    letting the default apply. So the flags passed are kept to the minimum that does
-    not touch behaviour:
-
-    --output-dir       so the run can be found afterwards. Changes where files are
-                       written, not what the agent does.
-    --enable-telemetry so the trajectory can be observed. Adds instrumentation, not
-                       decisions.
-
-    --aws-region is not passed. Region comes from the environment, since credentials
-    and model access are region scoped.
-
-    model_id is threaded through only for deliberate manual comparison between
-    models. Passing it makes the run stop testing the default, which the
-    DefaultsExercised evaluator will report as a failure. That is intended: a run
-    with an overridden model is measuring something else.
+    Only flags that do not change what the agent does are passed: --output-dir, so
+    the run can be found, and telemetry, so it can be observed. Region comes from
+    the environment. model_id is for deliberate comparison between models only;
+    passing it makes DefaultsExercised fail, as intended.
     """
     command = [
         "threat-composer-ai-cli",

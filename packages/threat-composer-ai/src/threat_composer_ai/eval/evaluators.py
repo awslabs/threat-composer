@@ -223,20 +223,14 @@ class SpansCaptured(_StateEvaluator):
 class DefaultsExercised(_StateEvaluator):
     """The run used the CLI's own defaults for the settings that govern behaviour.
 
-    Operational, because a run that overrode its own defaults is not measuring the
-    thing this eval exists to measure, and every other result in the report becomes
-    misleading rather than merely wrong.
+    This is why the eval never pins the model. A new default model, or a retuned
+    default timeout, is the change most likely to move quality, and its effect is
+    only measured if the default is what applied. A run that overrode a default is
+    measuring something else, so this is operational.
 
-    The point is regression cover for changes to the defaults themselves. If someone
-    bumps the default model, retunes a default timeout, or changes a default prompt,
-    the effect on output quality only shows up if the default is what actually
-    applied. Pinning the model in the eval would make the eval blind to precisely the
-    change most likely to move quality.
-
-    The CLI records the provenance of each setting in run-metadata.json, so this is a
-    direct assertion rather than an inference. The resolved model is reported either
-    way, since when a default model changes that is the first thing anyone reading a
-    failed run needs to know.
+    Reads the provenance the CLI records in run-metadata.json. The resolved model is
+    reported on pass and fail, since it is the first thing to check when a default
+    changes.
     """
 
     tier = OPERATIONAL
@@ -335,9 +329,8 @@ class LinksResolve(_StateEvaluator):
 class ThreatsWellFormed(_StateEvaluator):
     """Threats fill the grammar the schema models, not just a statement.
 
-    Checking that threatSource, prerequisites, threatAction, threatImpact and
-    impactedAssets are populated is a structural test for specificity. Statement
-    length, which this replaces, was only ever a proxy for it.
+    Checks that each statement meets a minimum length and that threatSource,
+    prerequisites, threatAction, threatImpact and impactedAssets are populated.
     """
 
     def __init__(self, allow_incomplete: int = 0, name: str | None = None):
@@ -409,10 +402,8 @@ class ConceptCoverage(_StateEvaluator):
     for wording to move while still catching a collapse into text that would fit
     any codebase.
 
-    This is the weakest check here and worth being honest about: it verifies
-    vocabulary, not understanding. Output can use every right word inside wrong
-    claims and pass. Judging the claims themselves needs an LLM evaluator, which
-    is a separate and later concern.
+    It checks vocabulary, not understanding: output can use the right words in
+    wrong claims and still pass. Judging the claims needs an LLM evaluator.
     """
 
     def __init__(

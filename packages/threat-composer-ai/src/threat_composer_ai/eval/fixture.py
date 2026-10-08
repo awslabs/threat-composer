@@ -1,19 +1,15 @@
 """Pin the eval's input so the agent is the only thing that moves.
 
-The quality eval exists to make regressions attributable. That only works if the
-source code it analyses is held still. If the fixture drifts, a score change means
-either the agent got worse or the input changed, and there is no way to tell which
-from the result. That ambiguity is the failure mode this module exists to prevent.
+If the fixture drifts, a score change could mean the agent got worse or the input
+changed, and the result cannot say which. The expectations file pins it two ways.
+``fixture.commit`` supplies the source: the workflow checks that commit out, so
+later edits on main do not move the input. ``fixture.tree_sha256``, checked here,
+verifies the tree that was actually materialised is the one the bands were
+measured on, and is checked before the CLI runs so a mismatch costs nothing.
 
-Pinning by commit is the obvious approach and is not enough on its own. A pinned
-SHA can be orphaned by a squash merge, and it says nothing about whether the tree
-that was actually materialised is the tree that was measured. So the guarantee here
-is a content hash: the expectations file records the hash of the fixture the bands
-were derived from, and the eval refuses to draw conclusions from anything else.
-
-The point is not to forbid the fixture from ever changing. It is to make changing
-it a deliberate act with a visible cost, and to ensure the resulting failure says
-"the input moved" rather than "quality dropped".
+The fixture may still change, but deliberately: re-run the eval and update the
+commit, hash and bands together, so the failure says "the input moved" rather than
+"quality dropped".
 """
 
 import hashlib
@@ -25,17 +21,11 @@ from pathlib import Path
 # named separately from the rest so the exception is visible and so
 # tests/eval/test_fixture.py can account for it when comparing against git.
 #
-# `.wxt` is the browser extension's case. Eight of
-# its files are committed, which is why they were originally hashed, but the package
-# declares `postinstall: wxt prepare` and `clean: rm -rf .output .wxt ...`. So
-# `pnpm install` rewrites it and the package's own tooling treats it as output. In CI
-# that produced a different file count from a fresh checkout and failed the pin for a
-# reason that had nothing to do with the fixture changing.
-#
-# The agent does read these files, so excluding them means the pin does not describe
-# the input in full. That is an acceptable trade: their content is derived from
-# configuration that IS hashed, and once fixture.commit is set the eval reads committed
-# content without running an install, so the instability cannot arise.
+# `.wxt` is the browser extension's case. Some of its files are committed, but the
+# package's `postinstall: wxt prepare` rewrites them, so hashing them would make the
+# pin depend on whether an install had run. The agent does read these files, so the
+# pin does not describe the input in full. Their content derives from configuration
+# that is hashed, and the pinned checkout is analysed without an install.
 GENERATED_TRACKED_DIRS = frozenset({".wxt"})
 
 # Paths that are not stable properties of the fixture. The test to apply is whether

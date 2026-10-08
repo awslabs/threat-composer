@@ -328,11 +328,7 @@ def to_environment_state(
     state["usage.total_tokens"] = usage.get("totalTokens")
     state["usage.execution_time_ms"] = graph.get("execution_time")
 
-    # Where each setting came from, and what it resolved to. The CLI records this
-    # itself, which is what lets the eval prove it measured default behaviour rather
-    # than a configuration peculiar to CI. Recording the resolved model matters as
-    # much as the sources: when a default model changes, that is the first thing
-    # anyone reading a failed run will want to see.
+    # Where each setting came from, and the resolved model. See DefaultsExercised.
     metadata = loaded.run_metadata or {}
     state["config.sources"] = metadata.get("configuration_sources") or {}
     aws = (loaded.resolved_config or {}).get("aws") or {}

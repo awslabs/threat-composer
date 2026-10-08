@@ -11,8 +11,8 @@ name: eval-quality
 #     from fork pull requests, so editing this file in a fork cannot obtain
 #     credentials either. Never switch this to pull_request_target, which would
 #     run fork code with this repository's permissions.
-#   - Dependabot pull requests are skipped. Dependabot runs get no OIDC token, and
-#     a dependency bump is third-party code; the run after merge covers it.
+#   - Dependabot pull requests are skipped. A dependency bump is third-party code;
+#     the run after merge covers it.
 #   - Pushes to main and the schedule run on code that is already merged.
 #
 # The job runs in the eval environment, and the role's trust policy accepts only
@@ -22,12 +22,6 @@ name: eval-quality
 # package is a fixture, an input rather than the subject. Only the files that can
 # change what the agent does trigger a run: its source, its dependencies and the
 # eval itself. Tests, docs and build config do not.
-#
-# The filter is not what holds the fixture still. That is done by the pin in the
-# expectations file: a commit, which is checked out below so the eval analyses the
-# same bytes on every run whatever has since happened on main, and a content hash,
-# which is verified before the CLI is invoked so a mismatch costs nothing. The filter
-# decides when to run; the pin decides whether the run means anything.
 #
 # Why also on a schedule: the dependencies are locked and the fixture is pinned, so
 # the significant remaining variable is Bedrock. The default model is hosted and can
@@ -129,12 +123,8 @@ jobs:
         env:
           CONFIG: ${{ inputs.config || 'packages/threat-composer-ai/eval/browser-extension.json' }}
 
-      # Fetches the pinned commit so the eval analyses the same bytes on every run,
-      # regardless of what has happened to the fixture on main since. This is what
-      # keeps the eval working rather than merely detecting that it should not.
-      #
-      # Skipped while commit is null, in which case the checked-out tree is used and
-      # the hash check below is the only thing holding the input still.
+      # See fixture.py for why the fixture is pinned. Skipped when commit is null, in
+      # which case the checked-out tree is analysed and only the hash holds it still.
       - name: Check out the pinned fixture
         if: steps.fixture.outputs.commit != ''
         uses: actions/checkout@v3
@@ -169,8 +159,8 @@ jobs:
           role-session-name: threat-composer-eval-quality
           role-duration-seconds: 2700
 
-      # Fails before spending anything if the role or model access is wrong, which
-      # is a far clearer signal than the graph dying part way through.
+      # Fails before any inference if the role or Bedrock is unreachable. It does not
+      # prove the model can be invoked; the CLI's own validation checks that.
       - name: Confirm Bedrock is reachable
         run: |
           uv run python -c "
@@ -180,13 +170,9 @@ jobs:
           "
         working-directory: packages/threat-composer-ai
 
-      # No --aws-region and no --aws-model-id: the CLI runs on its own defaults so
-      # that a change to a default is measured rather than bypassed. That is the most
-      # likely cause of a quality shift, a new default model above all, and pinning
-      # either here would make the eval blind to it. Region reaches the CLI through
-      # AWS_REGION, set by configure-aws-credentials above, because credentials and
-      # model access are region scoped. The defaults_exercised check asserts all of
-      # this from the provenance the CLI records, and reports the model it resolved.
+      # The CLI runs on its own defaults; see DefaultsExercised. --aws-model-id is
+      # passed only on a manual run that sets it, which defaults_exercised reports as
+      # a failure. Region reaches the CLI through AWS_REGION, set above.
       - name: Run the quality eval
         id: eval
         # Manual inputs arrive as environment variables rather than being expanded
