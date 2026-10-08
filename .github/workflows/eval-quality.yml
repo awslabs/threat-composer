@@ -1,0 +1,223 @@
+name: eval-quality
+
+# Runs when the agent changes, on pull requests and after merge, plus a periodic run
+# to catch drift we did not cause.
+#
+# Who gets a run: anyone who can push to this repository. A run is real inference
+# with real AWS credentials, so it only runs code a maintainer is responsible for.
+#
+#   - Pull requests from a branch in this repository run without approval.
+#   - Pull requests from a fork are skipped. GitHub also withholds the OIDC token
+#     from fork pull requests, so editing this file in a fork cannot obtain
+#     credentials either. Never switch this to pull_request_target, which would
+#     run fork code with this repository's permissions.
+#   - Dependabot pull requests are skipped. A dependency bump is third-party code;
+#     the run after merge covers it.
+#   - Pushes to main and the schedule run on code that is already merged.
+#
+# The job runs in the eval environment, and the role's trust policy accepts only
+# that environment's subject claim.
+#
+# Why the path filter: this eval measures the agent, and the browser extension
+# package is a fixture, an input rather than the subject. Only the files that can
+# change what the agent does trigger a run: its source, its dependencies and the
+# eval itself. Tests, docs and build config do not.
+#
+# Why also on a schedule: the dependencies are locked and the fixture is pinned, so
+# the significant remaining variable is Bedrock. The default model is hosted and can
+# change underneath us, and a push filtered to our own source would never notice.
+
+on:
+  pull_request:
+    paths:
+      - 'packages/threat-composer-ai/src/**'
+      - 'packages/threat-composer-ai/eval/**'
+      - 'packages/threat-composer-ai/pyproject.toml'
+      - 'packages/threat-composer-ai/uv.lock'
+      - '.github/workflows/eval-quality.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'packages/threat-composer-ai/src/**'
+      - 'packages/threat-composer-ai/eval/**'
+      - 'packages/threat-composer-ai/pyproject.toml'
+      - 'packages/threat-composer-ai/uv.lock'
+      - '.github/workflows/eval-quality.yml'
+  schedule:
+    # Mondays 06:00 UTC. Scheduled runs always use the default branch.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      config:
+        description: Expectations file
+        default: packages/threat-composer-ai/eval/browser-extension.json
+      aws-model-id:
+        description: Bedrock model id, blank for the CLI default
+        default: ''
+      allow-quality-failures:
+        description: Report quality failures without failing the job
+        type: boolean
+        default: false
+
+# Least privilege. id-token is required to mint the OIDC token exchanged for the
+# AWS role; contents is required to check out. Nothing here writes to the repo.
+permissions:
+  contents: read
+  id-token: write
+
+# One run at a time per pull request, and one at a time on main. Grouped per pull
+# request so that a push to one pull request cannot cancel a run on main or on
+# another pull request.
+#
+# Superseded push and pull request runs are cancelled, because when several commits
+# land in quick succession the only state worth measuring is the latest one, and
+# each run costs real tokens. Scheduled and manual runs are never cancelled: they
+# are deliberate, and discarding one halfway wastes everything already spent on it.
+concurrency:
+  group: eval-quality-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+
+jobs:
+  quality:
+    # Skips pull requests from forks and from Dependabot. See the header.
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]')
+    runs-on: ubuntu-latest
+    # The role's trust policy accepts only this environment's subject claim.
+    environment: eval
+    # The CLI's own default execution timeout is 2400s and reference runs took
+    # 550s to 1066s. This is the outer bound, sized so a slow run reports rather
+    # than being cut off mid-graph.
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      # The two diagram nodes render through graphviz. Installed explicitly rather
+      # than relying on the runner image, because a missing `dot` would fail those
+      # nodes and read as an agent regression rather than a missing binary.
+      - name: Install graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+
+      - name: Install threat-composer-ai with the eval extra
+        run: uv sync --extra eval
+        working-directory: packages/threat-composer-ai
+
+      # The expectations file owns the fixture's path, commit and hash, so they
+      # cannot drift apart by being stated in more than one place.
+      - name: Resolve the pinned fixture
+        id: fixture
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os
+          fixture = json.load(open(os.environ["CONFIG"]))["fixture"]
+          print(f"path={fixture['path']}")
+          print(f"sha256={fixture['tree_sha256']}")
+          print(f"commit={fixture.get('commit') or ''}")
+          PY
+        env:
+          CONFIG: ${{ inputs.config || 'packages/threat-composer-ai/eval/browser-extension.json' }}
+
+      # See fixture.py for why the fixture is pinned. Skipped when commit is null, in
+      # which case the checked-out tree is analysed and only the hash holds it still.
+      - name: Check out the pinned fixture
+        if: steps.fixture.outputs.commit != ''
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.fixture.outputs.commit }}
+          path: _pinned-fixture
+          sparse-checkout: ${{ steps.fixture.outputs.path }}
+          sparse-checkout-cone-mode: false
+
+      - name: Select the fixture to analyse
+        id: target
+        run: |
+          if [ -n "${{ steps.fixture.outputs.commit }}" ]; then
+            echo "dir=${{ github.workspace }}/_pinned-fixture/${{ steps.fixture.outputs.path }}" >> "$GITHUB_OUTPUT"
+            echo "analysing fixture pinned at ${{ steps.fixture.outputs.commit }}"
+          else
+            echo "dir=${{ github.workspace }}/${{ steps.fixture.outputs.path }}" >> "$GITHUB_OUTPUT"
+            echo "::warning::fixture.commit is null, analysing the checked-out tree. Results stay comparable only while its hash matches the recorded pin."
+          fi
+
+      # Credentials come after everything that does not need them, so a mistake in
+      # the cheap steps above fails before a role is assumed, and the credentials
+      # exist for as short a time as possible.
+      #
+      # 45 minutes covers the CLI's 40 minute execution timeout plus the steps
+      # around it, and limits how long leaked credentials would stay usable.
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_EVAL_ROLE_ARN }}
+          aws-region: us-west-2
+          role-session-name: threat-composer-eval-quality
+          role-duration-seconds: 2700
+
+      # Fails before any inference if the role or Bedrock is unreachable. It does not
+      # prove the model can be invoked; the CLI's own validation checks that.
+      - name: Confirm Bedrock is reachable
+        run: |
+          uv run python -c "
+          import boto3
+          models = boto3.client('bedrock', region_name='us-west-2').list_foundation_models()
+          print(f\"bedrock reachable, {len(models['modelSummaries'])} models visible\")
+          "
+        working-directory: packages/threat-composer-ai
+
+      # The CLI runs on its own defaults; see DefaultsExercised. --aws-model-id is
+      # passed only on a manual run that sets it, which defaults_exercised reports as
+      # a failure. Region reaches the CLI through AWS_REGION, set above.
+      - name: Run the quality eval
+        id: eval
+        # Manual inputs arrive as environment variables rather than being expanded
+        # into the script, so a crafted value cannot inject shell.
+        env:
+          TARGET: ${{ steps.target.outputs.dir }}
+          CONFIG: ${{ github.workspace }}/${{ inputs.config || 'packages/threat-composer-ai/eval/browser-extension.json' }}
+          MODEL_ID: ${{ inputs.aws-model-id }}
+          ALLOW_QUALITY_FAILURES: ${{ inputs.allow-quality-failures }}
+        run: |
+          args=()
+          if [ -n "$MODEL_ID" ]; then args+=(--aws-model-id "$MODEL_ID"); fi
+          if [ "$ALLOW_QUALITY_FAILURES" = "true" ]; then args+=(--allow-quality-failures); fi
+          uv run python -m threat_composer_ai.eval.quality \
+            --target "$TARGET" \
+            --config "$CONFIG" \
+            --output-dir "$RUNNER_TEMP/eval-run" \
+            --json-report "$RUNNER_TEMP/eval-report.json" \
+            "${args[@]}" \
+            | tee "$RUNNER_TEMP/eval-output.txt"
+          exit "${PIPESTATUS[0]}"
+        working-directory: packages/threat-composer-ai
+
+      # Always, because a failed run is when the report and the spans matter most.
+      - name: Summarise
+        if: always()
+        run: |
+          {
+            echo '## Quality eval'
+            echo
+            echo '```'
+            sed -n '/threat-composer-ai quality eval/,$p' "${{ runner.temp }}/eval-output.txt" 2>/dev/null || echo 'no output captured'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the run
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-quality-run
+          # The session tree carries the threat model, the strands graph state and
+          # telemetry/spans.jsonl, which together are enough to re-run every
+          # assertion offline with --session-dir and no inference cost.
+          path: |
+            ${{ runner.temp }}/eval-run/
+            ${{ runner.temp }}/eval-report.json
+            ${{ runner.temp }}/eval-output.txt
+          retention-days: 30

@@ -1,0 +1,151 @@
+{
+  "_comment": [
+    "Quality eval expectations for the threat-composer-app-browser-extension fixture.",
+    "",
+    "Reference runs, all on strands-agents 1.53.0 and global.anthropic.claude-sonnet-5.",
+    "Runs 1 and 2 used the fixture before the Vite migration was squash merged; run 3",
+    "used the pinned commit below:",
+    "",
+    "            threats  mitigations  assumptions  total tokens  wall clock",
+    "  run 1          19           31           20     1,255,735       1066s",
+    "  run 2          20           25           20       823,319        550s",
+    "  run 3          20           39           23       909,417        757s",
+    "",
+    "Runs 1 and 2 had the same input, model and code, yet mitigations moved by 19% and",
+    "tokens by 34%. Bands are therefore set roughly half to double: their job is to",
+    "catch collapse or runaway, not to pin a figure."
+  ],
+
+  "case_name": "browser-extension-threat-model",
+
+  "_fixture": [
+    "See src/threat_composer_ai/eval/fixture.py for why the fixture is pinned and what",
+    "the hash excludes. commit is the squash merge of the Vite migration (#346).",
+    "",
+    "To reproduce locally:",
+    "  git worktree add /tmp/fixture <commit>",
+    "  python -m threat_composer_ai.eval.quality --target /tmp/fixture/<path> ...",
+    "",
+    "To change the fixture, re-run the eval and update commit, tree_sha256 and the",
+    "bands together in one change."
+  ],
+  "fixture": {
+    "path": "packages/threat-composer-app-browser-extension",
+    "commit": "5493bcb183e421b83552993dcd44cf919ad7a110",
+    "tree_sha256": "036805562d3d1f63f55c7c4776efded805422527d6654111e21c8db3f32c49e9",
+    "file_count": 41,
+    "byte_count": 177866
+  },
+
+  "bands": {
+    "threats": [10, 40],
+    "mitigations": [15, 65],
+    "assumptions": [8, 45]
+  },
+
+  "_default_settings": [
+    "Settings that must come from the CLI's own defaults, asserted from run-metadata.json.",
+    "See DefaultsExercised in evaluators.py. aws_region is not listed: it is deployment",
+    "configuration and comes from the environment in CI."
+  ],
+  "default_settings": [
+    "aws_model_id",
+    "execution_timeout",
+    "node_timeout"
+  ],
+
+  "min_statement_chars": 40,
+  "min_diagram_text_nodes": 10,
+
+  "_allow_incomplete_threats": [
+    "Number of threats permitted to leave grammar fields empty. Zero to begin with,",
+    "on the basis that the schema models the grammar and the agent should fill it.",
+    "Raise it if the reference run shows this is unrealistically strict rather than",
+    "quietly dropping the check."
+  ],
+  "allow_incomplete_threats": 0,
+
+  "_max_total_tokens": [
+    "Cost regression guard, at roughly double the largest reference run. Nothing in the",
+    "artifacts notices a prompt change that doubles spend."
+  ],
+  "max_total_tokens": 2500000,
+
+  "_telemetry": [
+    "require_spans asserts telemetry actually produced spans. Without it, every",
+    "tool assertion below passes vacuously the moment telemetry breaks, which is",
+    "worse than not having them. expected_tools are the tools the workflow cannot",
+    "complete without."
+  ],
+  "require_spans": true,
+  "min_spans": 20,
+  "expected_tools": [
+    "threat_composer_workdir_file_write"
+  ],
+
+  "_concept_groups": [
+    "Ideas any competent threat model of this extension ought to raise. Each group",
+    "holds alternative phrasings and matches if ANY one appears, case-insensitively.",
+    "That is deliberate: a model says 'background service worker' one run and",
+    "'background script' the next, so exact strings would fail for reasons that have",
+    "nothing to do with quality.",
+    "",
+    "These groups were chosen over weaker signals such as CSP or DOMPurify, which",
+    "appeared once each in the first reference run and would make the check brittle.",
+    "",
+    "min_concept_groups is 6 of 8, leaving room for phrasing to drift while still",
+    "failing if the output collapses into text that would fit any codebase."
+  ],
+  "min_concept_groups": 6,
+  "concept_groups": {
+    "background execution context": [
+      "service worker",
+      "background worker",
+      "background script",
+      "background page"
+    ],
+    "content script injection": [
+      "content script",
+      "content-script",
+      "injected script"
+    ],
+    "extension message passing": [
+      "runtime.onMessage",
+      "onMessage",
+      "sendMessage",
+      "postMessage",
+      "message passing",
+      "runtime message"
+    ],
+    "execution world isolation": [
+      "isolated world",
+      "main world",
+      "page context"
+    ],
+    "manifest and host permissions": [
+      "manifest",
+      "host permission",
+      "match pattern",
+      "permissions"
+    ],
+    "manifest version differences": [
+      "MV3",
+      "MV2",
+      "manifest v3",
+      "manifest v2",
+      "manifest_version"
+    ],
+    "untrusted threat model input": [
+      ".tc.json",
+      "threat model json",
+      "threat composer json",
+      "threat model file"
+    ],
+    "extension user interface surface": [
+      "popup",
+      "options page",
+      "action popup",
+      "new tab"
+    ]
+  }
+}
