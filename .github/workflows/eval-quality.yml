@@ -1,23 +1,27 @@
 name: eval-quality
 
-# Runs when the agent changes, plus a periodic run to catch drift we did not cause.
-# Deliberately never on pull_request.
+# Runs when the agent changes, on pull requests and after merge, plus a periodic run
+# to catch drift we did not cause.
 #
-# Why not pull_request: a fork pull request cannot obtain AWS credentials. GitHub
-# gives it a read-only token, withholds repository and environment secrets, and caps
-# id-token at "none", so there is no OIDC token to exchange for a role. Approval
-# controls whether a run executes, not what it can reach. As a required check it
-# would go green for us and be permanently unrunnable for every external
-# contributor. Restricting it to same-repo pull requests would instead mean widening
-# the OIDC trust policy from refs/heads/main to pull request refs, which is a real
-# loosening in exchange for pre-merge coverage of maintainer branches only.
+# Who gets a run: anyone who can push to this repository. A run is real inference
+# with real AWS credentials, so it only runs code a maintainer is responsible for.
 #
-# So detection is post-merge. That is the best available here, and it still
-# attributes a regression to a single merge commit rather than to a week of them.
+#   - Pull requests from a branch in this repository run without approval.
+#   - Pull requests from a fork are skipped. GitHub also withholds the OIDC token
+#     from fork pull requests, so editing this file in a fork cannot obtain
+#     credentials either. Never switch this to pull_request_target, which would
+#     run fork code with this repository's permissions.
+#   - Dependabot pull requests are skipped. Dependabot runs get no OIDC token, and
+#     a dependency bump is third-party code; the run after merge covers it.
+#   - Pushes to main and the schedule run on code that is already merged.
+#
+# The job runs in the eval environment, and the role's trust policy accepts only
+# that environment's subject claim.
 #
 # Why the path filter: this eval measures the agent, and the browser extension
-# package is a fixture, an input rather than the subject. Triggering only on
-# threat-composer-ai means the agent is what moves between runs.
+# package is a fixture, an input rather than the subject. Only the files that can
+# change what the agent does trigger a run: its source, its dependencies and the
+# eval itself. Tests, docs and build config do not.
 #
 # The filter is not what holds the fixture still. That is done by the pin in the
 # expectations file: a commit, which is checked out below so the eval analyses the
@@ -30,17 +34,23 @@ name: eval-quality
 # change underneath us, and a push filtered to our own source would never notice.
 
 on:
+  pull_request:
+    paths:
+      - 'packages/threat-composer-ai/src/**'
+      - 'packages/threat-composer-ai/eval/**'
+      - 'packages/threat-composer-ai/pyproject.toml'
+      - 'packages/threat-composer-ai/uv.lock'
+      - '.github/workflows/eval-quality.yml'
   push:
     branches: [main]
     paths:
-      - 'packages/threat-composer-ai/**'
-      # Documentation cannot change agent behaviour, and a run is real inference.
-      - '!packages/threat-composer-ai/**/*.md'
-      # Changes to the eval itself should exercise the eval.
+      - 'packages/threat-composer-ai/src/**'
+      - 'packages/threat-composer-ai/eval/**'
+      - 'packages/threat-composer-ai/pyproject.toml'
+      - 'packages/threat-composer-ai/uv.lock'
       - '.github/workflows/eval-quality.yml'
   schedule:
-    # Mondays 06:00 UTC. Scheduled runs always use the default branch, which is what
-    # the OIDC role's trust policy is scoped to.
+    # Mondays 06:00 UTC. Scheduled runs always use the default branch.
     - cron: '0 6 * * 1'
   workflow_dispatch:
     inputs:
@@ -61,23 +71,32 @@ permissions:
   contents: read
   id-token: write
 
-# One run at a time. Overlapping runs would double the inference bill for no benefit.
+# One run at a time per pull request, and one at a time on main. Grouped per pull
+# request so that a push to one pull request cannot cancel a run on main or on
+# another pull request.
 #
-# Superseded push runs are cancelled, because when several commits land in quick
-# succession the only state worth measuring is the latest one, and each run costs
-# real tokens. Scheduled and manual runs are never cancelled: they are deliberate,
-# and discarding one halfway wastes everything already spent on it.
+# Superseded push and pull request runs are cancelled, because when several commits
+# land in quick succession the only state worth measuring is the latest one, and
+# each run costs real tokens. Scheduled and manual runs are never cancelled: they
+# are deliberate, and discarding one halfway wastes everything already spent on it.
 concurrency:
-  group: eval-quality
-  cancel-in-progress: ${{ github.event_name == 'push' }}
+  group: eval-quality-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
 
 jobs:
   quality:
+    # Skips pull requests from forks and from Dependabot. See the header.
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]')
     runs-on: ubuntu-latest
-    # The CLI's own default execution timeout is 2400s and a reference run took
-    # 1066s. This is the outer bound, sized so a slow run reports rather than
-    # being cut off mid-graph.
-    timeout-minutes: 90
+    # The role's trust policy accepts only this environment's subject claim.
+    environment: eval
+    # The CLI's own default execution timeout is 2400s and reference runs took
+    # 550s to 1066s. This is the outer bound, sized so a slow run reports rather
+    # than being cut off mid-graph.
+    timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -136,18 +155,19 @@ jobs:
             echo "::warning::fixture.commit is null, analysing the checked-out tree. Results stay comparable only while its hash matches the recorded pin."
           fi
 
-      # Credentials come after everything that does not need them. The steps above
-      # are cheap and are where mistakes actually tend to be: shell expressions, the
-      # config read, the sparse checkout, path assembly. Getting those wrong should
-      # not cost a role assumption, and more usefully it means a push from a branch
-      # exercises all of them for real before reaching the one step a branch cannot
-      # pass, since the role's trust policy is scoped to main.
+      # Credentials come after everything that does not need them, so a mistake in
+      # the cheap steps above fails before a role is assumed, and the credentials
+      # exist for as short a time as possible.
+      #
+      # 45 minutes covers the CLI's 40 minute execution timeout plus the steps
+      # around it, and limits how long leaked credentials would stay usable.
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_EVAL_ROLE_ARN }}
           aws-region: us-west-2
           role-session-name: threat-composer-eval-quality
+          role-duration-seconds: 2700
 
       # Fails before spending anything if the role or model access is wrong, which
       # is a far clearer signal than the graph dying part way through.
@@ -169,15 +189,24 @@ jobs:
       # this from the provenance the CLI records, and reports the model it resolved.
       - name: Run the quality eval
         id: eval
+        # Manual inputs arrive as environment variables rather than being expanded
+        # into the script, so a crafted value cannot inject shell.
+        env:
+          TARGET: ${{ steps.target.outputs.dir }}
+          CONFIG: ${{ github.workspace }}/${{ inputs.config || 'packages/threat-composer-ai/eval/browser-extension.json' }}
+          MODEL_ID: ${{ inputs.aws-model-id }}
+          ALLOW_QUALITY_FAILURES: ${{ inputs.allow-quality-failures }}
         run: |
+          args=()
+          if [ -n "$MODEL_ID" ]; then args+=(--aws-model-id "$MODEL_ID"); fi
+          if [ "$ALLOW_QUALITY_FAILURES" = "true" ]; then args+=(--allow-quality-failures); fi
           uv run python -m threat_composer_ai.eval.quality \
-            --target "${{ steps.target.outputs.dir }}" \
-            --config "${{ github.workspace }}/${{ inputs.config || 'packages/threat-composer-ai/eval/browser-extension.json' }}" \
-            --output-dir "${{ runner.temp }}/eval-run" \
-            ${{ inputs.aws-model-id && format('--aws-model-id {0}', inputs.aws-model-id) || '' }} \
-            --json-report "${{ runner.temp }}/eval-report.json" \
-            ${{ inputs.allow-quality-failures == true && '--allow-quality-failures' || '' }} \
-            | tee "${{ runner.temp }}/eval-output.txt"
+            --target "$TARGET" \
+            --config "$CONFIG" \
+            --output-dir "$RUNNER_TEMP/eval-run" \
+            --json-report "$RUNNER_TEMP/eval-report.json" \
+            "${args[@]}" \
+            | tee "$RUNNER_TEMP/eval-output.txt"
           exit "${PIPESTATUS[0]}"
         working-directory: packages/threat-composer-ai
 
