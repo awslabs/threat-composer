@@ -374,6 +374,14 @@ For MCP server configuration, add the environment variable:
 }
 ```
 
+### Writing Spans to a File
+
+To record spans without running a collector, add `--telemetry-export file` or set `THREAT_COMPOSER_TELEMETRY_EXPORT=file`. Spans are written one JSON object per line to `telemetry/spans.jsonl` in the session's output directory. The default, `otlp`, sends them to the endpoint above.
+
+```bash
+threat-composer-ai-cli /path/to/codebase --enable-telemetry --telemetry-export file
+```
+
 ### Using Jaeger for Trace Visualization
 
 [Jaeger](https://www.jaegertracing.io/) is an open-source distributed tracing platform that works well with Threat Composer AI. It provides a web UI for visualizing traces, analyzing latency, and debugging workflow execution.
@@ -395,6 +403,26 @@ uv sync
 uv run threat-composer-ai-cli /path/to/codebase
 uv run threat-composer-ai-mcp
 ```
+
+### Quality Eval
+
+The quality eval runs the CLI against a pinned copy of the browser extension package and checks the result: that the workflow completed, the output is valid, and the number of threats, mitigations and assumptions falls within the ranges in `packages/threat-composer-ai/eval/browser-extension.json`. A run uses real Bedrock inference.
+
+```bash
+cd packages/threat-composer-ai
+uv sync --extra eval
+
+# Run the CLI, then evaluate the result
+git worktree add /tmp/fixture "$(jq -r .fixture.commit eval/browser-extension.json)"
+uv run threat-composer-ai-eval-quality \
+  --target /tmp/fixture/packages/threat-composer-app-browser-extension \
+  --config eval/browser-extension.json
+
+# Re-evaluate an earlier run without inference
+uv run threat-composer-ai-eval-quality --session-dir eval-run --config eval/browser-extension.json
+```
+
+In CI, the `eval-quality` workflow runs on pull requests from branches in this repository, on pushes to `main` and weekly. Pull requests from forks are skipped.
 
 ## Support
 
