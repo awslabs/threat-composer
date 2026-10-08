@@ -152,10 +152,8 @@ def run_cli(target: Path, output_dir: Path, model_id: str | None, timeout: int) 
     --enable-telemetry so the trajectory can be observed. Adds instrumentation, not
                        decisions.
 
-    Notably absent is --aws-region, which was previously passed and made the region
-    an invocation argument rather than a default. Region still comes from the
-    environment in CI, since credentials and model access are region scoped, but it
-    is no longer overridden here.
+    --aws-region is not passed. Region comes from the environment, since credentials
+    and model access are region scoped.
 
     model_id is threaded through only for deliberate manual comparison between
     models. Passing it makes the run stop testing the default, which the
@@ -319,8 +317,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.target:
         # Checked before the CLI runs, not after. A drifted fixture makes the whole
-        # run unattributable, so there is no sense spending eighteen minutes and a
-        # million tokens to produce numbers nobody can interpret.
+        # run unattributable, so there is no sense paying for a full inference
+        # run to produce numbers nobody can interpret.
         expected = (config.get("fixture") or {}).get("tree_sha256")
         ok, message, identity = fixture_module.verify(args.target, expected)
         print(f"fixture: {message}")

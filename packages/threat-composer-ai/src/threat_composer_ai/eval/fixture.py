@@ -25,7 +25,7 @@ from pathlib import Path
 # named separately from the rest so the exception is visible and so
 # tests/eval/test_fixture.py can account for it when comparing against git.
 #
-# `.wxt` is the browser extension's case, and it took a CI failure to find. Eight of
+# `.wxt` is the browser extension's case. Eight of
 # its files are committed, which is why they were originally hashed, but the package
 # declares `postinstall: wxt prepare` and `clean: rm -rf .output .wxt ...`. So
 # `pnpm install` rewrites it and the package's own tooling treats it as output. In CI

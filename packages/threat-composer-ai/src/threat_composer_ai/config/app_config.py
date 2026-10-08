@@ -120,6 +120,8 @@ class AppConfig:
         env_verbose = cls._get_env_bool("THREAT_COMPOSER_VERBOSE")
         env_enable_telemetry = cls._get_env_bool("THREAT_COMPOSER_ENABLE_TELEMETRY")
         env_telemetry_export = os.getenv("THREAT_COMPOSER_TELEMETRY_EXPORT")
+        if env_telemetry_export not in ("otlp", "file"):
+            env_telemetry_export = None
         env_aws_region = os.getenv("AWS_REGION") or os.getenv("AWS_DEFAULT_REGION")
         env_aws_model_id = os.getenv("THREAT_COMPOSER_AWS_MODEL_ID")
         env_aws_profile = os.getenv("AWS_PROFILE")

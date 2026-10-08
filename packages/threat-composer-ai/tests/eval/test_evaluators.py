@@ -3,7 +3,7 @@
 Every evaluator is a pure function of named environment state, which is the whole
 reason the state is flattened in session.py rather than passed around as file
 handles. It means each check can be exercised against a synthetic dict in
-milliseconds, both passing and failing, instead of needing an eighteen minute
+milliseconds, both passing and failing, instead of needing a full
 inference run to find out whether a boolean works.
 
 Each test asserts the failing case as well as the passing one. A check that has

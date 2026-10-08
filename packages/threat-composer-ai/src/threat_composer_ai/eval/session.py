@@ -22,7 +22,7 @@ spans
 
 Everything is flattened into ``EnvironmentState`` entries so that evaluators stay
 pure functions of named state. That keeps them unit testable against synthetic
-state, with no need for an eighteen minute inference run to exercise a boolean.
+state, with no need for a full inference run to exercise a boolean.
 """
 
 import json

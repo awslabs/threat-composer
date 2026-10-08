@@ -41,14 +41,14 @@
     "  tree_sha256  verifies the source. Cheap defence against getting the wrong",
     "            tree anyway, whether through a checkout misconfiguration, a local",
     "            edit, or a pin left stale. Checked before the CLI runs, so a",
-    "            mismatch costs nothing rather than eighteen minutes of inference.",
+    "            mismatch costs nothing rather than a full inference run.",
     "",
     "The hash covers relative paths and file bytes for 41 files: everything git",
     "tracks apart from .wxt/, plus nothing untracked. tests/eval/test_fixture.py",
     "asserts the hashed set matches what git tracks minus that documented exception,",
     "so the exclusions cannot silently diverge from the repository.",
     "",
-    ".wxt/ is committed but excluded, which took a CI failure to work out. The package",
+    ".wxt/ is committed but excluded. The package",
     "declares postinstall: wxt prepare and clean: rm -rf .output .wxt, so pnpm install",
     "rewrites it. Hashing it made the pin depend on whether an install had run: a fresh",
     "checkout gave 49 files and CI, after installing, gave 50. The agent does read",
@@ -116,7 +116,7 @@
 
   "_max_total_tokens": [
     "Cost regression guard, at roughly double the reference run. Nothing in the",
-    "artifacts notices a prompt change that doubles spend, and at over a million",
+    "artifacts notices a prompt change that doubles spend, and at roughly a million",
     "tokens a run that is worth catching."
   ],
   "max_total_tokens": 2500000,
@@ -140,9 +140,8 @@
     "'background script' the next, so exact strings would fail for reasons that have",
     "nothing to do with quality.",
     "",
-    "Occurrence counts in the reference run are given below, and are why these groups",
-    "were chosen over weaker signals such as CSP or DOMPurify, which appeared once",
-    "each and would make the check brittle.",
+    "These groups were chosen over weaker signals such as CSP or DOMPurify, which",
+    "appeared once each in the first reference run and would make the check brittle.",
     "",
     "min_concept_groups is 6 of 8, leaving room for phrasing to drift while still",
     "failing if the output collapses into text that would fit any codebase."

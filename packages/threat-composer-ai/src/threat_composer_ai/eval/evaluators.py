@@ -452,7 +452,7 @@ class TokenUsageWithinBand(_StateEvaluator):
     """Token spend has not regressed.
 
     Nothing at the artifact layer notices a prompt change that doubles cost. At
-    over a million tokens a run, it is worth a check of its own.
+    roughly a million tokens a run, it is worth a check of its own.
     """
 
     def __init__(self, maximum: int, minimum: int = 1, name: str | None = None):

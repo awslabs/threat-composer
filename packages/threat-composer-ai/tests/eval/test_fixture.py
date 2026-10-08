@@ -121,12 +121,9 @@ class TestRecordedPinMatchesTheFixture:
         """The commit pin is what supplies the source, so its absence should be
         visible in the config rather than implicit.
 
-        A null value is legitimate while this stack is unmerged: the fixture the
-        bands were measured against only reaches main as a squash commit that does
-        not exist yet, and this repository deletes branches on merge so a branch
-        commit would be orphaned. Null means the workflow analyses the checked-out
-        tree and the hash is the only thing holding the input still, which it warns
-        about. The key must still be present so that state is explicit.
+        Null is allowed: the workflow then analyses the checked-out tree, and the
+        hash is the only thing holding the input still, which it warns about. The
+        key must still be present so that state is explicit.
         """
         config = json.loads(CONFIG.read_text())
         assert "commit" in config["fixture"], (
@@ -206,7 +203,7 @@ class TestTheGateRefusesBeforeSpendingAnything:
     """The pre-flight must block before the CLI runs, not after.
 
     A drifted fixture makes the whole run unattributable, so discovering it after
-    eighteen minutes and a million tokens would be pointless. These assert on
+    a full inference run would be pointless. These assert on
     whether run_cli was reached, which is the only thing that actually costs money.
 
     Unlike the rest of this module, these do require strands-agents-evals, because
