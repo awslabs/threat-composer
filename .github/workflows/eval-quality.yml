@@ -7,10 +7,12 @@ name: eval-quality
 # with real AWS credentials, so it only runs code a maintainer is responsible for.
 #
 #   - Pull requests from a branch in this repository run without approval.
-#   - Pull requests from a fork are skipped. GitHub also withholds the OIDC token
-#     from fork pull requests, so editing this file in a fork cannot obtain
-#     credentials either. Never switch this to pull_request_target, which would
-#     run fork code with this repository's permissions.
+#   - Pull requests from a fork are skipped. The repository requires approval
+#     before a fork's workflows run, but approval only decides whether a run
+#     starts: an approved fork run still gets no OIDC token, so without the skip
+#     it would fail at the credentials step. Editing this file in a fork cannot
+#     obtain credentials either. Never switch this to pull_request_target, which
+#     would run fork code with this repository's permissions.
 #   - Dependabot pull requests are skipped. A dependency bump is third-party code;
 #     the run after merge covers it.
 #   - Pushes to main and the schedule run on code that is already merged.
