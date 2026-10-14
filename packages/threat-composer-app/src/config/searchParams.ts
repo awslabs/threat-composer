@@ -15,3 +15,11 @@
  ******************************************************************************************************************** */
 export const SEARCH_PARAM_MODE = 'mode';
 export const SEARCH_PARAM_FEATURES = 'features';
+
+/**
+ * Attack trees view state. Kept in the URL so a view can be shared with anyone
+ * who has the same workspace loaded under the same name. Nothing is persisted.
+ */
+export const SEARCH_PARAM_ATTACK_TREE_ROOT = 'root';
+export const SEARCH_PARAM_ATTACK_TREE_ROOT_TAG = 'rootTag';
+export const SEARCH_PARAM_ATTACK_TREE_UNTAGGED = 'untagged';

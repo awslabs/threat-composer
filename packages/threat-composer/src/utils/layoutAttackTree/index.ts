@@ -66,6 +66,10 @@ export interface AttackTreeLayoutEdge {
   toId: string;
   isDefensive: boolean;
   /**
+   * Whether the child is an assumption, which is context rather than an attack step.
+   */
+  isAssumption: boolean;
+  /**
    * SVG path data connecting the right edge of the parent to the left edge of the child.
    */
   path: string;
@@ -213,6 +217,7 @@ const layoutAttackTree = (root: AttackTreeNode, options: Partial<AttackTreeLayou
         fromId: parent.node.id,
         toId: child.node.id,
         isDefensive: child.node.type === 'mitigation',
+        isAssumption: child.node.type === 'assumption',
         path: `M ${startX} ${startY} C ${midX} ${startY}, ${midX} ${endY}, ${endX} ${endY}`,
       });
     });
