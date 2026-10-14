@@ -50,6 +50,7 @@ class WorkflowRunner:
         previous_session_path: str | None = None,
         verbose: bool | None = None,
         enable_telemetry: bool | None = None,
+        telemetry_export: str | None = None,
         aws_region: str | None = None,
         aws_model_id: str | None = None,
         aws_profile: str | None = None,
@@ -74,6 +75,7 @@ class WorkflowRunner:
             previous_session_path: Path to previous session for incremental execution
             verbose: Enable verbose logging
             enable_telemetry: Enable telemetry tracing
+            telemetry_export: Span destination, "otlp" (default) or "file"
             aws_region: AWS region override
             aws_model_id: AWS model ID override
             aws_profile: AWS profile name override
@@ -90,6 +92,7 @@ class WorkflowRunner:
             output_directory=output_directory,
             verbose=verbose,
             enable_telemetry=enable_telemetry,
+            telemetry_export=telemetry_export,
             aws_region=aws_region,
             aws_model_id=aws_model_id,
             aws_profile=aws_profile,
@@ -122,6 +125,7 @@ class WorkflowRunner:
                     "aws_profile": aws_profile,
                     "verbose": verbose,
                     "enable_telemetry": enable_telemetry,
+                    "telemetry_export": telemetry_export,
                     "execution_timeout": execution_timeout,
                     "node_timeout": node_timeout,
                 }
@@ -130,13 +134,23 @@ class WorkflowRunner:
 
         # 4. Setup telemetry (if enabled)
         if config.enable_telemetry:
-            from ..utils import setup_local_telemetry
+            if config.telemetry_export == "file":
+                from ..utils import setup_file_telemetry
 
-            setup_local_telemetry(
-                endpoint_host=config.telemetry_endpoint_host,
-                endpoint_port=config.telemetry_endpoint_port,
-                service_name=config.telemetry_service_name,
-            )
+                setup_file_telemetry(
+                    spans_path=config.output_directory
+                    / config.telemetry_output_sub_dir
+                    / config.telemetry_spans_filename,
+                    service_name=config.telemetry_service_name,
+                )
+            else:
+                from ..utils import setup_local_telemetry
+
+                setup_local_telemetry(
+                    endpoint_host=config.telemetry_endpoint_host,
+                    endpoint_port=config.telemetry_endpoint_port,
+                    service_name=config.telemetry_service_name,
+                )
 
         # 5. Get session info
         from ..config import get_global_session_id, get_global_storage_directory

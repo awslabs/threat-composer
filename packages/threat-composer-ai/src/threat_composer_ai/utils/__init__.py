@@ -9,6 +9,7 @@ from .path_formatter import format_path_for_display
 from .process_management import (
     create_signal_handler,
     force_kill_all_processes,
+    setup_file_telemetry,
     setup_local_telemetry,
     terminate_all_threads,
 )
@@ -19,6 +20,7 @@ __all__ = [
     "force_kill_all_processes",
     "terminate_all_threads",
     "create_signal_handler",
+    "setup_file_telemetry",
     "setup_local_telemetry",
     "format_utc_timestamp",
     "parse_utc_timestamp",
