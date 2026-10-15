@@ -71,6 +71,9 @@ class RunResult:
 
     run_index: int
     run_path: Path | None = None
+    # The model the run resolved, whether passed in or the CLI's default, so a
+    # report stays readable after the default changes.
+    aws_model_id: str | None = None
     success: bool = False
     error: str | None = None
     duration_seconds: float = 0.0
@@ -274,6 +277,7 @@ class BenchmarkRunner:
                 skip_validation=self.config.skip_validation or (run_index > 0),
             )
 
+            result.aws_model_id = runner.config.aws_model_id
             if not success:
                 result.error = error
                 return result
@@ -353,6 +357,7 @@ class BenchmarkRunner:
         return {
             "run_index": r.run_index,
             "run_path": str(r.run_path) if r.run_path else None,
+            "aws_model_id": r.aws_model_id,
             "success": r.success,
             "error": r.error,
             "duration_seconds": r.duration_seconds,
