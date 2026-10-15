@@ -248,7 +248,7 @@ def eval_history(
 @click.option(
     "--enable-telemetry",
     is_flag=True,
-    help="Enable Jaeger telemetry tracing",
+    help="Enable OpenTelemetry tracing",
 )
 @click.option(
     "--dimension",
@@ -287,17 +287,17 @@ def benchmark(
 
     \b
     Examples:
-        # Baseline: 5 runs with default model
-        threat-composer-ai-eval benchmark ./my-app -n 5
+        # Baseline: 5 runs with the default model
+        threat-composer-ai-eval-consistency benchmark ./my-app -n 5
 
         # Model experiment: test a different model
-        threat-composer-ai-eval benchmark ./my-app -n 3 \\
-            --aws-model-id us.anthropic.claude-sonnet-4-20250514-v1:0 \\
+        threat-composer-ai-eval-consistency benchmark ./my-app -n 3 \\
+            --aws-model-id global.anthropic.claude-sonnet-4-6 \\
             --dimension model \\
-            --dimension-value claude-sonnet-4
+            --dimension-value claude-sonnet-4-6
 
         # Custom output location
-        threat-composer-ai-eval benchmark ./my-app -n 3 -o ./benchmarks/
+        threat-composer-ai-eval-consistency benchmark ./my-app -n 3 -o ./benchmarks/
     """
     from datetime import datetime, timezone
 
@@ -388,7 +388,7 @@ def suite(
           "description": "Baseline across diverse codebases",
           "runs_per_target": 3,
           "config": {
-            "aws_model_id": "global.anthropic.claude-sonnet-4-20250514-v1:0"
+            "aws_model_id": "global.anthropic.claude-sonnet-5"
           },
           "targets": [
             {"name": "browser-ext", "path": "./codebases/browser-ext"},
@@ -402,7 +402,7 @@ def suite(
         name: baseline-v1
         runs_per_target: 3
         config:
-          aws_model_id: global.anthropic.claude-sonnet-4-20250514-v1:0
+          aws_model_id: global.anthropic.claude-sonnet-5
         targets:
           - name: browser-ext
             path: ./codebases/browser-ext
@@ -411,9 +411,9 @@ def suite(
 
     \b
     Examples:
-        threat-composer-ai-eval suite ./suite.json
-        threat-composer-ai-eval suite ./suite.yaml -n 5
-        threat-composer-ai-eval suite ./suite.json -o ./results/
+        threat-composer-ai-eval-consistency suite ./suite.json
+        threat-composer-ai-eval-consistency suite ./suite.yaml -n 5
+        threat-composer-ai-eval-consistency suite ./suite.json -o ./results/
     """
     config = SuiteConfig.from_file(config_file)
 
@@ -488,17 +488,17 @@ def eval_files(
     \b
     Examples:
         # Compare 3 files directly
-        threat-composer-ai-eval eval-files run1.tc.json run2.tc.json run3.tc.json
+        threat-composer-ai-eval-consistency eval-files run1.tc.json run2.tc.json run3.tc.json
 
         # Compare directories containing threatmodel.tc.json
-        threat-composer-ai-eval eval-files ./session-1/ ./session-2/ ./session-3/
+        threat-composer-ai-eval-consistency eval-files ./session-1/ ./session-2/ ./session-3/
 
         # Mix files and directories
-        threat-composer-ai-eval eval-files ./output1.json ./session-2/ ./other.tc.json
+        threat-composer-ai-eval-consistency eval-files ./output1.json ./session-2/ ./other.tc.json
 
         # With experiment metadata
-        threat-composer-ai-eval eval-files *.tc.json --name "opus-vs-sonnet" \\
-            --dimension model --dimension-value opus-4.6
+        threat-composer-ai-eval-consistency eval-files *.tc.json --name "sonnet-5-vs-4-6" \\
+            --dimension model --dimension-value claude-sonnet-4-6
     """
     from datetime import datetime, timezone
 
@@ -840,7 +840,7 @@ def compare_matrix(
     Pass 2 or more run paths to compare all pairs.
 
     Example:
-        threat-composer-ai-eval matrix run1/ run2/ run3/ run4/ run5/
+        threat-composer-ai-eval-consistency matrix run1/ run2/ run3/ run4/ run5/
     """
     if len(run_paths) < 2:
         click.echo("Error: Need at least 2 runs to compare", err=True)
