@@ -36,9 +36,9 @@ threat-composer-ai-eval-consistency eval-files ./output1.json ./session-2/ ./oth
 
 # With experiment metadata and output
 threat-composer-ai-eval-consistency eval-files *.tc.json \
-    --name "opus-vs-sonnet" \
+    --name "sonnet-5-vs-4-6" \
     --dimension model \
-    --dimension-value opus-4.6 \
+    --dimension-value claude-sonnet-4-6 \
     -o results.json
 ```
 
@@ -54,9 +54,9 @@ threat-composer-ai-eval-consistency benchmark ./my-app -n 3
 
 # Test a different model
 threat-composer-ai-eval-consistency benchmark ./my-app -n 3 \
-    --aws-model-id us.anthropic.claude-sonnet-4-20250514-v1:0 \
+    --aws-model-id global.anthropic.claude-sonnet-4-6 \
     --dimension model \
-    --dimension-value claude-sonnet-4
+    --dimension-value claude-sonnet-4-6
 
 # Track a prompt change
 threat-composer-ai-eval-consistency benchmark ./my-app -n 3 \
@@ -85,6 +85,8 @@ threat-composer-ai-eval-consistency suite ./suite.yaml -n 5
 threat-composer-ai-eval-consistency suite ./suite.json -o ./results/
 ```
 
+Pin `aws_model_id` when comparing prompts or tools, so that a change to the CLI's default model between two suites cannot be mistaken for the effect of your change. To compare models, pass `--aws-model-id` instead.
+
 Example JSON config:
 ```json
 {
@@ -92,7 +94,7 @@ Example JSON config:
   "description": "Baseline across diverse codebases",
   "runs_per_target": 3,
   "config": {
-    "aws_model_id": "global.anthropic.claude-sonnet-4-20250514-v1:0"
+    "aws_model_id": "global.anthropic.claude-sonnet-5"
   },
   "targets": [
     {"name": "browser-ext", "path": "./codebases/browser-ext"},
@@ -107,7 +109,7 @@ Example YAML config (requires `pyyaml`):
 name: baseline-v1
 runs_per_target: 3
 config:
-  aws_model_id: global.anthropic.claude-sonnet-4-20250514-v1:0
+  aws_model_id: global.anthropic.claude-sonnet-5
 targets:
   - name: browser-ext
     path: ./codebases/browser-ext
@@ -237,8 +239,8 @@ This ensures unmatched items in either run penalise the score equally, regardles
 
 ## Typical Workflow
 
-1. Establish a baseline: `benchmark ./my-app -n 3 --dimension baseline`
+1. Establish a baseline: `benchmark ./my-app -n 3 --dimension baseline --aws-model-id global.anthropic.claude-sonnet-5`
 2. Make a change (prompt, model, temperature, etc.)
-3. Run another benchmark: `benchmark ./my-app -n 3 --dimension prompt --dimension-value "my-change"`
+3. Run another benchmark with the same model: `benchmark ./my-app -n 3 --aws-model-id global.anthropic.claude-sonnet-5 --dimension prompt --dimension-value "my-change"`
 4. Compare results in the benchmark reports
 5. Or re-evaluate existing outputs: `eval-files run1/ run2/ run3/`

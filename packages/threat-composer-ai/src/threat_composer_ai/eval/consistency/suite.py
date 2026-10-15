@@ -11,11 +11,11 @@ Suite config format (JSON or YAML):
     name: "baseline-v1"
     description: "Baseline consistency across diverse codebases"
     dimension: "baseline"
-    dimension_value: "claude-sonnet-4-default"
+    dimension_value: "claude-sonnet-5"
     runs_per_target: 3
 
     config:
-      aws_model_id: "global.anthropic.claude-sonnet-4-20250514-v1:0"
+      aws_model_id: "global.anthropic.claude-sonnet-5"
       aws_region: "us-west-2"
 
     targets:
