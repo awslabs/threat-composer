@@ -23,12 +23,15 @@ import FormField from '@cloudscape-design/components/form-field';
 import Grid from '@cloudscape-design/components/grid';
 import Input from '@cloudscape-design/components/input';
 import Link from '@cloudscape-design/components/link';
+import Multiselect, { MultiselectProps } from '@cloudscape-design/components/multiselect';
 import Select from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import Toggle from '@cloudscape-design/components/toggle';
 import { FC, useCallback, useMemo, useState } from 'react';
 import {
+  useAssumptionLinksContext,
+  useAssumptionsContext,
   useMitigationLinksContext,
   useMitigationsContext,
   useThreatsContext,
@@ -36,7 +39,11 @@ import {
 } from '../../../contexts';
 import { AttackTreeNode, AttackTreeRiskLevel, AttackTreeRootDimension } from '../../../customTypes';
 import { attackTreesToMermaidMarkdown } from '../../../utils/attackTreeToMermaid';
-import buildAttackTrees, { DEFAULT_ATTACK_TREE_ROOT_DIMENSION } from '../../../utils/buildAttackTrees';
+import buildAttackTrees, {
+  DEFAULT_ATTACK_TREE_ROOT_DIMENSION,
+  getAttackTreeTagRootOptions,
+  TAG_PATH_SEPARATOR,
+} from '../../../utils/buildAttackTrees';
 import { downloadContentAsMarkdown } from '../../../utils/downloadContent';
 import { MITRE_ATTACK_ENTERPRISE_MATRIX_URL } from '../../../utils/getMitreAttackTechniques';
 import parseNumericIdFilter from '../../../utils/parseNumericIdFilter';
@@ -81,7 +88,24 @@ const ROOT_DIMENSION_OPTIONS: RootDimensionOption[] = [
     value: 'stride',
     description: 'One tree per STRIDE category',
   },
+  {
+    label: 'Tag',
+    value: 'tag',
+    description: 'One tree per tag you choose, across threats, mitigations and assumptions',
+  },
 ];
+
+/**
+ * Indents a nested tag option so a tag reads beneath its parent in the picker.
+ * Non-breaking spaces survive the option label rendering.
+ */
+const toTagOptionLabel = (value: string, depth: number) => {
+  if (depth <= 1) {
+    return value;
+  }
+  const lastSegment = value.split(TAG_PATH_SEPARATOR).pop() || value;
+  return `${'\u00a0\u00a0\u00a0'.repeat(depth - 1)}↳ ${lastSegment}`;
+};
 
 /**
  * Turns a tree label into a file name fragment, so that "Compromise: customer
@@ -100,6 +124,43 @@ export interface AttackTreesProps {
    * host application to navigate to the underlying entity.
    */
   onNodeSelect?: (node: AttackTreeNode) => void;
+  /**
+   * Controls the tree root dimension. When omitted the component keeps it in local
+   * state. Pass it with onRootDimensionChange to keep it in, for example, the URL.
+   */
+  rootDimension?: AttackTreeRootDimension;
+  onRootDimensionChange?: (rootDimension: AttackTreeRootDimension) => void;
+  /**
+   * Controls the tags trees are rooted at when the root dimension is tag.
+   */
+  rootTags?: string[];
+  onRootTagsChange?: (rootTags: string[]) => void;
+  /**
+   * Controls whether the Untagged tree is shown when the root dimension is tag.
+   */
+  includeUntagged?: boolean;
+  onIncludeUntaggedChange?: (includeUntagged: boolean) => void;
+}
+
+/**
+ * Keeps a value in local state unless the host passes it in, in which case the
+ * host owns it and is told about changes.
+ */
+function useControllableState<T>(value: T | undefined, onChange: ((value: T) => void) | undefined, initial: T) {
+  const [localValue, setLocalValue] = useState<T>(initial);
+  const isControlled = value !== undefined;
+
+  const setValue = useCallback(
+    (next: T) => {
+      if (!isControlled) {
+        setLocalValue(next);
+      }
+      onChange?.(next);
+    },
+    [isControlled, onChange],
+  );
+
+  return [isControlled ? value : localValue, setValue] as const;
 }
 
 /**
@@ -107,10 +168,20 @@ export interface AttackTreesProps {
  * the current workspace. The trees are recomputed from the threat grammar on
  * every render, so nothing here is persisted.
  */
-const AttackTrees: FC<AttackTreesProps> = ({ onNodeSelect }) => {
+const AttackTrees: FC<AttackTreesProps> = ({
+  onNodeSelect,
+  rootDimension: rootDimensionProp,
+  onRootDimensionChange,
+  rootTags: rootTagsProp,
+  onRootTagsChange,
+  includeUntagged: includeUntaggedProp,
+  onIncludeUntaggedChange,
+}) => {
   const { statementList } = useThreatsContext();
   const { mitigationList } = useMitigationsContext();
   const { mitigationLinkList } = useMitigationLinksContext();
+  const { assumptionList } = useAssumptionsContext();
+  const { assumptionLinkList } = useAssumptionLinksContext();
   const { currentWorkspace } = useWorkspacesContext();
 
   const [filteringText, setFilteringText] = useState('');
@@ -118,16 +189,59 @@ const AttackTrees: FC<AttackTreesProps> = ({ onNodeSelect }) => {
   const [threatNumbersText, setThreatNumbersText] = useState('');
   const [mitigationNumbersText, setMitigationNumbersText] = useState('');
   const [includeMitigations, setIncludeMitigations] = useState(true);
-  const [rootDimension, setRootDimension] = useState<AttackTreeRootDimension>(DEFAULT_ATTACK_TREE_ROOT_DIMENSION);
+  const [includeAssumptions, setIncludeAssumptions] = useState(true);
+  const [rootDimension, setRootDimension] = useControllableState<AttackTreeRootDimension>(
+    rootDimensionProp,
+    onRootDimensionChange,
+    DEFAULT_ATTACK_TREE_ROOT_DIMENSION,
+  );
+  const [rootTags, setRootTags] = useControllableState<string[]>(rootTagsProp, onRootTagsChange, []);
+  const [includeUntagged, setIncludeUntagged] = useControllableState<boolean>(
+    includeUntaggedProp,
+    onIncludeUntaggedChange,
+    false,
+  );
+  const isTagDimension = rootDimension === 'tag';
 
   const threatNumbers = useMemo(() => parseNumericIdFilter(threatNumbersText), [threatNumbersText]);
   const mitigationNumbers = useMemo(() => parseNumericIdFilter(mitigationNumbersText), [mitigationNumbersText]);
 
   const allTags = useMemo(() => {
-    const tags = [...statementList.flatMap((t) => t.tags || []), ...mitigationList.flatMap((m) => m.tags || [])];
+    const tags = [
+      ...statementList.flatMap((t) => t.tags || []),
+      ...mitigationList.flatMap((m) => m.tags || []),
+      ...assumptionList.flatMap((a) => a.tags || []),
+    ];
 
     return Array.from(new Set(tags));
-  }, [statementList, mitigationList]);
+  }, [statementList, mitigationList, assumptionList]);
+
+  const tagRootOptions = useMemo(
+    () =>
+      getAttackTreeTagRootOptions({
+        threats: statementList,
+        mitigations: mitigationList,
+        assumptions: assumptionList,
+      }),
+    [statementList, mitigationList, assumptionList],
+  );
+
+  const tagRootSelectOptions: MultiselectProps.Option[] = useMemo(
+    () =>
+      tagRootOptions.map((option) => ({
+        label: toTagOptionLabel(option.value, option.depth),
+        value: option.value,
+        labelTag: String(option.entityCount),
+        // Matched by the filter, so typing a parent finds its nested tags too.
+        filteringTags: [option.value],
+      })),
+    [tagRootOptions],
+  );
+
+  const selectedTagRootOptions: MultiselectProps.Option[] = useMemo(
+    () => rootTags.map((tag) => ({ label: tag, value: tag })),
+    [rootTags],
+  );
 
   const trees = useMemo(
     () =>
@@ -135,25 +249,35 @@ const AttackTrees: FC<AttackTreesProps> = ({ onNodeSelect }) => {
         threats: statementList,
         mitigations: mitigationList,
         mitigationLinks: mitigationLinkList,
+        assumptions: assumptionList,
+        assumptionLinks: assumptionLinkList,
         filter: {
           searchText: filteringText,
           tags: selectedTags,
           threatNumbers,
           mitigationNumbers,
           includeMitigations,
+          includeAssumptions,
           rootDimension,
+          rootTags,
+          includeUntagged,
         },
       }),
     [
       statementList,
       mitigationList,
       mitigationLinkList,
+      assumptionList,
+      assumptionLinkList,
       filteringText,
       selectedTags,
       threatNumbers,
       mitigationNumbers,
       includeMitigations,
+      includeAssumptions,
       rootDimension,
+      rootTags,
+      includeUntagged,
     ],
   );
 
@@ -164,8 +288,21 @@ const AttackTrees: FC<AttackTreesProps> = ({ onNodeSelect }) => {
       threatNumbersText === '' &&
       mitigationNumbersText === '' &&
       includeMitigations &&
-      rootDimension === DEFAULT_ATTACK_TREE_ROOT_DIMENSION,
-    [filteringText, selectedTags, threatNumbersText, mitigationNumbersText, includeMitigations, rootDimension],
+      includeAssumptions &&
+      rootDimension === DEFAULT_ATTACK_TREE_ROOT_DIMENSION &&
+      rootTags.length === 0 &&
+      !includeUntagged,
+    [
+      filteringText,
+      selectedTags,
+      threatNumbersText,
+      mitigationNumbersText,
+      includeMitigations,
+      includeAssumptions,
+      rootDimension,
+      rootTags,
+      includeUntagged,
+    ],
   );
 
   const handleClearFilter = useCallback(() => {
@@ -174,8 +311,11 @@ const AttackTrees: FC<AttackTreesProps> = ({ onNodeSelect }) => {
     setThreatNumbersText('');
     setMitigationNumbersText('');
     setIncludeMitigations(true);
+    setIncludeAssumptions(true);
     setRootDimension(DEFAULT_ATTACK_TREE_ROOT_DIMENSION);
-  }, []);
+    setRootTags([]);
+    setIncludeUntagged(false);
+  }, [setRootDimension, setRootTags, setIncludeUntagged]);
 
   const selectedRootDimensionOption = useMemo(
     () => ROOT_DIMENSION_OPTIONS.find((o) => o.value === rootDimension) || ROOT_DIMENSION_OPTIONS[0],
@@ -321,9 +461,47 @@ const AttackTrees: FC<AttackTreesProps> = ({ onNodeSelect }) => {
                 />
               </FormField>
             </Grid>
+            {isTagDimension && (
+              <FormField
+                label="Root tags"
+                description="One tree per tag. Type to search. Nest a tag with a slash, such as exfiltrate-pii/via-api, to add a sub-goal beneath its parent. The number is how many threats, mitigations and assumptions carry the tag or a tag nested beneath it."
+                stretch
+              >
+                <Multiselect
+                  selectedOptions={selectedTagRootOptions}
+                  options={tagRootSelectOptions}
+                  onChange={({ detail }) =>
+                    setRootTags(detail.selectedOptions.map((o) => o.value || '').filter((v) => v.length > 0))
+                  }
+                  filteringType="auto"
+                  filteringPlaceholder="Search tags"
+                  virtualScroll
+                  tokenLimit={5}
+                  keepOpen
+                  placeholder={
+                    tagRootOptions.length === 0
+                      ? 'No tags in this workspace'
+                      : `Choose from ${tagRootOptions.length} tags`
+                  }
+                  disabled={tagRootOptions.length === 0}
+                  empty="No tags in this workspace"
+                  noMatch="No tags match"
+                  deselectAriaLabel={(option) => `Remove ${option.label}`}
+                  i18nStrings={{ tokenLimitShowMore: 'Show more', tokenLimitShowFewer: 'Show fewer' }}
+                />
+              </FormField>
+            )}
             <SpaceBetween direction="horizontal" size="l" alignItems="center">
+              {isTagDimension && (
+                <Toggle checked={includeUntagged} onChange={({ detail }) => setIncludeUntagged(detail.checked)}>
+                  Show untagged threats
+                </Toggle>
+              )}
               <Toggle checked={includeMitigations} onChange={({ detail }) => setIncludeMitigations(detail.checked)}>
                 Show mitigations
+              </Toggle>
+              <Toggle checked={includeAssumptions} onChange={({ detail }) => setIncludeAssumptions(detail.checked)}>
+                Show assumptions
               </Toggle>
               <Button onClick={handleClearFilter} disabled={hasNoFilter}>
                 Clear filters
@@ -347,7 +525,9 @@ const AttackTrees: FC<AttackTreesProps> = ({ onNodeSelect }) => {
             <Box textAlign="center" padding="l" color="text-body-secondary">
               {statementList.length === 0
                 ? 'Add threats to your workspace to generate attack trees.'
-                : 'No threats match the current filters.'}
+                : isTagDimension && rootTags.length === 0 && !includeUntagged
+                  ? 'Choose one or more root tags to build trees.'
+                  : 'No threats match the current filters.'}
             </Box>
           </Container>
         ) : (

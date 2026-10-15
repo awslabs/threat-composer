@@ -4,6 +4,7 @@
  ******************************************************************************************************************** */
 import type { Page } from '@playwright/test';
 import {
+  addTag,
   fillThreatStatement,
   gotoWorkspace,
   saveNewThreat,
@@ -11,14 +12,16 @@ import {
 } from '../fixtures/app';
 import { test, expect } from '../fixtures/console-guard';
 import { DEFAULT_WORKSPACE } from '../fixtures/routes';
+import { entityCard } from '../fixtures/selectors';
 
 /**
  * Attack trees are a projection of the threat grammar: every tree is recomputed
  * from the existing threats on each render and nothing is persisted. Two things
  * here are easy to break and invisible to a build.
  *
- * First the scope. This view deliberately ships only the four derived
- * dimensions. Authored kill chains and custom trees were cut precisely because
+ * First the scope. This view deliberately ships only derived dimensions: the
+ * four grammar fields, plus tags, which are already stored on threats,
+ * mitigations and assumptions. Authored kill chains and custom trees were cut precisely because
  * they require persisting new state in `.tc.json`, which readers predating that
  * field reject outright — and the exchange schema is strict, so they reject the
  * whole file rather than the unknown key. A stray extra option in the selector
@@ -37,6 +40,7 @@ const ROOT_DIMENSIONS = [
   'Impacted security objective',
   'Threat source',
   'STRIDE category',
+  'Tag',
 ];
 
 /** Each dimension, and the root label it must derive from the threat below. */
@@ -84,7 +88,7 @@ async function addFullyDescribedThreat(page: Page): Promise<void> {
 }
 
 test.describe('attack trees', () => {
-  test('supports exactly the four derived dimensions and no authored ones', async ({
+  test('supports exactly the derived dimensions and no authored ones', async ({
     page,
   }) => {
     await gotoWorkspace(page, DEFAULT_WORKSPACE, 'attackTrees');
@@ -157,5 +161,41 @@ test.describe('attack trees', () => {
       .getByRole('link', { name: 'Open T-0001 in the threats section' })
       .click();
     await expect(page).toHaveURL(/\/threats\/[0-9a-f-]{36}$/);
+  });
+
+  test('roots a tree at a nested tag and restores it from a shared URL', async ({
+    page,
+  }) => {
+    await addFullyDescribedThreat(page);
+    await gotoWorkspace(page, DEFAULT_WORKSPACE, 'threats');
+    await addTag(entityCard(page, 'Threat', 1), 'exfiltrate-pii/via-api');
+
+    await gotoWorkspace(page, DEFAULT_WORKSPACE, 'attackTrees');
+    await selectTreeRoot(page, 'Tag');
+    await expect(
+      page.getByText('Choose one or more root tags to build trees.'),
+    ).toBeVisible();
+
+    // The parent prefix is offered even though no entity carries it alone.
+    await page.getByRole('button', { name: /Root tags/ }).click();
+    await page.getByRole('option', { name: /^exfiltrate-pii/ }).first().click();
+    await page.keyboard.press('Escape');
+
+    const tree = page.getByRole('img', {
+      name: 'Attack tree for Tag: exfiltrate-pii',
+    });
+    await expect(tree).toBeVisible();
+    // The nested segment becomes a sub-goal node beneath the root. Matched on
+    // the rendered label; the node's <title> tooltip carries the same text.
+    await expect(tree.locator('text', { hasText: /^via-api$/ })).toBeVisible();
+    await expect(page).toHaveURL(/[?&]root=tag(&|$)/);
+    await expect(page).toHaveURL(/[?&]rootTag=exfiltrate-pii(&|$)/);
+
+    // A reload stands in for opening a shared link: the view comes back from
+    // the URL alone, with nothing written to the workspace.
+    await page.reload();
+    await expect(
+      page.getByRole('img', { name: 'Attack tree for Tag: exfiltrate-pii' }),
+    ).toBeVisible();
   });
 });

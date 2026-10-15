@@ -125,13 +125,17 @@ describe('layoutAttackTree', () => {
         { id: 'prerequisite', label: 'Console access', type: 'prerequisite' },
         { id: 'mitigation', label: 'Least privilege', type: 'mitigation' },
         { id: 'step', label: 'Export records', type: 'threat' },
+        { id: 'assumption', label: 'Console is internal only', type: 'assumption' },
       ],
     });
 
-    expect(edges.map(({ fromId, toId, isDefensive }) => ({ fromId, toId, isDefensive }))).toEqual([
-      { fromId: 'threat', toId: 'prerequisite', isDefensive: false },
-      { fromId: 'threat', toId: 'mitigation', isDefensive: true },
-      { fromId: 'threat', toId: 'step', isDefensive: false },
+    expect(
+      edges.map(({ fromId, toId, isDefensive, isAssumption }) => ({ fromId, toId, isDefensive, isAssumption })),
+    ).toEqual([
+      { fromId: 'threat', toId: 'prerequisite', isDefensive: false, isAssumption: false },
+      { fromId: 'threat', toId: 'mitigation', isDefensive: true, isAssumption: false },
+      { fromId: 'threat', toId: 'step', isDefensive: false, isAssumption: false },
+      { fromId: 'threat', toId: 'assumption', isDefensive: false, isAssumption: true },
     ]);
   });
 

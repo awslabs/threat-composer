@@ -21,18 +21,22 @@ import { AttackTreeNode, AttackTreeNodeType } from '../../customTypes';
  */
 export const MERMAID_CLASS_DEFS: { [key in AttackTreeNodeType]: string } = {
   root: 'fill:#fdecea,stroke:#d13212,stroke-width:2px,color:#16191f',
+  goal: 'fill:#ffffff,stroke:#d13212,stroke-width:1px,color:#16191f',
   impact: 'fill:#fef6e7,stroke:#906806,stroke-width:1px,color:#16191f',
   threat: 'fill:#f0f8ff,stroke:#0972d3,stroke-width:1px,color:#16191f',
   prerequisite: 'fill:#ffffff,stroke:#8c8c94,stroke-width:1px,color:#16191f',
   mitigation: 'fill:#effff1,stroke:#037f0c,stroke-width:1px,color:#16191f',
+  assumption: 'fill:#ffffff,stroke:#0972d3,stroke-width:1px,stroke-dasharray:4 3,color:#16191f',
 };
 
 const NODE_TYPE_LABEL: { [key in AttackTreeNodeType]: string } = {
   root: 'Goal',
+  goal: 'Sub-goal',
   impact: 'Impact',
   threat: 'Threat',
   prerequisite: 'Prerequisite',
   mitigation: 'Mitigation',
+  assumption: 'Assumption',
 };
 
 /**
@@ -117,6 +121,10 @@ const wrapInShape = (id: string, type: AttackTreeNodeType, label: string) => {
   switch (type) {
     case 'root':
       return `${id}(["${label}"])`;
+    case 'goal':
+      return `${id}(["${label}"])`;
+    case 'assumption':
+      return `${id}[\\"${label}"/]`;
     case 'impact':
       return `${id}{{"${label}"}}`;
     case 'mitigation':
@@ -153,6 +161,8 @@ export const attackTreeToMermaid = (tree: AttackTreeNode): string => {
       const operator = node.operator;
       if (child.type === 'mitigation') {
         edgeLines.push(`  ${id} -. mitigated by .-> ${childId}`);
+      } else if (child.type === 'assumption') {
+        edgeLines.push(`  ${id} -. assumes .-> ${childId}`);
       } else {
         // Only AND is worth annotating, OR is the default reading of a branch.
         edgeLines.push(operator === 'AND' ? `  ${id} -->|AND| ${childId}` : `  ${id} --> ${childId}`);

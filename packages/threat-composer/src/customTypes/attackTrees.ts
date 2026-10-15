@@ -25,24 +25,31 @@ export type AttackTreeRootDimension =
   | 'impactedAsset'
   | 'impactedGoal'
   | 'threatSource'
-  | 'stride';
+  | 'stride'
+  | 'tag';
 
 /**
  * The kind of node within an attack tree. Determines both the styling and the
  * semantics of the node.
  *
  * - root: the attacker goal the tree decomposes.
+ * - goal: a sub-goal of a tag rooted tree, taken from a nested tag segment such
+ *   as `via-api` in `exfiltrate-pii/via-api`.
  * - impact: an intermediate outcome that contributes to the goal.
  * - threat: a threat statement (the attacker action).
  * - prerequisite: a condition that must hold for the parent threat to be viable.
  * - mitigation: a countermeasure linked to the parent threat.
+ * - assumption: an assumption linked to the parent threat, directly or through
+ *   one of its mitigations.
  */
 export type AttackTreeNodeType =
   | 'root'
+  | 'goal'
   | 'impact'
   | 'threat'
   | 'prerequisite'
-  | 'mitigation';
+  | 'mitigation'
+  | 'assumption';
 
 /**
  * How the children of a node combine. OR means any child is sufficient, AND
@@ -169,7 +176,46 @@ export interface AttackTreeFilter {
    */
   includeMitigations?: boolean;
   /**
+   * Whether assumption leaf nodes are included. Defaults to true.
+   */
+  includeAssumptions?: boolean;
+  /**
    * The dimension used to derive tree roots. Defaults to impactedAsset.
    */
   rootDimension?: AttackTreeRootDimension;
+  /**
+   * The tags to root trees at when rootDimension is tag, one tree per tag. A tag
+   * may be a nested path such as `exfiltrate-pii/via-api`, in which case the tree
+   * is rooted at that sub-goal. Ignored for the other dimensions.
+   */
+  rootTags?: string[];
+  /**
+   * When rootDimension is tag, adds an Untagged tree holding the threats that are
+   * not related to any tag at all. Ignored for the other dimensions.
+   */
+  includeUntagged?: boolean;
+}
+
+/**
+ * A tag, or a prefix of a nested tag, that a tag rooted tree can be rooted at.
+ */
+export interface AttackTreeTagRootOption {
+  /**
+   * The tag path as first written in the workspace, for example
+   * `exfiltrate-pii/via-api`. Passed back as a rootTags entry.
+   */
+  value: string;
+  /**
+   * The first segment of the path, used to group the options.
+   */
+  group: string;
+  /**
+   * How many segments the path has. 1 for a top level tag.
+   */
+  depth: number;
+  /**
+   * The number of threats, mitigations and assumptions carrying this tag or a
+   * tag nested beneath it.
+   */
+  entityCount: number;
 }

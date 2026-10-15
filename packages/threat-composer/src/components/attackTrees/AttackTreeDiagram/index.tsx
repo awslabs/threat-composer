@@ -46,6 +46,11 @@ const NODE_STYLES: {
     stroke: awsui.colorBorderStatusError,
     accent: awsui.colorTextStatusError,
   },
+  goal: {
+    fill: awsui.colorBackgroundContainerContent,
+    stroke: awsui.colorBorderStatusError,
+    accent: awsui.colorTextStatusError,
+  },
   impact: {
     fill: awsui.colorBackgroundStatusWarning,
     stroke: awsui.colorBorderStatusWarning,
@@ -66,14 +71,27 @@ const NODE_STYLES: {
     stroke: awsui.colorBorderStatusSuccess,
     accent: awsui.colorTextStatusSuccess,
   },
+  assumption: {
+    fill: awsui.colorBackgroundContainerContent,
+    stroke: awsui.colorBorderStatusInfo,
+    accent: awsui.colorTextBodySecondary,
+  },
+};
+
+const ENTITY_SECTION_LABEL: { [type: string]: string } = {
+  threat: 'threats',
+  mitigation: 'mitigations',
+  assumption: 'assumptions',
 };
 
 const NODE_TYPE_LABEL: { [key in AttackTreeNodeType]: string } = {
   root: 'Goal',
+  goal: 'Sub-goal',
   impact: 'Impact',
   threat: 'Threat',
   prerequisite: 'Prerequisite',
   mitigation: 'Mitigation',
+  assumption: 'Assumption',
 };
 
 const RISK_LEVEL_COLOR: { [key in AttackTreeRiskLevel]: string } = {
@@ -260,9 +278,10 @@ const AttackTreeDiagram: FC<AttackTreeDiagramProps> = ({ tree, onNodeSelect }) =
                 fill="none"
                 stroke={awsui.colorBorderDividerDefault}
                 strokeWidth={1.5}
-                strokeDasharray={edge.isDefensive ? '6 4' : undefined}
+                strokeDasharray={edge.isDefensive ? '6 4' : edge.isAssumption ? '2 3' : undefined}
               >
                 {edge.isDefensive && <title>Mitigated by (defensive control, not an attack prerequisite)</title>}
+                {edge.isAssumption && <title>Assumes (context, not an attack step)</title>}
               </path>
             ))}
           </g>
@@ -313,7 +332,7 @@ const AttackTreeDiagram: FC<AttackTreeDiagramProps> = ({ tree, onNodeSelect }) =
                       role={interactive ? 'link' : undefined}
                       aria-label={
                         interactive
-                          ? `Open ${node.displayId} in the ${node.type === 'threat' ? 'threats' : 'mitigations'} section`
+                          ? `Open ${node.displayId} in the ${ENTITY_SECTION_LABEL[node.type] || 'threats'} section`
                           : undefined
                       }
                     >
@@ -437,6 +456,11 @@ const AttackTreeDiagram: FC<AttackTreeDiagramProps> = ({ tree, onNodeSelect }) =
       {layout.edges.some((edge) => edge.isDefensive) && (
         <Box variant="small" color="text-body-secondary">
           Dashed links: mitigated by (defensive controls, not attack prerequisites).
+        </Box>
+      )}
+      {layout.edges.some((edge) => edge.isAssumption) && (
+        <Box variant="small" color="text-body-secondary">
+          Dotted links: assumes (context recorded as an assumption, not an attack step).
         </Box>
       )}
     </SpaceBetween>

@@ -12,6 +12,7 @@ The second one has bitten this package twice, both times because the documented
 resolved-budget test below is the regression guard for that.
 """
 
+import importlib
 from unittest.mock import patch
 
 import pytest
@@ -68,6 +69,15 @@ MODELS_ACCEPTING_SAMPLING = [
     "global.anthropic.claude-sonnet-4-6",
     "global.anthropic.claude-haiku-4-5-20251001-v1:0",
 ]
+
+
+# The config package re-exports the model_capabilities function under the same
+# name as its submodule, so the dotted path
+# "threat_composer_ai.config.model_capabilities.log_warning" resolves to an
+# attribute of the function rather than the module. Patch the module object.
+_model_capabilities_module = importlib.import_module(
+    "threat_composer_ai.config.model_capabilities"
+)
 
 
 @pytest.fixture(autouse=True)
@@ -127,18 +137,14 @@ class TestUnknownModels:
         assert _DEFAULT_CAPABILITIES.max_output_tokens < smallest
 
     def test_unknown_model_warns_once_per_id(self):
-        with patch(
-            "threat_composer_ai.config.model_capabilities.log_warning"
-        ) as mock_warn:
+        with patch.object(_model_capabilities_module, "log_warning") as mock_warn:
             model_capabilities("anthropic.made-up-model")
             model_capabilities("anthropic.made-up-model")
             model_capabilities("anthropic.made-up-model")
             assert mock_warn.call_count == 1
 
     def test_known_model_does_not_warn(self):
-        with patch(
-            "threat_composer_ai.config.model_capabilities.log_warning"
-        ) as mock_warn:
+        with patch.object(_model_capabilities_module, "log_warning") as mock_warn:
             model_capabilities("global.anthropic.claude-sonnet-5")
             mock_warn.assert_not_called()
 
