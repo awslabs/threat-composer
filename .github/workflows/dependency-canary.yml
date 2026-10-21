@@ -1,0 +1,154 @@
+name: dependency-canary
+
+# Catches dependency breakage that originates on PyPI rather than in our code.
+#
+# Our normal CI installs from the committed uv.lock, so it resolves the same
+# known-good graph every time and never sees what a new user gets today. Issue
+# #362 was exactly this blind spot: the runtime dependencies had no version
+# floors, and after fastmcp 4.1.3 was published the resolver silently selected
+# the placeholder strands-agents==0.0.1 (an empty stub with no `strands`
+# module). A fresh install broke; every locked install stayed green. A user
+# reported it before any of our checks could.
+#
+# This job runs the EXACT commands from the package README's Quick Install, so
+# it reproduces precisely what a new user does: a lock-ignoring `uv tool install`
+# straight from git against live PyPI, followed by launching the MCP server.
+# `uv sync`/`uv pip compile` resolve differently from `uv tool install`/`uvx`,
+# so only the documented command faithfully reproduces the user path. If the
+# README command breaks for a user, this breaks first.
+#
+# It needs no AWS credentials: the failure mode is an import-time resolution
+# error that happens before the server does any inference, so there is no eval
+# environment and no OIDC role here.
+#
+# Why a schedule: the only variable is PyPI. A push-triggered run would only
+# fire when we change our own files, which is never the moment a third-party
+# release breaks us. The daily run surfaces it on our clock, not a user's.
+
+on:
+  schedule:
+    # Daily at 07:00 UTC. Scheduled runs always use the default branch.
+    - cron: '0 7 * * *'
+  # So the canary itself can be changed and tested on a pull request, and run
+  # on demand to confirm a suspected breakage.
+  pull_request:
+    paths:
+      - '.github/workflows/dependency-canary.yml'
+      - 'packages/threat-composer-ai/pyproject.toml'
+  workflow_dispatch:
+
+# Read-only. This job installs and launches the server; it never writes to the
+# repo and never assumes an AWS role.
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-canary-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  readme-install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # On a pull request, install from THIS ref so a proposed pyproject change is
+    # tested; on schedule/dispatch there is no PR ref, so install from the
+    # documented git URL exactly as the README tells a user to.
+    env:
+      PR_REF: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      # The diagram nodes render through graphviz; installed so an import that
+      # reaches it does not read as a dependency failure.
+      - name: Install graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+
+      # Version-robust backstop, independent of how `uv tool install` below
+      # happens to resolve. `uv pip compile` uses a pip-style resolver that
+      # anchors on the newest compatible release and does NOT backtrack to
+      # rescue a dependency with no floor, so it reproduces the #362 placeholder
+      # selection that uv's native `uvx`/`uv tool install` resolver may silently
+      # resolve around on some uv versions. Fail if either strands dependency
+      # resolves to a 0.0.x placeholder. Runs against THIS checkout's pyproject.
+      - name: Backstop — reject placeholder resolution (resolver-independent)
+        working-directory: packages/threat-composer-ai
+        run: |
+          set -euo pipefail
+          resolved=$(uv pip compile --python 3.13 pyproject.toml 2>/dev/null)
+          echo "$resolved" | grep -iE '^(fastmcp|mcp|strands-agents|strands-agents-tools)==' || true
+          while IFS= read -r line; do
+            case "$line" in
+              strands-agents==0.0.*|strands-agents-tools==0.0.*)
+                echo "::error::fresh resolve selected placeholder '${line}' (see issue #362)"
+                exit 1
+                ;;
+            esac
+          done <<< "$resolved"
+          echo "no placeholder strands release in a fresh resolve"
+
+      # The documented Quick Install command, verbatim except for the ref: on a
+      # pull request it targets this PR's commit so a pyproject change under
+      # review is what gets tested; otherwise it is the README's exact URL.
+      - name: Install the tool the way the README tells users to
+        run: |
+          set -euo pipefail
+          base='git+https://github.com/awslabs/threat-composer.git'
+          sub='#subdirectory=packages/threat-composer-ai'
+          if [ -n "${PR_REF}" ]; then
+            source="${base}@${PR_REF}${sub}"
+          else
+            source="${base}${sub}"
+          fi
+          echo "installing from: ${source}"
+          uv tool install --from "${source}" threat-composer-ai
+
+      # A clear, fast diagnostic ahead of the launch: fail if either strands
+      # dependency resolved to a 0.0.x placeholder (the #362 signature), and
+      # print the versions at the heart of that issue so a regression is
+      # diagnosable from the log alone.
+      - name: Report resolved versions and reject placeholders
+        run: |
+          set -euo pipefail
+          for pkg in fastmcp mcp strands-agents strands-agents-tools; do
+            version=$(uv tool run --from threat-composer-ai python -c "
+          import importlib.metadata as m
+          print(m.version('$pkg'))
+          ")
+            echo "${pkg}==${version}"
+            case "$pkg:$version" in
+              strands-agents:0.0.*|strands-agents-tools:0.0.*)
+                echo "::error::${pkg} resolved to placeholder ${version} (see issue #362)"
+                exit 1
+                ;;
+            esac
+          done
+
+      # The real proof, and the other README command: launch the MCP server and
+      # confirm it gets past module import. #362 died here with
+      # `ModuleNotFoundError: No module named 'strands'`. The server is a
+      # long-running stdio process, so we give it a few seconds to start, then
+      # treat a clean start (timeout's exit 124) as success and ANY
+      # ModuleNotFoundError / traceback in its output as failure.
+      - name: Launch threat-composer-ai-mcp and confirm it starts
+        run: |
+          set -uo pipefail
+          timeout 20s threat-composer-ai-mcp > mcp-start.log 2>&1 || rc=$?
+          rc=${rc:-0}
+          echo "----- server output -----"
+          cat mcp-start.log
+          echo "-------------------------"
+          if grep -qiE "ModuleNotFoundError|No module named|Traceback \(most recent" mcp-start.log; then
+            echo "::error::MCP server failed at import (see output above; cf. issue #362)"
+            exit 1
+          fi
+          # 124 = timeout killed a still-running server = it started cleanly.
+          # 0 = it exited on its own within the window, also past import.
+          if [ "$rc" -ne 124 ] && [ "$rc" -ne 0 ]; then
+            echo "::error::MCP server exited with unexpected status ${rc}"
+            exit 1
+          fi
+          echo "MCP server started cleanly (exit ${rc})"
