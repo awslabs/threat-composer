@@ -24,8 +24,8 @@ dependencies = [
   "psutil",
   "rich",
   "sarif-om",
-  "strands-agents",
-  "strands-agents-tools"
+  "strands-agents>=1.0,<2",
+  "strands-agents-tools>=0.2,<1"
 ]
 
   [project.scripts]
