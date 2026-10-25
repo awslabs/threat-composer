@@ -424,6 +424,23 @@ uv run threat-composer-ai-eval-quality --session-dir eval-run --config eval/brow
 
 In CI, the `eval-quality` workflow runs on pull requests from branches in this repository, on pushes to `main` and weekly. Pull requests from forks are skipped.
 
+### Consistency Eval
+
+The consistency eval measures how similar repeated runs are. It runs the CLI several times against a codebase, or compares threat models that already exist, and scores the matching threats, mitigations and assumptions using sentence embeddings. It is run on demand, for example when changing a prompt or model, and not in CI.
+
+```bash
+cd packages/threat-composer-ai
+uv sync --extra consistency
+
+# Compare existing threat models, no inference
+uv run threat-composer-ai-eval-consistency eval-files run1/ run2/ run3/
+
+# Run the CLI three times and compare the results
+uv run threat-composer-ai-eval-consistency benchmark /path/to/codebase -n 3
+```
+
+See `packages/threat-composer-ai/src/threat_composer_ai/eval/consistency/README.md` for all commands and how scoring works.
+
 ## Support
 
 For issues and questions:
