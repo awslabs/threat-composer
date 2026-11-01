@@ -54,8 +54,11 @@ on:
       - 'packages/threat-composer-ai/uv.lock'
       - '.github/workflows/eval-quality.yml'
   schedule:
-    # Daily 06:00 UTC. Scheduled runs always use the default branch.
-    - cron: '0 6 * * *'
+    # Daily 20:17 UTC, early morning in Sydney (7:17 AEDT, 6:17 AEST), so a failure
+    # is waiting at the start of a maintainer's day rather than interrupting the end
+    # of it. Off the hour because GitHub delays or drops runs queued at :00.
+    # Scheduled runs always use the default branch.
+    - cron: '17 20 * * *'
   workflow_dispatch:
     inputs:
       config:
