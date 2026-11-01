@@ -28,14 +28,8 @@ name: eval-quality
 # Why also on a schedule: the dependencies are locked and the fixture is pinned, so
 # the significant remaining variable is Bedrock. The default model is hosted and can
 # change underneath us, and a push filtered to our own source would never notice.
-#
-# Why daily: model output is probabilistic, so one run is a thin sample and a weekly
-# run leaves days between a change and the run that notices it. Daily runs build a
-# trend that separates a real regression from an unlucky run.
-#
-# What the schedule does not cover: it installs from the committed uv.lock, so it
-# never sees a fresh, unpinned resolve against live PyPI, the install path that
-# broke in #362. Locked dependency bumps are covered by the run after merge.
+# Daily, because output is probabilistic and a trend shows regressions sooner. It
+# installs from uv.lock, so it does not catch unpinned PyPI drift (#362).
 
 on:
   pull_request:
@@ -54,10 +48,7 @@ on:
       - 'packages/threat-composer-ai/uv.lock'
       - '.github/workflows/eval-quality.yml'
   schedule:
-    # Daily 20:17 UTC, early morning in Sydney (7:17 AEDT, 6:17 AEST), so a failure
-    # is waiting at the start of a maintainer's day rather than interrupting the end
-    # of it. Off the hour because GitHub delays or drops runs queued at :00.
-    # Scheduled runs always use the default branch.
+    # Daily 20:17 UTC, early morning Sydney. Scheduled runs use the default branch.
     - cron: '17 20 * * *'
   workflow_dispatch:
     inputs:
