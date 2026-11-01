@@ -1,6 +1,6 @@
 name: eval-quality
 
-# Runs when the agent changes, on pull requests and after merge, plus a periodic run
+# Runs when the agent changes, on pull requests and after merge, plus a daily run
 # to catch drift we did not cause.
 #
 # Who gets a run: anyone who can push to this repository. A run is real inference
@@ -28,6 +28,14 @@ name: eval-quality
 # Why also on a schedule: the dependencies are locked and the fixture is pinned, so
 # the significant remaining variable is Bedrock. The default model is hosted and can
 # change underneath us, and a push filtered to our own source would never notice.
+#
+# Why daily: model output is probabilistic, so one run is a thin sample and a weekly
+# run leaves days between a change and the run that notices it. Daily runs build a
+# trend that separates a real regression from an unlucky run.
+#
+# What the schedule does not cover: it installs from the committed uv.lock, so it
+# never sees a fresh, unpinned resolve against live PyPI, the install path that
+# broke in #362. Locked dependency bumps are covered by the run after merge.
 
 on:
   pull_request:
@@ -46,8 +54,8 @@ on:
       - 'packages/threat-composer-ai/uv.lock'
       - '.github/workflows/eval-quality.yml'
   schedule:
-    # Mondays 06:00 UTC. Scheduled runs always use the default branch.
-    - cron: '0 6 * * 1'
+    # Daily 06:00 UTC. Scheduled runs always use the default branch.
+    - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
       config:
