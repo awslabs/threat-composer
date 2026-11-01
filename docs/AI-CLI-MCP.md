@@ -422,7 +422,7 @@ uv run threat-composer-ai-eval-quality \
 uv run threat-composer-ai-eval-quality --session-dir eval-run --config eval/browser-extension.json
 ```
 
-In CI, the `eval-quality` workflow runs on pull requests from branches in this repository, on pushes to `main` and weekly. Pull requests from forks are skipped.
+In CI, the `eval-quality` workflow runs on pull requests from branches in this repository, on pushes to `main` and daily. Pull requests from forks are skipped.
 
 ### Consistency Eval
 
