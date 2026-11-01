@@ -32,6 +32,7 @@ dependencies = [
   threat-composer-ai-cli = "threat_composer_ai.__main__:main"
   threat-composer-ai-mcp = "threat_composer_ai.mcp_server:main"
   threat-composer-ai-eval-quality = "threat_composer_ai.eval.quality:main"
+  threat-composer-ai-eval-consistency = "threat_composer_ai.eval.consistency.cli:eval_cli"
 
   # Kept out of the runtime dependencies so that installing the CLI or the MCP
   # server does not pull in an evaluation framework only CI uses. Install with
@@ -40,6 +41,13 @@ dependencies = [
   [project.optional-dependencies]
   eval = [
     "strands-agents-evals"
+  ]
+  # Separate from eval because the embedding model pulls in PyTorch, which the
+  # quality eval in CI does not need. Install with `uv sync --extra consistency`.
+  consistency = [
+    "numpy",
+    "scipy",
+    "sentence-transformers"
   ]
 
 [dependency-groups]
