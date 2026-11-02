@@ -5,6 +5,7 @@ import sys
 
 from fastmcp import FastMCP
 
+from ..logging.rich_logger import console
 from .tools import register_tools
 
 
@@ -23,6 +24,11 @@ def create_mcp_server() -> FastMCP:
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
+
+    # Over stdio, stdout carries the MCP protocol. Workflow runs call
+    # setup_rich_logging(), which logs through this shared console, so send
+    # its output to stderr in the MCP server.
+    console.file = sys.stderr
 
     # Register all tools
     register_tools(mcp)
