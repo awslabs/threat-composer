@@ -26,6 +26,34 @@ The TypeScript toolchain is Vite (web app bundling and dev server), Vitest (unit
 | threat-composer-app-browser-extension | packages/threat-composer-app-browser-extension | threat-composer browser extension                                                                      | [wxt](https://wxt.dev/), React                                                      |
 | threat-composer-ai                    | packages/threat-composer-ai                    | AI-powered CLI and MCP server                                                                          | Python, [Strands](https://github.com/awslabs/strands), FastMCP                      |
 
+## Design principles
+
+These are the decisions behind Threat Composer. Read them before proposing a feature. The rules that follow from them are in [AGENTS.md](../AGENTS.md).
+
+### What breaks for users if Threat Composer breaks
+
+Users' threat models. A threat model that won't import, or that imports with data missing, can't be recovered from Threat Composer, because there is no server copy. Teams also depend on the format outside the app: they commit threat models to version control, review them as diffs, move them between networks, and generate them with other tools.
+
+### Who uses it
+
+Most kinds of user show up in the code: each package (`pnpm nx show projects`), each embedding mode (`packages/threat-composer/src/customTypes/composerMode.ts`) and the `window.threatcomposer` API (`packages/threat-composer/src/customTypes/windowAPI.ts`). Others don't:
+
+- People who self-host the web app, including in air-gapped networks.
+- Other tools that produce `.tc.json`, which validate against `schemas/threat-composer-v1.schema.json`.
+- Workshops and training built on `workshop-examples/`.
+
+A feature that helps one kind of user can get in another's way. Weigh them all.
+
+### Principles
+
+- **Client-side only.** The web app runs entirely in the browser, with no backend. That protects threat models by design: there is no server to breach. Browser storage is small, so store as little as possible.
+- **Threat models are code.** Users keep `.tc.json` files in version control and collaborate through the IDE and browser extensions, not a server. Exports must stay portable and produce clean diffs.
+- **A tight data format.** Every extra field adds storage, diff noise and work for every tool that reads the format. Prefer features that are views of data users already enter.
+- **Privacy first.** No usage telemetry. The GitHub Pages demo adds only a page-load pixel (`.github/workflows/deploy.yml`).
+- **Capabilities, not a catalogue.** Threat Composer helps people think about threats. It is not a catalogue of every threat and mitigation.
+- **Outcomes, not workflow.** It records the state of a threat model, not its history, approvals or tickets.
+- **AI drafts, people decide.** The AI CLI produces a starting draft that users review, edit and own.
+
 ## Prerequisites
 
 ### Required Tools
