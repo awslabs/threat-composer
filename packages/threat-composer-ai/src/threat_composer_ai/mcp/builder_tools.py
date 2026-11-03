@@ -115,7 +115,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
                 ws.write_json(tc_path, ops.empty_model(name, description))
         except WorkspaceError as e:
             raise _fail(e) from e
-        return {"model": ws.display(tc_path)}
+        return {"model": ws.display(tc_path), "path": str(tc_path)}
 
     @mcp.tool(annotations=WRITE)
     def tm_set_section(

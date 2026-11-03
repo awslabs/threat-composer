@@ -176,3 +176,33 @@ def test_tool_annotations(server):
     assert annotations["tm_coverage_report"].readOnlyHint is True
     assert annotations["tm_remove"].destructiveHint is True
     assert annotations["tm_add_threats"].readOnlyHint is False
+
+
+def _tool_names(monkeypatch, value):
+    from threat_composer_ai.mcp.server import TOOLS_ENV_VAR, create_mcp_server
+
+    if value is None:
+        monkeypatch.delenv(TOOLS_ENV_VAR, raising=False)
+    else:
+        monkeypatch.setenv(TOOLS_ENV_VAR, value)
+
+    async def run():
+        async with Client(create_mcp_server()) as client:
+            return {t.name for t in await client.list_tools()}
+
+    return asyncio.run(run())
+
+
+def test_server_tool_sets(monkeypatch):
+    everything = _tool_names(monkeypatch, None)
+    builder = _tool_names(monkeypatch, "builder")
+    assert "threat_modeling_start_workflow" in everything
+    assert "threat_modeling_start_workflow" not in builder
+    assert {"tm_init", "sys_render", "tm_coverage_report"} <= builder
+    with pytest.raises(ValueError, match="must be"):
+        _tool_names(monkeypatch, "bogus")
+
+
+def test_init_returns_absolute_path(server, tmp_path):
+    result = call(server, "tm_init", model=MODEL, name="x")
+    assert result["path"] == str(tmp_path / MODEL)

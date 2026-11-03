@@ -153,3 +153,19 @@ def test_render_dfd_refuses_broken_model(system, monkeypatch):
     system.flows.append(Flow(id="DF3", source="P1", target="GONE", description="x"))
     with pytest.raises(render.RenderError, match="unknown target"):
         render.render_dfd_svg(system)
+
+
+@pytest.mark.skipif(not graphviz_available(), reason="graphviz not installed")
+def test_large_diagrams_use_compact_labels(system):
+    from threat_composer_ai.builder.render import COMPACT_FLOWS
+
+    small = render_dfd_svg(system)
+    assert "DF1: Login request" in small
+
+    for i in range(COMPACT_FLOWS):
+        system.flows.append(
+            Flow(id=f"DF{i + 3}", source="P1", target="DS1", description="Extra flow")
+        )
+    large = render_dfd_svg(system)
+    assert "Extra flow" not in large  # descriptions live in the dataflow table
+    assert ">DF12<" in large

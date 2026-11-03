@@ -7,6 +7,7 @@ follows directly from the system model.
 
 import shutil
 import tempfile
+import textwrap
 import threading
 from pathlib import Path
 
@@ -15,6 +16,14 @@ from .system_model import SystemModel
 # diagrams keeps the current Diagram and Cluster in context variables, and
 # graphviz output goes through the file system; one render at a time.
 _RENDER_LOCK = threading.Lock()
+
+
+# Above this many flows, full edge labels crowd the diagram and Graphviz places
+# them far from their edges. Edges then carry only their DF id; the
+# descriptions are in the dataflow table rendered from the same model.
+COMPACT_FLOWS = 10
+NODE_LABEL_WIDTH = 22
+ZONE_LABEL_WIDTH = 40
 
 
 class RenderError(RuntimeError):
@@ -118,8 +127,16 @@ def render_dfd_svg(system: SystemModel, title: str = "Data Flow Diagram") -> str
         "data_store": Datastore,
     }
 
+    compact = len(system.flows) > COMPACT_FLOWS
+
+    def wrap(text: str, width: int) -> str:
+        return "\n".join(textwrap.wrap(text, width)) or text
+
+    def edge_label(f) -> str:
+        return f.id if compact else wrap(f"{f.id}: {f.description}", 30)
+
     def make_node(e):
-        label = f"{e.id}\n{e.name}"
+        label = f"{e.id}\n{wrap(e.name, NODE_LABEL_WIDTH)}"
         if e.kind == "human_actor":
             return HumanActor(label)
         # The node classes default to fixed sizes, which long names overflow.
@@ -130,7 +147,16 @@ def render_dfd_svg(system: SystemModel, title: str = "Data Flow Diagram") -> str
         out = Path(tmp) / "dfd"
         nodes = {}
         with Diagram(
-            title, filename=str(out), outformat="svg", show=False, direction="LR"
+            title,
+            filename=str(out),
+            outformat="svg",
+            show=False,
+            # Top to bottom keeps large diagrams from becoming a long thin strip
+            direction="TB" if compact else "LR",
+            # The diagrams default is orthogonal routing, and Graphviz cannot
+            # attach labels to orthogonal edges, so labels drift away from
+            # them. Curved edges keep each DF id next to its edge.
+            graph_attr={"splines": "spline"},
         ):
             for zone in system.zones:
                 label = (
@@ -138,7 +164,7 @@ def render_dfd_svg(system: SystemModel, title: str = "Data Flow Diagram") -> str
                     if zone.trust_level
                     else zone.name
                 )
-                with TrustBoundary(label):
+                with TrustBoundary(wrap(label, ZONE_LABEL_WIDTH)):
                     for e in system.elements:
                         if e.zone == zone.id:
                             nodes[e.id] = make_node(e)
@@ -146,11 +172,7 @@ def render_dfd_svg(system: SystemModel, title: str = "Data Flow Diagram") -> str
                 if e.id not in nodes:
                     nodes[e.id] = make_node(e)
             for f in system.flows:
-                (
-                    nodes[f.source]
-                    >> Edge(label=f"{f.id}: {f.description}")
-                    >> nodes[f.target]
-                )
+                (nodes[f.source] >> Edge(label=edge_label(f)) >> nodes[f.target])
 
         svg_path = out.with_suffix(".svg")
         if not svg_path.exists():
