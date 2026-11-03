@@ -14,6 +14,7 @@ from typing import Any
 
 from strands import tool
 
+from ..builder.statement import compose_statement
 from ..tools.path_validation import (
     create_path_validation_error_message,
     validate_output_directory_path,
@@ -51,8 +52,9 @@ def threat_composer_assemble_tc_v1_model(
     - architecture: description from architectureDescription.tc.json, image from architectureDiagram.svg
     - dataflow: description from dataflowDescription.tc.json, image from architectureDiagram.svg
     - assumptions: Collected from all files in order, with sequential numericId assignment
-    - threats: Directly from threatsPerElement.tc.json
-    - mitigations: Directly from mitigations.tc.json
+    - threats: From threatsPerElement.tc.json, with numericId reassigned and
+      statement rebuilt from the grammar fields
+    - mitigations: From mitigations.tc.json, with numericId reassigned
     - assumptionLinks: From threatsPerElement.tc.json
     - mitigationLinks: From mitigations.tc.json
 
@@ -251,7 +253,41 @@ def _assemble_components(
     # Extract threats directly
     assembled["threats"] = components["threats"].get("threats", [])
 
+    normalise_threats_and_mitigations(assembled)
+
     return assembled
+
+
+def normalise_threats_and_mitigations(model: dict[str, Any]) -> None:
+    """Make code, not the model, responsible for numbering and statements.
+
+    The agents write numericId and statement themselves. Nothing stops two
+    threats sharing a numericId, and the threats prompt offers the model two
+    different statement grammars, so statements drift from their own fields.
+    Here numericIds are reassigned in list order, as assumptions already are,
+    and each statement is rebuilt from its grammar fields the way the Threat
+    Composer UI renders it. A threat missing its source or action keeps the
+    statement it came with, since there is nothing to rebuild it from.
+
+    Links reference the UUID id, never numericId, so renumbering is safe.
+    """
+    for i, mitigation in enumerate(model.get("mitigations") or [], 1):
+        mitigation["numericId"] = i
+
+    for i, threat in enumerate(model.get("threats") or [], 1):
+        threat["numericId"] = i
+        source = (threat.get("threatSource") or "").strip()
+        action = (threat.get("threatAction") or "").strip()
+        if not source or not action:
+            continue
+        threat["statement"] = compose_statement(
+            source,
+            threat.get("prerequisites") or "",
+            action,
+            threat.get("threatImpact") or "",
+            [g for g in threat.get("impactedGoal") or [] if g and g.strip()],
+            [a for a in threat.get("impactedAssets") or [] if a and a.strip()],
+        )
 
 
 def _load_diagram_image(diagram_path: str) -> str:
