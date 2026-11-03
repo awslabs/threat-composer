@@ -6,6 +6,7 @@ import sys
 from fastmcp import FastMCP
 
 from ..logging.rich_logger import console
+from .builder_tools import register_builder_tools
 from .tools import register_tools
 
 
@@ -32,6 +33,7 @@ def create_mcp_server() -> FastMCP:
 
     # Register all tools
     register_tools(mcp)
+    register_builder_tools(mcp)
 
     return mcp
 
@@ -54,37 +56,23 @@ def main() -> None:
     3. threat_modeling_list_workflow_sessions - List available workflow sessions
     4. threat_modeling_validate_tc_schema - Validates JSON data against the Threat Composer v1 schema
     5. threat_modeling_get_tc_schema - Returns the Threat Composer v1 schema JSON content
+    6. tm_* and sys_* - build a threat model one item at a time (see builder_tools)
 
     Usage:
         threat-composer-ai-mcp
 
     The server will start and listen for MCP client connections using FastMCP defaults.
     """
+    # stdout carries the MCP protocol on the stdio transport, so anything
+    # human-readable goes to stderr. Printing to stdout corrupts the stream.
     try:
-        print("Starting threat-composer-ai MCP server...")
-        print("Available tools:")
-        print(
-            "  - threat_modeling_start_workflow: Start a new threat modeling workflow or re-run from previous session"
-        )
-        print(
-            "  - threat_modeling_get_workflow_logs: Get logs for a running or completed workflow session"
-        )
-        print(
-            "  - threat_modeling_list_workflow_sessions: List available workflow sessions in a directory"
-        )
-        print(
-            "  - threat_modeling_validate_tc_schema: Validate JSON data against Threat Composer v1 schema"
-        )
-        print(
-            "  - threat_modeling_get_tc_schema: Get the Threat Composer v1 schema JSON content"
-        )
-        print()
+        print("Starting threat-composer-ai MCP server...", file=sys.stderr)
 
         run_server()
 
     except KeyboardInterrupt:
-        print("\nMCP server stopped by user")
+        print("\nMCP server stopped by user", file=sys.stderr)
         sys.exit(0)
     except Exception as e:
-        print(f"Error starting MCP server: {e}")
+        print(f"Error starting MCP server: {e}", file=sys.stderr)
         sys.exit(1)
