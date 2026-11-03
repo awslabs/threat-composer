@@ -75,3 +75,6 @@ venv/
 # moved below it: git applies the last matching pattern.
 !packages/threat-composer-app/.env.browser-extension
 !packages/threat-composer-app/.env.ide-extension
+
+# Threat models written by the threat-composer MCP server (see .mcp.json)
+threat-models/
