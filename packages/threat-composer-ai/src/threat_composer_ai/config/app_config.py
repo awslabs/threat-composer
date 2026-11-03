@@ -33,6 +33,7 @@ class AppConfig:
     architecture_diagram_filename: str = "architectureDiagram.svg"
     dataflow_description_filename: str = "dataflowDescription.tc.json"
     dataflow_diagram_filename: str = "dataflowDiagram.svg"
+    dataflow_system_filename: str = "dataflowSystem.json"
     threats_filename: str = "threats.tc.json"
     mitigations_filename: str = "mitigations.tc.json"
     threat_composer_filename: str = "threatmodel.tc.json"

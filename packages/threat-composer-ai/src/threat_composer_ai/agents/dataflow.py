@@ -1,7 +1,11 @@
 """
 Dataflow Agent
 
-Parses and understands codebases to create Dataflow
+Parses and understands codebases to create Dataflow.
+
+The agent records its analysis as structured data through
+threat_composer_write_dataflow, which writes the dataflow description, the
+system model and the data flow diagram from that one input.
 """
 
 import os
@@ -10,15 +14,11 @@ from strands import Agent
 
 from ..config import AppConfig
 from ..tools import (
-    threat_composer_generate_uuid4,
-    threat_composer_generate_uuid4_with_guidance,
     threat_composer_list_workdir_files_gitignore_filtered,
-    threat_composer_validate_tc_v1_schema,
     threat_composer_workdir_file_read,
-    threat_composer_workdir_file_write,
+    threat_composer_write_dataflow,
 )
 from ..utils import get_tool_name
-from ..utils.relative_path_helper import create_prompt_path_from_config
 from .common import (
     CODE_ANALYSIS_PROMPT_SNIPPET,
     any_input_files_changed,
@@ -43,106 +43,54 @@ def get_input_files(config: AppConfig) -> list[str]:
     ]
 
 
+def get_output_files(config: AppConfig) -> list[str]:
+    """Files written by threat_composer_write_dataflow."""
+    return [
+        config.dataflow_description_filename,
+        config.dataflow_system_filename,
+        config.dataflow_diagram_filename,
+    ]
+
+
 def create_system_prompt(config: AppConfig):
     """Create the system prompt with caching enabled"""
 
-    # Build the tags example with the configurable AI generated tag
-    tags_example = f'["tag1", "tag2", "{config.ai_generated_tag}"] (each tag ≤30 chars)'
-
-    output_format = (
-        """{
-        "schema": 1,
-        "applicationInfo": { #Empty },
-        "architecture" : { # Empty },
-        "dataflow": {
-          "description": "CRITICAL CONSTRAINT: Maximum 12,000 characters total. Be extremely concise. Markdown format. No unicode. Use tables and lists only - no lengthy prose. These chars are NOT allowed: <>&
-
-          ### Human actors
-          [List only. Max 3-5 items. One line each. Human actors who interact with the system.]
-
-          ### External entities
-          [List only. Max 3-5 items. One line each. External systems/services you don't control.]
-
-          ### Processes
-          [List only. Max 5-7 items. One line each. Components that perform computation.]
-
-          ### Data stores
-          [Table format with header seperator row. Columns: Store | Type | High-Value (Y/N). Max 5-7 rows. Where data is stored at rest.]
-
-          ### Trust boundaries
-          [Table format with header seperator row. Columns: Zone | Elements | Trust Level. Max 3-5 rows. Security zones separating elements.]
-
-          ### Data flows
-          [Table format with header seperator row. Columns: Flow ID | Description | Source | Target | Trust Boundaries Crossed | Assets. Keep descriptions under 50 chars each. This section is critical for the data flow diagram that follows.]
-
-          STOP HERE. No additional sections."
-        },
-        "assumptions": [
-          {
-            "id": "Use available un-used UUID, or call tool to get more",
-            "numericId": 1,
-            "content": "[Brief assumption - single line - <= 200 chars]",
-            "tags": """
-        + tags_example
-        + """,
-            "metadata": [{
-                "key": "Comments"
-                "value": "[Brief detail - <= 300 chars]",
-              },
-              {
-                "key": "custom:agent",
-                "value": "[Contributing agent name]"
-              }]
-          }
-        ],
-        "assumptionLinks": [#Empty],
-        "threats": [#Empty],
-        "mitigations": [#Empty],
-        "mitigationLinks": [#Empty],
-      }"""
-    )
-
-    # Get dynamic input dependencies using the new helper function
     dynamic_inputs = generate_required_inputs_section(config, get_input_files(config))
+    write_tool = get_tool_name(threat_composer_write_dataflow)
 
-    prompt_text = f"""You are a agent specializing in understanding software systems for threat modeling purposes based on provided context, and by reviewing application source code.
+    prompt_text = f"""You are an agent specializing in understanding software systems for threat modeling purposes, based on provided context and by reviewing application source code.
 
-   {dynamic_inputs}
+{dynamic_inputs}
 
-   Your focus is determining the elements and flows of this application.
+Your focus is the elements, trust zones and data flows of this application. A threat analyst will apply STRIDE to each element and flow you record, so record what they need to reason about attacks, not every component.
 
-   Your primary responsibilities:
-   1. Read required inputs
-   2. Perform code analysis using tools if necesseary.
-   3. If doing file enumeration you must use {get_tool_name(threat_composer_list_workdir_files_gitignore_filtered)}
-   4. You must use {get_tool_name(threat_composer_workdir_file_read)} tool to read file contents
-   5. Determine elements and dataflow of application to the degree of detail that it could be used by another agent to create a data flow diagram
-   6. Document all assumptions you make during analysis
-   7. Write structured outputs to markdown files using tools
+Your responsibilities:
+1. Read the required inputs with {get_tool_name(threat_composer_workdir_file_read)}.
+2. Analyze the code as needed to confirm and refine the elements and flows. If you enumerate files, use {get_tool_name(threat_composer_list_workdir_files_gitignore_filtered)}.
+3. Record the result with one call to {write_tool}.
 
-   {CODE_ANALYSIS_PROMPT_SNIPPET}
+{CODE_ANALYSIS_PROMPT_SNIPPET}
 
-    REQUIRED TOOLS:
-    1. You must use {get_tool_name(threat_composer_workdir_file_read)} tool to discover directories, and read files.
-    2. You must use {get_tool_name(threat_composer_workdir_file_write)} tool to create your outputs.
-    3. You must use {get_tool_name(threat_composer_validate_tc_v1_schema)} to validate your output.
+WHAT TO RECORD:
+- Trust zones: areas where everything shares one level of trust, for example the internet, the user's browser, a private network, a cloud account. Give each a short id (Z1, Z2) and a trust level.
+- Elements, each with a short id, a kind and its zone:
+  - human_actor (U1, U2): people who interact with the system
+  - external_entity (E1, E2): systems or services outside your control
+  - process (P1, P2): components that run code and transform data
+  - data_store (DS1, DS2): where data rests. Set high_value for stores of credentials, personal data, secrets or other sensitive data.
+- Flows: data moving between two elements. Describe each in a few words, list the assets it carries, and give the source and target element ids. Omit flow ids; they are numbered DF1, DF2, ... in the order you list them, so list them in the order data moves through the system.
+- Evidence: for elements and flows you confirmed in the code, add path:line references.
+- Assumptions: anything you assumed rather than confirmed, such as the deployment environment or a component you could not see.
 
-    You have been provided with a set if pre-generated UUIDs to use for your outputs
+LEVEL OF DETAIL:
+- Merge components that share trust and handle the same data, for example a pool of identical workers is one process.
+- Keep every flow that crosses a trust zone. These matter most to the threat analyst.
+- Prefer accuracy over completeness. Do not invent elements the code and inputs do not support.
 
-    IMPORTANT UUID USAGE:
-    - Use these UUIDs in sequential order for your outputs (use UUID #1 first, then #2, etc.)
-    - Each UUID should only be used once
-    - If you need more UUIDs than provided, use the {get_tool_name(threat_composer_generate_uuid4)} tool to generate additional ones
-    - Do NOT generate your own UUIDs manually - always use the pre-loaded ones first, then the tool if needed
+If {write_tool} returns an error, fix the input it names and call it again. It writes nothing until the input is valid.
 
-    REQUIRED FILE OUTPUTS:
-
-   1. Write to "{create_prompt_path_from_config("output_directory", "components_output_sub_dir", config.dataflow_description_filename)}" with the following structure {output_format}
-
-   Remember: Be explicit about what you're assuming vs. what you can definitively determine from the code.
-
-   FINAL RESPONSE:
-   1. Your final reponse must be a single line. No formatting."""
+FINAL RESPONSE:
+1. Your final response must be a single line. No formatting."""
 
     return create_cached_system_prompt(prompt_text)
 
@@ -162,7 +110,7 @@ def create_dataflow_agent(
             # Copy output from previous session
             copy_output_from_previous_session(
                 agent_name=AGENT_NAME,
-                output_files=[config.dataflow_description_filename],
+                output_files=get_output_files(config),
                 previous_session_path=previous_session_path,
                 config=config,
             )
@@ -187,17 +135,11 @@ def create_dataflow_agent(
             "name": "threat_composer_workdir_file_read",
             "path": os.path.join(tools_dir, "threat_composer_workdir_file_read.py"),
         },
-        {
-            "name": "threat_composer_workdir_file_write",
-            "path": os.path.join(tools_dir, "threat_composer_workdir_file_write.py"),
-        },
         threat_composer_list_workdir_files_gitignore_filtered,
-        threat_composer_generate_uuid4,
-        threat_composer_generate_uuid4_with_guidance,
-        threat_composer_validate_tc_v1_schema,
+        threat_composer_write_dataflow,
     ]
 
-    agent = Agent(
+    return Agent(
         name=AGENT_NAME,
         model=create_agent_model(AGENT_NAME, config, **model_overrides),
         system_prompt=create_system_prompt(config),
@@ -205,8 +147,3 @@ def create_dataflow_agent(
         callback_handler=create_default_callback_handler(AGENT_NAME, config),
         tools=tools_list,
     )
-
-    # Proactively seed the agent with a batch of UUIDs
-    agent.tool.threat_composer_generate_uuid4_with_guidance(batch_size=20)
-
-    return agent

@@ -48,7 +48,6 @@ ALL_AGENT_TYPES = [
     "architecture",
     "architecture_diagram",
     "dataflow",
-    "dataflow_diagram",
     "threats",
     "mitigations",
     "threat_model",
