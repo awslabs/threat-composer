@@ -149,6 +149,21 @@ jobs:
             echo "::warning::fixture.commit is null, analysing the checked-out tree. Results stay comparable only while its hash matches the recorded pin."
           fi
 
+      # The agents write their prose with the rules of the asd-ste100 skill, an
+      # external prerequisite like graphviz (see config/style_skill.py). Pinned to a
+      # commit, because the skill's text goes into every prompt: a change upstream
+      # would change the agent's output, and an unpinned checkout would let anyone
+      # who can push to that repository put text into these prompts. The text is
+      # only read, never executed. To update, check the new SKILL.md, then change
+      # the ref here; run-metadata.json records the hash of the file each run used.
+      - name: Check out the asd-ste100 writing skill
+        uses: actions/checkout@v3
+        with:
+          repository: danyuchn/asd-ste100-skill
+          ref: a610dbdfb27366653798bcdd4cebe745c92e1ac5  # SKILL.md version 0.4.0
+          path: _asd-ste100
+          persist-credentials: false
+
       # Credentials come after everything that does not need them, so a mistake in
       # the cheap steps above fails before a role is assumed, and the credentials
       # exist for as short a time as possible.
@@ -186,6 +201,7 @@ jobs:
           CONFIG: ${{ github.workspace }}/${{ inputs.config || 'packages/threat-composer-ai/eval/browser-extension.json' }}
           MODEL_ID: ${{ inputs.aws-model-id }}
           ALLOW_QUALITY_FAILURES: ${{ inputs.allow-quality-failures }}
+          THREAT_COMPOSER_AI_STYLE_SKILL: ${{ github.workspace }}/_asd-ste100
         run: |
           args=()
           if [ -n "$MODEL_ID" ]; then args+=(--aws-model-id "$MODEL_ID"); fi

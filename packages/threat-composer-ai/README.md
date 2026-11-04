@@ -30,6 +30,7 @@ threat-composer-ai-mcp
 - UV package manager
 - AWS credentials (for Bedrock access)
 - Graphviz (for diagram generation)
+- The asd-ste100 writing skill (see below)
 
 **⚠️ Cost Note**: This tool uses Amazon Bedrock for AI inference, which incurs costs. By default, it uses Claude Sonnet 4 with standard on-demand pricing. See [Bedrock Pricing](https://aws.amazon.com/bedrock/pricing/) for details.
 
@@ -54,6 +55,24 @@ dot -V
 ```
 
 For more information, see: https://graphviz.org/download/
+
+#### Installing the asd-ste100 writing skill
+
+The agents write the text of the threat model with the rules of ASD-STE100 Simplified Technical English. The rules come from the [asd-ste100 skill](https://github.com/danyuchn/asd-ste100-skill). The CLI, the MCP workflow and the Claude Code `/threat-model` skill all use it, and they do not start without it.
+
+Install it in the default location:
+
+```bash
+git clone https://github.com/danyuchn/asd-ste100-skill ~/.claude/skills/asd-ste100
+```
+
+The tools look for the skill in this order:
+
+1. `THREAT_COMPOSER_AI_STYLE_SKILL`, if you set it to the skill directory or to its `SKILL.md`.
+2. `~/.claude/skills/asd-ste100/SKILL.md`.
+3. A copy that your Claude organization synced to `~/.claude/skills/synced/`.
+
+To run without the writing rules, set `THREAT_COMPOSER_AI_STYLE_SKILL=none`. Each run records the skill path, version and file hash in `config/run-metadata.json`.
 
 ### Setup
 

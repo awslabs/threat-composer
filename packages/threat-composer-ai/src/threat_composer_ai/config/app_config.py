@@ -323,6 +323,7 @@ class AppConfig:
     ) -> None:
         """Export configuration files to the config subdirectory."""
         from ..utils import format_utc_timestamp
+        from .style_skill import provenance as style_provenance
 
         config_dir = self.output_directory / self.config_output_sub_dir
         config_dir.mkdir(parents=True, exist_ok=True)
@@ -356,6 +357,7 @@ class AppConfig:
                 k: v for k, v in invocation_args.items() if v is not None
             },
             "configuration_sources": sources,
+            "writing_style": style_provenance(),
         }
 
         metadata_file = config_dir / "run-metadata.json"
@@ -379,6 +381,7 @@ class AppConfig:
                     "THREAT_COMPOSER_NODE_TIMEOUT",
                     "THREAT_COMPOSER_AWS_MODEL_ID",
                     "THREAT_COMPOSER_AI_GENERATED_TAG",
+                    "THREAT_COMPOSER_AI_STYLE_SKILL",
                 ]
             },
             "note": "Only non-sensitive environment variables are logged. Credentials and secrets are never exported.",

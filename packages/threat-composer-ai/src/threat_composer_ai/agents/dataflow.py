@@ -13,6 +13,7 @@ import os
 from strands import Agent
 
 from ..config import AppConfig
+from ..config.style_skill import writing_rules_section
 from ..tools import (
     threat_composer_list_workdir_files_gitignore_filtered,
     threat_composer_workdir_file_read,
@@ -88,6 +89,8 @@ LEVEL OF DETAIL:
 - Prefer accuracy over completeness. Do not invent elements the code and inputs do not support.
 
 If {write_tool} returns an error, fix the input it names and call it again. It writes nothing until the input is valid.
+
+{writing_rules_section()}
 
 FINAL RESPONSE:
 1. Your final response must be a single line. No formatting."""

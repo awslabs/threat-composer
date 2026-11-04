@@ -9,6 +9,7 @@ from strands.session import FileSessionManager
 
 from ..config import AppConfig
 from ..config.export import export_run_configuration, update_run_completion_info
+from ..config.style_skill import StyleSkillError, get_style_skill
 from ..utils.relative_path_helper import make_relative_to_working_dir
 from ..validation import (
     validate_aws_bedrock_access,
@@ -187,6 +188,14 @@ class WorkflowRunner:
             (success: bool, error_message: str | None)
         """
         try:
+            # 0. Writing skill (required unless disabled; see config/style_skill.py).
+            #    Checked even with skip_validation: it is part of the output
+            #    specification, not an environment check.
+            try:
+                get_style_skill()
+            except StyleSkillError as e:
+                return False, str(e)
+
             # 1. Graphviz validation (required for DFD diagram generation)
             if not skip_validation:
                 validate_graphviz_installation()
