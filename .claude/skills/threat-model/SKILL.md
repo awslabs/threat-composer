@@ -5,6 +5,29 @@ description: Build a threat model of a codebase in Threat Composer format, using
 
 # Threat model a codebase
 
+**Step 1, before anything else:** call the Skill tool with
+`skill: "asd-ste100"`. Do this before `tm_init` and before any subagent.
+
+If the Skill tool returns "Unknown skill", stop. Do not start the threat
+model. Tell the user that this skill needs the asd-ste100 writing skill, and
+give them this install command:
+
+```
+git clone https://github.com/danyuchn/asd-ste100-skill ~/.claude/skills/asd-ste100
+```
+
+Continue without the writing skill only if the user tells you to skip it.
+Then say in your final summary that the model text does not follow
+ASD-STE100.
+
+## Writing style
+
+Apply the asd-ste100 skill to every text field you send to a tool and to every
+message to the user, including the final summary. Use Strict mode for threat
+fields and mitigations. Use STE-flavored mode for descriptions, comments,
+assumptions and your messages. Ignore the skill's "Output Format" section. The
+subagents preload the skill themselves.
+
 You coordinate the work. Three subagents do the analysis, and the
 `threat-composer` MCP tools hold the model. Never write the `.tc.json` or
 `.system.json` files yourself; change them only through the `tm_*` and `sys_*`
@@ -25,6 +48,7 @@ The work follows the four threat modeling questions:
 - Tell each subagent the target directory and the model path. Subagents do not
   see this conversation.
 - Keep the user's time for decisions. Show compact tables, not file dumps.
+- Write all prose with the asd-ste100 skill (see "First action" below).
 
 ## Step 0: Scope
 
