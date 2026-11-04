@@ -513,6 +513,53 @@ def set_status(
     return {"updated": len(items)}
 
 
+_ENTITY_CLS: dict[str, type[BaseModel]] = {
+    "threat": Threat,
+    "mitigation": Mitigation,
+    "assumption": Assumption,
+}
+
+
+def _change_tags(
+    doc: dict[str, Any], kind: Kind, ids: list[str], tags: list[str], add: bool
+) -> dict[str, Any]:
+    """Add or remove tags on items. Checks everything before it changes anything."""
+    if any(not t.strip() for t in tags):
+        raise BuilderError("tags: a tag cannot be empty or only whitespace")
+    wanted = _tags(tags)
+    items = [_find(doc, kind, i) for i in dict.fromkeys(ids)]
+    changes: list[tuple[dict[str, Any], list[str]]] = []
+    for item in items:
+        current = item.get("tags") or []
+        if add:
+            new = current + [t for t in wanted if t not in current]
+        else:
+            new = [t for t in current if t not in wanted]
+        if new == current:
+            continue
+        problems = _check(_ENTITY_CLS[kind], {**item, "tags": new})
+        if problems:
+            raise BuilderError(f"{kind} '{item['id']}': " + "; ".join(problems))
+        changes.append((item, new))
+    for item, new in changes:
+        item["tags"] = new
+    return {"updated": len(items)}
+
+
+def add_tags(
+    doc: dict[str, Any], kind: Kind, ids: list[str], tags: list[str]
+) -> dict[str, Any]:
+    """Append tags an item does not have yet. Changes no other field."""
+    return _change_tags(doc, kind, ids, tags, add=True)
+
+
+def remove_tags(
+    doc: dict[str, Any], kind: Kind, ids: list[str], tags: list[str]
+) -> dict[str, Any]:
+    """Remove tags from items. Changes no other field."""
+    return _change_tags(doc, kind, ids, tags, add=False)
+
+
 def remove(doc: dict[str, Any], kind: Kind, ids: list[str]) -> dict[str, Any]:
     """Remove items and every link that refers to them."""
     for i in ids:

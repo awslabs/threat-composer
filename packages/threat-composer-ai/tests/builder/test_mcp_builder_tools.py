@@ -206,3 +206,72 @@ def test_server_tool_sets(monkeypatch):
 def test_init_returns_absolute_path(server, tmp_path):
     result = call(server, "tm_init", model=MODEL, name="x")
     assert result["path"] == str(tmp_path / MODEL)
+
+
+def test_tag_tools_change_only_tags(server, tmp_path):
+    call(server, "tm_init", model=MODEL, name="Demo")
+    tid = call(
+        server,
+        "tm_add_threats",
+        model=MODEL,
+        threats=[
+            {
+                "threat_source": "actor",
+                "threat_action": "x",
+                "stride": ["S"],
+                "priority": "High",
+            }
+        ],
+    )["added"][0]["id"]
+    mid = call(
+        server,
+        "tm_add_mitigations",
+        model=MODEL,
+        mitigations=[{"content": "MFA", "threat_ids": [tid], "comments": "c"}],
+    )["added"][0]["id"]
+    before = json.loads((tmp_path / MODEL).read_text())
+
+    added = call(
+        server,
+        "tm_add_tags",
+        model=MODEL,
+        kind="mitigation",
+        ids=[mid],
+        tags=["task:3.2"],
+    )
+    assert added == {"updated": 1}
+    after = json.loads((tmp_path / MODEL).read_text())
+    assert after["mitigations"][0]["tags"][-1] == "task:3.2"
+    after["mitigations"][0]["tags"].pop()
+    assert after == before
+
+    raw = (tmp_path / MODEL).read_text()
+    with pytest.raises(ToolError, match="no mitigation"):
+        call(
+            server,
+            "tm_add_tags",
+            model=MODEL,
+            kind="mitigation",
+            ids=[mid, "nope"],
+            tags=["task:9"],
+        )
+    with pytest.raises(ToolError, match="30 character"):
+        call(
+            server,
+            "tm_add_tags",
+            model=MODEL,
+            kind="mitigation",
+            ids=[mid],
+            tags=["x" * 31],
+        )
+    assert (tmp_path / MODEL).read_text() == raw
+
+    call(
+        server,
+        "tm_remove_tags",
+        model=MODEL,
+        kind="mitigation",
+        ids=[mid],
+        tags=["task:3.2"],
+    )
+    assert json.loads((tmp_path / MODEL).read_text()) == before

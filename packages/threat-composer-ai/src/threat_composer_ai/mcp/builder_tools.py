@@ -223,6 +223,25 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         dismiss a threat while keeping a record of it."""
         return change_model(model, lambda d: ops.set_status(d, kind, ids, status))
 
+    @mcp.tool(annotations=WRITE)
+    def tm_add_tags(
+        model: ModelPath, kind: ops.Kind, ids: list[str], tags: list[str]
+    ) -> dict[str, Any]:
+        """Add tags to threats, mitigations or assumptions. Changes only tags; the
+        content, status, metadata and links stay the same. A tag that the item
+        already has is not added again. Tags are 1 to 30 characters. If an id is
+        unknown or a tag is invalid, nothing changes."""
+        return change_model(model, lambda d: ops.add_tags(d, kind, ids, tags))
+
+    @mcp.tool(annotations=WRITE)
+    def tm_remove_tags(
+        model: ModelPath, kind: ops.Kind, ids: list[str], tags: list[str]
+    ) -> dict[str, Any]:
+        """Remove tags from threats, mitigations or assumptions. Changes only tags;
+        the content, status, metadata and links stay the same. A tag that the item
+        does not have is ignored. If an id is unknown, nothing changes."""
+        return change_model(model, lambda d: ops.remove_tags(d, kind, ids, tags))
+
     @mcp.tool(annotations=DESTRUCTIVE)
     def tm_remove(model: ModelPath, kind: ops.Kind, ids: list[str]) -> dict[str, Any]:
         """Delete threats, mitigations or assumptions and every link to them."""

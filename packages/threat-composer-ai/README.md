@@ -88,6 +88,17 @@ uv run threat-composer-ai-cli /path/to/codebase
 uv run threat-composer-ai-mcp
 ```
 
+## MCP builder tools
+
+The `tm_*` and `sys_*` MCP tools build a threat model one item at a time (see `src/threat_composer_ai/mcp/builder_tools.py`). Set `THREAT_COMPOSER_AI_MCP_TOOLS=builder` to expose only these tools. Every write validates the whole document and changes nothing if it would become invalid.
+
+| Tool | Purpose |
+| --- | --- |
+| `tm_add_tags` | Add tags to threats, mitigations or assumptions, for example `task:3.2`. Changes only `tags`; content, status, metadata and links stay the same. A tag the item already has is not added again. |
+| `tm_remove_tags` | Remove tags from threats, mitigations or assumptions. Changes only `tags`. A tag the item does not have is ignored. |
+
+Both take `model`, `kind` (`threat`, `mitigation` or `assumption`), `ids` and `tags`, and return `{"updated": n}`. Each tag is 1 to 30 characters after whitespace is stripped. If an id is unknown or a tag is invalid, nothing changes. Use these instead of `tm_update_mitigation` to change tags: `tm_update_mitigation` replaces the whole mitigation, including its threat links.
+
 ## Project Structure
 
 ```

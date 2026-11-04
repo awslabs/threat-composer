@@ -1,5 +1,6 @@
 """Model operations: ids assigned in code, per-item rejection, link integrity."""
 
+import copy
 import uuid
 
 import pytest
@@ -169,3 +170,126 @@ def test_ai_tag_from_environment(doc, monkeypatch):
     monkeypatch.setenv(ops.AI_TAG_ENV_VAR, "Claude")
     ops.add_threats(doc, [threat()])
     assert "Claude" in doc["threats"][0]["tags"]
+
+
+# -- tags -------------------------------------------------------------------
+
+
+def _tagged_doc(doc):
+    """Two threats, two linked mitigations with full metadata, one assumption."""
+    t1, t2 = (a["id"] for a in ops.add_threats(doc, [threat(), threat()])["added"])
+    m1, m2 = (
+        a["id"]
+        for a in ops.add_mitigations(
+            doc,
+            [
+                ops.MitigationInput(
+                    content="Bind tokens to client",
+                    threat_ids=[t1, t2],
+                    control_type="Preventative",
+                    comments="Why",
+                    evidence=["src/auth.py:10"],
+                    tags=["alpha"],
+                    status="mitigationInProgress",
+                ),
+                ops.MitigationInput(content="m2", threat_ids=[t1], existing=True),
+            ],
+            agent="defender",
+        )["added"]
+    )
+    a1 = ops.add_assumptions(doc, [ops.AssumptionInput(content="a", link_to=[t1])])[
+        "added"
+    ][0]["id"]
+    return {"threat": t1, "mitigation": m1, "assumption": a1, "m2": m2}
+
+
+def _without_tags(doc, kind, item_id):
+    stripped = copy.deepcopy(doc)
+    for item in stripped[ops._COLLECTION[kind]]:
+        if item["id"] == item_id:
+            item.pop("tags", None)
+    return stripped
+
+
+def test_add_tags_changes_only_tags(doc):
+    ids = _tagged_doc(doc)
+    mid = ids["mitigation"]
+    before = copy.deepcopy(doc)
+    result = ops.add_tags(doc, "mitigation", [mid], ["  task:3.2 "])
+    assert result == {"updated": 1}
+    item = next(m for m in doc["mitigations"] if m["id"] == mid)
+    old = next(m for m in before["mitigations"] if m["id"] == mid)
+    assert item["tags"] == old["tags"] + ["task:3.2"]
+    assert _without_tags(doc, "mitigation", mid) == _without_tags(
+        before, "mitigation", mid
+    )
+    assert doc["mitigationLinks"] == before["mitigationLinks"]
+    assert item["status"] == "mitigationInProgress"
+    assert ops.validate_document(doc) == []
+
+
+def test_add_existing_tag_is_noop_and_keeps_order(doc):
+    mid = _tagged_doc(doc)["mitigation"]
+    ops.add_tags(doc, "mitigation", [mid], ["task:1", "task:2"])
+    tags = doc["mitigations"][0]["tags"]
+    before = copy.deepcopy(doc)
+    ops.add_tags(doc, "mitigation", [mid], ["task:2", "alpha", "task:1", "task:2"])
+    assert doc == before
+    assert tags[-2:] == ["task:1", "task:2"] and tags.index("alpha") < tags.index(
+        "task:1"
+    )
+
+
+def test_remove_tags_and_missing_tag_is_noop(doc):
+    mid = _tagged_doc(doc)["mitigation"]
+    ops.add_tags(doc, "mitigation", [mid], ["task:1", "task:2"])
+    before = copy.deepcopy(doc)
+    assert ops.remove_tags(doc, "mitigation", [mid], ["task:1"]) == {"updated": 1}
+    old_tags = before["mitigations"][0]["tags"]
+    assert doc["mitigations"][0]["tags"] == [t for t in old_tags if t != "task:1"]
+    assert _without_tags(doc, "mitigation", mid) == _without_tags(
+        before, "mitigation", mid
+    )
+    after = copy.deepcopy(doc)
+    ops.remove_tags(doc, "mitigation", [mid], ["not-there"])
+    assert doc == after
+
+
+@pytest.mark.parametrize("kind", ["threat", "mitigation", "assumption"])
+def test_tags_work_for_each_kind(doc, kind):
+    item_id = _tagged_doc(doc)[kind]
+    before = copy.deepcopy(doc)
+    ops.add_tags(doc, kind, [item_id], ["task:3.2"])
+    item = next(i for i in doc[ops._COLLECTION[kind]] if i["id"] == item_id)
+    assert item["tags"][-1] == "task:3.2"
+    ops.remove_tags(doc, kind, [item_id], ["task:3.2"])
+    assert doc == before
+
+
+def test_tags_unknown_id_changes_nothing(doc):
+    ids = _tagged_doc(doc)
+    before = copy.deepcopy(doc)
+    for op in (ops.add_tags, ops.remove_tags):
+        with pytest.raises(ops.BuilderError, match="no mitigation"):
+            op(doc, "mitigation", [ids["mitigation"], "nope", ids["m2"]], ["alpha"])
+        assert doc == before
+
+
+@pytest.mark.parametrize("bad", ["", "   "])
+def test_tags_empty_tag_rejected(doc, bad):
+    mid = _tagged_doc(doc)["mitigation"]
+    before = copy.deepcopy(doc)
+    for op in (ops.add_tags, ops.remove_tags):
+        with pytest.raises(ops.BuilderError, match="empty"):
+            op(doc, "mitigation", [mid], ["task:1", bad])
+        assert doc == before
+
+
+def test_tags_schema_rejection_changes_nothing(doc):
+    ids = _tagged_doc(doc)
+    before = copy.deepcopy(doc)
+    with pytest.raises(ops.BuilderError, match="30 character"):
+        ops.add_tags(doc, "mitigation", [ids["m2"], ids["mitigation"]], ["x" * 31])
+    assert doc == before
+    ops.add_tags(doc, "mitigation", [ids["mitigation"]], ["x" * 30])
+    assert ops.validate_document(doc) == []
