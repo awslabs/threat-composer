@@ -16,6 +16,7 @@ import pytest
 
 from threat_composer_ai.eval.fixture import (
     EXCLUDED_DIRS,
+    EXCLUDED_FILENAMES,
     GENERATED_TRACKED_DIRS,
     identify,
     verify,
@@ -72,6 +73,14 @@ class TestIdentify:
             "build output must not affect the pin, or the hash would depend on "
             "whether anyone had run a build"
         )
+
+    def test_ignores_git_metadata_files(self, tree):
+        # Some checkouts (CodePipeline source artifacts) omit these, so the pin
+        # must not depend on whether they were delivered.
+        before = identify(tree).tree_sha256
+        (tree / ".gitignore").write_text("node_modules\n")
+        (tree / ".gitattributes").write_text("* text=auto\n")
+        assert identify(tree).tree_sha256 == before
 
     def test_counts_only_hashed_files(self, tree):
         (tree / "node_modules").mkdir()
@@ -175,6 +184,7 @@ class TestRecordedPinMatchesTheFixture:
             p
             for p in expected
             if not GENERATED_TRACKED_DIRS.intersection(Path(p).parts)
+            and Path(p).name not in EXCLUDED_FILENAMES
         }
 
         missed = sorted(expected - hashed)

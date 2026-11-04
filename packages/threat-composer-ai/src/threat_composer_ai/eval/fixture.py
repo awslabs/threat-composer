@@ -53,6 +53,13 @@ EXCLUDED_DIRS = frozenset(
 )
 EXCLUDED_SUFFIXES = frozenset({".pyc", ".pyo", ".log"})
 
+# Git metadata files, excluded by name. Not every way of materialising the commit
+# delivers them: CodePipeline's source artifact, which the CodeBuild pipeline runs
+# the tests from, drops them, so hashing them made the pin depend on how the tree
+# was fetched rather than on what it contains. They describe the repository, not
+# the code under analysis, so leaving them out does not weaken the pin.
+EXCLUDED_FILENAMES = frozenset({".gitattributes", ".gitignore", ".gitmodules"})
+
 
 @dataclass
 class FixtureIdentity:
@@ -78,6 +85,8 @@ def _source_files(root: Path) -> list[Path]:
         if EXCLUDED_DIRS.intersection(path.relative_to(root).parts):
             continue
         if path.suffix in EXCLUDED_SUFFIXES:
+            continue
+        if path.name in EXCLUDED_FILENAMES:
             continue
         found.append(path)
     # Sorted by POSIX relative path so the hash does not depend on filesystem
