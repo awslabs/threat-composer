@@ -87,6 +87,16 @@ def test_full_flow(server, tmp_path):
 
     view = call(server, "tm_get", model=MODEL, sections=["threats"])
     assert view["threats"][0]["mitigations"]
+    assert view["threats"][0]["elements"] == ["U1"]
+    assert "U1" not in view["threats"][0]["tags"]
+    dismissed = call(
+        server,
+        "tm_get",
+        model=MODEL,
+        sections=["threats"],
+        threat_status=["threatResolvedNotUseful"],
+    )
+    assert dismissed["threats"] == []
 
     report = call(server, "tm_coverage_report", model=MODEL)
     assert "P1" in report["targets_with_no_threats"]

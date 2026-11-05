@@ -94,6 +94,7 @@ The `tm_*` and `sys_*` MCP tools build a threat model one item at a time (see `s
 
 | Tool | Purpose |
 | --- | --- |
+| `tm_get` | Compact view of the model. Each threat shows its `elements` (the tags that are system model ids) apart from its other `tags`. Filter with `priority`, `element`, `threat_status` and `mitigation_status`. A threat filter also limits mitigations to those linked to a selected threat. |
 | `tm_add_tags` | Add tags to threats, mitigations or assumptions, for example `task:3.2`. Changes only `tags`; content, status, metadata and links stay the same. A tag the item already has is not added again. |
 | `tm_remove_tags` | Remove tags from threats, mitigations or assumptions. Changes only `tags`. A tag the item does not have is ignored. |
 

@@ -254,12 +254,30 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         | None = None,
         priority: ops.Priority | None = None,
         element: Annotated[
-            str | None, Field(description="Only threats tagged with this id")
+            str | None, Field(description="Only threats on this element or flow id")
+        ] = None,
+        threat_status: Annotated[
+            list[ops.ThreatStatus] | None,
+            Field(description="Only threats with one of these statuses"),
+        ] = None,
+        mitigation_status: Annotated[
+            list[ops.MitigationStatus] | None,
+            Field(description="Only mitigations with one of these statuses"),
         ] = None,
     ) -> dict[str, Any]:
-        """Compact view of the model: ids, statements, priorities and links. Omits
-        descriptions and images. Use this instead of reading the file."""
-        return ops.summary(read_model(model), sections, priority, element)
+        """Compact view of the model: ids, statements, priorities, elements and
+        links. Omits descriptions and images. Use this instead of reading the file.
+        priority, element and threat_status select threats. When you set one of
+        them, mitigations shows only the mitigations linked to a selected threat."""
+        return ops.summary(
+            read_model(model),
+            sections,
+            priority,
+            element,
+            known_targets(model),
+            threat_status,
+            mitigation_status,
+        )
 
     @mcp.tool(annotations=READ_ONLY)
     def tm_validate(model: ModelPath) -> dict[str, Any]:

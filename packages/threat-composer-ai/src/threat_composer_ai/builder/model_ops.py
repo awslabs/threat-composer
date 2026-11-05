@@ -88,11 +88,14 @@ class ThreatInput(_Input):
     priority: Priority
     elements: list[str] = Field(
         default_factory=list,
-        description="System model element or flow ids this threat applies to",
+        description="System model element and flow ids this threat applies to",
     )
     comments: str = Field("", max_length=1000, description="Rationale. Markdown")
     evidence: list[str] = Field(default_factory=list, description="path:line")
-    tags: list[str] = Field(default_factory=list)
+    tags: list[str] = Field(
+        default_factory=list,
+        description="Other labels. Do not put element or flow ids here",
+    )
     status: ThreatStatus = "threatIdentified"
 
 
@@ -236,6 +239,9 @@ def _build_threat(
         unknown = [e for e in t.elements if e not in known_elements]
         if unknown:
             problems.append(f"elements: unknown ids {unknown}")
+        misplaced = [tag for tag in t.tags if tag.strip() in known_elements]
+        if misplaced:
+            problems.append(f"tags: put element and flow ids in elements: {misplaced}")
 
     source = normalise_source(t.threat_source)
     prerequisites = lower_first(t.prerequisites)
@@ -593,9 +599,20 @@ def summary(
     | None = None,
     priority: Priority | None = None,
     element: str | None = None,
+    known_targets: set[str] | None = None,
+    threat_status: list[ThreatStatus] | None = None,
+    mitigation_status: list[MitigationStatus] | None = None,
 ) -> dict[str, Any]:
-    """A compact view: ids, statements, links. No descriptions or images."""
+    """A compact view: ids, statements, links. No descriptions or images.
+
+    A threat's elements are its tags that are ids in known_targets (the system
+    model), as in the coverage report. With no system model, elements is empty
+    and every tag stays under tags. priority, element and threat_status select
+    threats; when any of them is set, mitigations are only those linked to a
+    selected threat.
+    """
     sections = sections or ["info", "threats", "mitigations", "assumptions"]
+    known = known_targets or set()
     mitigation_links = doc.get("mitigationLinks") or []
     assumption_links = doc.get("assumptionLinks") or []
     out: dict[str, Any] = {}
@@ -618,23 +635,27 @@ def summary(
             },
         }
 
+    selected = [
+        t
+        for t in doc.get("threats") or []
+        if (not priority or _metadata_value(t, "Priority") == priority)
+        and (not element or element in (t.get("tags") or []))
+        and (not threat_status or t.get("status") in threat_status)
+    ]
+
     if "threats" in sections:
         rows = []
-        for t in doc.get("threats") or []:
-            prio = _metadata_value(t, "Priority")
+        for t in selected:
             tags = t.get("tags") or []
-            if priority and prio != priority:
-                continue
-            if element and element not in tags:
-                continue
             rows.append(
                 {
                     "id": t["id"],
                     "numericId": t["numericId"],
                     "statement": t.get("statement", ""),
-                    "priority": prio,
+                    "priority": _metadata_value(t, "Priority"),
                     "stride": _metadata_value(t, "STRIDE") or [],
-                    "tags": tags,
+                    "elements": [x for x in tags if x in known],
+                    "tags": [x for x in tags if x not in known],
                     "status": t.get("status"),
                     "mitigations": [
                         x["mitigationId"]
@@ -646,21 +667,28 @@ def summary(
         out["threats"] = rows
 
     if "mitigations" in sections:
-        out["mitigations"] = [
-            {
-                "id": m["id"],
-                "numericId": m["numericId"],
-                "content": m.get("content", ""),
-                "status": m.get("status"),
-                "tags": m.get("tags") or [],
-                "threats": [
-                    x["linkedId"]
-                    for x in mitigation_links
-                    if x["mitigationId"] == m["id"]
-                ],
-            }
-            for m in doc.get("mitigations") or []
-        ]
+        threat_filter = bool(priority or element or threat_status)
+        selected_ids = {t["id"] for t in selected}
+        rows = []
+        for m in doc.get("mitigations") or []:
+            threats = [
+                x["linkedId"] for x in mitigation_links if x["mitigationId"] == m["id"]
+            ]
+            if mitigation_status and m.get("status") not in mitigation_status:
+                continue
+            if threat_filter and not selected_ids.intersection(threats):
+                continue
+            rows.append(
+                {
+                    "id": m["id"],
+                    "numericId": m["numericId"],
+                    "content": m.get("content", ""),
+                    "status": m.get("status"),
+                    "tags": m.get("tags") or [],
+                    "threats": threats,
+                }
+            )
+        out["mitigations"] = rows
 
     if "assumptions" in sections:
         out["assumptions"] = [

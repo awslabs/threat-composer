@@ -86,12 +86,22 @@ threat wrong, so do not continue until they confirm. Apply corrections with
 
 ## Step 2: Find threats
 
-Call `sys_get` and list the targets: every element and every flow.
+Call `sys_get` and list the targets: every element and every flow. Count the
+flows that cross a trust boundary (`boundaries_crossed` is not empty). Each
+analyst reads the code and the model again, so more analysts make the run
+longer and more costly. Most threats are at trust boundaries, so use the
+number of boundary-crossing flows to set the number of analysts:
 
-- Up to 12 targets: start one **threat-analyst** with all of them.
-- More than 12: split them into groups of about 8 and start one threat-analyst
-  per group, in parallel. Put each flow in the same group as its source or
-  target element where you can. The tools handle concurrent writes.
+- Up to 12 targets, or 2 or fewer boundary-crossing flows: start one
+  **threat-analyst** with all of the targets. If there are more than 30
+  targets, split them into groups of about 20 instead.
+- All other cases: split the targets into groups of about 8, but do not make
+  more groups than there are boundary-crossing flows. Start one threat-analyst
+  per group, in parallel.
+
+When you make groups, put each boundary-crossing flow in a different group
+where you can. Put each flow in the same group as its source or target
+element where you can. The tools handle concurrent writes.
 
 Give each threat-analyst the target directory, the model path, its target ids,
 and the scope context.
@@ -101,7 +111,14 @@ When all have returned, call `tm_coverage_report`. If
 empty, start one more threat-analyst for exactly those ids. Do this once only.
 A target can have no credible threats; that is a valid result.
 
-**Checkpoint.** Call `tm_get` with `sections: ["threats"]` and show the threats
+If you started more than one threat-analyst in this step, start one more
+threat-analyst for the dedup task. Give it the target directory and the model
+path, and tell it: "Task: dedup. Merge duplicate threats." It reads all the
+threats, moves the links of each duplicate to the threat it keeps, and
+dismisses the duplicate. Show the user the duplicates it reports.
+
+**Checkpoint.** Call `tm_get` with `sections: ["threats"]` and
+`threat_status: ["threatIdentified", "threatResolved"]`, and show the threats
 in a table grouped by priority: numericId, statement (shortened if long),
 STRIDE, elements. Ask the user which to:
 
@@ -110,7 +127,7 @@ STRIDE, elements. Ask the user which to:
   another, first move its links to the threat you keep: call `tm_get` with
   `sections: ["assumptions", "mitigations"]`, and use `tm_link` to link each
   assumption and mitigation to the kept threat and unlink it from the
-  duplicate.
+  duplicate. The dedup task of the threat-analyst uses the same steps.
 - change: call `tm_update_threat`.
 - add: describe them to a threat-analyst, or add them with `tm_add_threats`.
 

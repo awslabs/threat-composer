@@ -293,3 +293,67 @@ def test_tags_schema_rejection_changes_nothing(doc):
     assert doc == before
     ops.add_tags(doc, "mitigation", [ids["mitigation"]], ["x" * 30])
     assert ops.validate_document(doc) == []
+
+
+# -- summary elements and filters ---------------------------------------------
+
+
+def test_element_ids_in_tags_rejected(doc):
+    result = ops.add_threats(
+        doc, [threat(elements=[], tags=["P1", "web"]), threat()], {"P1"}
+    )
+    assert [r["index"] for r in result["rejected"]] == [0]
+    assert "put element and flow ids in elements" in result["rejected"][0]["errors"][0]
+    # Without a system model there is nothing to check against.
+    assert ops.add_threats(doc, [threat(tags=["P1"])])["rejected"] == []
+
+
+def test_summary_splits_elements_from_tags(doc):
+    ops.add_threats(doc, [threat(elements=["P1", "DF1"], tags=["web"])], {"P1", "DF1"})
+    row = ops.summary(doc, ["threats"], known_targets={"P1", "DF1"})["threats"][0]
+    assert row["elements"] == ["P1", "DF1"]
+    assert row["tags"] == ["web", ops.DEFAULT_AI_TAG]
+    row = ops.summary(doc, ["threats"])["threats"][0]
+    assert row["elements"] == [] and "P1" in row["tags"]
+
+
+def test_summary_status_filters(doc):
+    t1, t2 = (a["id"] for a in ops.add_threats(doc, [threat(), threat()])["added"])
+    ops.set_status(doc, "threat", [t2], "threatResolvedNotUseful")
+    m1, m2 = (
+        a["id"]
+        for a in ops.add_mitigations(
+            doc,
+            [
+                ops.MitigationInput(content="m1", threat_ids=[t1]),
+                ops.MitigationInput(content="m2", threat_ids=[t2], existing=True),
+            ],
+        )["added"]
+    )
+    view = ops.summary(
+        doc, ["threats", "mitigations"], threat_status=["threatIdentified"]
+    )
+    assert [t["id"] for t in view["threats"]] == [t1]
+    assert [m["id"] for m in view["mitigations"]] == [m1]
+    view = ops.summary(doc, ["mitigations"], mitigation_status=["mitigationResolved"])
+    assert [m["id"] for m in view["mitigations"]] == [m2]
+    assert len(ops.summary(doc, ["mitigations"])["mitigations"]) == 2
+
+
+def test_summary_element_filter_narrows_mitigations(doc):
+    known = {"P1", "P2"}
+    t1, t2 = (
+        a["id"]
+        for a in ops.add_threats(doc, [threat(), threat(elements=["P2"])], known)[
+            "added"
+        ]
+    )
+    ops.add_mitigations(
+        doc,
+        [
+            ops.MitigationInput(content="m1", threat_ids=[t1]),
+            ops.MitigationInput(content="m2", threat_ids=[t2]),
+        ],
+    )
+    view = ops.summary(doc, ["mitigations"], element="P2", known_targets=known)
+    assert [m["content"] for m in view["mitigations"]] == ["m2"]
