@@ -32,9 +32,9 @@
   "fixture": {
     "path": "packages/threat-composer-app-browser-extension",
     "commit": "5493bcb183e421b83552993dcd44cf919ad7a110",
-    "tree_sha256": "036805562d3d1f63f55c7c4776efded805422527d6654111e21c8db3f32c49e9",
-    "file_count": 41,
-    "byte_count": 177866
+    "tree_sha256": "6073cd01ce24d8aeb8cd1035215bf15839454615dc08c9d4e04e5f022fd46805",
+    "file_count": 39,
+    "byte_count": 176710
   },
 
   "bands": {
