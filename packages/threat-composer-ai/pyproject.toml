@@ -1,3 +1,9 @@
+# Declared explicitly so the build does not fall back to setuptools' legacy
+# defaults, which ship only Python modules.
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
 
 [project]
 name = "threat-composer-ai"
@@ -58,6 +64,12 @@ dev = [
   "pytest-asyncio",
   "ruff"
 ]
+
+# Non-Python files the package reads at runtime, such as the DFD icons in
+# assets/. Without this they are left out of the wheel, and an install from it
+# draws diagrams without them. tests/test_packaging.py checks the built wheel.
+[tool.setuptools.package-data]
+threat_composer_ai = ["assets/**/*"]
 
 [tool.uv]
 managed = true
