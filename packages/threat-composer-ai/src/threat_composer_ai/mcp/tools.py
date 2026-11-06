@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import sys
 import threading
 from pathlib import Path
 from typing import Any
@@ -43,7 +44,7 @@ def register_tools(mcp: FastMCP) -> None:
 
     @mcp.tool()
     def threat_modeling_validate_tc_schema(
-        data: str = None, file_path: str = None
+        data: str | None = None, file_path: str | None = None
     ) -> str:
         """
         Validate JSON data against the Threat Composer v1 schema.
@@ -128,8 +129,8 @@ def register_tools(mcp: FastMCP) -> None:
     @mcp.tool()
     def threat_modeling_start_workflow(
         directory_path: str,
-        rerun_from_session_id: str = None,
-        search_directory: str = None,
+        rerun_from_session_id: str | None = None,
+        search_directory: str | None = None,
     ) -> str:
         """
         Start a new threat modeling workflow or re-run from previous session.
@@ -237,9 +238,9 @@ def register_tools(mcp: FastMCP) -> None:
                             await runner.execute_async()
 
                     except RuntimeError as e:
-                        print(f"Workflow lock error: {e}")
+                        print(f"Workflow lock error: {e}", file=sys.stderr)
                     except Exception as e:
-                        print(f"Workflow execution error: {e}")
+                        print(f"Workflow execution error: {e}", file=sys.stderr)
 
                 asyncio.run(run_workflow())
 
@@ -264,7 +265,7 @@ def register_tools(mcp: FastMCP) -> None:
 
     @mcp.tool()
     def threat_modeling_get_workflow_logs(
-        session_id: str, output_directory: str, tail_lines: int = None
+        session_id: str, output_directory: str, tail_lines: int | None = None
     ) -> str:
         """
         Get the workflow logs for a running or completed session.
