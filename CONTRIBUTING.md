@@ -31,10 +31,12 @@ To send us a pull request, please:
 
 1. Fork the repository.
 2. Modify the source; please focus on the specific change you are contributing. If you also reformat all the code, it will be hard for us to focus on your change.
-3. Ensure local tests pass.
+3. Ensure the build passes locally. [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) covers setup, the build and the tests.
 4. Commit to your fork using clear commit messages.
-5. Send us a pull request, answering any default questions in the pull request interface.
+5. Send us a pull request, answering the questions in the pull request template. We squash-merge, so the pull request title becomes the commit message: write it as `type(scope): Subject`, as described in [AGENTS.md](AGENTS.md).
 6. Pay attention to any automated CI failures reported in the pull request, and stay involved in the conversation.
+
+If you use an AI coding agent, start it at the repository root. [AGENTS.md](AGENTS.md) holds its rules, and Claude Code, Codex, Cursor and Kiro all load it from there. Claude Code, Cursor and Kiro also load package rules, such as `packages/threat-composer-ai/AGENTS.md`, when they work in that package. Codex doesn't, so the root AGENTS.md points it there. Kiro started inside a package folder doesn't load the root rules, so start it at the root.
 
 GitHub provides additional document on [forking a repository](https://help.github.com/articles/fork-a-repo/) and
 [creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
