@@ -219,3 +219,24 @@ def test_boundary_view_hides_internal_flows(system, monkeypatch):
     assert "DF2" not in svg  # P1 to DS1 stays in Backend
     assert "DS1" not in svg  # no flow of DS1 crosses a boundary
     assert "[not shown: 1 internal flow, 1 element]" in svg
+
+
+def test_viewer_embeds_model_safely(system):
+    import json
+    import re
+
+    from threat_composer_ai.builder.viewer import render_dfd_html, viewer_data
+
+    system.flows[0].description = "</script><b>x</b>"
+    html = render_dfd_html(system, title="Demo </script>")
+    assert html.count("</script>") == html.count("<script")  # nothing closes early
+    raw = re.search(
+        r'<script id="dfd-data" type="application/json">(.*?)</script>', html, re.S
+    ).group(1)
+    assert json.loads(raw) == viewer_data(system)
+    flows = {f["id"]: f for f in viewer_data(system)["flows"]}
+    assert flows["DF1"]["crosses"] and flows["DF1"]["boundary"] == [
+        "Internet",
+        "Backend",
+    ]
+    assert not flows["DF2"]["crosses"]

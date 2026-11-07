@@ -51,6 +51,12 @@ def test_full_flow(server, tmp_path):
 
     rendered = call(server, "sys_render", model=MODEL, diagram=False)
     assert rendered["markdown"] is True
+    assert rendered["viewer"] is None
+
+    rendered = call(server, "sys_render", model=MODEL)
+    viewer = tmp_path / "app.dfd.html"
+    assert rendered["viewer"] and viewer.exists()  # written without Graphviz too
+    assert '"id": "DF1"' in viewer.read_text(encoding="utf-8")
 
     threats = call(
         server,

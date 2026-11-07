@@ -29,6 +29,7 @@ from ..builder.system_model import (
     SystemModel,
     Zone,
 )
+from ..builder.viewer import render_dfd_html
 from ..builder.workspace import Workspace, WorkspaceError
 from ..tools.threat_composer_svg_to_data_url import threat_composer_svg_to_data_url
 
@@ -404,7 +405,8 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
     ) -> dict[str, Any]:
         """Write the dataflow section of the threat model from the system model, and
         render the DFD (needs Graphviz) into <name>.dfd.svg and dataflow.image.
-        The dataflow table always lists all flows, for each view."""
+        The dataflow table always lists all flows, for each view. Also write an
+        interactive DFD viewer to <name>.dfd.html for large systems."""
         system = load_system(model)
         if system is None:
             raise ToolError(f"no system model yet for {model}; add one with sys_upsert")
@@ -412,12 +414,19 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         if problems:
             raise ToolError("fix the system model first: " + "; ".join(problems))
 
-        result: dict[str, Any] = {"markdown": True, "diagram": None}
+        result: dict[str, Any] = {"markdown": True, "diagram": None, "viewer": None}
         image = None
         if diagram:
+            tc_path, _, dfd_path = ws.model_paths(model)
+            info = (read_model(model).get("applicationInfo") or {}).get("name")
+            # The viewer needs no Graphviz, so write it even if the SVG fails.
+            viewer_path = dfd_path.with_suffix(".html")
+            ws.write_text(
+                viewer_path,
+                render_dfd_html(system, title=info or "Data Flow Diagram"),
+            )
+            result["viewer"] = ws.display(viewer_path)
             try:
-                tc_path, _, dfd_path = ws.model_paths(model)
-                info = (read_model(model).get("applicationInfo") or {}).get("name")
                 svg = render_dfd_svg(
                     system,
                     title=info or "Data Flow Diagram",
