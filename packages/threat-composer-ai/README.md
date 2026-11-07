@@ -120,6 +120,28 @@ A test runs the check, so a stale file fails the test suite. The script writes:
 
 In Kiro, install the asd-ste100 skill in `~/.kiro/skills/asd-ste100`. To run the recipe, turn on workflows, then run `/workflow run threat-model` in Kiro CLI or `/workflow-run` in Kiro IDE. Before the first run, ask Kiro to run `validate_workflow` on the recipe. The run pauses twice, to confirm the system model and to review the threats. Answer in the paused step's session.
 
+### Resume or update a threat model
+
+The `threat-model` skill and the workflow have three modes:
+
+- **new**: the model does not exist. Do every step.
+- **resume**: the model is incomplete. Start at the first stage with work left: the system model if it has no elements, the threats if a target has none, the mitigations if a High or Medium threat has none, otherwise the report.
+- **update**: the system changed. The system-modeler keeps the ids that still exist and reports the ids it added, changed and removed. The analysts look only at the added and changed ids and their flows. At the threat checkpoint you keep, change or dismiss the threats on changed and removed ids. The defender works only on new and affected threats.
+
+Prompts for the skill (`/threat-model` in Claude Code or Kiro):
+
+```text
+/threat-model Resume threat-models/app.tc.json for this repository.
+/threat-model Update threat-models/app.tc.json. The system changed since commit abc1234.
+/threat-model Update threat-models/app.tc.json. We added an SQS queue between the API and the worker.
+```
+
+For the workflow, set `mode` to `new`, `resume` or `update`, and set `changes` to the change description, a commit, or `none`:
+
+```text
+/workflow run threat-model --target . --model app.tc.json --mode update --changes "since commit abc1234" --context "none"
+```
+
 ## Project Structure
 
 ```

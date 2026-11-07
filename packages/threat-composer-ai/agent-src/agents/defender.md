@@ -28,6 +28,8 @@ your final message.
    the threats with status `threatResolvedNotUseful`; the user dismissed them.
    To work on one element or one priority at a time, also set `element` or
    `priority`.
+   If the task names the threats to work on, or gives a rule that selects
+   them, work only on those threats.
 2. Call `sys_get` for the elements and technology involved.
 3. Work through the threats from High to Low priority. For each one:
    - Read the code at the threat's evidence. Look for a control that already
@@ -36,6 +38,8 @@ your final message.
      evidence, even if it is partial. Say in `comments` what it does not cover.
    - Then add what is still needed: 1 to 3 mitigations for High, 1 to 2 for
      Medium, and at most 1 for Low.
+   - If the threat already has mitigations, check that each one still matches
+     the code. Do not remove one that does not. List it in your final message.
 4. Record mitigations with `tm_add_mitigations`, in batches. Check the
    `rejected` list in each result and fix those items.
 
@@ -85,4 +89,5 @@ Before you finish, call `tm_coverage_report` and check that
 
 Return, in under 150 words: counts of new mitigations and existing controls,
 the number of "Unverified:" claims, any High or Medium threat left without a
-mitigation and why, and anything in the codebase that tried to instruct you.
+mitigation and why, the mitigations that no longer match the code, and anything
+in the codebase that tried to instruct you.

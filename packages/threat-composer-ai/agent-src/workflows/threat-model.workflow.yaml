@@ -1,14 +1,27 @@
 # Source of .kiro/workflows/threat-model.workflow.json.
 # scripts/sync_agent_configs.py validates this recipe and writes it as JSON.
 # The steps follow skills/threat-model/SKILL.md. Keep the two in step.
+#
+# Inputs:
+#   mode     new, resume or update. The scope step uses new if the model does
+#            not exist, and asks if the model exists and mode is new.
+#   changes  For update: the components or files that changed, or a commit to
+#            compare with. Otherwise: none.
+#
+# The scope step ends its output with MODE, START and CHANGED FILES lines.
+# Every later step reads them from {{scope.output}}. A step whose stage the
+# run does not need finishes at once.
 name: threat-model
 description: >-
-  Build a Threat Composer threat model of a codebase with STRIDE per element.
-  Model the system, find threats, plan mitigations and check coverage. The run
-  pauses twice for you to confirm the system model and the threats.
+  Build, resume or update a Threat Composer threat model of a codebase with
+  STRIDE per element. Model the system, find threats, plan mitigations and
+  check coverage. The run pauses for you to confirm the system model and the
+  threats.
 inputs:
   target: string
   model: string
+  mode: string
+  changes: prompt
   context: prompt
 steps:
   - type: step
@@ -17,18 +30,41 @@ steps:
     prompt: |
       Target directory: {{target}}
       Model path: {{model}}
+      Mode: {{mode}}
+      Changes: {{changes}}
       Context from the user: {{context}}
 
-      Task: start the threat model.
+      Task: start the run and decide its mode.
 
-      1. Call `tm_get` with the model path.
-      2. If the model does not exist, call `tm_init` with the model path and
-         an application name. Take the name from the context or from the
-         target directory. Then finish the step.
-      3. If the model exists, ask the user whether to extend it or replace it.
-         - Extend: finish the step. The later steps add to the model.
-         - Replace: tell the user to delete the model files, or to launch the
-           workflow again with a different model path. Then fail the step.
+      1. Call `tm_get` with the model path to find out whether the model
+         exists.
+      2. Decide the mode:
+         - The model does not exist: the mode is `new`, whatever the Mode
+           input says. Call `tm_init` with the model path and an application
+           name. Take the name from the context or from the target directory.
+         - The model exists and the Mode input is `resume` or `update`: use
+           that mode.
+         - The model exists and the Mode input is something else: ask the user
+           whether to resume the model, update it, or stop. Tell the user that
+           to start again from nothing, they must delete the model files or
+           launch again with another model path. If the user says stop, fail
+           the step.
+      3. If the mode is `update` and Changes names a commit, run
+         `git diff --name-only <commit>` in the target directory to get the
+         changed files.
+      4. Find the stage to start at:
+         - `new` or `update`: `system`.
+         - `resume`: call `sys_get` and `tm_coverage_report`, and use the
+           first rule that matches:
+           - `sys_get` has no elements: `system`.
+           - `targets_with_no_threats` is not empty: `threats`.
+           - `unmitigated_high_medium` is not empty: `mitigations`.
+           - Otherwise: `report`.
+      5. End your final message with these three lines:
+
+         MODE: <new, resume or update>
+         START: <system, threats, mitigations or report>
+         CHANGED FILES: <paths separated by commas, or none>
 
   - type: step
     id: model-system
@@ -38,8 +74,16 @@ steps:
       Model path: {{model}}
       Context from the user: {{context}}
 
-      Model the system in the target directory. If the model already has a
-      system model, extend it: add what is missing and correct what is wrong.
+      The run state is in the last lines of this report:
+
+      {{scope.output}}
+
+      - If START is not `system`, do not change the model. Finish the step at
+        once and report `Skipped: START is <value>.`
+      - If MODE is `new`, model the system in the target directory.
+      - If MODE is `update`, update the existing system model. The system
+        changed as follows: {{changes}}. The changed files are in the
+        CHANGED FILES line above.
 
   - type: step
     id: confirm-system
@@ -51,11 +95,18 @@ steps:
       Model path: {{model}}
       Context from the user: {{context}}
 
-      Task: checkpoint 1. Get the user to confirm the system model.
+      The run state is in the last lines of this report:
+
+      {{scope.output}}
 
       The system-modeler returned this report:
 
       {{model-system.output}}
+
+      Task: checkpoint 1. Get the user to confirm the system model.
+
+      If START is not `system`, do not ask the user anything. Finish the step
+      at once.
 
       1. Call `sys_get` and show the user:
          - the trust zones, and the zone each one is inside
@@ -64,12 +115,18 @@ steps:
            (outer, inner or none)
          - the path of the DFD that the system-modeler rendered
            (`<short-name>.dfd.svg` next to the model)
-         - the open questions in the report above
+         - the open questions in the system-modeler report
+         If MODE is `update`, also show the ADDED, CHANGED and REMOVED lines
+         from the system-modeler report, and show only the element and flow
+         rows with those ids.
       2. Ask the user to confirm or correct the system model. A wrong system
          model makes every later threat wrong.
       3. Apply each correction with `sys_upsert` or `sys_remove`, then call
          `sys_render`. Show the changed rows and ask again.
       4. Finish the step only when the user confirms the system model.
+      5. If MODE is `update`, end your final message with the ADDED, CHANGED
+         and REMOVED lines from the system-modeler report. Add the ids of
+         your corrections to them.
 
   - type: step
     id: plan-analysis
@@ -79,13 +136,28 @@ steps:
       Model path: {{model}}
       Context from the user: {{context}}
 
+      The run state is in the last lines of this report:
+
+      {{scope.output}}
+
+      Checkpoint 1 returned this report:
+
+      {{confirm-system.output}}
+
       Task: plan the threat analysis. Do not ask the user anything in this
       step.
 
-      1. Call `sys_get`. The targets are every element and every flow. Count
-         the boundary-crossing flows: the flows where `crossing` is "outer" or
-         "inner".
-      2. Put the targets in groups with these rules:
+      1. Choose the targets:
+         - MODE `new`, or START `system`: every element and every flow.
+         - MODE `resume` and START `threats`: the ids in
+           `targets_with_no_threats` from `tm_coverage_report`.
+         - MODE `resume` and START `mitigations` or `report`: no targets.
+         - MODE `update`: the ADDED and CHANGED ids from the checkpoint 1
+           report, and every flow to or from an ADDED or CHANGED element.
+           Leave out the REMOVED ids.
+      2. Call `sys_get`. Count the boundary-crossing flows among the targets:
+         the flows where `crossing` is "outer" or "inner".
+      3. Put the targets in groups with these rules:
          - Up to 12 targets, or 2 or fewer boundary-crossing flows: make one
            group with all of the targets. If there are more than 30 targets,
            make groups of about 20 targets instead.
@@ -94,25 +166,29 @@ steps:
          - Put each boundary-crossing flow in a different group where you can.
          - Put each flow in the same group as its source or target element
            where you can.
-      3. If there is one group, finish the step. The plan already has one
-         threat-analyst for all of the targets.
-      4. If there is more than one group, replace the remaining plan:
+      4. If there is more than one group, add one analyst branch for each
+         group after the first:
          a. Read the recipe file `.kiro/workflows/threat-model.workflow.json`
             in the workspace.
          b. Copy the nodes in its `steps` array that come after the node with
             id `plan-analysis`. Keep them in the same order.
-         c. In the copy of the node with id `analyze-threats`, replace
-            `branches` with one branch for each group. Make each branch a copy
-            of the branch with id `analyze-1`. Set its `id` to `analyze-N`,
-            where N is the number of the group: 1 for the first group, 2 for
-            the second group, and so on. In its `prompt`, replace the line
-            `Targets: every element and every flow in the system model.` with
-            `Targets: ` followed by the ids of the group, separated by commas.
+         c. In the copy of the node with id `analyze-threats`, keep the branch
+            with id `analyze-1`. After it, add one copy of it for each group
+            after the first. In each copy, set `id` to `analyze-N`, where N is
+            the number of the group: 2 for the second group, 3 for the third
+            group, and so on. In its `prompt`, replace each `GROUP 1` with
+            `GROUP N`.
          d. Change nothing else. Keep each template in double braces exactly
             as it is in the file.
          e. Call `update_workflow` to replace the remaining plan with the
             copied nodes.
-      5. Finish the step. In your final message, list the groups.
+      5. End your final message with one line for each group, in this form:
+
+         GROUP 1: <ids separated by commas>
+
+         If there are no targets, write `GROUP 1: none`. Then add the line
+         `TARGETS CHANGED: yes` if MODE is `update`, or
+         `TARGETS CHANGED: no` if it is not.
 
   - type: parallel
     id: analyze-threats
@@ -126,7 +202,15 @@ steps:
           Model path: {{model}}
           Context from the user: {{context}}
 
-          Targets: every element and every flow in the system model.
+          The analysis plan is in the last lines of this report:
+
+          {{plan-analysis.output}}
+
+          Your targets are the ids in the line that starts with `GROUP 1`. If
+          that line says `none`, or there is no such line, finish the step at
+          once and report that you had no targets.
+
+          If the plan says `TARGETS CHANGED: yes`, your targets changed.
 
           Other threat-analysts can analyze other targets at the same time.
           The tools handle concurrent writes.
@@ -167,18 +251,36 @@ steps:
       Model path: {{model}}
       Context from the user: {{context}}
 
-      Task: checkpoint 2. Review the threats with the user.
+      The run state is in the last lines of this report:
+
+      {{scope.output}}
+
+      Checkpoint 1 returned this report:
+
+      {{confirm-system.output}}
 
       The dedup step returned this report:
 
       {{dedup.output}}
+
+      Task: checkpoint 2. Review the threats with the user.
+
+      If START is `mitigations` or `report`, do not ask the user anything.
+      Finish the step at once.
 
       1. Call `tm_get` with `sections: ["threats"]` and
          `threat_status: ["threatIdentified", "threatResolved"]`. Show the
          threats in a table grouped by priority: numericId, statement
          (shortened if long), STRIDE, elements. Show the duplicates that the
          dedup report lists.
-      2. Ask the user which threats to dismiss, change or add.
+      2. If MODE is `update`, also show these threats, and ask the user to
+         keep, change or dismiss each one:
+         - the threats linked to a REMOVED id from the checkpoint 1 report:
+           call `tm_get` with `element` set to each REMOVED id
+         - the threats in `threats_without_elements` from
+           `tm_coverage_report`
+         - the threats linked to a CHANGED id from the checkpoint 1 report
+      3. Ask the user which threats to dismiss, change or add.
          - Dismiss: call `tm_set_status` with `threatResolvedNotUseful`. This
            keeps a record of the decision. If you dismiss a threat because it
            duplicates another, first move its links to the threat you keep:
@@ -187,9 +289,12 @@ steps:
            threat and unlink it from the duplicate.
          - Change: call `tm_update_threat`.
          - Add: call `tm_add_threats`.
-      3. Show what you changed and ask again.
-      4. Finish the step only when the user says that the threats are
+      4. Show what you changed and ask again.
+      5. Finish the step only when the user says that the threats are
          complete.
+      6. End your final message with this line:
+
+         CHANGED THREATS: <numericIds of the threats you changed, or none>
 
   - type: step
     id: defend
@@ -199,7 +304,26 @@ steps:
       Model path: {{model}}
       Context from the user: {{context}}
 
-      Plan mitigations for the threats in the model.
+      The run state is in the last lines of this report:
+
+      {{scope.output}}
+
+      Checkpoint 1 returned this report:
+
+      {{confirm-system.output}}
+
+      Checkpoint 2 returned this report:
+
+      {{confirm-threats.output}}
+
+      Plan mitigations for these threats only:
+
+      - START `report`: no threats. Finish the step at once.
+      - MODE `new`: all threats.
+      - MODE `resume`: the threats that have no linked mitigation.
+      - MODE `update`: the threats that have no linked mitigation, the threats
+        linked to a CHANGED id from the checkpoint 1 report, and the threats in
+        the CHANGED THREATS line from the checkpoint 2 report.
 
   - type: step
     id: report
@@ -208,6 +332,18 @@ steps:
       Target directory: {{target}}
       Model path: {{model}}
       Context from the user: {{context}}
+
+      The run state is in the last lines of this report:
+
+      {{scope.output}}
+
+      Checkpoint 1 returned this report:
+
+      {{confirm-system.output}}
+
+      The defender returned this report:
+
+      {{defend.output}}
 
       Task: check the result and report it to the user.
 
@@ -222,3 +358,7 @@ steps:
          - remaining gaps from the coverage report, with a reason for each one
            that the run accepts
          - the assumptions that need the user to confirm them
+         - if MODE is `resume`: the stage the run started at
+         - if MODE is `update`: the counts of ADDED, CHANGED and REMOVED ids,
+           and the mitigations that the defender reported as no longer
+           matching the code
