@@ -24,6 +24,7 @@ _RENDER_LOCK = threading.Lock()
 COMPACT_FLOWS = 10
 NODE_LABEL_WIDTH = 22
 ZONE_LABEL_WIDTH = 40
+EDGE_IDS_WIDTH = 20
 
 
 class RenderError(RuntimeError):
@@ -96,8 +97,17 @@ def graphviz_available() -> bool:
     return shutil.which("dot") is not None
 
 
-def render_dfd_svg(system: SystemModel, title: str = "Data Flow Diagram") -> str:
-    """Render the system model as an SVG string with images embedded."""
+def render_dfd_svg(
+    system: SystemModel,
+    title: str = "Data Flow Diagram",
+    boundary_only: bool = False,
+) -> str:
+    """Render the system model as an SVG string with images embedded.
+
+    With boundary_only, draw only the flows that cross a trust boundary and the
+    elements at their ends. Each zone label counts the flows and elements it
+    leaves out; the dataflow table still lists all of them.
+    """
     if not graphviz_available():
         raise RenderError(
             "Graphviz 'dot' is not on PATH. Install graphviz to render diagrams."
@@ -127,13 +137,49 @@ def render_dfd_svg(system: SystemModel, title: str = "Data Flow Diagram") -> str
         "data_store": Datastore,
     }
 
-    compact = len(system.flows) > COMPACT_FLOWS
+    zone_of = {e.id: e.zone for e in system.elements}
+    if boundary_only:
+        flows = [f for f in system.flows if system.boundaries_crossed(f)]
+        shown = {f.source for f in flows} | {f.target for f in flows}
+    else:
+        flows = list(system.flows)
+        shown = {e.id for e in system.elements}
+
+    def hidden_note(zone_id: str) -> str:
+        if not boundary_only:
+            return ""
+        n_flows = sum(
+            1
+            for f in system.flows
+            if zone_of[f.source] == zone_id and zone_of[f.target] == zone_id
+        )
+        n_elements = sum(
+            1 for e in system.elements if e.zone == zone_id and e.id not in shown
+        )
+        parts = []
+        if n_flows:
+            parts.append(f"{n_flows} internal flow{'s' if n_flows != 1 else ''}")
+        if n_elements:
+            parts.append(f"{n_elements} element{'s' if n_elements != 1 else ''}")
+        return f"\n[not shown: {', '.join(parts)}]" if parts else ""
+
+    compact = len(flows) > COMPACT_FLOWS
 
     def wrap(text: str, width: int) -> str:
         return "\n".join(textwrap.wrap(text, width)) or text
 
-    def edge_label(f) -> str:
-        return f.id if compact else wrap(f"{f.id}: {f.description}", 30)
+    # One edge per source and target pair. Parallel flows between the same
+    # two elements otherwise draw as a fan of near-identical curves, which is
+    # most of the clutter in a large diagram. Direction is kept: A to B and
+    # B to A stay separate edges, because STRIDE analysis is per direction.
+    edges: dict[tuple[str, str], list] = {}
+    for f in flows:
+        edges.setdefault((f.source, f.target), []).append(f)
+
+    def edge_label(flows) -> str:
+        if compact:
+            return wrap(", ".join(f.id for f in flows), EDGE_IDS_WIDTH)
+        return "\n".join(wrap(f"{f.id}: {f.description}", 30) for f in flows)
 
     def make_node(e):
         label = f"{e.id}\n{wrap(e.name, NODE_LABEL_WIDTH)}"
@@ -164,15 +210,17 @@ def render_dfd_svg(system: SystemModel, title: str = "Data Flow Diagram") -> str
                     if zone.trust_level
                     else zone.name
                 )
-                with TrustBoundary(wrap(label, ZONE_LABEL_WIDTH)):
+                with TrustBoundary(
+                    wrap(label, ZONE_LABEL_WIDTH) + hidden_note(zone.id)
+                ):
                     for e in system.elements:
-                        if e.zone == zone.id:
+                        if e.zone == zone.id and e.id in shown:
                             nodes[e.id] = make_node(e)
             for e in system.elements:
-                if e.id not in nodes:
+                if e.id in shown and e.id not in nodes:
                     nodes[e.id] = make_node(e)
-            for f in system.flows:
-                (nodes[f.source] >> Edge(label=edge_label(f)) >> nodes[f.target])
+            for (source, target), flows in edges.items():
+                (nodes[source] >> Edge(label=edge_label(flows)) >> nodes[target])
 
         svg_path = out.with_suffix(".svg")
         if not svg_path.exists():

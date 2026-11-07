@@ -391,9 +391,20 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
     def sys_render(
         model: ModelPath,
         diagram: Annotated[bool, Field(description="Also render the DFD")] = True,
+        view: Annotated[
+            Literal["full", "boundary"],
+            Field(
+                description=(
+                    "full: draw all elements and flows. boundary: draw only "
+                    "the flows that cross a trust boundary, and the elements "
+                    "at their ends. Use boundary for large systems."
+                )
+            ),
+        ] = "full",
     ) -> dict[str, Any]:
         """Write the dataflow section of the threat model from the system model, and
-        render the DFD (needs Graphviz) into <name>.dfd.svg and dataflow.image."""
+        render the DFD (needs Graphviz) into <name>.dfd.svg and dataflow.image.
+        The dataflow table always lists all flows, for each view."""
         system = load_system(model)
         if system is None:
             raise ToolError(f"no system model yet for {model}; add one with sys_upsert")
@@ -407,7 +418,11 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             try:
                 tc_path, _, dfd_path = ws.model_paths(model)
                 info = (read_model(model).get("applicationInfo") or {}).get("name")
-                svg = render_dfd_svg(system, title=info or "Data Flow Diagram")
+                svg = render_dfd_svg(
+                    system,
+                    title=info or "Data Flow Diagram",
+                    boundary_only=view == "boundary",
+                )
                 ws.write_text(dfd_path, svg)
                 image = threat_composer_svg_to_data_url(svg)
                 result["diagram"] = ws.display(dfd_path)

@@ -168,4 +168,54 @@ def test_large_diagrams_use_compact_labels(system):
         )
     large = render_dfd_svg(system)
     assert "Extra flow" not in large  # descriptions live in the dataflow table
-    assert ">DF12<" in large
+    assert "DF12" in large
+
+
+def test_parallel_flows_share_one_edge(system, monkeypatch):
+    import diagrams
+
+    from threat_composer_ai.builder import render
+
+    def fake_render(self):
+        self.dot.save(self.filename)
+        with open(self.filename + ".svg", "w", encoding="utf-8") as f:
+            f.write(f"<svg><!--{self.dot.source}--></svg>")
+
+    monkeypatch.setattr(render, "graphviz_available", lambda: True)
+    monkeypatch.setattr(diagrams.Diagram, "render", fake_render)
+
+    system.flows += [
+        Flow(id="DF3", source="P1", target="DS1", description="Audit write"),
+        Flow(id="DF4", source="DS1", target="P1", description="Query result"),
+    ]
+    svg = render.render_dfd_svg(system)
+    assert svg.count(" -> ") == 3  # DF2 and DF3 merge; DF4 keeps its direction
+    assert 'label="DF2: Query | write\nDF3: Audit write"' in svg
+
+    for i in range(render.COMPACT_FLOWS):
+        system.flows.append(
+            Flow(id=f"DF{i + 5}", source="P1", target="DS1", description="x")
+        )
+    svg = render.render_dfd_svg(system)
+    assert svg.count(" -> ") == 3
+    assert "DF2, DF3, DF5" in svg
+
+
+def test_boundary_view_hides_internal_flows(system, monkeypatch):
+    import diagrams
+
+    from threat_composer_ai.builder import render
+
+    def fake_render(self):
+        self.dot.save(self.filename)
+        with open(self.filename + ".svg", "w", encoding="utf-8") as f:
+            f.write(f"<svg><!--{self.dot.source}--></svg>")
+
+    monkeypatch.setattr(render, "graphviz_available", lambda: True)
+    monkeypatch.setattr(diagrams.Diagram, "render", fake_render)
+
+    svg = render.render_dfd_svg(system, boundary_only=True)
+    assert "DF1: Login request" in svg  # Internet to Backend
+    assert "DF2" not in svg  # P1 to DS1 stays in Backend
+    assert "DS1" not in svg  # no flow of DS1 crosses a boundary
+    assert "[not shown: 1 internal flow, 1 element]" in svg
