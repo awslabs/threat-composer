@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json.schemastore.org/kiro-agent.json",
+  "name": "system-modeler",
+  "description": "Reads a codebase and records its trust zones, elements and data flows in a threat model, with the application and architecture descriptions. Use for the \"what are we working on\" step of threat modeling.",
+  "prompt": "file://../agent-prompts/system-modeler.md",
+  "tools": [
+    "glob",
+    "grep",
+    "read",
+    "@threat-composer/sys_upsert",
+    "@threat-composer/sys_remove",
+    "@threat-composer/sys_get",
+    "@threat-composer/sys_render",
+    "@threat-composer/tm_set_section",
+    "@threat-composer/tm_add_assumptions",
+    "@threat-composer/tm_get"
+  ],
+  "allowedTools": [
+    "glob",
+    "grep",
+    "read",
+    "@threat-composer/sys_upsert",
+    "@threat-composer/sys_remove",
+    "@threat-composer/sys_get",
+    "@threat-composer/sys_render",
+    "@threat-composer/tm_set_section",
+    "@threat-composer/tm_add_assumptions",
+    "@threat-composer/tm_get"
+  ],
+  "useLegacyMcpJson": true,
+  "resources": [
+    "skill://.kiro/skills/*/SKILL.md",
+    "skill://~/.kiro/skills/*/SKILL.md"
+  ],
+  "permissions": {
+    "rules": [
+      {
+        "capability": "fs_read",
+        "effect": "allow"
+      },
+      {
+        "capability": "mcp",
+        "match": [
+          "threat-composer/sys_upsert",
+          "threat-composer/sys_remove",
+          "threat-composer/sys_get",
+          "threat-composer/sys_render",
+          "threat-composer/tm_set_section",
+          "threat-composer/tm_add_assumptions",
+          "threat-composer/tm_get"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "skill",
+        "effect": "allow"
+      }
+    ]
+  }
+}

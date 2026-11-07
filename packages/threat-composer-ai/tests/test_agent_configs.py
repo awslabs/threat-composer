@@ -1,6 +1,7 @@
 """The Claude Code and Kiro files are generated from agent-src/."""
 
 import importlib.util
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -37,11 +38,30 @@ def test_tool_names_per_target():
         "skills": ["s"],
     }
     claude = sync.claude_agent(meta, "body\n", Path("a.md"))
-    kiro = sync.kiro_agent(meta, "body\n", Path("a.md"))
     assert "tools: Read, Grep, Glob, mcp__srv__t1\n" in claude
     assert "skills:\n  - s\n" in claude
-    assert 'tools: ["read", "@srv/t1"]\n' in kiro
-    assert "skill://~/.kiro/skills/s/SKILL.md" in kiro
+
+    agent_json, prompt = sync.kiro_agent(meta, "body\n", Path("a.md"))
+    agent = json.loads(agent_json)
+    assert prompt == "body\n"
+    assert agent["prompt"] == "file://../agent-prompts/a.md"
+    assert (
+        agent["tools"] == agent["allowedTools"] == ["glob", "grep", "read", "@srv/t1"]
+    )
+    assert agent["useLegacyMcpJson"] is True
+    assert "skill://~/.kiro/skills/*/SKILL.md" in agent["resources"]
+    assert agent["permissions"]["rules"] == [
+        {"capability": "fs_read", "effect": "allow"},
+        {"capability": "mcp", "match": ["srv/t1"], "effect": "allow"},
+        {"capability": "skill", "effect": "allow"},
+    ]
+
+
+def test_kiro_does_not_preapprove_write_or_shell():
+    meta = {"name": "a", "description": "d", "tools": ["read", "write", "shell"]}
+    agent = json.loads(sync.kiro_agent(meta, "", Path("a.md"))[0])
+    assert "write" in agent["tools"] and "shell" in agent["tools"]
+    assert "write" not in agent["allowedTools"] and "shell" not in agent["allowedTools"]
 
 
 def step(sid, prompt="p", **extra):

@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json.schemastore.org/kiro-agent.json",
+  "name": "threat-model-coordinator",
+  "description": "Runs the coordination steps of the threat-model workflow. It starts the model, holds the user checkpoints, plans the threat analysis and reports the result. Use only as a step agent in the threat-model workflow.",
+  "prompt": "file://../agent-prompts/threat-model-coordinator.md",
+  "tools": [
+    "glob",
+    "grep",
+    "read",
+    "@threat-composer/tm_init",
+    "@threat-composer/tm_get",
+    "@threat-composer/tm_validate",
+    "@threat-composer/tm_coverage_report",
+    "@threat-composer/tm_add_threats",
+    "@threat-composer/tm_update_threat",
+    "@threat-composer/tm_set_status",
+    "@threat-composer/tm_link",
+    "@threat-composer/tm_add_assumptions",
+    "@threat-composer/sys_get",
+    "@threat-composer/sys_upsert",
+    "@threat-composer/sys_remove",
+    "@threat-composer/sys_render"
+  ],
+  "allowedTools": [
+    "glob",
+    "grep",
+    "read",
+    "@threat-composer/tm_init",
+    "@threat-composer/tm_get",
+    "@threat-composer/tm_validate",
+    "@threat-composer/tm_coverage_report",
+    "@threat-composer/tm_add_threats",
+    "@threat-composer/tm_update_threat",
+    "@threat-composer/tm_set_status",
+    "@threat-composer/tm_link",
+    "@threat-composer/tm_add_assumptions",
+    "@threat-composer/sys_get",
+    "@threat-composer/sys_upsert",
+    "@threat-composer/sys_remove",
+    "@threat-composer/sys_render"
+  ],
+  "useLegacyMcpJson": true,
+  "resources": [
+    "skill://.kiro/skills/*/SKILL.md",
+    "skill://~/.kiro/skills/*/SKILL.md"
+  ],
+  "permissions": {
+    "rules": [
+      {
+        "capability": "fs_read",
+        "effect": "allow"
+      },
+      {
+        "capability": "mcp",
+        "match": [
+          "threat-composer/tm_init",
+          "threat-composer/tm_get",
+          "threat-composer/tm_validate",
+          "threat-composer/tm_coverage_report",
+          "threat-composer/tm_add_threats",
+          "threat-composer/tm_update_threat",
+          "threat-composer/tm_set_status",
+          "threat-composer/tm_link",
+          "threat-composer/tm_add_assumptions",
+          "threat-composer/sys_get",
+          "threat-composer/sys_upsert",
+          "threat-composer/sys_remove",
+          "threat-composer/sys_render"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "skill",
+        "effect": "allow"
+      }
+    ]
+  }
+}

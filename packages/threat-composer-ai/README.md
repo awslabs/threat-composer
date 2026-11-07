@@ -113,7 +113,7 @@ A test runs the check, so a stale file fails the test suite. The script writes:
 
 | Output | Claude Code | Kiro |
 | --- | --- | --- |
-| Agents | `.claude/agents/*.md` | `.kiro/agents/*.md` |
+| Agents | `.claude/agents/*.md` | `.kiro/agents/*.json`, with prompts in `.kiro/agent-prompts/*.md` |
 | `threat-model` skill | `.claude/skills/threat-model/` | `.kiro/skills/threat-model/` |
 | Workflow recipe | none | `.kiro/workflows/threat-model.workflow.json` |
 | MCP server | `.mcp.json` (the source) | `.kiro/settings/mcp.json` |

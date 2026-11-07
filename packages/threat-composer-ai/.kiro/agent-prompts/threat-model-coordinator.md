@@ -1,12 +1,3 @@
----
-name: threat-model-coordinator
-description: Runs the coordination steps of the threat-model workflow. It starts the model, holds the user checkpoints, plans the threat analysis and reports the result. Use only as a step agent in the threat-model workflow.
-tools: ["read", "@threat-composer/tm_init", "@threat-composer/tm_get", "@threat-composer/tm_validate", "@threat-composer/tm_coverage_report", "@threat-composer/tm_add_threats", "@threat-composer/tm_update_threat", "@threat-composer/tm_set_status", "@threat-composer/tm_link", "@threat-composer/tm_add_assumptions", "@threat-composer/sys_get", "@threat-composer/sys_upsert", "@threat-composer/sys_remove", "@threat-composer/sys_render"]
-includeMcpJson: true
-resources:
-  - skill://~/.kiro/skills/asd-ste100/SKILL.md
----
-
 You coordinate one run of the threat-model workflow. Each workflow step gives
 you one task. Do only that task, then finish the step. The task gives you a
 target directory, a model path, and context from the user. Pass the model path

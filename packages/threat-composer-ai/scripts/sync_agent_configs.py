@@ -9,7 +9,7 @@ Source (agent-src/):
 
 Output:
   .claude/agents/<name>.md, .claude/skills/<name>/
-  .kiro/agents/<name>.md, .kiro/skills/<name>/,
+  .kiro/agents/<name>.json, .kiro/agent-prompts/<name>.md, .kiro/skills/<name>/,
   .kiro/workflows/<name>.workflow.json, .kiro/settings/mcp.json (from .mcp.json)
 
 Agent frontmatter in the source:
@@ -49,11 +49,21 @@ CLAUDE_TOOLS = {
     "shell": ["Bash"],
     "web": ["WebFetch", "WebSearch"],
 }
-KIRO_TOOLS = {"read": ["read"], "write": ["write"], "shell": ["shell"], "web": ["web"]}
+KIRO_TOOLS = {
+    "read": ["glob", "grep", "read"],
+    "write": ["write"],
+    "shell": ["shell"],
+    "web": ["web_fetch", "web_search"],
+}
+
+KIRO_AGENT_SCHEMA = "https://json.schemastore.org/kiro-agent.json"
 
 # Kiro loads only the name and description of a skill:// resource at start,
 # and the rest when the agent activates the skill.
-KIRO_SKILL_RESOURCE = "skill://~/.kiro/skills/{name}/SKILL.md"
+KIRO_SKILL_RESOURCES = (
+    "skill://.kiro/skills/*/SKILL.md",
+    "skill://~/.kiro/skills/*/SKILL.md",
+)
 
 # Workflow step agents that Kiro bundles (kiro.dev/docs/workflows/authoring).
 KIRO_BUNDLED_AGENTS = {
@@ -183,27 +193,51 @@ def claude_agent(meta: dict, body: str, path: Path) -> str:
     return "\n".join(lines) + "\n---\n" + render_body(body, "claude", path)
 
 
-def kiro_agent(meta: dict, body: str, path: Path) -> str:
-    tools = [t for g in meta.get("tools", []) for t in KIRO_TOOLS[g]]
-    tools += [
-        f"@{server}/{tool}"
+def kiro_agent(meta: dict, body: str, path: Path) -> tuple[str, str]:
+    """The agent JSON and its prompt file, in the form Kiro loads.
+
+    The prompt goes in .kiro/agent-prompts/<name>.md, and the JSON points to
+    it. The visible tools are also pre-approved, except write and shell.
+    """
+    name = meta["name"]
+    groups = meta.get("tools", [])
+    builtin = [t for g in groups for t in KIRO_TOOLS[g]]
+    approved = [t for g in groups if g not in ("write", "shell") for t in KIRO_TOOLS[g]]
+    mcp = [
+        (server, tool)
         for server, names in (meta.get("mcp") or {}).items()
         for tool in names
     ]
-    lines = [
-        "---",
-        f"name: {meta['name']}",
-        f"description: {scalar(meta['description'])}",
-    ]
-    lines.append(f"tools: {json.dumps(tools)}")
-    if meta.get("mcp"):
+    mcp_tools = [f"@{server}/{tool}" for server, tool in mcp]
+    agent: dict = {
+        "$schema": KIRO_AGENT_SCHEMA,
+        "name": name,
+        "description": meta["description"],
+        "prompt": f"file://../agent-prompts/{name}.md",
+        "tools": builtin + mcp_tools,
+        "allowedTools": approved + mcp_tools,
+    }
+    rules = []
+    if "read" in groups:
+        rules.append({"capability": "fs_read", "effect": "allow"})
+    if mcp:
         # The MCP servers come from .kiro/settings/mcp.json.
-        lines.append("includeMcpJson: true")
+        agent["useLegacyMcpJson"] = True
+        rules.append(
+            {
+                "capability": "mcp",
+                "match": [f"{server}/{tool}" for server, tool in mcp],
+                "effect": "allow",
+            }
+        )
     if meta.get("skills"):
-        lines += ["resources:"] + [
-            f"  - {KIRO_SKILL_RESOURCE.format(name=s)}" for s in meta["skills"]
-        ]
-    return "\n".join(lines) + "\n---\n" + render_body(body, "kiro", path)
+        agent["resources"] = list(KIRO_SKILL_RESOURCES)
+        rules.append({"capability": "skill", "effect": "allow"})
+    if rules:
+        agent["permissions"] = {"rules": rules}
+    return json.dumps(agent, indent=2) + "\n", render_body(body, "kiro", path).lstrip(
+        "\n"
+    )
 
 
 def skill_files(target: str) -> dict[str, str | bytes]:
@@ -382,9 +416,9 @@ def build() -> dict[Path, str | bytes]:
                 meta, body, path
             )
         if "kiro" in targets:
-            files[ROOT / ".kiro/agents" / f"{meta['name']}.md"] = kiro_agent(
-                meta, body, path
-            )
+            agent, prompt = kiro_agent(meta, body, path)
+            files[ROOT / ".kiro/agents" / f"{meta['name']}.json"] = agent
+            files[ROOT / ".kiro/agent-prompts" / f"{meta['name']}.md"] = prompt
             kiro_names.add(meta["name"])
     for target in TARGETS:
         for rel, content in skill_files(target).items():
@@ -405,6 +439,7 @@ OWNED = [
     ".claude/agents",
     ".claude/skills",
     ".kiro/agents",
+    ".kiro/agent-prompts",
     ".kiro/skills",
     ".kiro/workflows",
 ]

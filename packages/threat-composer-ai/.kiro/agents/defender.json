@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json.schemastore.org/kiro-agent.json",
+  "name": "defender",
+  "description": "Proposes specific mitigations for the threats in a threat model, and identifies controls the code already has. Use for the \"what are we going to do about it\" step of threat modeling.",
+  "prompt": "file://../agent-prompts/defender.md",
+  "tools": [
+    "glob",
+    "grep",
+    "read",
+    "@threat-composer/sys_get",
+    "@threat-composer/tm_get",
+    "@threat-composer/tm_add_mitigations",
+    "@threat-composer/tm_link",
+    "@threat-composer/tm_add_assumptions",
+    "@threat-composer/tm_coverage_report"
+  ],
+  "allowedTools": [
+    "glob",
+    "grep",
+    "read",
+    "@threat-composer/sys_get",
+    "@threat-composer/tm_get",
+    "@threat-composer/tm_add_mitigations",
+    "@threat-composer/tm_link",
+    "@threat-composer/tm_add_assumptions",
+    "@threat-composer/tm_coverage_report"
+  ],
+  "useLegacyMcpJson": true,
+  "resources": [
+    "skill://.kiro/skills/*/SKILL.md",
+    "skill://~/.kiro/skills/*/SKILL.md"
+  ],
+  "permissions": {
+    "rules": [
+      {
+        "capability": "fs_read",
+        "effect": "allow"
+      },
+      {
+        "capability": "mcp",
+        "match": [
+          "threat-composer/sys_get",
+          "threat-composer/tm_get",
+          "threat-composer/tm_add_mitigations",
+          "threat-composer/tm_link",
+          "threat-composer/tm_add_assumptions",
+          "threat-composer/tm_coverage_report"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "skill",
+        "effect": "allow"
+      }
+    ]
+  }
+}

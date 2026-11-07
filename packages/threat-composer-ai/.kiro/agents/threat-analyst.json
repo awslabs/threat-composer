@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json.schemastore.org/kiro-agent.json",
+  "name": "threat-analyst",
+  "description": "Applies STRIDE per element to given elements and flows of a threat model and records specific, evidence-based threats. Use for the \"what can go wrong\" step of threat modeling.",
+  "prompt": "file://../agent-prompts/threat-analyst.md",
+  "tools": [
+    "glob",
+    "grep",
+    "read",
+    "@threat-composer/sys_get",
+    "@threat-composer/tm_get",
+    "@threat-composer/tm_add_threats",
+    "@threat-composer/tm_update_threat",
+    "@threat-composer/tm_set_status",
+    "@threat-composer/tm_link",
+    "@threat-composer/tm_add_assumptions",
+    "@threat-composer/tm_coverage_report"
+  ],
+  "allowedTools": [
+    "glob",
+    "grep",
+    "read",
+    "@threat-composer/sys_get",
+    "@threat-composer/tm_get",
+    "@threat-composer/tm_add_threats",
+    "@threat-composer/tm_update_threat",
+    "@threat-composer/tm_set_status",
+    "@threat-composer/tm_link",
+    "@threat-composer/tm_add_assumptions",
+    "@threat-composer/tm_coverage_report"
+  ],
+  "useLegacyMcpJson": true,
+  "resources": [
+    "skill://.kiro/skills/*/SKILL.md",
+    "skill://~/.kiro/skills/*/SKILL.md"
+  ],
+  "permissions": {
+    "rules": [
+      {
+        "capability": "fs_read",
+        "effect": "allow"
+      },
+      {
+        "capability": "mcp",
+        "match": [
+          "threat-composer/sys_get",
+          "threat-composer/tm_get",
+          "threat-composer/tm_add_threats",
+          "threat-composer/tm_update_threat",
+          "threat-composer/tm_set_status",
+          "threat-composer/tm_link",
+          "threat-composer/tm_add_assumptions",
+          "threat-composer/tm_coverage_report"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "skill",
+        "effect": "allow"
+      }
+    ]
+  }
+}
