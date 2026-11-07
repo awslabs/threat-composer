@@ -1,0 +1,224 @@
+# Source of .kiro/workflows/threat-model.workflow.json.
+# scripts/sync_agent_configs.py validates this recipe and writes it as JSON.
+# The steps follow skills/threat-model/SKILL.md. Keep the two in step.
+name: threat-model
+description: >-
+  Build a Threat Composer threat model of a codebase with STRIDE per element.
+  Model the system, find threats, plan mitigations and check coverage. The run
+  pauses twice for you to confirm the system model and the threats.
+inputs:
+  target: string
+  model: string
+  context: prompt
+steps:
+  - type: step
+    id: scope
+    agent: threat-model-coordinator
+    prompt: |
+      Target directory: {{target}}
+      Model path: {{model}}
+      Context from the user: {{context}}
+
+      Task: start the threat model.
+
+      1. Call `tm_get` with the model path.
+      2. If the model does not exist, call `tm_init` with the model path and
+         an application name. Take the name from the context or from the
+         target directory. Then finish the step.
+      3. If the model exists, ask the user whether to extend it or replace it.
+         - Extend: finish the step. The later steps add to the model.
+         - Replace: tell the user to delete the model files, or to launch the
+           workflow again with a different model path. Then fail the step.
+
+  - type: step
+    id: model-system
+    agent: system-modeler
+    prompt: |
+      Target directory: {{target}}
+      Model path: {{model}}
+      Context from the user: {{context}}
+
+      Model the system in the target directory. If the model already has a
+      system model, extend it: add what is missing and correct what is wrong.
+
+  - type: step
+    id: confirm-system
+    agent: threat-model-coordinator
+    completion:
+      completionSignal: success
+    prompt: |
+      Target directory: {{target}}
+      Model path: {{model}}
+      Context from the user: {{context}}
+
+      Task: checkpoint 1. Get the user to confirm the system model.
+
+      The system-modeler returned this report:
+
+      {{model-system.output}}
+
+      1. Call `sys_get` and show the user:
+         - the trust zones, and the zone each one is inside
+         - a table of elements: id, kind, name, zone
+         - a table of flows: id, source, target, description, and `crossing`
+           (outer, inner or none)
+         - the path of the DFD that the system-modeler rendered
+           (`<short-name>.dfd.svg` next to the model)
+         - the open questions in the report above
+      2. Ask the user to confirm or correct the system model. A wrong system
+         model makes every later threat wrong.
+      3. Apply each correction with `sys_upsert` or `sys_remove`, then call
+         `sys_render`. Show the changed rows and ask again.
+      4. Finish the step only when the user confirms the system model.
+
+  - type: step
+    id: plan-analysis
+    agent: threat-model-coordinator
+    prompt: |
+      Target directory: {{target}}
+      Model path: {{model}}
+      Context from the user: {{context}}
+
+      Task: plan the threat analysis. Do not ask the user anything in this
+      step.
+
+      1. Call `sys_get`. The targets are every element and every flow. Count
+         the boundary-crossing flows: the flows where `crossing` is "outer" or
+         "inner".
+      2. Put the targets in groups with these rules:
+         - Up to 12 targets, or 2 or fewer boundary-crossing flows: make one
+           group with all of the targets. If there are more than 30 targets,
+           make groups of about 20 targets instead.
+         - All other cases: make groups of about 8 targets. Do not make more
+           groups than there are boundary-crossing flows.
+         - Put each boundary-crossing flow in a different group where you can.
+         - Put each flow in the same group as its source or target element
+           where you can.
+      3. If there is one group, finish the step. The plan already has one
+         threat-analyst for all of the targets.
+      4. If there is more than one group, replace the remaining plan:
+         a. Read the recipe file `.kiro/workflows/threat-model.workflow.json`
+            in the workspace.
+         b. Copy the nodes in its `steps` array that come after the node with
+            id `plan-analysis`. Keep them in the same order.
+         c. In the copy of the node with id `analyze-threats`, replace
+            `branches` with one branch for each group. Make each branch a copy
+            of the branch with id `analyze-1`. Set its `id` to `analyze-N`,
+            where N is the number of the group: 1 for the first group, 2 for
+            the second group, and so on. In its `prompt`, replace the line
+            `Targets: every element and every flow in the system model.` with
+            `Targets: ` followed by the ids of the group, separated by commas.
+         d. Change nothing else. Keep each template in double braces exactly
+            as it is in the file.
+         e. Call `update_workflow` to replace the remaining plan with the
+            copied nodes.
+      5. Finish the step. In your final message, list the groups.
+
+  - type: parallel
+    id: analyze-threats
+    joinPolicy: allSettled
+    branches:
+      - type: step
+        id: analyze-1
+        agent: threat-analyst
+        prompt: |
+          Target directory: {{target}}
+          Model path: {{model}}
+          Context from the user: {{context}}
+
+          Targets: every element and every flow in the system model.
+
+          Other threat-analysts can analyze other targets at the same time.
+          The tools handle concurrent writes.
+
+  - type: step
+    id: fill-gaps
+    agent: threat-analyst
+    prompt: |
+      Target directory: {{target}}
+      Model path: {{model}}
+      Context from the user: {{context}}
+
+      Task: close the coverage gaps.
+
+      1. Call `tm_coverage_report`.
+      2. If `targets_with_no_threats` and `boundary_crossings_without_threats`
+         are both empty, finish the step and report that there are no gaps.
+      3. If not, your targets are exactly the ids in those two lists. Do the
+         steps in "Method" for them. A target can have no credible threats.
+         That is a valid result.
+
+  - type: step
+    id: dedup
+    agent: threat-analyst
+    prompt: |
+      Target directory: {{target}}
+      Model path: {{model}}
+
+      Task: dedup. Merge duplicate threats.
+
+  - type: step
+    id: confirm-threats
+    agent: threat-model-coordinator
+    completion:
+      completionSignal: success
+    prompt: |
+      Target directory: {{target}}
+      Model path: {{model}}
+      Context from the user: {{context}}
+
+      Task: checkpoint 2. Review the threats with the user.
+
+      The dedup step returned this report:
+
+      {{dedup.output}}
+
+      1. Call `tm_get` with `sections: ["threats"]` and
+         `threat_status: ["threatIdentified", "threatResolved"]`. Show the
+         threats in a table grouped by priority: numericId, statement
+         (shortened if long), STRIDE, elements. Show the duplicates that the
+         dedup report lists.
+      2. Ask the user which threats to dismiss, change or add.
+         - Dismiss: call `tm_set_status` with `threatResolvedNotUseful`. This
+           keeps a record of the decision. If you dismiss a threat because it
+           duplicates another, first move its links to the threat you keep:
+           call `tm_get` with `sections: ["assumptions", "mitigations"]`, and
+           use `tm_link` to link each assumption and mitigation to the kept
+           threat and unlink it from the duplicate.
+         - Change: call `tm_update_threat`.
+         - Add: call `tm_add_threats`.
+      3. Show what you changed and ask again.
+      4. Finish the step only when the user says that the threats are
+         complete.
+
+  - type: step
+    id: defend
+    agent: defender
+    prompt: |
+      Target directory: {{target}}
+      Model path: {{model}}
+      Context from the user: {{context}}
+
+      Plan mitigations for the threats in the model.
+
+  - type: step
+    id: report
+    agent: threat-model-coordinator
+    prompt: |
+      Target directory: {{target}}
+      Model path: {{model}}
+      Context from the user: {{context}}
+
+      Task: check the result and report it to the user.
+
+      1. Call `tm_validate` and `tm_coverage_report`.
+      2. Return:
+         - the model path, and that it opens in the Threat Composer app
+           (import the `.tc.json` file)
+         - counts of threats by priority, mitigations, existing controls, and
+           assumptions
+         - the High priority threats that have no existing control, with their
+           mitigations
+         - remaining gaps from the coverage report, with a reason for each one
+           that the run accepts
+         - the assumptions that need the user to confirm them

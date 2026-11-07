@@ -100,6 +100,26 @@ The `tm_*` and `sys_*` MCP tools build a threat model one item at a time (see `s
 
 Both take `model`, `kind` (`threat`, `mitigation` or `assumption`), `ids` and `tags`, and return `{"updated": n}`. Each tag is 1 to 30 characters after whitespace is stripped. If an id is unknown or a tag is invalid, nothing changes. Use these instead of `tm_update_mitigation` to change tags: `tm_update_mitigation` replaces the whole mitigation, including its threat links.
 
+## Claude Code and Kiro agents
+
+The agents, the `threat-model` skill and the Kiro workflow recipe come from one source in `agent-src/`. Do not edit the generated files in `.claude/` and `.kiro/`. Change `agent-src/`, then run:
+
+```bash
+uv run python scripts/sync_agent_configs.py          # write .claude/ and .kiro/
+uv run python scripts/sync_agent_configs.py --check  # exit 1 if they are out of date
+```
+
+A test runs the check, so a stale file fails the test suite. The script writes:
+
+| Output | Claude Code | Kiro |
+| --- | --- | --- |
+| Agents | `.claude/agents/*.md` | `.kiro/agents/*.md` |
+| `threat-model` skill | `.claude/skills/threat-model/` | `.kiro/skills/threat-model/` |
+| Workflow recipe | none | `.kiro/workflows/threat-model.workflow.json` |
+| MCP server | `.mcp.json` (the source) | `.kiro/settings/mcp.json` |
+
+In Kiro, install the asd-ste100 skill in `~/.kiro/skills/asd-ste100`. To run the recipe, turn on workflows, then run `/workflow run threat-model` in Kiro CLI or `/workflow-run` in Kiro IDE. Before the first run, ask Kiro to run `validate_workflow` on the recipe. The run pauses twice, to confirm the system model and to review the threats. Answer in the paused step's session.
+
 ## Project Structure
 
 ```

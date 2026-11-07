@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "threat-composer": {
+      "command": "sh",
+      "args": [
+        "-c",
+        "cd \"$(git rev-parse --show-toplevel)\" && exec uv run --quiet --project packages/threat-composer-ai threat-composer-ai-mcp"
+      ],
+      "env": {
+        "THREAT_COMPOSER_AI_MCP_TOOLS": "builder",
+        "THREAT_COMPOSER_AI_MODEL_DIR": "threat-models"
+      }
+    }
+  }
+}

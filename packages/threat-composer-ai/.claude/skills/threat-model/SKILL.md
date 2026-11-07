@@ -48,7 +48,7 @@ The work follows the four threat modeling questions:
 - Tell each subagent the target directory and the model path. Subagents do not
   see this conversation.
 - Keep the user's time for decisions. Show compact tables, not file dumps.
-- Write all prose with the asd-ste100 skill (see "First action" below).
+- Write all prose with the asd-ste100 skill (see Step 1 at the top).
 
 ## Step 0: Scope
 
@@ -111,8 +111,9 @@ When all have returned, call `tm_coverage_report`. If
 empty, start one more threat-analyst for exactly those ids. Do this once only.
 A target can have no credible threats; that is a valid result.
 
-If you started more than one threat-analyst in this step, start one more
-threat-analyst for the dedup task. Give it the target directory and the model
+If you started more than one threat-analyst for the target groups, start one
+more threat-analyst for the dedup task. Do not count the threat-analyst for
+coverage gaps. Give it the target directory and the model
 path, and tell it: "Task: dedup. Merge duplicate threats." It reads all the
 threats, moves the links of each duplicate to the threat it keeps, and
 dismisses the duplicate. Show the user the duplicates it reports.
