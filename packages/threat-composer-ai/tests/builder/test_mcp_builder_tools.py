@@ -49,6 +49,9 @@ def test_full_flow(server, tmp_path):
     )
     assert sys_result["flow_ids"] == ["DF1"] and sys_result["problems"] == []
 
+    flow = call(server, "sys_get", model=MODEL)["flows"][0]
+    assert flow["common_zone"] is None and flow["crossing"] == "outer"
+
     rendered = call(server, "sys_render", model=MODEL, diagram=False)
     assert rendered["markdown"] is True
     assert rendered["viewer"] is None

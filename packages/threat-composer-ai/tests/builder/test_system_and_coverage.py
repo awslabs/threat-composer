@@ -279,7 +279,7 @@ def test_nested_zones_crossings(nested):
     by_id = {f.id: f for f in nested.flows}
     assert nested.problems() == []
     assert nested.zone_chain("CMP") == ["CMP", "ACCT"]
-    # Perimeter: no zone holds both ends; the path enters the account.
+    # Outer: no zone holds both ends. The path enters the account.
     assert nested.boundaries_crossed(by_id["DF1"]) == ["Internet", "Account", "Compute"]
     assert nested.common_zone(by_id["DF1"]) is None
     # Sibling zones inside one account: an inner crossing.
@@ -291,6 +291,13 @@ def test_nested_zones_crossings(nested):
     assert nested.common_zone(by_id["DF3"]) == "ACCT"
     # Unzoned elements keep the old behaviour.
     assert nested.boundaries_crossed(by_id["DF5"]) == ["unzoned", "Account", "Compute"]
+    assert [nested.crossing(f) for f in nested.flows] == [
+        "outer",
+        "inner",
+        "inner",
+        "inner",
+        "outer",
+    ]
 
 
 def test_zone_parent_problems():

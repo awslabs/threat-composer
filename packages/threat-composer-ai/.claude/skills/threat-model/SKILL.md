@@ -75,8 +75,8 @@ path and the scope context from Step 0.
 
 - the trust zones, and the zone each one is inside
 - a table of elements: id, kind, name, zone
-- a table of flows: id, source, target, description, and whether it crosses a
-  trust boundary
+- a table of flows: id, source, target, description, and `crossing` (outer,
+  inner or none)
 - the path of the DFD it rendered (`<short-name>.dfd.svg` next to the model)
 - the open questions the subagent reported
 

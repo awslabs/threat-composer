@@ -254,13 +254,13 @@ __SCRIPTS__
         <div class="seg">
           <label><input type="radio" name="scope" value="all" checked>All</label>
           <label title="Flows between two zones, at any level"><input type="radio" name="scope" value="boundary">Between zones</label>
-          <label title="Flows between zones that are not inside a common zone"><input type="radio" name="scope" value="perimeter">Outer only</label>
+          <label title="Flows whose two ends no single zone contains"><input type="radio" name="scope" value="outer">Outer only</label>
         </div></div>
       <div class="field"><div class="lbl">Plane</div>
         <div class="seg">
           <label><input type="radio" name="plane" value="all" checked>All</label>
           <label><input type="radio" name="plane" value="control">Control</label>
-          <label title="Flows not marked control plane"><input type="radio" name="plane" value="data">Data</label>
+          <label title="Flows not marked control plane"><input type="radio" name="plane" value="data">Non-control</label>
         </div></div>
       <label class="toggle">Flow labels <input id="labels" type="checkbox" checked></label>
     </div>
@@ -378,7 +378,7 @@ __SCRIPTS__
     const r = document.querySelector('input[name="' + name + '"][value="' + value + '"]');
     if (r) r.checked = true;
   };
-  // A crossing flow is "perimeter" when no zone holds both ends.
+  // A crossing flow is "outer" ("cross") when no zone holds both ends.
   const crossing = (f) => (!f.crosses ? "" : f.within ? "inner" : "cross");
 
   // Width of a zone title as drawn (22px, weight 650), so a zone box is
@@ -960,7 +960,7 @@ __SCRIPTS__
   });
 
   // URL options, so a view can be linked:
-  // ?collapse=leaf|top&flows=boundary|perimeter&plane=control|data&focus=P1
+  // ?collapse=leaf|top&flows=boundary|outer&plane=control|data&focus=P1
   const params = new URLSearchParams(location.search);
   const alias = { 1: "leaf" };
   if (params.get("collapse")) setRadio("collapse", alias[params.get("collapse")] || params.get("collapse"));

@@ -57,7 +57,11 @@ class Zone(Evidenced):
     name: str = Field(..., max_length=100)
     trust_level: str = Field("", max_length=100, description="For example: untrusted")
     parent: str | None = Field(
-        None, description="Id of the zone that contains this zone; omit if top level"
+        None,
+        description=(
+            "Id of the zone that contains this zone. "
+            "Omit for a zone that no other zone contains."
+        ),
     )
 
 
@@ -80,8 +84,10 @@ class Flow(Evidenced):
     plane: Plane | None = Field(
         None,
         description=(
-            "control: creates or changes resources, roles or policies. "
-            "data: uses resources. Omit if neither applies."
+            "Set only on a flow that calls a cloud provider or infrastructure "
+            "API. control: the call creates or changes resources, roles or "
+            "policies. data: the call uses a resource, for example a read, a "
+            "write or a sign operation. Omit for all other flows."
         ),
     )
 
@@ -100,8 +106,10 @@ class FlowInput(BaseModel):
     plane: Plane | None = Field(
         None,
         description=(
-            "control: creates or changes resources, roles or policies. "
-            "data: uses resources. Omit if neither applies."
+            "Set only on a flow that calls a cloud provider or infrastructure "
+            "API. control: the call creates or changes resources, roles or "
+            "policies. data: the call uses a resource, for example a read, a "
+            "write or a sign operation. Omit for all other flows."
         ),
     )
     evidence: list[str] = Field(default_factory=list, description="path:line")
@@ -180,14 +188,22 @@ class SystemModel(BaseModel):
     def common_zone(self, flow: Flow) -> str | None:
         """Id of the innermost zone that holds both ends of a flow, or None.
 
-        None for a flow that crosses a boundary means it crosses the outer
-        perimeter of the system: no zone contains both ends.
+        A zone contains an element if the element is in that zone or in a
+        zone inside it.
         """
         src, dst = self.element(flow.source), self.element(flow.target)
         if not src or not dst:
             return None
         outer = set(self.zone_chain(dst.zone))
         return next((z for z in self.zone_chain(src.zone) if z in outer), None)
+
+    def crossing(self, flow: Flow) -> Literal["outer", "inner"] | None:
+        """outer: the flow crosses a trust boundary and no zone contains both
+        ends. inner: the flow crosses a trust boundary inside common_zone.
+        None: the flow stays in one zone."""
+        if not self.boundaries_crossed(flow):
+            return None
+        return "inner" if self.common_zone(flow) else "outer"
 
     def boundaries_crossed(self, flow: Flow) -> list[str]:
         """The zones a flow passes through, from the source zone to the target

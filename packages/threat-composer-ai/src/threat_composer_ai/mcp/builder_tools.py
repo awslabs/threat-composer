@@ -377,19 +377,27 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
 
     @mcp.tool(annotations=READ_ONLY)
     def sys_get(model: ModelPath) -> dict[str, Any]:
-        """The system model, with each flow's computed boundary crossing.
-        boundaries_crossed lists the zones on the path from source to target.
-        common_zone is the innermost zone that holds both ends; on a flow that
-        crosses a boundary, None means it crosses the outer perimeter."""
+        """The system model, with three computed fields on each flow.
+
+        A zone contains an element if the element is in that zone or in a zone
+        inside it.
+
+        - boundaries_crossed: the zone names on the path from the source zone
+          to the target zone. "unzoned" stands for an element with no zone.
+          Empty if both ends are in the same zone.
+        - common_zone: the id of the innermost zone that contains both ends.
+          Null if no zone contains both ends.
+        - crossing: "outer" if the flow crosses a trust boundary and no zone
+          contains both ends. "inner" if the flow crosses a trust boundary
+          inside common_zone. Null if both ends are in the same zone."""
         system = load_system(model)
         if system is None:
             raise ToolError(f"no system model yet for {model}; add one with sys_upsert")
         data = system.model_dump()
         for flow, raw in zip(system.flows, data["flows"], strict=True):
             raw["boundaries_crossed"] = system.boundaries_crossed(flow)
-            # The innermost zone holding both ends. None on a crossing flow
-            # means it crosses the outer perimeter of the system.
             raw["common_zone"] = system.common_zone(flow)
+            raw["crossing"] = system.crossing(flow)
         data["problems"] = system.problems()
         data["stride_by_kind"] = STRIDE_BY_KIND
         return data
