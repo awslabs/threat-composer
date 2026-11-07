@@ -240,3 +240,108 @@ def test_viewer_embeds_model_safely(system):
         "Backend",
     ]
     assert not flows["DF2"]["crosses"]
+
+
+@pytest.fixture
+def nested():
+    """Internet outside; an AWS account holding a compute zone and a store zone."""
+    return SystemModel(
+        zones=[
+            Zone(id="Z1", name="Internet", trust_level="untrusted"),
+            Zone(id="ACCT", name="Account", trust_level="internal"),
+            Zone(id="CMP", name="Compute", parent="ACCT"),
+            Zone(id="STO", name="Stores", parent="ACCT"),
+        ],
+        elements=[
+            Element(id="U1", kind="human_actor", name="User", zone="Z1"),
+            Element(id="P1", kind="process", name="Fn", zone="CMP"),
+            Element(id="DS1", kind="data_store", name="Table", zone="STO"),
+            Element(id="CFN", kind="process", name="Deployer", zone="ACCT"),
+            Element(id="X", kind="process", name="Loose"),
+        ],
+        flows=[
+            Flow(id="DF1", source="U1", target="P1", description="Call"),
+            Flow(id="DF2", source="P1", target="DS1", description="Write"),
+            Flow(
+                id="DF3",
+                source="CFN",
+                target="P1",
+                description="Deploy",
+                plane="control",
+            ),
+            Flow(id="DF4", source="P1", target="CFN", description="Report"),
+            Flow(id="DF5", source="X", target="P1", description="Poke"),
+        ],
+    )
+
+
+def test_nested_zones_crossings(nested):
+    by_id = {f.id: f for f in nested.flows}
+    assert nested.problems() == []
+    assert nested.zone_chain("CMP") == ["CMP", "ACCT"]
+    # Perimeter: no zone holds both ends; the path enters the account.
+    assert nested.boundaries_crossed(by_id["DF1"]) == ["Internet", "Account", "Compute"]
+    assert nested.common_zone(by_id["DF1"]) is None
+    # Sibling zones inside one account: an inner crossing.
+    assert nested.boundaries_crossed(by_id["DF2"]) == ["Compute", "Stores"]
+    assert nested.common_zone(by_id["DF2"]) == "ACCT"
+    # Between a child zone and an element directly in its parent.
+    assert nested.boundaries_crossed(by_id["DF3"]) == ["Account", "Compute"]
+    assert nested.boundaries_crossed(by_id["DF4"]) == ["Compute", "Account"]
+    assert nested.common_zone(by_id["DF3"]) == "ACCT"
+    # Unzoned elements keep the old behaviour.
+    assert nested.boundaries_crossed(by_id["DF5"]) == ["unzoned", "Account", "Compute"]
+
+
+def test_zone_parent_problems():
+    model = SystemModel(
+        zones=[
+            Zone(id="A", name="a", parent="B"),
+            Zone(id="B", name="b", parent="A"),
+            Zone(id="C", name="c", parent="GONE"),
+        ]
+    )
+    problems = model.problems()
+    assert "zone C: unknown parent 'GONE'" in problems
+    assert "zone A: parent chain loops back to itself" in problems
+    assert "zone B: parent chain loops back to itself" in problems
+    # A loop must not hang the path computations.
+    assert model.zone_chain("A") == ["A", "B"]
+
+
+def test_markdown_shows_parent_and_plane(nested):
+    md = dataflow_markdown(nested)
+    assert "| Compute |  | Account | P1 |" in md
+    assert "| Internet | untrusted | - | U1 |" in md
+    assert "| DF3 | Deploy | CFN | P1 | Account to Compute |  | control |" in md
+    assert "| DF2 | Write | P1 | DS1 | Compute to Stores |  | - |" in md
+
+
+def test_render_nests_zone_clusters(nested, monkeypatch):
+    import diagrams
+
+    from threat_composer_ai.builder import render
+
+    def fake_render(self):
+        self.dot.save(self.filename)
+        with open(self.filename + ".svg", "w", encoding="utf-8") as f:
+            f.write(f"<svg><!--{self.dot.source}--></svg>")
+
+    monkeypatch.setattr(render, "graphviz_available", lambda: True)
+    monkeypatch.setattr(diagrams.Diagram, "render", fake_render)
+
+    svg = render.render_dfd_svg(nested)
+    account = svg.index('label="Account (internal)"')
+    # Both child clusters open after the account cluster and before it closes.
+    assert account < svg.index("label=Compute") and account < svg.index("label=Stores")
+    assert svg.count("subgraph") == 4  # each zone drawn once
+
+
+def test_viewer_data_carries_nesting_and_plane(nested):
+    from threat_composer_ai.builder.viewer import viewer_data
+
+    data = viewer_data(nested)
+    assert {z["id"]: z["parent"] for z in data["zones"]}["CMP"] == "ACCT"
+    flows = {f["id"]: f for f in data["flows"]}
+    assert flows["DF1"]["within"] is None and flows["DF2"]["within"] == "ACCT"
+    assert flows["DF3"]["plane"] == "control" and flows["DF2"]["plane"] is None

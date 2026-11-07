@@ -36,6 +36,11 @@ Call `sys_upsert` with:
   internet, a user's browser, a page's origin, a private network, a cloud
   account. Use ids Z1, Z2 and a trust level such as "untrusted", "user",
   "internal" or "privileged".
+  If a zone is inside a larger zone, set `parent` to the id of the larger
+  zone. Example: Lambda functions and the stores they use are two zones
+  inside one cloud account zone. Do not put a zone beside the account if it
+  is in the account. A flow between two zones in one account crosses an
+  inner boundary, not the perimeter.
 - **Elements**, each with an id, a kind and its zone:
   - `human_actor` (U1, U2): people who use or operate the system
   - `external_entity` (E1, E2): systems or services outside the team's control
@@ -45,6 +50,10 @@ Call `sys_upsert` with:
 - **Flows**: data moving between two elements. Omit the id; flows are numbered
   DF1, DF2 in the order you send them, so send them in the order data moves.
   Give a few words of description and the assets the flow carries.
+  Set `plane` to "control" if the flow creates or changes resources, roles or
+  policies (for example, a deployment or a key policy change). Set it to
+  "data" if the flow uses resources (for example, a read, a write or a sign
+  operation). Omit it if neither applies.
 - **Evidence**: `path:line` for each element and flow you confirmed in the code.
 
 Level of detail:

@@ -73,7 +73,7 @@ path and the scope context from Step 0.
 
 **Checkpoint.** When it returns, call `sys_get` and show the user:
 
-- the trust zones
+- the trust zones, and the zone each one is inside
 - a table of elements: id, kind, name, zone
 - a table of flows: id, source, target, description, and whether it crosses a
   trust boundary

@@ -21,6 +21,11 @@ ID_PATTERN = r"^[A-Za-z][A-Za-z0-9_-]{0,29}$"
 
 ElementKind = Literal["human_actor", "external_entity", "process", "data_store"]
 
+# Control-plane calls create or change resources and their policies; data-plane
+# calls use them. Control-plane flows are the usual paths to elevation of
+# privilege and tampering with configuration.
+Plane = Literal["control", "data"]
+
 # STRIDE-per-element: the categories that apply to each element type.
 STRIDE_BY_KIND: dict[str, list[str]] = {
     "human_actor": ["S", "R"],
@@ -41,11 +46,19 @@ class Evidenced(BaseModel):
 
 
 class Zone(Evidenced):
-    """A trust zone. Elements in different zones are separated by a boundary."""
+    """A trust zone. Elements in different zones are separated by a boundary.
+
+    A zone can sit inside a parent zone, for example a compute zone inside a
+    cloud account. A flow between two zones crosses each boundary on the path
+    between them, up to the innermost zone that holds both.
+    """
 
     id: str = Field(..., pattern=ID_PATTERN)
     name: str = Field(..., max_length=100)
     trust_level: str = Field("", max_length=100, description="For example: untrusted")
+    parent: str | None = Field(
+        None, description="Id of the zone that contains this zone; omit if top level"
+    )
 
 
 class Element(Evidenced):
@@ -64,6 +77,13 @@ class Flow(Evidenced):
     description: str = Field(..., max_length=200)
     protocol: str = Field("", max_length=50)
     assets: list[str] = Field(default_factory=list)
+    plane: Plane | None = Field(
+        None,
+        description=(
+            "control: creates or changes resources, roles or policies. "
+            "data: uses resources. Omit if neither applies."
+        ),
+    )
 
 
 class FlowInput(BaseModel):
@@ -77,6 +97,13 @@ class FlowInput(BaseModel):
     description: str = Field(..., max_length=200)
     protocol: str = Field("", max_length=50)
     assets: list[str] = Field(default_factory=list)
+    plane: Plane | None = Field(
+        None,
+        description=(
+            "control: creates or changes resources, roles or policies. "
+            "data: uses resources. Omit if neither applies."
+        ),
+    )
     evidence: list[str] = Field(default_factory=list, description="path:line")
 
 
@@ -114,6 +141,16 @@ class SystemModel(BaseModel):
             for e in self.elements
             if e.zone and e.zone not in zone_ids
         ]
+        parents = {z.id: z.parent for z in self.zones}
+        for z in self.zones:
+            if z.parent and z.parent not in zone_ids:
+                out.append(f"zone {z.id}: unknown parent '{z.parent}'")
+            seen, cur = set(), z.id
+            while cur in parents and cur not in seen:
+                seen.add(cur)
+                cur = parents[cur]
+            if cur == z.id:
+                out.append(f"zone {z.id}: parent chain loops back to itself")
         for f in self.flows:
             for end in ("source", "target"):
                 ref = getattr(f, end)
@@ -130,12 +167,53 @@ class SystemModel(BaseModel):
         zone = next((z for z in self.zones if z.id == zone_id), None)
         return zone.name if zone else "unzoned"
 
+    def zone_chain(self, zone_id: str | None) -> list[str]:
+        """The zone and its ancestors, innermost first. [] for no zone."""
+        parents = {z.id: z.parent for z in self.zones}
+        chain: list[str] = []
+        cur = zone_id
+        while cur and cur not in chain:  # problems() reports loops
+            chain.append(cur)
+            cur = parents.get(cur)
+        return chain
+
+    def common_zone(self, flow: Flow) -> str | None:
+        """Id of the innermost zone that holds both ends of a flow, or None.
+
+        None for a flow that crosses a boundary means it crosses the outer
+        perimeter of the system: no zone contains both ends.
+        """
+        src, dst = self.element(flow.source), self.element(flow.target)
+        if not src or not dst:
+            return None
+        outer = set(self.zone_chain(dst.zone))
+        return next((z for z in self.zone_chain(src.zone) if z in outer), None)
+
     def boundaries_crossed(self, flow: Flow) -> list[str]:
-        """The zones a flow leaves and enters, or [] if it stays in one zone."""
+        """The zones a flow passes through, from the source zone to the target
+        zone, or [] if it stays in one zone.
+
+        The path goes up from the source to the innermost zone that holds both
+        ends, then down to the target. For sibling zones A and B inside P the
+        path is [A, B]; for a flow from A out to an element directly in P it
+        is [A, P].
+        """
         src, dst = self.element(flow.source), self.element(flow.target)
         if not src or not dst or src.zone == dst.zone:
             return []
-        return [self.zone_name(src.zone), self.zone_name(dst.zone)]
+        up, down = self.zone_chain(src.zone), self.zone_chain(dst.zone)
+        common = self.common_zone(flow)
+        if common:
+            up = up[: up.index(common)] or [common]
+            down = down[: down.index(common)] or [common]
+        path = [self.zone_name(z) for z in up] + [
+            self.zone_name(z) for z in reversed(down)
+        ]
+        if not up:
+            path.insert(0, self.zone_name(None))
+        if not down:
+            path.append(self.zone_name(None))
+        return path
 
     def next_flow_id(self) -> str:
         numbers = [int(f.id[2:]) for f in self.flows]

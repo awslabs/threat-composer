@@ -40,8 +40,13 @@ element that holds it.
    control exists and is sound, do not record the threat.
 5. Record credible threats with `tm_add_threats`, in batches.
 
-Flows that cross a trust boundary need the most attention. A category can have
-no credible threat for an element; skip it.
+Flows that cross a trust boundary need the most attention. In `sys_get`,
+`common_zone` is null on a flow that crosses the perimeter of the system.
+Examine these flows first. A flow with a `common_zone` crosses an inner
+boundary in that zone; look for the control at that boundary, for example an
+IAM role or a resource policy. Flows with `plane` "control" can change
+resources, roles or policies; examine them for elevation of privilege and
+tampering. A category can have no credible threat for an element; skip it.
 
 ## Writing a threat
 

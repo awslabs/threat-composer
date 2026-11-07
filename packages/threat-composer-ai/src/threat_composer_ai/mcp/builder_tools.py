@@ -377,13 +377,19 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
 
     @mcp.tool(annotations=READ_ONLY)
     def sys_get(model: ModelPath) -> dict[str, Any]:
-        """The system model, with each flow's computed boundary crossing."""
+        """The system model, with each flow's computed boundary crossing.
+        boundaries_crossed lists the zones on the path from source to target.
+        common_zone is the innermost zone that holds both ends; on a flow that
+        crosses a boundary, None means it crosses the outer perimeter."""
         system = load_system(model)
         if system is None:
             raise ToolError(f"no system model yet for {model}; add one with sys_upsert")
         data = system.model_dump()
         for flow, raw in zip(system.flows, data["flows"], strict=True):
             raw["boundaries_crossed"] = system.boundaries_crossed(flow)
+            # The innermost zone holding both ends. None on a crossing flow
+            # means it crosses the outer perimeter of the system.
+            raw["common_zone"] = system.common_zone(flow)
         data["problems"] = system.problems()
         data["stride_by_kind"] = STRIDE_BY_KIND
         return data

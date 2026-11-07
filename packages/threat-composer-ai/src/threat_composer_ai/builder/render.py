@@ -70,25 +70,27 @@ def dataflow_markdown(system: SystemModel) -> str:
     lines += [
         "",
         "### Trust zones",
-        "| Zone | Trust level | Elements |",
-        "| --- | --- | --- |",
+        "| Zone | Trust level | Inside | Elements |",
+        "| --- | --- | --- | --- |",
     ]
     lines += [
         f"| {_cell(z.name)} | {_cell(z.trust_level)} | "
+        f"{_cell(system.zone_name(z.parent)) if z.parent else '-'} | "
         f"{', '.join(e.id for e in system.elements if e.zone == z.id)} |"
         for z in system.zones
     ]
     lines += [
         "",
         "### Data flows",
-        "| Flow | Description | Source | Target | Boundary crossed | Assets |",
-        "| --- | --- | --- | --- | --- | --- |",
+        "| Flow | Description | Source | Target | Boundary crossed | Assets | Plane |",
+        "| --- | --- | --- | --- | --- | --- | --- |",
     ]
     for f in system.flows:
         crossed = system.boundaries_crossed(f)
         lines.append(
             f"| {f.id} | {_cell(f.description)} | {f.source} | {f.target} | "
-            f"{_cell(' to '.join(crossed)) if crossed else 'No'} | {_cell(', '.join(f.assets))} |"
+            f"{_cell(' to '.join(crossed)) if crossed else 'No'} | {_cell(', '.join(f.assets))} | "
+            f"{f.plane or '-'} |"
         )
     return "\n".join(lines) + "\n"
 
@@ -204,7 +206,10 @@ def render_dfd_svg(
             # them. Curved edges keep each DF id next to its edge.
             graph_attr={"splines": "spline"},
         ):
-            for zone in system.zones:
+            zone_ids = {z.id for z in system.zones}
+
+            def draw_zone(zone, path: tuple[str, ...]) -> None:
+                # Child zones are drawn as clusters inside their parent.
                 label = (
                     f"{zone.name} ({zone.trust_level})"
                     if zone.trust_level
@@ -216,6 +221,13 @@ def render_dfd_svg(
                     for e in system.elements:
                         if e.zone == zone.id and e.id in shown:
                             nodes[e.id] = make_node(e)
+                    for child in system.zones:
+                        if child.parent == zone.id and child.id not in path:
+                            draw_zone(child, (*path, child.id))
+
+            for zone in system.zones:
+                if not zone.parent or zone.parent not in zone_ids:
+                    draw_zone(zone, (zone.id,))
             for e in system.elements:
                 if e.id in shown and e.id not in nodes:
                     nodes[e.id] = make_node(e)
