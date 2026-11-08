@@ -158,6 +158,31 @@ A test runs the check, so a stale file fails the test suite. The script writes:
 
 In Kiro, install the asd-ste100 skill in `~/.kiro/skills/asd-ste100`. To run the recipe, turn on workflows, then run `/workflow run threat-model` in Kiro CLI or `/workflow-run` in Kiro IDE. Before the first run, ask Kiro to run `validate_workflow` on the recipe. The run pauses twice, to confirm the system model and to review the threats. Answer in the paused step's session.
 
+### Install into a project or your home directory
+
+`scripts/install_agents.py` copies the generated agents, the `threat-model` skill and the Kiro workflow, and registers the MCP server. It uses only the Python standard library.
+
+```bash
+python3 scripts/install_agents.py --project ~/src/app    # .claude/, .kiro/ and .mcp.json in that project
+python3 scripts/install_agents.py --scope user           # ~/.claude and ~/.kiro
+python3 scripts/install_agents.py --tool kiro --dry-run  # show the changes, write nothing
+python3 scripts/install_agents.py --install-style-skill  # also clone asd-ste100 if it is missing
+python3 scripts/install_agents.py --uninstall
+```
+
+To install without a checkout, run the wrapper from a URL. It keeps a shallow, sparse checkout in `~/.local/share/threat-composer` and runs `install_agents.py` from it with your arguments. Running it again updates both. It needs `git` 2.25 or later and `python3` 3.9 or later.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/awslabs/threat-composer/main/packages/threat-composer-ai/scripts/install.sh | sh -s -- --project ~/src/app
+```
+
+Set `THREAT_COMPOSER_REF` for another branch or tag, `THREAT_COMPOSER_HOME` for another checkout directory, and `THREAT_COMPOSER_REPO` for a fork. Read the script before you pipe it to a shell. The checkout is only for the installer: the wrapper discards local changes in it.
+
+- The MCP entry runs `uv run --project <this checkout> threat-composer-ai-mcp` from the root of the git repository where the session starts, so the models go in that repository's `threat-models/`. Move or delete this checkout and the entry stops working.
+- It merges the entry into `.mcp.json` (Claude Code, project), `<root>/.kiro/settings/mcp.json` (Kiro) and, for the Claude Code user scope, runs `claude mcp add-json --scope user`. It keeps your other servers. If a JSON file is invalid, it stops and changes nothing in that file.
+- Run it again to update. It overwrites the files it installs and leaves other files alone. `--no-mcp` skips the MCP entry.
+- The Kiro workflow reads its own recipe from `.kiro/workflows/` in the workspace, so use the project scope for it.
+
 ### Resume or update a threat model
 
 The `threat-model` skill and the workflow have three modes:
