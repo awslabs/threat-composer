@@ -143,7 +143,7 @@ Each agent sets a model tier, `opus`, `sonnet` or `haiku`, in its `agent-src` fr
 | `defender` | `sonnet` | Smaller volume. Spot-check controls that it marks `existing`. |
 | `threat-model-coordinator` | `sonnet` | Checkpoints and planning, with few tokens. |
 
-Claude Code gets the tier as the `model:` alias. Kiro needs an id that its model service lists (run `/model` in Kiro), so `KIRO_MODEL_IDS` in `scripts/sync_agent_configs.py` maps each tier to one. Kiro's public docs name the current Claude models but show few ids, and Kiro does not fall back from an unknown id: the first call fails. A tier with no id there (`None`) is left out of the Kiro files, and those agents and steps use the model of the session. Fill in `KIRO_MODEL_IDS`, run the sync script, and delete `test_the_shipped_kiro_files_have_no_model_while_no_ids_are_set`.
+Claude Code gets the tier as the `model:` alias. Kiro gets the id `claude-<tier>-<version>`, for example `claude-sonnet-5.5`, from the one `KIRO_MODEL_VERSION` constant in `scripts/sync_agent_configs.py`. Kiro does not fall back from an unknown id: the first call fails. When you move to a newer Claude family, change the version, check that `/model` in Kiro lists the three ids, and run the sync script.
 
 In a Kiro workflow, the model of a step is chosen in this order: the step's `modelId`, the workflow's `modelId`, the model of the session, then the agent's `model`. The agent's `model` is the last fallback. So the script also writes each step's `modelId` from its agent's tier. A step in `workflow.yaml` can set `model: <tier>` or `model: inherit` to override its agent, for example to run one analyst step on Opus. Write the tier, not `modelId`: the script checks it and maps it.
 

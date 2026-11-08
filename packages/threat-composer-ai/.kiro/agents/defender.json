@@ -25,6 +25,7 @@
     "@threat-composer/tm_add_assumptions",
     "@threat-composer/tm_coverage_report"
   ],
+  "model": "claude-sonnet-5.5",
   "useLegacyMcpJson": true,
   "resources": [
     "skill://.kiro/skills/*/SKILL.md",

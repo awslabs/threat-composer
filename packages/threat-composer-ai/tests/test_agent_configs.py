@@ -133,12 +133,10 @@ def test_recipe_accepts_valid_handoffs():
 
 # --- Models ---------------------------------------------------------------------
 
-IDS = {"opus": "model-opus-x", "sonnet": "model-sonnet-x", "haiku": None}
-
 
 @pytest.fixture
-def kiro_ids(monkeypatch):
-    monkeypatch.setattr(sync, "KIRO_MODEL_IDS", dict(IDS))
+def kiro_version(monkeypatch):
+    monkeypatch.setattr(sync, "KIRO_MODEL_VERSION", "9.9")
 
 
 def test_every_source_agent_names_its_model():
@@ -155,25 +153,41 @@ def test_claude_agent_gets_the_tier_as_an_alias():
     assert "model:" not in sync.claude_agent(meta, "x\n", Path("a.md"))
 
 
-def test_kiro_agent_gets_the_id_for_its_tier(kiro_ids):
+def test_kiro_id_is_claude_tier_version(kiro_version):
+    assert sync.kiro_model_id("opus") == "claude-opus-9.9"
+    assert sync.kiro_model_id("sonnet") == "claude-sonnet-9.9"
+    assert sync.kiro_model_id("haiku") == "claude-haiku-9.9"
+    assert sync.kiro_model_id(None) is None
+    assert sync.kiro_model_id("inherit") is None
+    with pytest.raises(sync.SourceError, match="unknown model tier"):
+        sync.kiro_model_id("gpt")
+
+
+def test_kiro_agent_gets_the_id_for_its_tier(kiro_version):
     meta = {"name": "a", "description": "d", "model": "opus"}
     assert json.loads(sync.kiro_agent(meta, "x\n", Path("a.md"))[0])["model"] == (
-        "model-opus-x"
+        "claude-opus-9.9"
     )
 
 
-def test_kiro_agent_has_no_model_without_an_id_or_a_tier(kiro_ids):
-    for model in ("haiku", None, "inherit"):  # haiku has no id in IDS
+def test_kiro_agent_has_no_model_without_a_tier():
+    for model in (None, "inherit"):
         meta = {"name": "a", "description": "d", "model": model}
         assert "model" not in json.loads(sync.kiro_agent(meta, "x\n", Path("a.md"))[0])
 
 
-def test_the_shipped_kiro_files_have_no_model_while_no_ids_are_set():
-    """Guards against writing a guessed id: Kiro fails at the first call with an
-    unknown id. When ids are added, delete this test."""
-    assert all(v is None for v in sync.KIRO_MODEL_IDS.values())
-    for path in (sync.ROOT / ".kiro/agents").glob("*.json"):
-        assert "model" not in json.loads(path.read_text()), path
+def test_the_shipped_kiro_files_use_the_expected_ids():
+    """The ids are the ones `/model` lists in Kiro."""
+    expected = {
+        "opus": "claude-opus-5.5",
+        "sonnet": "claude-sonnet-5.5",
+        "haiku": "claude-haiku-5.5",
+    }
+    assert {t: sync.kiro_model_id(t) for t in sync.TIERS} == expected
+    for meta, _, _ in sync.load_agents():
+        path = sync.ROOT / ".kiro/agents" / f"{meta['name']}.json"
+        if path.exists():
+            assert json.loads(path.read_text())["model"] == expected[meta["model"]]
 
 
 def test_unknown_tier_in_an_agent_is_an_error(tmp_path, monkeypatch):
@@ -184,12 +198,6 @@ def test_unknown_tier_in_an_agent_is_an_error(tmp_path, monkeypatch):
     monkeypatch.setattr(sync, "SRC", tmp_path)
     with pytest.raises(sync.SourceError, match="model must be one of"):
         sync.load_agents()
-
-
-def test_a_bad_kiro_id_is_an_error(monkeypatch):
-    monkeypatch.setattr(sync, "KIRO_MODEL_IDS", {"opus": "Claude Opus 5.5"})
-    with pytest.raises(sync.SourceError, match="not a model id"):
-        sync.kiro_model_id("opus")
 
 
 def model_steps():
@@ -229,27 +237,20 @@ def model_ids(steps):
     return found
 
 
-def test_steps_use_their_step_tier_then_their_agents_tier(kiro_ids):
+def test_steps_use_their_step_tier_then_their_agents_tier(kiro_version):
     steps = model_steps()
     sync.apply_models(steps, TIER_BY_AGENT)
     assert model_ids(steps) == {
-        "scope": None,  # haiku has no id
-        "system": "model-opus-x",  # the agent's tier
-        "override": "model-opus-x",  # the step's tier beats the agent's sonnet
+        "scope": "claude-haiku-9.9",
+        "system": "claude-opus-9.9",  # the agent's tier
+        "override": "claude-opus-9.9",  # the step's tier beats the agent's sonnet
         "keep": None,  # inherit beats the agent's tier
-        "branch": "model-sonnet-x",  # inside parallel
-        "nested": "model-opus-x",  # inside sequence
+        "branch": "claude-sonnet-9.9",  # inside parallel
+        "nested": "claude-opus-9.9",  # inside sequence
     }
 
 
-def test_steps_get_no_modelid_when_no_ids_are_set(monkeypatch):
-    monkeypatch.setattr(sync, "KIRO_MODEL_IDS", dict.fromkeys(sync.TIERS))
-    steps = model_steps()
-    sync.apply_models(steps, TIER_BY_AGENT)
-    assert set(model_ids(steps).values()) == {None}
-
-
-def test_the_real_workflow_and_agents_get_their_models(kiro_ids):
+def test_the_real_workflow_and_agents_get_their_models(kiro_version):
     """Build the real source with fake ids: the system step runs the model of
     its agent's tier, and so do the others."""
     files = {p.relative_to(sync.ROOT): c for p, c in sync.build().items()}
@@ -267,11 +268,11 @@ def test_the_real_workflow_and_agents_get_their_models(kiro_ids):
     walk(recipe["steps"])
     assert seen
     for step_id, (agent, model_id) in seen.items():
-        assert model_id == IDS[tiers[agent]], step_id
+        assert model_id == f"claude-{tiers[agent]}-9.9", step_id
     assert {a for a, _ in seen.values()} >= {"system-modeler", "threat-analyst"}
 
     modeler = json.loads(files[Path(".kiro/agents/system-modeler.json")])
-    assert modeler["model"] == "model-opus-x"
+    assert modeler["model"] == "claude-opus-9.9"
     assert "model: opus\n" in files[Path(".claude/agents/system-modeler.md")]
 
 

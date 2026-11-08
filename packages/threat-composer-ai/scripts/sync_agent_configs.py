@@ -19,7 +19,7 @@ Agent frontmatter in the source:
   skills              Skills the agent writes with.
   targets             Optional: [claude], [kiro] or both (the default).
   model               Optional model tier: opus, sonnet or haiku. Claude Code
-                      gets the alias. Kiro gets the id from KIRO_MODEL_IDS.
+                      gets the alias. Kiro gets claude-<tier>-<KIRO_MODEL_VERSION>.
                       Without it the agent uses the model of the session.
 
 A workflow step may also set `model` (a tier, or `inherit`). It overrides the
@@ -67,18 +67,12 @@ KIRO_TOOLS = {
 # Model tiers. Claude Code accepts these names as they are.
 TIERS = ("opus", "sonnet", "haiku")
 
-# The Kiro model id for each tier, as `/model` lists it in Kiro. Kiro's public
-# docs (kiro.dev/docs/models) name Claude Opus 5.5, Sonnet 5.5 and Haiku 5.5 but
-# show no 5.5 id strings; the only ids they show are claude-sonnet-4.6 and
-# claude-opus-4.8. Kiro does not fall back from an unknown id: the first call
-# of the agent or step fails. So a tier with no id here (None) is left out of
-# the Kiro files, and those agents and steps use the model of the session.
-KIRO_MODEL_IDS: dict[str, str | None] = {
-    "opus": None,
-    "sonnet": None,
-    "haiku": None,
-}
-KIRO_MODEL_ID = re.compile(r"^[a-z0-9][a-z0-9._-]*$")
+# The Kiro model id of a tier is claude-<tier>-<version>, for example
+# claude-sonnet-5.5, as `/model` lists it in Kiro. Kiro does not fall back from
+# an unknown id: the first call of the agent or step fails. Change the version
+# here when you move all agents to a newer Claude family, and check that
+# `/model` in Kiro lists the three ids.
+KIRO_MODEL_VERSION = "5.5"
 
 KIRO_AGENT_SCHEMA = "https://json.schemastore.org/kiro-agent.json"
 
@@ -226,13 +220,12 @@ def claude_agent(meta: dict, body: str, path: Path) -> str:
 
 
 def kiro_model_id(tier: str | None) -> str | None:
-    """The Kiro id for a tier, or None if there is none (inherit the session)."""
+    """The Kiro id for a tier, or None for no tier (inherit the session)."""
     if not tier or tier == "inherit":
         return None
-    model_id = KIRO_MODEL_IDS.get(tier)
-    if model_id is not None and not KIRO_MODEL_ID.match(model_id):
-        raise SourceError(f"KIRO_MODEL_IDS[{tier!r}] is not a model id: {model_id!r}")
-    return model_id
+    if tier not in TIERS:
+        raise SourceError(f"unknown model tier {tier!r}")
+    return f"claude-{tier}-{KIRO_MODEL_VERSION}"
 
 
 def kiro_agent(meta: dict, body: str, path: Path) -> tuple[str, str]:
@@ -449,8 +442,8 @@ def check_recipe(recipe: dict, path: Path, agents: set[str]) -> None:
 def apply_models(nodes: list, tiers: dict[str, str]) -> None:
     """Turn each step's `model` tier, or else its agent's tier, into `modelId`.
 
-    A step with no tier, or a tier with no Kiro id, gets no modelId and so
-    inherits the model of the session.
+    A step with no tier, or with `inherit`, gets no modelId and so inherits the
+    model of the session.
     """
     for node in nodes:
         if node.get("type") == "step":
@@ -533,13 +526,6 @@ def main() -> int:
         print(f"error: {e}", file=sys.stderr)
         return 2
 
-    unset = [t for t in TIERS if not KIRO_MODEL_IDS.get(t)]
-    if unset:
-        print(
-            f"note: KIRO_MODEL_IDS has no id for {', '.join(unset)}. Kiro agents "
-            "and workflow steps with that tier use the model of the session.",
-            file=sys.stderr,
-        )
     stale = []
     for path, content in files.items():
         data = content.encode() if isinstance(content, str) else content

@@ -44,6 +44,7 @@
     "@threat-composer/sys_remove",
     "@threat-composer/sys_render"
   ],
+  "model": "claude-sonnet-5.5",
   "useLegacyMcpJson": true,
   "resources": [
     "skill://.kiro/skills/*/SKILL.md",
