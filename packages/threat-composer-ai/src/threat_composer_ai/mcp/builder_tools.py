@@ -12,6 +12,7 @@ calling agent never writes Threat Composer JSON itself. Every write validates
 the whole document first and changes nothing if it would become invalid.
 """
 
+import copy
 from typing import Annotated, Any, Literal
 
 from fastmcp import FastMCP
@@ -21,6 +22,7 @@ from pydantic import Field, ValidationError
 from ..builder import item_ops
 from ..builder import model_ops as ops
 from ..builder.coverage import coverage_report, link_problems
+from ..builder.diff import diff_system_model, diff_threat_model
 from ..builder.render import RenderError, dataflow_markdown, render_dfd_svg
 from ..builder.search import SearchKind
 from ..builder.search import search as search_model
@@ -53,6 +55,15 @@ ExpectedHash = Annotated[
         )
     ),
 ]
+DryRun = Annotated[
+    bool,
+    Field(
+        description=(
+            "Check the change and return what would change under 'changes', "
+            "without writing anything"
+        )
+    ),
+]
 Agent = Annotated[
     str | None, Field(description="Your agent name, recorded as custom:agent metadata")
 ]
@@ -82,12 +93,19 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             return None
         return {e.id for e in system.elements} | {f.id for f in system.flows}
 
-    def change_model(model: str, change, expected_hash: str | None = None) -> Any:
+    def change_model(
+        model: str,
+        change,
+        expected_hash: str | None = None,
+        dry_run: bool = False,
+    ) -> Any:
         """Apply a change to the threat model, validate, then write. The result
-        carries the new file hash."""
+        carries the file hash. With dry_run nothing is written and the result
+        lists the changes instead."""
         tc_path, _, _ = ws.model_paths(model)
 
         def apply(doc: dict[str, Any]) -> Any:
+            before = copy.deepcopy(doc) if dry_run else None
             result = change(doc)
             errors = ops.validate_document(doc)
             if errors:
@@ -95,11 +113,17 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
                     "change rejected, document would be invalid: "
                     + "; ".join(errors[:10])
                 )
+            if dry_run:
+                result = {
+                    **(result or {}),
+                    "dry_run": True,
+                    "changes": diff_threat_model(before, doc),
+                }
             return result
 
         try:
             result, new_hash = ws.update_json_hashed(
-                tc_path, apply, expected_hash=expected_hash
+                tc_path, apply, expected_hash=expected_hash, dry_run=dry_run
             )
         except (WorkspaceError, ops.BuilderError) as e:
             raise _fail(e) from e
@@ -114,6 +138,25 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
 
     def read_model(model: str) -> dict[str, Any]:
         return read_model_hashed(model)[0]
+
+    def change_system(
+        system_path, apply, default=None, dry_run: bool = False
+    ) -> dict[str, Any]:
+        """Apply a change to the system model. With dry_run nothing is written and
+        the result lists the changes."""
+
+        def run(data: dict[str, Any]) -> dict[str, Any]:
+            before = copy.deepcopy(data) if dry_run else None
+            result = apply(data)
+            if dry_run:
+                result = {
+                    **result,
+                    "dry_run": True,
+                    "changes": diff_system_model(before, data),
+                }
+            return result
+
+        return ws.update_json(system_path, run, default=default, dry_run=dry_run)
 
     # -- threat model -------------------------------------------------------
 
@@ -149,6 +192,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             str | None, Field(description="SVG in the model directory to embed")
         ] = None,
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Set the description, name or diagram of applicationInfo, architecture or
         dataflow. Prefer sys_render for dataflow."""
@@ -166,6 +210,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             lambda d: ops.set_section(d, section, description, name, image)
             or {"section": section, "updated": True},
             expected_hash,
+            dry_run,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -180,6 +225,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             bool, Field(description="Replace every match, not only a single one")
         ] = False,
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Replace exact text in the description of applicationInfo, architecture or
         dataflow, without sending the whole description. Fails and changes nothing if
@@ -188,6 +234,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             model,
             lambda d: item_ops.edit_section(d, section, old, new, replace_all),
             expected_hash,
+            dry_run,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -196,13 +243,17 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         threats: list[ops.ThreatInput],
         agent: Agent = None,
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Add threats. The statement is composed from the grammar fields. Element ids
         are checked against the system model when one exists. Valid items are added,
         invalid ones returned under 'rejected' by index."""
         known = known_targets(model)
         return change_model(
-            model, lambda d: ops.add_threats(d, threats, known, agent), expected_hash
+            model,
+            lambda d: ops.add_threats(d, threats, known, agent),
+            expected_hash,
+            dry_run,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -211,11 +262,15 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         mitigations: list[ops.MitigationInput],
         agent: Agent = None,
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Add mitigations and link each to its threats. Set existing=true for controls
         the code already implements."""
         return change_model(
-            model, lambda d: ops.add_mitigations(d, mitigations, agent), expected_hash
+            model,
+            lambda d: ops.add_mitigations(d, mitigations, agent),
+            expected_hash,
+            dry_run,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -224,10 +279,14 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         assumptions: list[ops.AssumptionInput],
         agent: Agent = None,
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Add assumptions, optionally linked to threats or mitigations."""
         return change_model(
-            model, lambda d: ops.add_assumptions(d, assumptions, agent), expected_hash
+            model,
+            lambda d: ops.add_assumptions(d, assumptions, agent),
+            expected_hash,
+            dry_run,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -238,11 +297,15 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         to_ids: list[str],
         unlink: bool = False,
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Link a mitigation to threats, or an assumption to threats or mitigations.
         unlink=true removes those links instead."""
         return change_model(
-            model, lambda d: ops.link(d, kind, from_id, to_ids, unlink), expected_hash
+            model,
+            lambda d: ops.link(d, kind, from_id, to_ids, unlink),
+            expected_hash,
+            dry_run,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -252,6 +315,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         threat: ops.ThreatInput,
         agent: Agent = None,
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Replace a threat's content. Its id, numericId and links are kept."""
         known = known_targets(model)
@@ -259,6 +323,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             model,
             lambda d: ops.update_threat(d, threat_id, threat, known, agent),
             expected_hash,
+            dry_run,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -268,12 +333,14 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         mitigation: ops.MitigationInput,
         agent: Agent = None,
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Replace a mitigation's content and threat links. Its id is kept."""
         return change_model(
             model,
             lambda d: ops.update_mitigation(d, mitigation_id, mitigation, agent),
             expected_hash,
+            dry_run,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -282,6 +349,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         threat: Annotated[str, Field(description="Threat id, or its number: T17")],
         changes: item_ops.ThreatPatch,
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Change only the fields you set on a threat. Everything else stays: id,
         number, links, tags, other metadata and custom:agent. If you change a
@@ -292,6 +360,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             model,
             lambda d: item_ops.patch_threat(d, threat, changes, known),
             expected_hash,
+            dry_run,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -302,6 +371,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         ],
         changes: item_ops.MitigationPatch,
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Change only the fields you set on a mitigation. Everything else stays: id,
         number, tags, other metadata, custom:agent and threat links, unless you
@@ -310,6 +380,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             model,
             lambda d: item_ops.patch_mitigation(d, mitigation, changes),
             expected_hash,
+            dry_run,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -320,6 +391,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         ],
         changes: item_ops.AssumptionPatch,
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Change only the fields you set on an assumption. Its id, number, tags,
         other metadata and links stay, unless you set link_to. Use this instead of
@@ -328,6 +400,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             model,
             lambda d: item_ops.patch_assumption(d, assumption, changes),
             expected_hash,
+            dry_run,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -345,11 +418,15 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             ),
         ],
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Set status on threats or mitigations. Use threatResolvedNotUseful to
         dismiss a threat while keeping a record of it."""
         return change_model(
-            model, lambda d: ops.set_status(d, kind, ids, status), expected_hash
+            model,
+            lambda d: ops.set_status(d, kind, ids, status),
+            expected_hash,
+            dry_run,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -359,6 +436,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         ids: list[str],
         tags: list[str],
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Add tags to threats, mitigations or assumptions. Changes only tags; the
         content, status, metadata and links stay the same. A tag that the item
@@ -367,7 +445,10 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         unknown or a tag is invalid, nothing changes."""
         known = known_targets(model)
         return change_model(
-            model, lambda d: ops.add_tags(d, kind, ids, tags, known), expected_hash
+            model,
+            lambda d: ops.add_tags(d, kind, ids, tags, known),
+            expected_hash,
+            dry_run,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -377,12 +458,13 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         ids: list[str],
         tags: list[str],
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Remove tags from threats, mitigations or assumptions. Changes only tags;
         the content, status, metadata and links stay the same. A tag that the item
         does not have is ignored. If an id is unknown, nothing changes."""
         return change_model(
-            model, lambda d: ops.remove_tags(d, kind, ids, tags), expected_hash
+            model, lambda d: ops.remove_tags(d, kind, ids, tags), expected_hash, dry_run
         )
 
     @mcp.tool(annotations=DESTRUCTIVE)
@@ -401,6 +483,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             ),
         ] = False,
         expected_hash: ExpectedHash = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Delete threats, mitigations or assumptions and every link to them. Links
         are cleaned up, but text is not. If any threat, mitigation, assumption or
@@ -408,7 +491,10 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         43'), nothing is removed and the mentions are listed. Fix that text, or pass
         force=true. Item numbers are not reused or renumbered."""
         return change_model(
-            model, lambda d: item_ops.remove_checked(d, kind, ids, force), expected_hash
+            model,
+            lambda d: item_ops.remove_checked(d, kind, ids, force),
+            expected_hash,
+            dry_run,
         )
 
     @mcp.tool(annotations=READ_ONLY)
@@ -518,6 +604,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         zones: list[Zone] | None = None,
         elements: list[Element] | None = None,
         flows: list[FlowInput] | None = None,
+        dry_run: DryRun = False,
     ) -> dict[str, Any]:
         """Add or replace (by id) trust zones, elements and data flows in the system
         model. Element kinds: human_actor, external_entity, process, data_store.
@@ -557,14 +644,16 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             }
 
         try:
-            return ws.update_json(
-                system_path, apply, default=SystemModel().model_dump()
+            return change_system(
+                system_path, apply, SystemModel().model_dump(), dry_run
             )
         except (WorkspaceError, ValidationError) as e:
             raise _fail(e) from e
 
     @mcp.tool(annotations=DESTRUCTIVE)
-    def sys_remove(model: ModelPath, ids: list[str]) -> dict[str, Any]:
+    def sys_remove(
+        model: ModelPath, ids: list[str], dry_run: DryRun = False
+    ) -> dict[str, Any]:
         """Remove zones, elements or flows by id. Flows touching a removed element
         are removed too."""
         try:
@@ -587,7 +676,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             return {"problems": system.problems()}
 
         try:
-            return ws.update_json(system_path, apply)
+            return change_system(system_path, apply, None, dry_run)
         except (WorkspaceError, ValidationError) as e:
             raise _fail(e) from e
 
@@ -641,6 +730,15 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
                 )
             ),
         ] = "full",
+        dry_run: Annotated[
+            bool,
+            Field(
+                description=(
+                    "Return the change to the dataflow text under 'changes' and "
+                    "write no file. The diagram is not rendered"
+                )
+            ),
+        ] = False,
     ) -> dict[str, Any]:
         """Write the dataflow section of the threat model from the system model, and
         render the DFD (needs Graphviz) into <name>.dfd.svg and dataflow.image.
@@ -652,6 +750,14 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         problems = system.problems()
         if problems:
             raise ToolError("fix the system model first: " + "; ".join(problems))
+
+        if dry_run:
+            markdown = dataflow_markdown(system)
+            return change_model(
+                model,
+                lambda d: ops.set_section(d, "dataflow", markdown, None, None),
+                dry_run=True,
+            )
 
         result: dict[str, Any] = {"markdown": True, "diagram": None, "viewer": None}
         image = None

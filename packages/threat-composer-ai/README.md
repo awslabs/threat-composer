@@ -105,6 +105,16 @@ The `tm_*` and `sys_*` MCP tools build a threat model one item at a time (see `s
 
 Both take `model`, `kind` (`threat`, `mitigation` or `assumption`), `ids` and `tags`, and return `{"updated": n}`. Each tag is 1 to 30 characters after whitespace is stripped. If an id is unknown or a tag is invalid, nothing changes. Use these instead of `tm_update_mitigation` to change tags: `tm_update_mitigation` replaces the whole mitigation, including its threat links.
 
+### Dry runs
+
+Every `tm_*` write, and `sys_upsert`, `sys_remove` and `sys_render`, takes `dry_run`. The change runs in memory and is checked in full, so the same errors appear, and a stale `expected_hash` still fails. Nothing is written. The result has `dry_run: true` and `changes`, a list of field-level differences:
+
+- `{"op": "change", "item": "T17", "fields": {"status": {"before": ..., "after": ...}}}`. Tags show `added` and `removed`. Metadata fields are named `metadata:<key>`. Long text is cut to 300 characters and images show `changed`.
+- `{"op": "add" | "remove", "item": "M19", "text": ...}` for items, zones, elements and flows.
+- `{"op": "link" | "unlink", "link": "M19 -> T3"}` for links.
+
+`sys_render` with `dry_run` shows the change to the dataflow text. It renders no diagram and writes no file.
+
 ### Resolution candidates
 
 `tm_coverage_report` also compares each threat's status with the status of its mitigations. `resolution_candidates` lists open threats whose linked mitigations are all `mitigationResolved`. `resolution_candidates_with_will_not_action` lists open threats where the rest are resolved and at least one is `mitigationResolvedWillNotAction`; that closes the item without reducing the risk, so a person should decide. `resolved_threats_with_open_mitigations` lists resolved threats that still have an open mitigation. Threat Composer links neither status to the other, so these lists are advice and nothing changes a status.

@@ -653,3 +653,187 @@ def test_element_ids_round_trip_between_reads_and_writes(server, tmp_path, model
         ids=[model["t1"]],
         tags=["task:2"],
     )
+
+
+# -- dry_run -----------------------------------------------------------------
+
+
+def changes(result):
+    return {(c.get("item") or c.get("link"), c["op"]): c for c in result["changes"]}
+
+
+def test_dry_run_reports_field_changes_and_writes_nothing(server, tmp_path, model):
+    raw = (tmp_path / MODEL).read_text()
+    h0 = call(server, "tm_get", model=MODEL)["hash"]
+
+    result = call(
+        server,
+        "tm_patch_threat",
+        model=MODEL,
+        threat="T1",
+        changes={"comments": "new", "priority": "Low", "status": "threatResolved"},
+        dry_run=True,
+    )
+    assert result["dry_run"] is True and result["hash"] == h0
+    change = changes(result)[("T1", "change")]["fields"]
+    assert change["metadata:Comments"] == {"before": "original comment", "after": "new"}
+    assert change["metadata:Priority"] == {"before": "High", "after": "Low"}
+    assert change["status"] == {
+        "before": "threatIdentified",
+        "after": "threatResolved",
+    }
+    assert set(change) == {"metadata:Comments", "metadata:Priority", "status"}
+    assert (tmp_path / MODEL).read_text() == raw
+
+    # The same call without dry_run makes exactly that change.
+    real = call(
+        server,
+        "tm_patch_threat",
+        model=MODEL,
+        threat="T1",
+        changes={"comments": "new", "priority": "Low", "status": "threatResolved"},
+    )
+    assert "dry_run" not in real and real["hash"] != h0
+    t = read(tmp_path)["threats"][0]
+    assert meta(t, "Priority") == "Low" and t["status"] == "threatResolved"
+
+
+def test_dry_run_shows_adds_removes_links_and_tags(server, tmp_path, model):
+    raw = (tmp_path / MODEL).read_text()
+    added = call(
+        server,
+        "tm_add_threats",
+        model=MODEL,
+        dry_run=True,
+        threats=[
+            {
+                "threat_source": "actor",
+                "threat_action": "do a thing",
+                "stride": ["T"],
+                "priority": "Low",
+            }
+        ],
+    )
+    assert ("T3", "add") in changes(added) and added["added"][0]["numericId"] == 3
+
+    removed = call(
+        server, "tm_remove", model=MODEL, kind="mitigation", ids=["M1"], dry_run=True
+    )
+    c = changes(removed)
+    assert ("M1", "remove") in c and ("M1 -> T1", "unlink") in c
+
+    linked = call(
+        server,
+        "tm_link",
+        model=MODEL,
+        kind="mitigation",
+        from_id=read(tmp_path)["mitigations"][0]["id"],
+        to_ids=[model["t2"]],
+        dry_run=True,
+    )
+    assert ("M1 -> T2", "link") in changes(linked)
+
+    tagged = call(
+        server,
+        "tm_add_tags",
+        model=MODEL,
+        kind="threat",
+        ids=[model["t1"]],
+        tags=["task:9"],
+        dry_run=True,
+    )
+    assert changes(tagged)[("T1", "change")]["fields"]["tags"] == {
+        "added": ["task:9"],
+        "removed": [],
+    }
+    assert (tmp_path / MODEL).read_text() == raw
+
+
+def test_dry_run_still_rejects_bad_changes_and_stale_hashes(server, tmp_path, model):
+    h0 = call(server, "tm_get", model=MODEL)["hash"]
+    with pytest.raises(ToolError, match="unknown ids"):
+        call(
+            server,
+            "tm_patch_threat",
+            model=MODEL,
+            threat="T1",
+            changes={"elements": ["NOPE"]},
+            dry_run=True,
+        )
+    call(
+        server, "tm_add_tags", model=MODEL, kind="threat", ids=[model["t1"]], tags=["z"]
+    )
+    with pytest.raises(ToolError, match="changed since you read it"):
+        call(
+            server,
+            "tm_patch_threat",
+            model=MODEL,
+            threat="T1",
+            changes={"priority": "Low"},
+            expected_hash=h0,
+            dry_run=True,
+        )
+
+
+def test_dry_run_section_edit_clips_long_text_and_hides_images(server, tmp_path, model):
+    call(
+        server,
+        "tm_set_section",
+        model=MODEL,
+        section="architecture",
+        description="x" * 1000,
+    )
+    result = call(
+        server,
+        "tm_edit_section",
+        model=MODEL,
+        section="architecture",
+        old="x" * 1000,
+        new="short",
+        dry_run=True,
+    )
+    fields = changes(result)[("architecture", "change")]["fields"]["description"]
+    assert fields["after"] == "short" and "1000 characters" in fields["before"]
+    assert len(fields["before"]) < 400
+    assert read(tmp_path)["architecture"]["description"] == "x" * 1000
+
+
+def test_dry_run_on_system_model_and_render(server, tmp_path, model):
+    system_path = tmp_path / "app.system.json"
+    raw = system_path.read_text()
+
+    upsert = call(
+        server,
+        "sys_upsert",
+        model=MODEL,
+        dry_run=True,
+        elements=[{"id": "DS1", "kind": "data_store", "name": "DB", "zone": "Z2"}],
+        flows=[{"source": "P1", "target": "DS1", "description": "Query"}],
+    )
+    c = changes(upsert)
+    assert ("element DS1", "add") in c and ("flow DF2", "add") in c
+    assert system_path.read_text() == raw
+
+    removed = call(server, "sys_remove", model=MODEL, ids=["P1"], dry_run=True)
+    assert ("flow DF1", "remove") in changes(removed)
+    assert system_path.read_text() == raw
+
+    before = (tmp_path / MODEL).read_text()
+    rendered = call(server, "sys_render", model=MODEL, dry_run=True)
+    assert rendered["dry_run"] is True
+    assert changes(rendered)[("dataflow", "change")]["fields"]["description"]
+    assert (tmp_path / MODEL).read_text() == before
+    assert not (tmp_path / "app.dfd.html").exists()
+    assert not (tmp_path / "app.dfd.svg").exists()
+
+
+def test_dry_run_sys_upsert_on_new_model_creates_no_file(server, tmp_path):
+    call(server, "tm_init", model=MODEL, name="Demo")
+    call(
+        server,
+        "sys_upsert",
+        model=MODEL,
+        dry_run=True,
+        elements=[{"id": "P1", "kind": "process", "name": "API"}],
+    )
+    assert not (tmp_path / "app.system.json").exists()

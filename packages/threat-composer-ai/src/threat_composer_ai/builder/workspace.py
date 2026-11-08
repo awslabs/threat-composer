@@ -145,15 +145,19 @@ class Workspace:
         change: Callable[[dict[str, Any]], Any],
         default: dict[str, Any] | None = None,
         expected_hash: str | None = None,
+        dry_run: bool = False,
     ) -> tuple[Any, str]:
         """Read, change and write a JSON file under its lock.
 
         `change` mutates the dict in place and returns a result for the caller.
         If it raises, nothing is written. If `expected_hash` is given and the
         file no longer has that hash, nothing is changed and StaleModelError is
-        raised. Returns the result and the hash of the file as written.
+        raised. With `dry_run`, the change runs and is checked but nothing is
+        written, and the hash is the file's current hash. Returns the result and
+        the hash of the file as written.
         """
         with self.lock(path):
+            current = None
             if path.exists() or default is None:
                 data, current = self.read_json_hashed(path)
                 if expected_hash and expected_hash != current:
@@ -170,6 +174,8 @@ class Workspace:
                     )
                 data = json.loads(json.dumps(default))
             result = change(data)
+            if dry_run:
+                return result, current or ""
             return result, self.write_json(path, data)
 
     def update_json(
@@ -178,6 +184,7 @@ class Workspace:
         change: Callable[[dict[str, Any]], Any],
         default: dict[str, Any] | None = None,
         expected_hash: str | None = None,
+        dry_run: bool = False,
     ) -> Any:
         """update_json_hashed without the hash."""
-        return self.update_json_hashed(path, change, default, expected_hash)[0]
+        return self.update_json_hashed(path, change, default, expected_hash, dry_run)[0]
