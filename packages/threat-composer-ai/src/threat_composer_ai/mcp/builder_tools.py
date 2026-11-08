@@ -18,6 +18,7 @@ from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
 from pydantic import Field, ValidationError
 
+from ..builder import item_ops
 from ..builder import model_ops as ops
 from ..builder.coverage import coverage_report, link_problems
 from ..builder.render import RenderError, dataflow_markdown, render_dfd_svg
@@ -40,6 +41,15 @@ DESTRUCTIVE = {"readOnlyHint": False, "destructiveHint": True, "openWorldHint": 
 ModelPath = Annotated[
     str,
     Field(description="Model file relative to the model directory, e.g. 'app.tc.json'"),
+]
+ExpectedHash = Annotated[
+    str | None,
+    Field(
+        description=(
+            "The 'hash' from your last read or write of this model. If the file "
+            "has changed since, the write fails and changes nothing"
+        )
+    ),
 ]
 Agent = Annotated[
     str | None, Field(description="Your agent name, recorded as custom:agent metadata")
@@ -70,8 +80,9 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             return None
         return {e.id for e in system.elements} | {f.id for f in system.flows}
 
-    def change_model(model: str, change) -> Any:
-        """Apply a change to the threat model, validate, then write."""
+    def change_model(model: str, change, expected_hash: str | None = None) -> Any:
+        """Apply a change to the threat model, validate, then write. The result
+        carries the new file hash."""
         tc_path, _, _ = ws.model_paths(model)
 
         def apply(doc: dict[str, Any]) -> Any:
@@ -85,16 +96,22 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             return result
 
         try:
-            return ws.update_json(tc_path, apply)
+            result, new_hash = ws.update_json_hashed(
+                tc_path, apply, expected_hash=expected_hash
+            )
         except (WorkspaceError, ops.BuilderError) as e:
+            raise _fail(e) from e
+        return {**(result or {}), "hash": new_hash}
+
+    def read_model_hashed(model: str) -> tuple[dict[str, Any], str]:
+        try:
+            tc_path, _, _ = ws.model_paths(model)
+            return ws.read_json_hashed(tc_path)
+        except WorkspaceError as e:
             raise _fail(e) from e
 
     def read_model(model: str) -> dict[str, Any]:
-        try:
-            tc_path, _, _ = ws.model_paths(model)
-            return ws.read_json(tc_path)
-        except WorkspaceError as e:
-            raise _fail(e) from e
+        return read_model_hashed(model)[0]
 
     # -- threat model -------------------------------------------------------
 
@@ -129,6 +146,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         image_path: Annotated[
             str | None, Field(description="SVG in the model directory to embed")
         ] = None,
+        expected_hash: ExpectedHash = None,
     ) -> dict[str, Any]:
         """Set the description, name or diagram of applicationInfo, architecture or
         dataflow. Prefer sys_render for dataflow."""
@@ -141,35 +159,52 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             image = threat_composer_svg_to_data_url(svg)
             if image.startswith("❌"):
                 raise ToolError(image)
-        change_model(
-            model, lambda d: ops.set_section(d, section, description, name, image)
+        return change_model(
+            model,
+            lambda d: ops.set_section(d, section, description, name, image)
+            or {"section": section, "updated": True},
+            expected_hash,
         )
-        return {"section": section, "updated": True}
 
     @mcp.tool(annotations=WRITE)
     def tm_add_threats(
-        model: ModelPath, threats: list[ops.ThreatInput], agent: Agent = None
+        model: ModelPath,
+        threats: list[ops.ThreatInput],
+        agent: Agent = None,
+        expected_hash: ExpectedHash = None,
     ) -> dict[str, Any]:
         """Add threats. The statement is composed from the grammar fields. Element ids
         are checked against the system model when one exists. Valid items are added,
         invalid ones returned under 'rejected' by index."""
         known = known_targets(model)
-        return change_model(model, lambda d: ops.add_threats(d, threats, known, agent))
+        return change_model(
+            model, lambda d: ops.add_threats(d, threats, known, agent), expected_hash
+        )
 
     @mcp.tool(annotations=WRITE)
     def tm_add_mitigations(
-        model: ModelPath, mitigations: list[ops.MitigationInput], agent: Agent = None
+        model: ModelPath,
+        mitigations: list[ops.MitigationInput],
+        agent: Agent = None,
+        expected_hash: ExpectedHash = None,
     ) -> dict[str, Any]:
         """Add mitigations and link each to its threats. Set existing=true for controls
         the code already implements."""
-        return change_model(model, lambda d: ops.add_mitigations(d, mitigations, agent))
+        return change_model(
+            model, lambda d: ops.add_mitigations(d, mitigations, agent), expected_hash
+        )
 
     @mcp.tool(annotations=WRITE)
     def tm_add_assumptions(
-        model: ModelPath, assumptions: list[ops.AssumptionInput], agent: Agent = None
+        model: ModelPath,
+        assumptions: list[ops.AssumptionInput],
+        agent: Agent = None,
+        expected_hash: ExpectedHash = None,
     ) -> dict[str, Any]:
         """Add assumptions, optionally linked to threats or mitigations."""
-        return change_model(model, lambda d: ops.add_assumptions(d, assumptions, agent))
+        return change_model(
+            model, lambda d: ops.add_assumptions(d, assumptions, agent), expected_hash
+        )
 
     @mcp.tool(annotations=WRITE)
     def tm_link(
@@ -178,19 +213,28 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         from_id: str,
         to_ids: list[str],
         unlink: bool = False,
+        expected_hash: ExpectedHash = None,
     ) -> dict[str, Any]:
         """Link a mitigation to threats, or an assumption to threats or mitigations.
         unlink=true removes those links instead."""
-        return change_model(model, lambda d: ops.link(d, kind, from_id, to_ids, unlink))
+        return change_model(
+            model, lambda d: ops.link(d, kind, from_id, to_ids, unlink), expected_hash
+        )
 
     @mcp.tool(annotations=WRITE)
     def tm_update_threat(
-        model: ModelPath, threat_id: str, threat: ops.ThreatInput, agent: Agent = None
+        model: ModelPath,
+        threat_id: str,
+        threat: ops.ThreatInput,
+        agent: Agent = None,
+        expected_hash: ExpectedHash = None,
     ) -> dict[str, Any]:
         """Replace a threat's content. Its id, numericId and links are kept."""
         known = known_targets(model)
         return change_model(
-            model, lambda d: ops.update_threat(d, threat_id, threat, known, agent)
+            model,
+            lambda d: ops.update_threat(d, threat_id, threat, known, agent),
+            expected_hash,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -199,10 +243,67 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         mitigation_id: str,
         mitigation: ops.MitigationInput,
         agent: Agent = None,
+        expected_hash: ExpectedHash = None,
     ) -> dict[str, Any]:
         """Replace a mitigation's content and threat links. Its id is kept."""
         return change_model(
-            model, lambda d: ops.update_mitigation(d, mitigation_id, mitigation, agent)
+            model,
+            lambda d: ops.update_mitigation(d, mitigation_id, mitigation, agent),
+            expected_hash,
+        )
+
+    @mcp.tool(annotations=WRITE)
+    def tm_patch_threat(
+        model: ModelPath,
+        threat: Annotated[str, Field(description="Threat id, or its number: T17")],
+        changes: item_ops.ThreatPatch,
+        expected_hash: ExpectedHash = None,
+    ) -> dict[str, Any]:
+        """Change only the fields you set on a threat. Everything else stays: id,
+        number, links, tags, other metadata and custom:agent. If you change a
+        grammar field, the statement is composed again from the stored fields.
+        Prefer this to tm_update_threat, which replaces the whole threat."""
+        known = known_targets(model)
+        return change_model(
+            model,
+            lambda d: item_ops.patch_threat(d, threat, changes, known),
+            expected_hash,
+        )
+
+    @mcp.tool(annotations=WRITE)
+    def tm_patch_mitigation(
+        model: ModelPath,
+        mitigation: Annotated[
+            str, Field(description="Mitigation id, or its number: M19")
+        ],
+        changes: item_ops.MitigationPatch,
+        expected_hash: ExpectedHash = None,
+    ) -> dict[str, Any]:
+        """Change only the fields you set on a mitigation. Everything else stays: id,
+        number, tags, other metadata, custom:agent and threat links, unless you
+        set threat_ids. Prefer this to tm_update_mitigation."""
+        return change_model(
+            model,
+            lambda d: item_ops.patch_mitigation(d, mitigation, changes),
+            expected_hash,
+        )
+
+    @mcp.tool(annotations=WRITE)
+    def tm_patch_assumption(
+        model: ModelPath,
+        assumption: Annotated[
+            str, Field(description="Assumption id, or its number: A44")
+        ],
+        changes: item_ops.AssumptionPatch,
+        expected_hash: ExpectedHash = None,
+    ) -> dict[str, Any]:
+        """Change only the fields you set on an assumption. Its id, number, tags,
+        other metadata and links stay, unless you set link_to. Use this instead of
+        removing an assumption and adding a new one, which changes its number."""
+        return change_model(
+            model,
+            lambda d: item_ops.patch_assumption(d, assumption, changes),
+            expected_hash,
         )
 
     @mcp.tool(annotations=WRITE)
@@ -219,34 +320,54 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
                 "mitigationResolvedWillNotAction"
             ),
         ],
+        expected_hash: ExpectedHash = None,
     ) -> dict[str, Any]:
         """Set status on threats or mitigations. Use threatResolvedNotUseful to
         dismiss a threat while keeping a record of it."""
-        return change_model(model, lambda d: ops.set_status(d, kind, ids, status))
+        return change_model(
+            model, lambda d: ops.set_status(d, kind, ids, status), expected_hash
+        )
 
     @mcp.tool(annotations=WRITE)
     def tm_add_tags(
-        model: ModelPath, kind: ops.Kind, ids: list[str], tags: list[str]
+        model: ModelPath,
+        kind: ops.Kind,
+        ids: list[str],
+        tags: list[str],
+        expected_hash: ExpectedHash = None,
     ) -> dict[str, Any]:
         """Add tags to threats, mitigations or assumptions. Changes only tags; the
         content, status, metadata and links stay the same. A tag that the item
         already has is not added again. Tags are 1 to 30 characters. If an id is
         unknown or a tag is invalid, nothing changes."""
-        return change_model(model, lambda d: ops.add_tags(d, kind, ids, tags))
+        return change_model(
+            model, lambda d: ops.add_tags(d, kind, ids, tags), expected_hash
+        )
 
     @mcp.tool(annotations=WRITE)
     def tm_remove_tags(
-        model: ModelPath, kind: ops.Kind, ids: list[str], tags: list[str]
+        model: ModelPath,
+        kind: ops.Kind,
+        ids: list[str],
+        tags: list[str],
+        expected_hash: ExpectedHash = None,
     ) -> dict[str, Any]:
         """Remove tags from threats, mitigations or assumptions. Changes only tags;
         the content, status, metadata and links stay the same. A tag that the item
         does not have is ignored. If an id is unknown, nothing changes."""
-        return change_model(model, lambda d: ops.remove_tags(d, kind, ids, tags))
+        return change_model(
+            model, lambda d: ops.remove_tags(d, kind, ids, tags), expected_hash
+        )
 
     @mcp.tool(annotations=DESTRUCTIVE)
-    def tm_remove(model: ModelPath, kind: ops.Kind, ids: list[str]) -> dict[str, Any]:
+    def tm_remove(
+        model: ModelPath,
+        kind: ops.Kind,
+        ids: list[str],
+        expected_hash: ExpectedHash = None,
+    ) -> dict[str, Any]:
         """Delete threats, mitigations or assumptions and every link to them."""
-        return change_model(model, lambda d: ops.remove(d, kind, ids))
+        return change_model(model, lambda d: ops.remove(d, kind, ids), expected_hash)
 
     @mcp.tool(annotations=READ_ONLY)
     def tm_get(
@@ -270,29 +391,52 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         links. Omits descriptions and images. Use this instead of reading the file.
         priority, element and threat_status select threats. When you set one of
         them, mitigations shows only the mitigations linked to a selected threat."""
-        return ops.summary(
-            read_model(model),
-            sections,
-            priority,
-            element,
-            known_targets(model),
-            threat_status,
-            mitigation_status,
-        )
+        doc, file_hash = read_model_hashed(model)
+        return {
+            **ops.summary(
+                doc,
+                sections,
+                priority,
+                element,
+                known_targets(model),
+                threat_status,
+                mitigation_status,
+            ),
+            "hash": file_hash,
+        }
+
+    @mcp.tool(annotations=READ_ONLY)
+    def tm_get_item(
+        model: ModelPath,
+        item: Annotated[
+            str,
+            Field(description="An item id, or its number: T17, M19 or A44"),
+        ],
+    ) -> dict[str, Any]:
+        """Everything stored on one threat, mitigation or assumption: grammar fields,
+        tags, status and all metadata (comments, evidence, STRIDE, priority,
+        custom keys), plus the items linked to it. tm_get leaves most of this out."""
+        doc, file_hash = read_model_hashed(model)
+        try:
+            found = item_ops.get_item(doc, item, known_targets(model))
+        except ops.BuilderError as e:
+            raise _fail(e) from e
+        return {**found, "hash": file_hash}
 
     @mcp.tool(annotations=READ_ONLY)
     def tm_validate(model: ModelPath) -> dict[str, Any]:
         """Validate the model against the Threat Composer v1 schema and check links."""
-        doc = read_model(model)
+        doc, file_hash = read_model_hashed(model)
         errors = ops.validate_document(doc) + link_problems(doc)
-        return {"valid": not errors, "errors": errors}
+        return {"valid": not errors, "errors": errors, "hash": file_hash}
 
     @mcp.tool(annotations=READ_ONLY)
     def tm_coverage_report(model: ModelPath) -> dict[str, Any]:
         """Find gaps: elements and flows with no threats, missing STRIDE categories per
         element, boundary-crossing flows with no threats, High/Medium threats with no
         mitigation, unlinked items and dangling links. Run before finishing."""
-        return coverage_report(read_model(model), load_system(model))
+        doc, file_hash = read_model_hashed(model)
+        return {**coverage_report(doc, load_system(model)), "hash": file_hash}
 
     # -- system model -------------------------------------------------------
 

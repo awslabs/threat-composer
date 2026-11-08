@@ -287,7 +287,8 @@ steps:
            call `tm_get` with `sections: ["assumptions", "mitigations"]`, and
            use `tm_link` to link each assumption and mitigation to the kept
            threat and unlink it from the duplicate.
-         - Change: call `tm_update_threat`.
+         - Change: call `tm_patch_threat` with only the fields to change. Call
+           `tm_update_threat` only to replace the whole threat.
          - Add: call `tm_add_threats`.
       4. Show what you changed and ask again.
       5. Finish the step only when the user says that the threats are

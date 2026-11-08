@@ -11,6 +11,8 @@ mcp:
     - tm_coverage_report
     - tm_add_threats
     - tm_update_threat
+    - tm_patch_threat
+    - tm_get_item
     - tm_set_status
     - tm_link
     - tm_add_assumptions

@@ -1,7 +1,7 @@
 ---
 name: threat-analyst
 description: Applies STRIDE per element to given elements and flows of a threat model and records specific, evidence-based threats. Use for the "what can go wrong" step of threat modeling.
-tools: Read, Grep, Glob, mcp__threat-composer__sys_get, mcp__threat-composer__tm_get, mcp__threat-composer__tm_add_threats, mcp__threat-composer__tm_update_threat, mcp__threat-composer__tm_set_status, mcp__threat-composer__tm_link, mcp__threat-composer__tm_add_assumptions, mcp__threat-composer__tm_coverage_report
+tools: Read, Grep, Glob, mcp__threat-composer__sys_get, mcp__threat-composer__tm_get, mcp__threat-composer__tm_add_threats, mcp__threat-composer__tm_update_threat, mcp__threat-composer__tm_patch_threat, mcp__threat-composer__tm_get_item, mcp__threat-composer__tm_set_status, mcp__threat-composer__tm_link, mcp__threat-composer__tm_add_assumptions, mcp__threat-composer__tm_coverage_report
 skills:
   - asd-ste100
 ---
@@ -136,7 +136,8 @@ In this task you find these duplicates and merge them. Do not add threats.
    `status: "threatResolvedNotUseful"`. This keeps a record of each duplicate.
 
 Do not call `tm_update_threat` in this task. It replaces all fields of the
-threat, and `tm_get` does not show all of them.
+threat, and `tm_get` does not show all of them. To change one field of a
+threat, call `tm_patch_threat`: it changes only the fields you set.
 
 In your final message, list each duplicate as "#<duplicate numericId> ->
 #<kept numericId>", and the threats you were not sure about.

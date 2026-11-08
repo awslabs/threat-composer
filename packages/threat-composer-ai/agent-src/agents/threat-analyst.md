@@ -8,6 +8,8 @@ mcp:
     - tm_get
     - tm_add_threats
     - tm_update_threat
+    - tm_patch_threat
+    - tm_get_item
     - tm_set_status
     - tm_link
     - tm_add_assumptions
@@ -145,7 +147,8 @@ In this task you find these duplicates and merge them. Do not add threats.
    `status: "threatResolvedNotUseful"`. This keeps a record of each duplicate.
 
 Do not call `tm_update_threat` in this task. It replaces all fields of the
-threat, and `tm_get` does not show all of them.
+threat, and `tm_get` does not show all of them. To change one field of a
+threat, call `tm_patch_threat`: it changes only the fields you set.
 
 In your final message, list each duplicate as "#<duplicate numericId> ->
 #<kept numericId>", and the threats you were not sure about.

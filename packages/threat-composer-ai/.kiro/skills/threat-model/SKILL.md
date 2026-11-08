@@ -169,7 +169,8 @@ STRIDE, elements. Ask the user which to:
   `sections: ["assumptions", "mitigations"]`, and use `tm_link` to link each
   assumption and mitigation to the kept threat and unlink it from the
   duplicate. The dedup task of the threat-analyst uses the same steps.
-- change: call `tm_update_threat`.
+- change: call `tm_patch_threat` with only the fields to change. Call
+  `tm_update_threat` only to replace the whole threat.
 - add: describe them to a threat-analyst, or add them with `tm_add_threats`.
 
 In update mode, show these threats before you ask, and ask the user to keep,

@@ -10,6 +10,7 @@ because one MCP server process is shared by every subagent in a Claude Code
 session and two of them may write the same model at once.
 """
 
+import hashlib
 import json
 import os
 import tempfile
@@ -40,6 +41,15 @@ _FILE_MODE = 0o666 & ~_read_umask()
 
 class WorkspaceError(ValueError):
     """A path or file problem the caller can fix."""
+
+
+class StaleModelError(WorkspaceError):
+    """The file changed after the caller last read it."""
+
+
+def content_hash(data: bytes) -> str:
+    """Short hash of a file's bytes. Callers pass it back as expected_hash."""
+    return hashlib.sha256(data).hexdigest()[:16]
 
 
 class Workspace:
@@ -95,16 +105,21 @@ class Workspace:
         with file_lock:
             yield
 
-    def read_json(self, path: Path) -> dict[str, Any]:
+    def read_json_hashed(self, path: Path) -> tuple[dict[str, Any], str]:
+        """Read a JSON object file and the hash of the bytes that were read."""
         if not path.exists():
             raise WorkspaceError(f"file not found: {self.display(path)}")
+        raw = path.read_bytes()
         try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as e:
+            data = json.loads(raw.decode("utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError) as e:
             raise WorkspaceError(f"invalid JSON in {self.display(path)}: {e}") from e
         if not isinstance(data, dict):
             raise WorkspaceError(f"{self.display(path)} is not a JSON object")
-        return data
+        return data, content_hash(raw)
+
+    def read_json(self, path: Path) -> dict[str, Any]:
+        return self.read_json_hashed(path)[0]
 
     def write_text(self, path: Path, text: str) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -118,25 +133,51 @@ class Workspace:
             Path(tmp).unlink(missing_ok=True)
             raise
 
-    def write_json(self, path: Path, data: dict[str, Any]) -> None:
-        self.write_text(path, json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+    def write_json(self, path: Path, data: dict[str, Any]) -> str:
+        """Write a JSON file atomically. Returns the hash of what was written."""
+        text = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
+        self.write_text(path, text)
+        return content_hash(text.encode("utf-8"))
+
+    def update_json_hashed(
+        self,
+        path: Path,
+        change: Callable[[dict[str, Any]], Any],
+        default: dict[str, Any] | None = None,
+        expected_hash: str | None = None,
+    ) -> tuple[Any, str]:
+        """Read, change and write a JSON file under its lock.
+
+        `change` mutates the dict in place and returns a result for the caller.
+        If it raises, nothing is written. If `expected_hash` is given and the
+        file no longer has that hash, nothing is changed and StaleModelError is
+        raised. Returns the result and the hash of the file as written.
+        """
+        with self.lock(path):
+            if path.exists() or default is None:
+                data, current = self.read_json_hashed(path)
+                if expected_hash and expected_hash != current:
+                    raise StaleModelError(
+                        f"{self.display(path)} changed since you read it "
+                        f"(expected hash {expected_hash}, now {current}). "
+                        "Read it again, check your change still applies, and retry."
+                    )
+            else:
+                if expected_hash:
+                    raise StaleModelError(
+                        f"{self.display(path)} does not exist; "
+                        "expected_hash cannot match"
+                    )
+                data = json.loads(json.dumps(default))
+            result = change(data)
+            return result, self.write_json(path, data)
 
     def update_json(
         self,
         path: Path,
         change: Callable[[dict[str, Any]], Any],
         default: dict[str, Any] | None = None,
+        expected_hash: str | None = None,
     ) -> Any:
-        """Read, change and write a JSON file under its lock.
-
-        `change` mutates the dict in place and returns a result for the caller.
-        If it raises, nothing is written.
-        """
-        with self.lock(path):
-            if path.exists() or default is None:
-                data = self.read_json(path)
-            else:
-                data = json.loads(json.dumps(default))
-            result = change(data)
-            self.write_json(path, data)
-            return result
+        """update_json_hashed without the hash."""
+        return self.update_json_hashed(path, change, default, expected_hash)[0]

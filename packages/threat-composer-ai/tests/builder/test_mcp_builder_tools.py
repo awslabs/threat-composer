@@ -92,7 +92,8 @@ def test_full_flow(server, tmp_path):
         model=MODEL,
         mitigations=[{"content": "MFA", "threat_ids": [tid]}],
     )
-    assert call(server, "tm_validate", model=MODEL) == {"valid": True, "errors": []}
+    validated = call(server, "tm_validate", model=MODEL)
+    assert validated["valid"] is True and validated["errors"] == []
 
     view = call(server, "tm_get", model=MODEL, sections=["threats"])
     assert view["threats"][0]["mitigations"]
@@ -258,7 +259,7 @@ def test_tag_tools_change_only_tags(server, tmp_path):
         ids=[mid],
         tags=["task:3.2"],
     )
-    assert added == {"updated": 1}
+    assert added["updated"] == 1 and added["hash"]
     after = json.loads((tmp_path / MODEL).read_text())
     assert after["mitigations"][0]["tags"][-1] == "task:3.2"
     after["mitigations"][0]["tags"].pop()
