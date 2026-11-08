@@ -33,7 +33,9 @@ from .model_ops import (
     _items,
     _metadata_value,
     _tags,
+    remove,
 )
+from .search import references
 from .statement import compose_statement, lower_first, normalise_source
 
 CONTROL_TYPES = ("Preventative", "Detective", "Corrective")
@@ -433,7 +435,9 @@ def get_item(
             [x["assumptionId"] for x in a_links if x["linkedId"] == item["id"]],
         )
         tags = item.get("tags") or []
-        out["elements"] = [t for t in tags if t in (known_targets or set())]
+        known = known_targets or set()
+        out["elements"] = [t for t in tags if t in known]
+        out["other_tags"] = [t for t in tags if t not in known]
         out["priority"] = _metadata_value(item, "Priority")
         out["stride"] = _metadata_value(item, "STRIDE") or []
     elif kind == "mitigation":
@@ -457,3 +461,67 @@ def get_item(
     out["item"] = copy.deepcopy(item)
     out["linked"] = linked
     return out
+
+
+# ---------------------------------------------------------------------------
+# Editing a section in place
+# ---------------------------------------------------------------------------
+
+
+def edit_section(
+    doc: dict[str, Any],
+    section: str,
+    old: str,
+    new: str,
+    replace_all: bool = False,
+) -> dict[str, Any]:
+    """Replace exact text in a section description."""
+    if not old:
+        raise BuilderError("old must not be empty")
+    target = doc.get(section) or {}
+    text = target.get("description") or ""
+    count = text.count(old)
+    if count == 0:
+        raise BuilderError(f"old text not found in {section} description")
+    if count > 1 and not replace_all:
+        raise BuilderError(
+            f"old text matches {count} times in {section} description; make it "
+            "longer so it matches once, or set replace_all"
+        )
+    doc.setdefault(section, {})["description"] = text.replace(old, new)
+    return {"section": section, "replaced": count}
+
+
+# ---------------------------------------------------------------------------
+# Removing, with a check for mentions in prose
+# ---------------------------------------------------------------------------
+
+
+def remove_checked(
+    doc: dict[str, Any], kind: Kind, refs: list[str], force: bool = False
+) -> dict[str, Any]:
+    """Remove items named by id or number, and the links that refer to them.
+
+    Links are cleaned up, but prose is not: another item may say "assumption
+    43" in its text. Unless `force` is set, the removal is refused when any
+    text outside the removed items mentions one of them by id or number.
+    """
+    targets = [find_item(doc, ref, kind) for ref in dict.fromkeys(refs)]
+    mentions = references(doc, targets)
+    if mentions and not force:
+        shown = "; ".join(
+            f'{m["in"]} {m["field"]} mentions {m["mentions"]}: "{m["snippet"]}"'
+            for m in mentions[:10]
+        )
+        more = f" (and {len(mentions) - 10} more)" if len(mentions) > 10 else ""
+        raise BuilderError(
+            f"nothing removed: text still refers to what you remove. {shown}{more}. "
+            "Edit that text with tm_patch_*, or pass force=true to remove anyway."
+        )
+    result = remove(doc, kind, [item["id"] for _, item in targets])
+    result["removed_numbers"] = [
+        f"{kind[0].upper()}{item['numericId']}" for _, item in targets
+    ]
+    if mentions:
+        result["references_left"] = mentions
+    return result

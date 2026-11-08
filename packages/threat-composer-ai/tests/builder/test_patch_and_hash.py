@@ -440,3 +440,216 @@ def test_hash_changes_when_the_file_is_edited_outside_the_tools(
             status="threatIdentified",
             expected_hash=h0,
         )
+
+
+# -- tm_remove, tm_search, tm_edit_section, tags -----------------------------
+
+
+def test_remove_refuses_while_text_mentions_the_item(server, tmp_path, model):
+    call(
+        server,
+        "tm_patch_threat",
+        model=MODEL,
+        threat="T2",
+        changes={"comments": "Relies on assumption 1 and also M1."},
+    )
+    raw = (tmp_path / MODEL).read_text()
+    with pytest.raises(ToolError, match="T2 metadata:Comments mentions A1"):
+        call(server, "tm_remove", model=MODEL, kind="assumption", ids=["A1"])
+    assert (tmp_path / MODEL).read_text() == raw  # links and item stay
+
+    # A mention of a different number is not a match.
+    call(
+        server,
+        "tm_patch_threat",
+        model=MODEL,
+        threat="T2",
+        changes={"comments": "see A10, M12 and a1"},
+    )
+    result = call(server, "tm_remove", model=MODEL, kind="assumption", ids=["A1"])
+    assert result["removed_numbers"] == ["A1"] and "references_left" not in result
+    doc = read(tmp_path)
+    assert doc["assumptions"] == [] and doc["assumptionLinks"] == []
+
+
+def test_remove_force_removes_and_reports_what_is_left(server, tmp_path, model):
+    call(
+        server,
+        "tm_patch_threat",
+        model=MODEL,
+        threat="T2",
+        changes={"comments": "see mitigation #1"},
+    )
+    result = call(
+        server, "tm_remove", model=MODEL, kind="mitigation", ids=["M1"], force=True
+    )
+    assert result["references_left"][0]["in"] == "T2"
+    doc = read(tmp_path)
+    assert doc["mitigations"] == [] and doc["mitigationLinks"] == []
+
+
+def test_remove_ignores_mentions_inside_the_removed_items(server, tmp_path, model):
+    call(
+        server,
+        "tm_patch_assumption",
+        model=MODEL,
+        assumption="A1",
+        changes={"comments": "this is A1"},
+    )
+    call(server, "tm_remove", model=MODEL, kind="assumption", ids=["A1"])
+    assert read(tmp_path)["assumptions"] == []
+
+
+def test_search_covers_every_text_field(server, model):
+    call(
+        server,
+        "tm_patch_mitigation",
+        model=MODEL,
+        mitigation="M1",
+        changes={"comments": "needle in mitigation comment"},
+    )
+    call(
+        server,
+        "tm_set_section",
+        model=MODEL,
+        section="architecture",
+        description="the needle sits in the architecture",
+    )
+    call(
+        server,
+        "sys_upsert",
+        model=MODEL,
+        elements=[
+            {"id": "DS1", "kind": "data_store", "name": "needle store", "zone": "Z2"}
+        ],
+    )
+    call(
+        server,
+        "tm_patch_threat",
+        model=MODEL,
+        threat="T1",
+        changes={"evidence": ["src/needle.py:1"]},
+    )
+
+    found = call(server, "tm_search", model=MODEL, query="NEEDLE")
+    places = {(m["kind"], m["number"], m["field"]) for m in found["matches"]}
+    assert places == {
+        ("mitigation", "M1", "metadata:Comments"),
+        ("section", "architecture", "description"),
+        ("element", "DS1", "name"),
+        ("threat", "T1", "metadata:custom:evidence"),
+    }
+    assert found["count"] == 4 and found["truncated"] is False
+    assert (
+        call(server, "tm_search", model=MODEL, query="NEEDLE", case_sensitive=True)[
+            "count"
+        ]
+        == 0
+    )
+    only = call(server, "tm_search", model=MODEL, query="needle", kinds=["threat"])
+    assert [m["number"] for m in only["matches"]] == ["T1"]
+    assert (
+        call(server, "tm_search", model=MODEL, query="needle", limit=1)["truncated"]
+        is True
+    )
+
+    regex = call(
+        server, "tm_search", model=MODEL, query=r"^replay the \w+$", regex=True
+    )
+    assert {m["number"] for m in regex["matches"]} == {"T1"}
+    with pytest.raises(ToolError, match="regular expression"):
+        call(server, "tm_search", model=MODEL, query="(", regex=True)
+    with pytest.raises(ToolError, match="empty"):
+        call(server, "tm_search", model=MODEL, query="")
+
+
+def test_edit_section(server, tmp_path, model):
+    call(
+        server,
+        "tm_set_section",
+        model=MODEL,
+        section="architecture",
+        description="API talks to DB. API is public.",
+    )
+    raw = (tmp_path / MODEL).read_text()
+    with pytest.raises(ToolError, match="not found"):
+        call(
+            server,
+            "tm_edit_section",
+            model=MODEL,
+            section="architecture",
+            old="nope",
+            new="x",
+        )
+    with pytest.raises(ToolError, match="matches 2 times"):
+        call(
+            server,
+            "tm_edit_section",
+            model=MODEL,
+            section="architecture",
+            old="API",
+            new="Gateway",
+        )
+    assert (tmp_path / MODEL).read_text() == raw
+
+    call(
+        server,
+        "tm_edit_section",
+        model=MODEL,
+        section="architecture",
+        old="API is public",
+        new="API is private",
+    )
+    assert (
+        read(tmp_path)["architecture"]["description"]
+        == "API talks to DB. API is private."
+    )
+    result = call(
+        server,
+        "tm_edit_section",
+        model=MODEL,
+        section="architecture",
+        old="API",
+        new="Gateway",
+        replace_all=True,
+    )
+    assert result["replaced"] == 2
+    assert (
+        read(tmp_path)["architecture"]["description"]
+        == "Gateway talks to DB. Gateway is private."
+    )
+
+
+def test_viewer_flag_skips_the_html_file(server, tmp_path, model):
+    result = call(server, "sys_render", model=MODEL, viewer=False)
+    assert result["viewer"] is None and not (tmp_path / "app.dfd.html").exists()
+    call(server, "sys_render", model=MODEL)
+    assert (tmp_path / "app.dfd.html").exists()
+
+
+def test_element_ids_round_trip_between_reads_and_writes(server, tmp_path, model):
+    got = call(server, "tm_get", model=MODEL, sections=["threats"])["threats"][0]
+    assert got["elements"] == ["U1"] and "U1" not in got["tags"]
+    item = call(server, "tm_get_item", model=MODEL, item="T1")
+    assert item["elements"] == ["U1"] and "U1" not in item["other_tags"]
+
+    before = read(tmp_path)["threats"][0]["tags"]
+    call(
+        server,
+        "tm_patch_threat",
+        model=MODEL,
+        threat="T1",
+        changes={"elements": got["elements"]},
+    )
+    assert read(tmp_path)["threats"][0]["tags"] == before
+
+    with pytest.raises(ToolError, match="not as tags|element or flow ids"):
+        call(server, "tm_add_tags", model=MODEL, kind="threat", ids=["x"], tags=["P1"])
+    call(
+        server,
+        "tm_add_tags",
+        model=MODEL,
+        kind="threat",
+        ids=[model["t1"]],
+        tags=["task:2"],
+    )

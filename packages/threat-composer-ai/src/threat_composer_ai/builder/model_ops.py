@@ -553,9 +553,23 @@ def _change_tags(
 
 
 def add_tags(
-    doc: dict[str, Any], kind: Kind, ids: list[str], tags: list[str]
+    doc: dict[str, Any],
+    kind: Kind,
+    ids: list[str],
+    tags: list[str],
+    known_elements: set[str] | None = None,
 ) -> dict[str, Any]:
-    """Append tags an item does not have yet. Changes no other field."""
+    """Append tags an item does not have yet. Changes no other field.
+
+    A threat's element and flow ids are set with its `elements`, not as tags, so
+    the ids that the system model knows are refused here.
+    """
+    misplaced = [t for t in tags if t.strip() in (known_elements or set())]
+    if misplaced:
+        raise BuilderError(
+            f"tags: {misplaced} are element or flow ids. Set them with "
+            "tm_patch_threat elements, not as tags"
+        )
     return _change_tags(doc, kind, ids, tags, add=True)
 
 

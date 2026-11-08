@@ -22,6 +22,8 @@ from ..builder import item_ops
 from ..builder import model_ops as ops
 from ..builder.coverage import coverage_report, link_problems
 from ..builder.render import RenderError, dataflow_markdown, render_dfd_svg
+from ..builder.search import SearchKind
+from ..builder.search import search as search_model
 from ..builder.system_model import (
     STRIDE_BY_KIND,
     Element,
@@ -163,6 +165,28 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             model,
             lambda d: ops.set_section(d, section, description, name, image)
             or {"section": section, "updated": True},
+            expected_hash,
+        )
+
+    @mcp.tool(annotations=WRITE)
+    def tm_edit_section(
+        model: ModelPath,
+        section: ops.Section,
+        old: Annotated[
+            str, Field(description="Exact text to replace. Must match exactly once")
+        ],
+        new: Annotated[str, Field(description="Replacement text. '' deletes")],
+        replace_all: Annotated[
+            bool, Field(description="Replace every match, not only a single one")
+        ] = False,
+        expected_hash: ExpectedHash = None,
+    ) -> dict[str, Any]:
+        """Replace exact text in the description of applicationInfo, architecture or
+        dataflow, without sending the whole description. Fails and changes nothing if
+        old matches nothing, or matches more than once and replace_all is false."""
+        return change_model(
+            model,
+            lambda d: item_ops.edit_section(d, section, old, new, replace_all),
             expected_hash,
         )
 
@@ -338,10 +362,12 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
     ) -> dict[str, Any]:
         """Add tags to threats, mitigations or assumptions. Changes only tags; the
         content, status, metadata and links stay the same. A tag that the item
-        already has is not added again. Tags are 1 to 30 characters. If an id is
+        already has is not added again. Tags are 1 to 30 characters. Element and flow
+        ids are not tags: set them with tm_patch_threat elements. If an id is
         unknown or a tag is invalid, nothing changes."""
+        known = known_targets(model)
         return change_model(
-            model, lambda d: ops.add_tags(d, kind, ids, tags), expected_hash
+            model, lambda d: ops.add_tags(d, kind, ids, tags, known), expected_hash
         )
 
     @mcp.tool(annotations=WRITE)
@@ -363,11 +389,54 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
     def tm_remove(
         model: ModelPath,
         kind: ops.Kind,
-        ids: list[str],
+        ids: Annotated[
+            list[str], Field(description="Item ids, or numbers such as T17 or 17")
+        ],
+        force: Annotated[
+            bool,
+            Field(
+                description=(
+                    "Remove even if other text mentions the items by id or number"
+                )
+            ),
+        ] = False,
         expected_hash: ExpectedHash = None,
     ) -> dict[str, Any]:
-        """Delete threats, mitigations or assumptions and every link to them."""
-        return change_model(model, lambda d: ops.remove(d, kind, ids), expected_hash)
+        """Delete threats, mitigations or assumptions and every link to them. Links
+        are cleaned up, but text is not. If any threat, mitigation, assumption or
+        section text mentions a removed item by id or number (for example 'assumption
+        43'), nothing is removed and the mentions are listed. Fix that text, or pass
+        force=true. Item numbers are not reused or renumbered."""
+        return change_model(
+            model, lambda d: item_ops.remove_checked(d, kind, ids, force), expected_hash
+        )
+
+    @mcp.tool(annotations=READ_ONLY)
+    def tm_search(
+        model: ModelPath,
+        query: Annotated[str, Field(description="Text to find")],
+        regex: Annotated[bool, Field(description="Treat query as a regex")] = False,
+        case_sensitive: bool = False,
+        kinds: Annotated[
+            list[SearchKind] | None,
+            Field(description="Only these kinds. Default: all"),
+        ] = None,
+        limit: Annotated[int, Field(ge=1, le=500)] = 50,
+    ) -> dict[str, Any]:
+        """Find text in every field: threat grammar fields and statements, mitigation
+        and assumption content, tags, all metadata (comments, evidence and custom
+        keys), the section descriptions, and the system model's zones, elements and
+        flows. Returns the kind, id, number (T17, M19, A44, a section name or a
+        system id), the field and a snippet for each match. Use this instead of
+        reading the file."""
+        doc, file_hash = read_model_hashed(model)
+        try:
+            found = search_model(
+                doc, load_system(model), query, regex, case_sensitive, kinds, limit
+            )
+        except ops.BuilderError as e:
+            raise _fail(e) from e
+        return {**found, "hash": file_hash}
 
     @mcp.tool(annotations=READ_ONLY)
     def tm_get(
@@ -553,6 +622,15 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
     def sys_render(
         model: ModelPath,
         diagram: Annotated[bool, Field(description="Also render the DFD")] = True,
+        viewer: Annotated[
+            bool,
+            Field(
+                description=(
+                    "Also write the interactive viewer <name>.dfd.html. Set false "
+                    "if you do not track that file. Needs diagram=true"
+                )
+            ),
+        ] = True,
         view: Annotated[
             Literal["full", "boundary"],
             Field(
@@ -567,7 +645,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         """Write the dataflow section of the threat model from the system model, and
         render the DFD (needs Graphviz) into <name>.dfd.svg and dataflow.image.
         The dataflow table always lists all flows, for each view. Also write an
-        interactive DFD viewer to <name>.dfd.html for large systems."""
+        interactive DFD viewer to <name>.dfd.html, unless viewer=false."""
         system = load_system(model)
         if system is None:
             raise ToolError(f"no system model yet for {model}; add one with sys_upsert")
@@ -581,12 +659,13 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
             tc_path, _, dfd_path = ws.model_paths(model)
             info = (read_model(model).get("applicationInfo") or {}).get("name")
             # The viewer needs no Graphviz, so write it even if the SVG fails.
-            viewer_path = dfd_path.with_suffix(".html")
-            ws.write_text(
-                viewer_path,
-                render_dfd_html(system, title=info or "Data Flow Diagram"),
-            )
-            result["viewer"] = ws.display(viewer_path)
+            if viewer:
+                viewer_path = dfd_path.with_suffix(".html")
+                ws.write_text(
+                    viewer_path,
+                    render_dfd_html(system, title=info or "Data Flow Diagram"),
+                )
+                result["viewer"] = ws.display(viewer_path)
             try:
                 svg = render_dfd_svg(
                     system,
