@@ -8,6 +8,9 @@ from .dataflow_diagram import create_dataflow_diagram_agent
 from .mitigations import create_mitigations_agent
 from .threat_model import create_threat_model_agent
 from .threats import create_threats_agent
+from .custom_documentation_reader import create_custom_documentation_reader_agent
+from .custom_deep_discovery import create_custom_deep_discovery_agent
+from .custom_deep_dive import create_custom_deep_dive_agent
 
 __all__ = [
     "create_application_info_agent",
@@ -18,4 +21,7 @@ __all__ = [
     "create_threats_agent",
     "create_mitigations_agent",
     "create_threat_model_agent",
+    "create_custom_documentation_reader_agent",
+    "create_custom_deep_discovery_agent",
+    "create_custom_deep_dive_agent",
 ]

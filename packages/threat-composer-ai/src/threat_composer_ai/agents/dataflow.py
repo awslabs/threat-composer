@@ -37,9 +37,13 @@ AGENT_NAME = "dataflow"
 
 def get_input_files(config: AppConfig) -> list[str]:
     """Get the list of input files this agent depends on."""
+    # Check if architecture-enriched exists, otherwise fall back to standard architecture
+    enriched_path = f"{config.output_directory}/{config.components_output_sub_dir}/architecture-enriched.tc.json"
+    standard_path = f"{config.output_directory}/{config.components_output_sub_dir}/{config.architecture_description_filename}"
+    
     return [
         f"{config.output_directory}/{config.components_output_sub_dir}/{config.application_info_filename}",
-        f"{config.output_directory}/{config.components_output_sub_dir}/{config.architecture_description_filename}",
+        enriched_path,  # Prefer enriched architecture if available
     ]
 
 
@@ -109,16 +113,36 @@ def create_system_prompt(config: AppConfig):
 
    {dynamic_inputs}
 
+   IMPORTANT: If architecture-enriched.tc.json is available, use it as your primary architecture input. It contains:
+   - Enhanced architecture description with discovered components and file paths
+   - Identified workflows and their entry/exit points
+   - Sequence flows with components involved
+   - Security-relevant components
+   
+   Use this enriched information to identify data flows more accurately.
+
    Your focus is determining the elements and flows of this application.
 
    Your primary responsibilities:
-   1. Read required inputs
-   2. Perform code analysis using tools if necesseary.
-   3. If doing file enumeration you must use {get_tool_name(threat_composer_list_workdir_files_gitignore_filtered)}
-   4. You must use {get_tool_name(threat_composer_workdir_file_read)} tool to read file contents
-   5. Determine elements and dataflow of application to the degree of detail that it could be used by another agent to create a data flow diagram
-   6. Document all assumptions you make during analysis
-   7. Write structured outputs to markdown files using tools
+   1. Read required inputs (prioritize architecture-enriched.tc.json if available)
+   2. Use discovered sequence flows from architecture-enriched to inform data flow identification
+   3. For each identified flow, create detailed analysis:
+      a. **Sequence Diagram**: Generate PlantUML sequence diagram showing:
+         - All components, message flows, data transformations
+         - Authentication, authorization, error paths
+         - Security controls
+      b. **Flow-Specific Assets**: Document assets for this flow:
+         - Data assets, security credentials, configuration, infrastructure
+         - Sensitivity, protection requirements, access methods
+      c. **Trust Boundaries**: Identify and analyze trust boundaries crossed:
+         - Source/destination zones, data transferred, security controls
+         - Create trust boundary summary
+   4. Perform code analysis using tools if necessary
+   5. If doing file enumeration you must use {get_tool_name(threat_composer_list_workdir_files_gitignore_filtered)}
+   6. You must use {get_tool_name(threat_composer_workdir_file_read)} tool to read file contents
+   7. Determine elements and dataflow of application to the degree of detail that it could be used by another agent to create a data flow diagram
+   8. Document all assumptions you make during analysis
+   9. Write structured outputs to markdown files using tools
 
    {CODE_ANALYSIS_PROMPT_SNIPPET}
 
