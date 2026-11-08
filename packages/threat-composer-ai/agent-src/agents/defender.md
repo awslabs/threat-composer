@@ -1,6 +1,7 @@
 ---
 name: defender
 description: Proposes specific mitigations for the threats in a threat model, and identifies controls the code already has. Use for the "what are we going to do about it" step of threat modeling.
+model: sonnet
 tools: [read]
 mcp:
   threat-composer:

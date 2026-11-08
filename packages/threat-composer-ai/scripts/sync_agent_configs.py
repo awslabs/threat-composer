@@ -18,6 +18,14 @@ Agent frontmatter in the source:
   mcp                 {server: [tool, ...]}: the MCP tools the agent can call.
   skills              Skills the agent writes with.
   targets             Optional: [claude], [kiro] or both (the default).
+  model               Optional model tier: opus, sonnet or haiku. Claude Code
+                      gets the alias. Kiro gets the id from KIRO_MODEL_IDS.
+                      Without it the agent uses the model of the session.
+
+A workflow step may also set `model` (a tier, or `inherit`). It overrides the
+tier of the step's agent. The script writes it as the step's `modelId`, because
+in a Kiro workflow a model on the agent config is only the last fallback, after
+the step, the workflow and the model of the parent session.
 
 Markdown directives in agent and skill bodies, each on a line of its own:
   <!-- if claude --> ... <!-- endif -->   Text for one target only.
@@ -55,6 +63,22 @@ KIRO_TOOLS = {
     "shell": ["shell"],
     "web": ["web_fetch", "web_search"],
 }
+
+# Model tiers. Claude Code accepts these names as they are.
+TIERS = ("opus", "sonnet", "haiku")
+
+# The Kiro model id for each tier, as `/model` lists it in Kiro. Kiro's public
+# docs (kiro.dev/docs/models) name Claude Opus 5.5, Sonnet 5.5 and Haiku 5.5 but
+# show no 5.5 id strings; the only ids they show are claude-sonnet-4.6 and
+# claude-opus-4.8. Kiro does not fall back from an unknown id: the first call
+# of the agent or step fails. So a tier with no id here (None) is left out of
+# the Kiro files, and those agents and steps use the model of the session.
+KIRO_MODEL_IDS: dict[str, str | None] = {
+    "opus": None,
+    "sonnet": None,
+    "haiku": None,
+}
+KIRO_MODEL_ID = re.compile(r"^[a-z0-9][a-z0-9._-]*$")
 
 KIRO_AGENT_SCHEMA = "https://json.schemastore.org/kiro-agent.json"
 
@@ -161,6 +185,7 @@ def load_agents() -> list[tuple[dict, str, Path]]:
             "mcp",
             "skills",
             "targets",
+            "model",
         }
         if unknown:
             raise SourceError(f"{path}: unknown fields {sorted(unknown)}")
@@ -170,6 +195,11 @@ def load_agents() -> list[tuple[dict, str, Path]]:
         for target in meta.get("targets", TARGETS):
             if target not in TARGETS:
                 raise SourceError(f"{path}: unknown target {target!r}")
+        if "model" in meta and meta["model"] not in TIERS:
+            raise SourceError(
+                f"{path}: model must be one of {', '.join(TIERS)}, "
+                f"not {meta['model']!r}"
+            )
         agents.append((meta, body, path))
     return agents
 
@@ -188,9 +218,21 @@ def claude_agent(meta: dict, body: str, path: Path) -> str:
     ]
     if tools:
         lines.append(f"tools: {', '.join(tools)}")
+    if meta.get("model"):
+        lines.append(f"model: {meta['model']}")
     if meta.get("skills"):
         lines += ["skills:"] + [f"  - {s}" for s in meta["skills"]]
     return "\n".join(lines) + "\n---\n" + render_body(body, "claude", path)
+
+
+def kiro_model_id(tier: str | None) -> str | None:
+    """The Kiro id for a tier, or None if there is none (inherit the session)."""
+    if not tier or tier == "inherit":
+        return None
+    model_id = KIRO_MODEL_IDS.get(tier)
+    if model_id is not None and not KIRO_MODEL_ID.match(model_id):
+        raise SourceError(f"KIRO_MODEL_IDS[{tier!r}] is not a model id: {model_id!r}")
+    return model_id
 
 
 def kiro_agent(meta: dict, body: str, path: Path) -> tuple[str, str]:
@@ -217,6 +259,9 @@ def kiro_agent(meta: dict, body: str, path: Path) -> tuple[str, str]:
         "tools": builtin + mcp_tools,
         "allowedTools": approved + mcp_tools,
     }
+    model_id = kiro_model_id(meta.get("model"))
+    if model_id:
+        agent["model"] = model_id
     rules = []
     if "read" in groups:
         rules.append({"capability": "fs_read", "effect": "allow"})
@@ -342,6 +387,17 @@ def check_recipe(recipe: dict, path: Path, agents: set[str]) -> None:
                 errors.append(f"{where}: nests deeper than {MAX_DEPTH}")
             for ref in templates_in(node):
                 check_ref(ref, where, done, arts, i == 0, in_par)
+            if "modelId" in node:
+                errors.append(
+                    f"{where}: write the model as 'model: <tier>', not 'modelId'"
+                )
+            if "model" in node and (
+                kind != "step" or node["model"] not in (*TIERS, "inherit")
+            ):
+                errors.append(
+                    f"{where}: model is only for a step and must be one of "
+                    f"{', '.join(TIERS)}, inherit"
+                )
             if kind == "step":
                 steps += 1
                 if node.get("agent") not in agents | KIRO_BUNDLED_AGENTS:
@@ -390,11 +446,30 @@ def check_recipe(recipe: dict, path: Path, agents: set[str]) -> None:
         raise SourceError(f"{path}:\n  " + "\n  ".join(errors))
 
 
-def recipe_files(kiro_agents: set[str]) -> dict[str, str]:
+def apply_models(nodes: list, tiers: dict[str, str]) -> None:
+    """Turn each step's `model` tier, or else its agent's tier, into `modelId`.
+
+    A step with no tier, or a tier with no Kiro id, gets no modelId and so
+    inherits the model of the session.
+    """
+    for node in nodes:
+        if node.get("type") == "step":
+            tier = node.pop("model", None) or tiers.get(node.get("agent", ""))
+            model_id = kiro_model_id(tier)
+            if model_id:
+                node["modelId"] = model_id
+        for child in (node.get("steps") or []) + (node.get("branches") or []):
+            apply_models([child], tiers)
+
+
+def recipe_files(
+    kiro_agents: set[str], tiers: dict[str, str] | None = None
+) -> dict[str, str]:
     out = {}
     for path in sorted((SRC / "workflows").glob("*.workflow.yaml")):
         recipe = yaml.safe_load(path.read_text())
         check_recipe(recipe, path, kiro_agents)
+        apply_models(recipe.get("steps") or [], tiers or {})
         name = path.name.removesuffix(".workflow.yaml")
         if recipe["name"] != name:
             raise SourceError(f"{path}: name must match the file name")
@@ -409,6 +484,7 @@ def build() -> dict[Path, str | bytes]:
     agents = load_agents()
     files: dict[Path, str | bytes] = {}
     kiro_names = set()
+    tiers = {m["name"]: m["model"] for m, _, _ in agents if m.get("model")}
     for meta, body, path in agents:
         targets = meta.get("targets", TARGETS)
         if "claude" in targets:
@@ -423,7 +499,7 @@ def build() -> dict[Path, str | bytes]:
     for target in TARGETS:
         for rel, content in skill_files(target).items():
             files[ROOT / f".{target}" / rel] = content
-    for rel, content in recipe_files(kiro_names).items():
+    for rel, content in recipe_files(kiro_names, tiers).items():
         files[ROOT / ".kiro" / rel] = content
     mcp = ROOT / ".mcp.json"
     if mcp.is_file():
@@ -457,6 +533,13 @@ def main() -> int:
         print(f"error: {e}", file=sys.stderr)
         return 2
 
+    unset = [t for t in TIERS if not KIRO_MODEL_IDS.get(t)]
+    if unset:
+        print(
+            f"note: KIRO_MODEL_IDS has no id for {', '.join(unset)}. Kiro agents "
+            "and workflow steps with that tier use the model of the session.",
+            file=sys.stderr,
+        )
     stale = []
     for path, content in files.items():
         data = content.encode() if isinstance(content, str) else content

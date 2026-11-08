@@ -2,6 +2,7 @@
 name: threat-analyst
 description: Applies STRIDE per element to given elements and flows of a threat model and records specific, evidence-based threats. Use for the "what can go wrong" step of threat modeling.
 tools: Read, Grep, Glob, mcp__threat-composer__sys_get, mcp__threat-composer__tm_get, mcp__threat-composer__tm_add_threats, mcp__threat-composer__tm_update_threat, mcp__threat-composer__tm_patch_threat, mcp__threat-composer__tm_get_item, mcp__threat-composer__tm_set_status, mcp__threat-composer__tm_link, mcp__threat-composer__tm_add_assumptions, mcp__threat-composer__tm_coverage_report
+model: sonnet
 skills:
   - asd-ste100
 ---

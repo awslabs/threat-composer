@@ -129,3 +129,172 @@ def test_recipe_accepts_valid_handoffs():
         ],
     }
     sync.check_recipe(recipe, Path("r.yaml"), set())
+
+
+# --- Models ---------------------------------------------------------------------
+
+IDS = {"opus": "model-opus-x", "sonnet": "model-sonnet-x", "haiku": None}
+
+
+@pytest.fixture
+def kiro_ids(monkeypatch):
+    monkeypatch.setattr(sync, "KIRO_MODEL_IDS", dict(IDS))
+
+
+def test_every_source_agent_names_its_model():
+    """A missing tier would silently use the session's (most costly) model."""
+    agents = {meta["name"]: meta.get("model") for meta, _, _ in sync.load_agents()}
+    assert all(t in sync.TIERS for t in agents.values()), agents
+    assert agents["system-modeler"] == "opus"
+
+
+def test_claude_agent_gets_the_tier_as_an_alias():
+    meta = {"name": "a", "description": "d", "model": "sonnet"}
+    assert "\nmodel: sonnet\n" in sync.claude_agent(meta, "x\n", Path("a.md"))
+    meta.pop("model")
+    assert "model:" not in sync.claude_agent(meta, "x\n", Path("a.md"))
+
+
+def test_kiro_agent_gets_the_id_for_its_tier(kiro_ids):
+    meta = {"name": "a", "description": "d", "model": "opus"}
+    assert json.loads(sync.kiro_agent(meta, "x\n", Path("a.md"))[0])["model"] == (
+        "model-opus-x"
+    )
+
+
+def test_kiro_agent_has_no_model_without_an_id_or_a_tier(kiro_ids):
+    for model in ("haiku", None, "inherit"):  # haiku has no id in IDS
+        meta = {"name": "a", "description": "d", "model": model}
+        assert "model" not in json.loads(sync.kiro_agent(meta, "x\n", Path("a.md"))[0])
+
+
+def test_the_shipped_kiro_files_have_no_model_while_no_ids_are_set():
+    """Guards against writing a guessed id: Kiro fails at the first call with an
+    unknown id. When ids are added, delete this test."""
+    assert all(v is None for v in sync.KIRO_MODEL_IDS.values())
+    for path in (sync.ROOT / ".kiro/agents").glob("*.json"):
+        assert "model" not in json.loads(path.read_text()), path
+
+
+def test_unknown_tier_in_an_agent_is_an_error(tmp_path, monkeypatch):
+    (tmp_path / "agents").mkdir()
+    (tmp_path / "agents" / "a.md").write_text(
+        "---\nname: a\ndescription: d\nmodel: gpt\n---\nbody\n"
+    )
+    monkeypatch.setattr(sync, "SRC", tmp_path)
+    with pytest.raises(sync.SourceError, match="model must be one of"):
+        sync.load_agents()
+
+
+def test_a_bad_kiro_id_is_an_error(monkeypatch):
+    monkeypatch.setattr(sync, "KIRO_MODEL_IDS", {"opus": "Claude Opus 5.5"})
+    with pytest.raises(sync.SourceError, match="not a model id"):
+        sync.kiro_model_id("opus")
+
+
+def model_steps():
+    return [
+        {**step("scope"), "agent": "coord"},
+        {**step("system"), "agent": "modeler"},
+        {**step("override"), "agent": "analyst", "model": "opus"},
+        {**step("keep"), "agent": "modeler", "model": "inherit"},
+        {
+            "type": "parallel",
+            "id": "par",
+            "joinPolicy": "all",
+            "branches": [{**step("branch"), "agent": "analyst"}],
+        },
+        {
+            "type": "sequence",
+            "id": "seq",
+            "steps": [{**step("nested"), "agent": "modeler"}],
+        },
+    ]
+
+
+TIER_BY_AGENT = {"coord": "haiku", "modeler": "opus", "analyst": "sonnet"}
+
+
+def model_ids(steps):
+    found = {}
+
+    def walk(nodes):
+        for n in nodes:
+            if n.get("type") == "step":
+                found[n["id"]] = n.get("modelId")
+                assert "model" not in n  # the neutral key never reaches Kiro
+            walk((n.get("steps") or []) + (n.get("branches") or []))
+
+    walk(steps)
+    return found
+
+
+def test_steps_use_their_step_tier_then_their_agents_tier(kiro_ids):
+    steps = model_steps()
+    sync.apply_models(steps, TIER_BY_AGENT)
+    assert model_ids(steps) == {
+        "scope": None,  # haiku has no id
+        "system": "model-opus-x",  # the agent's tier
+        "override": "model-opus-x",  # the step's tier beats the agent's sonnet
+        "keep": None,  # inherit beats the agent's tier
+        "branch": "model-sonnet-x",  # inside parallel
+        "nested": "model-opus-x",  # inside sequence
+    }
+
+
+def test_steps_get_no_modelid_when_no_ids_are_set(monkeypatch):
+    monkeypatch.setattr(sync, "KIRO_MODEL_IDS", dict.fromkeys(sync.TIERS))
+    steps = model_steps()
+    sync.apply_models(steps, TIER_BY_AGENT)
+    assert set(model_ids(steps).values()) == {None}
+
+
+def test_the_real_workflow_and_agents_get_their_models(kiro_ids):
+    """Build the real source with fake ids: the system step runs the model of
+    its agent's tier, and so do the others."""
+    files = {p.relative_to(sync.ROOT): c for p, c in sync.build().items()}
+    recipe = json.loads(files[Path(".kiro/workflows/threat-model.workflow.json")])
+    tiers = {m["name"]: m["model"] for m, _, _ in sync.load_agents()}
+
+    seen = {}
+
+    def walk(nodes):
+        for n in nodes:
+            if n.get("type") == "step":
+                seen[n["id"]] = (n["agent"], n.get("modelId"))
+            walk((n.get("steps") or []) + (n.get("branches") or []))
+
+    walk(recipe["steps"])
+    assert seen
+    for step_id, (agent, model_id) in seen.items():
+        assert model_id == IDS[tiers[agent]], step_id
+    assert {a for a, _ in seen.values()} >= {"system-modeler", "threat-analyst"}
+
+    modeler = json.loads(files[Path(".kiro/agents/system-modeler.json")])
+    assert modeler["model"] == "model-opus-x"
+    assert "model: opus\n" in files[Path(".claude/agents/system-modeler.md")]
+
+
+@pytest.mark.parametrize(
+    "node, error",
+    [
+        ({**step("a"), "model": "gpt"}, "must be one of"),
+        ({**step("a"), "modelId": "x"}, "not 'modelId'"),
+        (
+            {"type": "sequence", "id": "s", "steps": [], "model": "opus"},
+            "only for a step",
+        ),
+    ],
+)
+def test_recipe_model_errors(node, error):
+    with pytest.raises(sync.SourceError, match=error):
+        sync.check_recipe({"name": "r", "steps": [node]}, Path("r.yaml"), {"a"})
+
+
+def test_recipe_accepts_a_step_model():
+    for model in ("opus", "sonnet", "haiku", "inherit"):
+        sync.check_recipe(
+            {"name": "r", "steps": [{**step("a"), "model": model}]},
+            Path("r.yaml"),
+            {"a"},
+        )

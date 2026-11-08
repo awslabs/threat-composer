@@ -2,6 +2,7 @@
 name: defender
 description: Proposes specific mitigations for the threats in a threat model, and identifies controls the code already has. Use for the "what are we going to do about it" step of threat modeling.
 tools: Read, Grep, Glob, mcp__threat-composer__sys_get, mcp__threat-composer__tm_get, mcp__threat-composer__tm_add_mitigations, mcp__threat-composer__tm_link, mcp__threat-composer__tm_add_assumptions, mcp__threat-composer__tm_coverage_report
+model: sonnet
 skills:
   - asd-ste100
 ---

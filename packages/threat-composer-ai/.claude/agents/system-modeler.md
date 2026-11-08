@@ -2,6 +2,7 @@
 name: system-modeler
 description: Reads a codebase and records its trust zones, elements and data flows in a threat model, with the application and architecture descriptions. Use for the "what are we working on" step of threat modeling.
 tools: Read, Grep, Glob, mcp__threat-composer__sys_upsert, mcp__threat-composer__sys_remove, mcp__threat-composer__sys_get, mcp__threat-composer__sys_render, mcp__threat-composer__tm_set_section, mcp__threat-composer__tm_add_assumptions, mcp__threat-composer__tm_get
+model: opus
 skills:
   - asd-ste100
 ---

@@ -1,6 +1,7 @@
 ---
 name: threat-model-coordinator
 description: Runs the coordination steps of the threat-model workflow. It starts the model, holds the user checkpoints, plans the threat analysis and reports the result. Use only as a step agent in the threat-model workflow.
+model: sonnet
 targets: [kiro]
 tools: [read, shell]
 mcp:

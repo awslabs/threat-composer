@@ -1,6 +1,7 @@
 ---
 name: system-modeler
 description: Reads a codebase and records its trust zones, elements and data flows in a threat model, with the application and architecture descriptions. Use for the "what are we working on" step of threat modeling.
+model: opus
 tools: [read]
 mcp:
   threat-composer:

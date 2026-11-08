@@ -1,6 +1,7 @@
 ---
 name: threat-analyst
 description: Applies STRIDE per element to given elements and flows of a threat model and records specific, evidence-based threats. Use for the "what can go wrong" step of threat modeling.
+model: sonnet
 tools: [read]
 mcp:
   threat-composer:
