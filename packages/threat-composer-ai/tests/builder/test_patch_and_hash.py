@@ -837,3 +837,397 @@ def test_dry_run_sys_upsert_on_new_model_creates_no_file(server, tmp_path):
         elements=[{"id": "P1", "kind": "process", "name": "API"}],
     )
     assert not (tmp_path / "app.system.json").exists()
+
+
+# -- gaps: patch edge cases ---------------------------------------------------
+
+
+def test_patched_statement_equals_the_statement_add_would_make(server, tmp_path, model):
+    """T1 and T2 differ only in threat_action, so patching T1's action to T2's
+    must give T2's statement."""
+    call(
+        server,
+        "tm_patch_threat",
+        model=MODEL,
+        threat="T1",
+        changes={"threat_action": "Forge a token"},  # case is normalised like add
+    )
+    threats = read(tmp_path)["threats"]
+    assert threats[0]["threatAction"] == "forge a token"
+    assert threats[0]["statement"] == threats[1]["statement"]
+
+
+def test_patch_threat_clearing_optional_grammar_fields(server, tmp_path, model):
+    call(
+        server,
+        "tm_patch_threat",
+        model=MODEL,
+        threat="T1",
+        changes={"prerequisites": "", "threat_impact": "", "impacted_goal": []},
+    )
+    t = read(tmp_path)["threats"][0]
+    assert "stolen token" not in t["statement"]
+    assert "leads to" not in t["statement"]
+    assert t["impactedGoal"] == [] and t["impactedAssets"] == ["account data"]
+    assert "negatively impacting account data" in t["statement"]
+
+
+def test_patch_threat_elements_needs_a_system_model(server, tmp_path):
+    call(server, "tm_init", model=MODEL, name="Demo")
+    call(
+        server,
+        "tm_add_threats",
+        model=MODEL,
+        threats=[
+            {
+                "threat_source": "actor",
+                "threat_action": "act",
+                "stride": ["S"],
+                "priority": "Low",
+            }
+        ],
+    )
+    with pytest.raises(ToolError, match="no system model"):
+        call(
+            server,
+            "tm_patch_threat",
+            model=MODEL,
+            threat="T1",
+            changes={"elements": ["P1"]},
+        )
+    # Other fields still patch without one.
+    call(
+        server,
+        "tm_patch_threat",
+        model=MODEL,
+        threat="T1",
+        changes={"priority": "High"},
+    )
+
+
+def test_patch_mitigation_content_and_clearing_tags(server, tmp_path, model):
+    call(
+        server,
+        "tm_patch_mitigation",
+        model=MODEL,
+        mitigation="M1",
+        changes={
+            "content": "  Bind tokens to a client certificate  ",
+            "existing": True,
+        },
+    )
+    m = read(tmp_path)["mitigations"][0]
+    assert m["content"] == "Bind tokens to a client certificate"
+    assert "Existing control" in m["tags"] and "Preventative" in m["tags"]
+
+    call(
+        server,
+        "tm_patch_mitigation",
+        model=MODEL,
+        mitigation="M1",
+        changes={"existing": False, "control_type": None},
+    )
+    m = read(tmp_path)["mitigations"][0]
+    assert "Existing control" not in m["tags"]
+    assert not {"Preventative", "Detective", "Corrective"} & set(m["tags"])
+    assert "AI Generated" in m["tags"]  # unrelated tags stay
+
+
+def test_patch_assumption_rejects_unknown_link_and_changes_nothing(
+    server, tmp_path, model
+):
+    raw = (tmp_path / MODEL).read_text()
+    with pytest.raises(ToolError, match="not a threat or mitigation id"):
+        call(
+            server,
+            "tm_patch_assumption",
+            model=MODEL,
+            assumption="A1",
+            changes={"link_to": ["nope"], "content": "changed"},
+        )
+    assert (tmp_path / MODEL).read_text() == raw
+
+
+def test_patch_assumption_can_link_to_a_mitigation(server, tmp_path, model):
+    mitigation_id = read(tmp_path)["mitigations"][0]["id"]
+    call(
+        server,
+        "tm_patch_assumption",
+        model=MODEL,
+        assumption="A1",
+        changes={"link_to": [mitigation_id]},
+    )
+    assert read(tmp_path)["assumptionLinks"] == [
+        {
+            "type": "Mitigation",
+            "assumptionId": read(tmp_path)["assumptions"][0]["id"],
+            "linkedId": mitigation_id,
+        }
+    ]
+
+
+def test_edit_section_rejects_empty_old_text(server, model):
+    with pytest.raises(ToolError, match="must not be empty"):
+        call(
+            server,
+            "tm_edit_section",
+            model=MODEL,
+            section="architecture",
+            old="",
+            new="x",
+        )
+
+
+# -- gaps: removal references --------------------------------------------------
+
+
+def test_reference_matching_boundaries(server, tmp_path, model):
+    def removal(comment, kind="assumption", ref="A1"):
+        call(
+            server,
+            "tm_patch_threat",
+            model=MODEL,
+            threat="T2",
+            changes={"comments": comment},
+        )
+        return call(
+            server, "tm_remove", model=MODEL, kind=kind, ids=[ref], dry_run=True
+        )
+
+    # Not references to A1: other numbers, lower-case codes, longer words.
+    for text in [
+        "see A10",
+        "A11 and A21",
+        "a1",
+        "XA1",
+        "A1B",
+        "assumption 10",
+        "assumptions 12",
+        "the assumption is 1",
+    ]:
+        removal(text)  # would raise if it matched
+
+    # References to A1.
+    for text in [
+        "see A1.",
+        "(A1)",
+        "A01",
+        "Assumption 1",
+        "assumptions #1",
+        "assumption   1",
+    ]:
+        with pytest.raises(ToolError, match="mentions A1"):
+            removal(text)
+
+    # By id, and a different kind with the same number is not a match.
+    with pytest.raises(ToolError, match="mentions A1"):
+        removal(f"see {read(tmp_path)['assumptions'][0]['id']}")
+    removal("see M1 and T1", kind="assumption", ref="A1")
+
+
+def test_removal_finds_mentions_in_section_text_tags_and_other_kinds(
+    server, tmp_path, model
+):
+    call(
+        server,
+        "tm_set_section",
+        model=MODEL,
+        section="architecture",
+        description="Depends on threat 2.",
+    )
+    with pytest.raises(ToolError, match="architecture description mentions T2"):
+        call(server, "tm_remove", model=MODEL, kind="threat", ids=["T2"])
+    call(
+        server,
+        "tm_edit_section",
+        model=MODEL,
+        section="architecture",
+        old="threat 2",
+        new="the risk",
+    )
+
+    call(
+        server,
+        "tm_patch_assumption",
+        model=MODEL,
+        assumption="A1",
+        changes={"content": "Holds because of T2"},
+    )
+    with pytest.raises(ToolError, match="A1 content mentions T2"):
+        call(server, "tm_remove", model=MODEL, kind="threat", ids=["T2"])
+
+    call(
+        server,
+        "tm_patch_assumption",
+        model=MODEL,
+        assumption="A1",
+        changes={"content": "TLS is on"},
+    )
+    call(
+        server,
+        "tm_add_tags",
+        model=MODEL,
+        kind="mitigation",
+        ids=[read(tmp_path)["mitigations"][0]["id"]],
+        tags=["T2"],
+    )
+    with pytest.raises(ToolError, match="M1 tags mentions T2"):
+        call(server, "tm_remove", model=MODEL, kind="threat", ids=["T2"])
+
+
+def test_removing_several_items_ignores_mentions_between_them(server, tmp_path, model):
+    call(
+        server,
+        "tm_patch_threat",
+        model=MODEL,
+        threat="T1",
+        changes={"comments": "same as T2"},
+    )
+    call(
+        server,
+        "tm_patch_threat",
+        model=MODEL,
+        threat="T2",
+        changes={"comments": "same as T1"},
+    )
+    result = call(server, "tm_remove", model=MODEL, kind="threat", ids=["T1", "T2"])
+    assert result["removed_numbers"] == ["T1", "T2"]
+    assert read(tmp_path)["threats"] == []
+
+
+# -- gaps: search and diff -----------------------------------------------------
+
+
+def test_search_finds_flow_assets_and_protocol(server, model):
+    call(
+        server,
+        "sys_upsert",
+        model=MODEL,
+        flows=[
+            {
+                "id": "DF9",
+                "source": "U1",
+                "target": "P1",
+                "description": "x",
+                "protocol": "gRPC",
+                "assets": ["session cookie"],
+            }
+        ],
+    )
+    found = call(server, "tm_search", model=MODEL, query="cookie")
+    assert [(m["kind"], m["number"], m["field"]) for m in found["matches"]] == [
+        ("flow", "DF9", "assets")
+    ]
+    found = call(server, "tm_search", model=MODEL, query="grpc", kinds=["flow"])
+    assert [m["field"] for m in found["matches"]] == ["protocol"]
+
+
+def test_search_snippet_is_bounded_around_the_match(server, model):
+    call(
+        server,
+        "tm_set_section",
+        model=MODEL,
+        section="architecture",
+        description="a" * 500 + "NEEDLE" + "b" * 500,
+    )
+    snippet = call(server, "tm_search", model=MODEL, query="needle")["matches"][0][
+        "snippet"
+    ]
+    assert "NEEDLE" in snippet and len(snippet) < 150
+    assert snippet.startswith("…") and snippet.endswith("…")
+
+
+def test_dry_run_diff_hides_image_data(server, tmp_path, model):
+    svg = tmp_path / "d.svg"
+    svg.write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10"/></svg>'
+    )
+    result = call(
+        server,
+        "tm_set_section",
+        model=MODEL,
+        section="architecture",
+        image_path="d.svg",
+        dry_run=True,
+    )
+    fields = changes(result)[("architecture", "change")]["fields"]
+    assert fields == {"image": {"changed": True}}
+    assert "image" not in read(tmp_path)["architecture"]
+
+
+def test_dry_run_with_no_effective_change_lists_none(server, model):
+    result = call(
+        server,
+        "tm_patch_threat",
+        model=MODEL,
+        threat="T1",
+        changes={"priority": "High"},
+        dry_run=True,
+    )
+    assert result["changes"] == []
+
+
+# -- gaps: hashes and concurrency ---------------------------------------------
+
+
+def test_expected_hash_on_a_missing_model_is_refused(server):
+    with pytest.raises(ToolError, match="not found"):
+        call(
+            server,
+            "tm_set_status",
+            model="missing.tc.json",
+            kind="threat",
+            ids=["x"],
+            status="threatResolved",
+            expected_hash="abc",
+        )
+
+
+def test_only_one_of_two_writers_with_the_same_hash_succeeds(tmp_path, model):
+    """Two clients read the model, then both write against that read. The second
+    write must be refused instead of silently replacing the first."""
+    import threading
+
+    workspace = Workspace(tmp_path)
+    mcp = FastMCP("test")
+    register_builder_tools(mcp, workspace)
+    h0 = call(mcp, "tm_get", model=MODEL)["hash"]
+
+    outcomes: list[str] = []
+    barrier = threading.Barrier(4)
+
+    def writer(priority):
+        barrier.wait()
+        try:
+            call(
+                mcp,
+                "tm_patch_threat",
+                model=MODEL,
+                threat="T1",
+                changes={"priority": priority},
+                expected_hash=h0,
+            )
+            outcomes.append("ok")
+        except ToolError as e:
+            outcomes.append(
+                "stale" if "changed since you read it" in str(e) else str(e)
+            )
+
+    threads = [
+        threading.Thread(target=writer, args=(p,))
+        for p in ("Low", "Medium", "High", "Low")
+    ]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert sorted(outcomes) == ["ok", "stale", "stale", "stale"]
+    assert meta(read(tmp_path)["threats"][0], "Priority") in ("Low", "Medium", "High")
+
+
+def test_hash_ignores_nothing_in_the_file(server, tmp_path, model):
+    """Any byte change, even whitespace, changes the hash."""
+    h0 = call(server, "tm_get", model=MODEL)["hash"]
+    path = tmp_path / MODEL
+    path.write_text(path.read_text() + "\n")
+    assert call(server, "tm_get", model=MODEL)["hash"] != h0
