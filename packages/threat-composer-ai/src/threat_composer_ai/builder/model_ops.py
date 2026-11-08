@@ -10,6 +10,7 @@ and `numericId` is one more than the highest in that collection.
 """
 
 import os
+import re
 import uuid
 from typing import Any, Literal
 
@@ -65,7 +66,8 @@ class AssumptionInput(_Input):
     comments: str = Field("", max_length=1000, description="Rationale. Markdown")
     tags: list[str] = Field(default_factory=list, description="Each ≤30 chars")
     link_to: list[str] = Field(
-        default_factory=list, description="Ids of threats or mitigations it supports"
+        default_factory=list,
+        description="Ids or numbers (T3, M2) of threats or mitigations it supports",
     )
 
 
@@ -101,7 +103,9 @@ class ThreatInput(_Input):
 
 class MitigationInput(_Input):
     content: str = Field(..., max_length=1000, description="The control, specific")
-    threat_ids: list[str] = Field(..., min_length=1, description="Threats it mitigates")
+    threat_ids: list[str] = Field(
+        ..., min_length=1, description="Ids or numbers (T3) of threats it mitigates"
+    )
     control_type: Literal["Preventative", "Detective", "Corrective"] | None = None
     existing: bool = Field(
         False, description="True if the code already implements this control"
@@ -336,7 +340,8 @@ def add_mitigations(
     for index, m in enumerate(mitigations):
         item = _build_mitigation(m, agent)
         problems = _check(Mitigation, item)
-        unknown = [t for t in m.threat_ids if t not in threat_ids]
+        linked = [ref_id(doc, t, "threat") for t in m.threat_ids]
+        unknown = [t for t in linked if t not in threat_ids]
         if unknown:
             problems.append(f"threat_ids: unknown {unknown}")
         if problems:
@@ -345,7 +350,7 @@ def add_mitigations(
         item["numericId"] = _next_numeric(doc, "mitigation")
         _items(doc, "mitigation").append(item)
         links = doc.setdefault("mitigationLinks", [])
-        for threat_id in dict.fromkeys(m.threat_ids):
+        for threat_id in dict.fromkeys(linked):
             links.append({"mitigationId": item["id"], "linkedId": threat_id})
         added.append({"index": index, "id": item["id"], "numericId": item["numericId"]})
     return _result(added, rejected)
@@ -364,8 +369,9 @@ def add_assumptions(
             "metadata": _metadata(a.comments, agent),
         }
         problems = _check(Assumption, item)
+        targets = [ref_id(doc, t) for t in a.link_to]
         try:
-            link_types = [_assumption_link_type(doc, target) for target in a.link_to]
+            link_types = [_assumption_link_type(doc, target) for target in targets]
         except BuilderError as e:
             problems.append(f"link_to: {e}")
         if problems:
@@ -373,7 +379,7 @@ def add_assumptions(
             continue
         item["numericId"] = _next_numeric(doc, "assumption")
         _items(doc, "assumption").append(item)
-        for target, link_type in zip(a.link_to, link_types, strict=True):
+        for target, link_type in zip(targets, link_types, strict=True):
             _add_assumption_link(doc, item["id"], target, link_type)
         added.append({"index": index, "id": item["id"], "numericId": item["numericId"]})
     return _result(added, rejected)
@@ -389,6 +395,11 @@ def _assumption_link_type(doc: dict[str, Any], target: str) -> str:
         return "Threat"
     if target in _ids(doc, "mitigation"):
         return "Mitigation"
+    if target.strip().isdigit():
+        n = target.strip()
+        raise BuilderError(
+            f"'{target}' could be a threat or a mitigation; write T{n} or M{n}"
+        )
     raise BuilderError(f"'{target}' is not a threat or mitigation id")
 
 
@@ -410,8 +421,10 @@ def link(
 ) -> dict[str, Any]:
     """Link (or unlink) a mitigation to threats, or an assumption to threats or
     mitigations."""
-    if from_id not in _ids(doc, kind):
-        raise BuilderError(f"no {kind} with id '{from_id}'")
+    from_id = _find(doc, kind, from_id)["id"]
+    to_ids = [
+        ref_id(doc, t, "threat" if kind == "mitigation" else None) for t in to_ids
+    ]
     changed = 0
     if kind == "mitigation":
         threat_ids = _ids(doc, "threat")
@@ -452,11 +465,48 @@ def link(
 # ---------------------------------------------------------------------------
 
 
+_PREFIX = {"T": "threat", "M": "mitigation", "A": "assumption"}
+_NUMBER = re.compile(r"^([TMA])?\s*(\d+)$", re.IGNORECASE)
+
+
+def find_item(
+    doc: dict[str, Any], ref: str, kind: Kind | None = None
+) -> tuple[Kind, dict[str, Any]]:
+    """Find an item by id or by number (T17, M19, A44; 17 if `kind` is given)."""
+    ref = ref.strip()
+    match = _NUMBER.match(ref)
+    if match:
+        prefix, number = match.group(1), int(match.group(2))
+        found_kind = _PREFIX[prefix.upper()] if prefix else kind
+        if found_kind is None:
+            raise BuilderError(
+                f"'{ref}': say which kind, for example T{number}, M{number} or "
+                f"A{number}"
+            )
+        if kind and found_kind != kind:
+            raise BuilderError(f"'{ref}' is a {found_kind} number, not a {kind}")
+        for item in _items(doc, found_kind):
+            if item.get("numericId") == number:
+                return found_kind, item
+        raise BuilderError(f"no {found_kind} numbered {number}")
+    for candidate in (kind,) if kind else ("threat", "mitigation", "assumption"):
+        for item in _items(doc, candidate):
+            if item["id"] == ref:
+                return candidate, item
+    raise BuilderError(f"no {kind or 'item'} with id '{ref}'")
+
+
+def ref_id(doc: dict[str, Any], ref: str, kind: Kind | None = None) -> str:
+    """The id for an id or a number. A ref that matches nothing is returned as it
+    is, so the caller's own 'unknown id' check reports it."""
+    try:
+        return find_item(doc, ref, kind)[1]["id"]
+    except BuilderError:
+        return ref
+
+
 def _find(doc: dict[str, Any], kind: str, item_id: str) -> dict[str, Any]:
-    for item in _items(doc, kind):
-        if item["id"] == item_id:
-            return item
-    raise BuilderError(f"no {kind} with id '{item_id}'")
+    return find_item(doc, item_id, kind)[1]  # type: ignore[arg-type]
 
 
 def update_threat(
@@ -474,7 +524,7 @@ def update_threat(
     item["id"], item["numericId"] = existing["id"], existing["numericId"]
     existing.clear()
     existing.update(item)
-    return {"id": threat_id, "statement": item["statement"]}
+    return {"id": existing["id"], "statement": item["statement"]}
 
 
 def update_mitigation(
@@ -487,7 +537,8 @@ def update_mitigation(
     existing = _find(doc, "mitigation", mitigation_id)
     item = _build_mitigation(mitigation, agent)
     problems = _check(Mitigation, item)
-    unknown = [t for t in mitigation.threat_ids if t not in _ids(doc, "threat")]
+    linked = [ref_id(doc, t, "threat") for t in mitigation.threat_ids]
+    unknown = [t for t in linked if t not in _ids(doc, "threat")]
     if unknown:
         problems.append(f"threat_ids: unknown {unknown}")
     if problems:
@@ -496,10 +547,10 @@ def update_mitigation(
     existing.clear()
     existing.update(item)
     links = doc.setdefault("mitigationLinks", [])
-    links[:] = [x for x in links if x["mitigationId"] != mitigation_id]
-    for threat_id in dict.fromkeys(mitigation.threat_ids):
-        links.append({"mitigationId": mitigation_id, "linkedId": threat_id})
-    return {"id": mitigation_id}
+    links[:] = [x for x in links if x["mitigationId"] != existing["id"]]
+    for threat_id in dict.fromkeys(linked):
+        links.append({"mitigationId": existing["id"], "linkedId": threat_id})
+    return {"id": existing["id"]}
 
 
 def set_status(
@@ -582,9 +633,7 @@ def remove_tags(
 
 def remove(doc: dict[str, Any], kind: Kind, ids: list[str]) -> dict[str, Any]:
     """Remove items and every link that refers to them."""
-    for i in ids:
-        _find(doc, kind, i)
-    gone = set(ids)
+    gone = {_find(doc, kind, i)["id"] for i in ids}
     collection = _items(doc, kind)
     collection[:] = [x for x in collection if x["id"] not in gone]
     mitigation_links = doc.setdefault("mitigationLinks", [])

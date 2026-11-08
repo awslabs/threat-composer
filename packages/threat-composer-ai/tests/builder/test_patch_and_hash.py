@@ -1231,3 +1231,233 @@ def test_hash_ignores_nothing_in_the_file(server, tmp_path, model):
     path = tmp_path / MODEL
     path.write_text(path.read_text() + "\n")
     assert call(server, "tm_get", model=MODEL)["hash"] != h0
+
+
+# -- numbers work in every tool that takes an item --------------------------------
+
+
+def test_numbers_work_in_the_older_tools(server, tmp_path, model):
+    """The result must equal the result of using ids."""
+    call(
+        server,
+        "tm_set_status",
+        model=MODEL,
+        kind="threat",
+        ids=["T2"],
+        status="threatResolved",
+    )
+    assert read(tmp_path)["threats"][1]["status"] == "threatResolved"
+
+    call(
+        server,
+        "tm_add_tags",
+        model=MODEL,
+        kind="mitigation",
+        ids=["M1"],
+        tags=["task:1"],
+    )
+    assert "task:1" in read(tmp_path)["mitigations"][0]["tags"]
+    call(
+        server,
+        "tm_remove_tags",
+        model=MODEL,
+        kind="mitigation",
+        ids=["m1"],
+        tags=["task:1"],
+    )
+    assert "task:1" not in read(tmp_path)["mitigations"][0]["tags"]
+
+    # A bare number is fine when the kind is known.
+    call(
+        server,
+        "tm_set_status",
+        model=MODEL,
+        kind="mitigation",
+        ids=["1"],
+        status="mitigationInProgress",
+    )
+    assert read(tmp_path)["mitigations"][0]["status"] == "mitigationInProgress"
+
+
+def test_numbers_work_for_links_in_tm_link(server, tmp_path, model):
+    doc = read(tmp_path)
+    m_id, a_id = doc["mitigations"][0]["id"], doc["assumptions"][0]["id"]
+    t1, t2 = model["t1"], model["t2"]
+
+    call(
+        server,
+        "tm_link",
+        model=MODEL,
+        kind="mitigation",
+        from_id="M1",
+        to_ids=["T2", "2"],
+    )
+    links = [x for x in read(tmp_path)["mitigationLinks"] if x["mitigationId"] == m_id]
+    assert sorted(x["linkedId"] for x in links) == sorted([t1, t2])
+
+    call(
+        server,
+        "tm_link",
+        model=MODEL,
+        kind="mitigation",
+        from_id="M1",
+        to_ids=["T1"],
+        unlink=True,
+    )
+    links = [x for x in read(tmp_path)["mitigationLinks"] if x["mitigationId"] == m_id]
+    assert [x["linkedId"] for x in links] == [t2]
+
+    # An assumption can link to a threat or a mitigation, so it needs the prefix.
+    call(
+        server,
+        "tm_link",
+        model=MODEL,
+        kind="assumption",
+        from_id="A1",
+        to_ids=["M1", "T2"],
+    )
+    types = {
+        (x["type"], x["linkedId"])
+        for x in read(tmp_path)["assumptionLinks"]
+        if x["assumptionId"] == a_id
+    }
+    assert types == {("Threat", t1), ("Mitigation", m_id), ("Threat", t2)}
+    with pytest.raises(ToolError, match="write T2 or M2"):
+        call(
+            server,
+            "tm_link",
+            model=MODEL,
+            kind="assumption",
+            from_id="A1",
+            to_ids=["2"],
+        )
+    with pytest.raises(ToolError, match="unknown threat ids"):
+        call(
+            server,
+            "tm_link",
+            model=MODEL,
+            kind="mitigation",
+            from_id="M1",
+            to_ids=["T9"],
+        )
+    with pytest.raises(ToolError, match="not a mitigation"):
+        call(
+            server,
+            "tm_link",
+            model=MODEL,
+            kind="mitigation",
+            from_id="T1",
+            to_ids=["T2"],
+        )
+
+
+def test_numbers_work_in_update_tools_and_keep_ids(server, tmp_path, model):
+    before = read(tmp_path)
+    threat = {
+        "threat_source": "actor",
+        "threat_action": "replace it",
+        "stride": ["T"],
+        "priority": "Low",
+        "elements": ["P1"],
+    }
+    result = call(
+        server, "tm_update_threat", model=MODEL, threat_id="T2", threat=threat
+    )
+    assert result["id"] == model["t2"]  # the id, not the number given
+    assert read(tmp_path)["threats"][1]["id"] == model["t2"]
+
+    m_id = before["mitigations"][0]["id"]
+    result = call(
+        server,
+        "tm_update_mitigation",
+        model=MODEL,
+        mitigation_id="M1",
+        mitigation={"content": "New control", "threat_ids": ["T1", "T2"]},
+    )
+    assert result["id"] == m_id
+    doc = read(tmp_path)
+    assert doc["mitigations"][0]["content"] == "New control"
+    assert sorted(
+        x["linkedId"] for x in doc["mitigationLinks"] if x["mitigationId"] == m_id
+    ) == sorted([model["t1"], model["t2"]])
+    assert not [x for x in doc["mitigationLinks"] if x["mitigationId"] == "M1"]
+
+
+def test_numbers_work_for_links_when_adding_items(server, tmp_path, model):
+    added = call(
+        server,
+        "tm_add_mitigations",
+        model=MODEL,
+        mitigations=[
+            {"content": "Rate limit", "threat_ids": ["T1", "2"]},
+            {"content": "bad", "threat_ids": ["T9"]},
+        ],
+    )
+    assert len(added["added"]) == 1 and "T9" in added["rejected"][0]["errors"][0]
+    new_id = added["added"][0]["id"]
+    linked = [
+        x["linkedId"]
+        for x in read(tmp_path)["mitigationLinks"]
+        if x["mitigationId"] == new_id
+    ]
+    assert sorted(linked) == sorted([model["t1"], model["t2"]])
+
+    added = call(
+        server,
+        "tm_add_assumptions",
+        model=MODEL,
+        assumptions=[{"content": "Clock is synced", "link_to": ["T2", "M2"]}],
+    )
+    new_id = added["added"][0]["id"]
+    links = [
+        x for x in read(tmp_path)["assumptionLinks"] if x["assumptionId"] == new_id
+    ]
+    assert {(x["type"], x["linkedId"]) for x in links} == {
+        ("Threat", model["t2"]),
+        ("Mitigation", read(tmp_path)["mitigations"][1]["id"]),
+    }
+
+
+def test_patch_tools_accept_numbers_for_links(server, tmp_path, model):
+    call(
+        server,
+        "tm_patch_mitigation",
+        model=MODEL,
+        mitigation="M1",
+        changes={"threat_ids": ["T2"]},
+    )
+    assert [x["linkedId"] for x in read(tmp_path)["mitigationLinks"]] == [model["t2"]]
+    call(
+        server,
+        "tm_patch_assumption",
+        model=MODEL,
+        assumption="A1",
+        changes={"link_to": ["T2", "M1"]},
+    )
+    assert {x["type"] for x in read(tmp_path)["assumptionLinks"]} == {
+        "Threat",
+        "Mitigation",
+    }
+
+
+def test_a_wrong_or_unknown_number_names_the_problem(server, tmp_path, model):
+    raw = (tmp_path / MODEL).read_text()
+    with pytest.raises(ToolError, match="no threat numbered 9"):
+        call(
+            server,
+            "tm_set_status",
+            model=MODEL,
+            kind="threat",
+            ids=["T9"],
+            status="threatResolved",
+        )
+    with pytest.raises(ToolError, match="is a mitigation number, not a threat"):
+        call(
+            server,
+            "tm_set_status",
+            model=MODEL,
+            kind="threat",
+            ids=["M1"],
+            status="threatResolved",
+        )
+    assert (tmp_path / MODEL).read_text() == raw

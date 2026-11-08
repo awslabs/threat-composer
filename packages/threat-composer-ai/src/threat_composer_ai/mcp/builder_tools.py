@@ -64,6 +64,10 @@ DryRun = Annotated[
         )
     ),
 ]
+ItemRef = Annotated[str, Field(description="Item id, or its number: T17, M19 or A44")]
+ItemRefs = Annotated[
+    list[str], Field(description="Item ids, or numbers such as T17, M19 or A44")
+]
 Agent = Annotated[
     str | None, Field(description="Your agent name, recorded as custom:agent metadata")
 ]
@@ -293,8 +297,8 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
     def tm_link(
         model: ModelPath,
         kind: Literal["mitigation", "assumption"],
-        from_id: str,
-        to_ids: list[str],
+        from_id: ItemRef,
+        to_ids: ItemRefs,
         unlink: bool = False,
         expected_hash: ExpectedHash = None,
         dry_run: DryRun = False,
@@ -311,7 +315,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
     @mcp.tool(annotations=WRITE)
     def tm_update_threat(
         model: ModelPath,
-        threat_id: str,
+        threat_id: ItemRef,
         threat: ops.ThreatInput,
         agent: Agent = None,
         expected_hash: ExpectedHash = None,
@@ -329,7 +333,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
     @mcp.tool(annotations=WRITE)
     def tm_update_mitigation(
         model: ModelPath,
-        mitigation_id: str,
+        mitigation_id: ItemRef,
         mitigation: ops.MitigationInput,
         agent: Agent = None,
         expected_hash: ExpectedHash = None,
@@ -407,7 +411,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
     def tm_set_status(
         model: ModelPath,
         kind: Literal["threat", "mitigation"],
-        ids: list[str],
+        ids: ItemRefs,
         status: Annotated[
             str,
             Field(
@@ -433,7 +437,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
     def tm_add_tags(
         model: ModelPath,
         kind: ops.Kind,
-        ids: list[str],
+        ids: ItemRefs,
         tags: list[str],
         expected_hash: ExpectedHash = None,
         dry_run: DryRun = False,
@@ -455,7 +459,7 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
     def tm_remove_tags(
         model: ModelPath,
         kind: ops.Kind,
-        ids: list[str],
+        ids: ItemRefs,
         tags: list[str],
         expected_hash: ExpectedHash = None,
         dry_run: DryRun = False,

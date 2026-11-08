@@ -11,7 +11,6 @@ An item is named by its id (UUID) or by its number: `T17`, `M19`, `A44`, or
 """
 
 import copy
-import re
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
@@ -33,15 +32,14 @@ from .model_ops import (
     _items,
     _metadata_value,
     _tags,
+    find_item,
+    ref_id,
     remove,
 )
 from .search import references
 from .statement import compose_statement, lower_first, normalise_source
 
 CONTROL_TYPES = ("Preventative", "Detective", "Corrective")
-_PREFIX = {"T": "threat", "M": "mitigation", "A": "assumption"}
-_NUMBER = re.compile(r"^([TMA])?\s*(\d+)$", re.IGNORECASE)
-
 # Metadata that has a named field, or that the builder owns.
 _RESERVED_KEYS = {"custom:agent", "custom:evidence"}
 
@@ -133,33 +131,6 @@ class AssumptionPatch(_Patch):
 # ---------------------------------------------------------------------------
 # Finding items by id or number
 # ---------------------------------------------------------------------------
-
-
-def find_item(
-    doc: dict[str, Any], ref: str, kind: Kind | None = None
-) -> tuple[Kind, dict]:
-    """Find an item by id or by number (T17, M19, A44; 17 if `kind` is given)."""
-    ref = ref.strip()
-    match = _NUMBER.match(ref)
-    if match:
-        prefix, number = match.group(1), int(match.group(2))
-        found_kind = _PREFIX[prefix.upper()] if prefix else kind
-        if found_kind is None:
-            raise BuilderError(
-                f"'{ref}': say which kind, for example T{number}, M{number} or "
-                f"A{number}"
-            )
-        if kind and found_kind != kind:
-            raise BuilderError(f"'{ref}' is a {found_kind} number, not a {kind}")
-        for item in _items(doc, found_kind):
-            if item.get("numericId") == number:
-                return found_kind, item
-        raise BuilderError(f"no {found_kind} numbered {number}")
-    for candidate in (kind,) if kind else ("threat", "mitigation", "assumption"):
-        for item in _items(doc, candidate):
-            if item["id"] == ref:
-                return candidate, item
-    raise BuilderError(f"no {kind or 'item'} with id '{ref}'")
 
 
 # ---------------------------------------------------------------------------
@@ -342,10 +313,11 @@ def patch_mitigation(
 
     new_links: list[str] | None = None
     if "threat_ids" in fields:
-        unknown = [t for t in patch.threat_ids or [] if t not in _ids(doc, "threat")]
+        wanted = [ref_id(doc, t, "threat") for t in patch.threat_ids or []]
+        unknown = [t for t in wanted if t not in _ids(doc, "threat")]
         if unknown:
             problems.append(f"threat_ids: unknown {unknown}")
-        new_links = list(dict.fromkeys(patch.threat_ids or []))
+        new_links = list(dict.fromkeys(wanted))
 
     _apply_common_metadata(new, patch, fields)
     result = _finish(existing, new, Mitigation, fields, problems)
@@ -372,7 +344,7 @@ def patch_assumption(
 
     link_types: list[tuple[str, str]] = []
     if "link_to" in fields:
-        for target in dict.fromkeys(patch.link_to or []):
+        for target in dict.fromkeys(ref_id(doc, t) for t in patch.link_to or []):
             try:
                 link_types.append((target, _assumption_link_type(doc, target)))
             except BuilderError as e:
