@@ -134,9 +134,12 @@ def test_recipe_accepts_valid_handoffs():
 # --- Models ---------------------------------------------------------------------
 
 
+VERSIONS = {"opus": "9.1", "sonnet": "9.2", "haiku": "4.5"}  # released apart
+
+
 @pytest.fixture
 def kiro_version(monkeypatch):
-    monkeypatch.setattr(sync, "KIRO_MODEL_VERSION", "9.9")
+    monkeypatch.setattr(sync, "load_model_versions", lambda: dict(VERSIONS))
 
 
 def test_every_source_agent_names_its_model():
@@ -154,9 +157,9 @@ def test_claude_agent_gets_the_tier_as_an_alias():
 
 
 def test_kiro_id_is_claude_tier_version(kiro_version):
-    assert sync.kiro_model_id("opus") == "claude-opus-9.9"
-    assert sync.kiro_model_id("sonnet") == "claude-sonnet-9.9"
-    assert sync.kiro_model_id("haiku") == "claude-haiku-9.9"
+    assert sync.kiro_model_id("opus") == "claude-opus-9.1"
+    assert sync.kiro_model_id("sonnet") == "claude-sonnet-9.2"
+    assert sync.kiro_model_id("haiku") == "claude-haiku-4.5"
     assert sync.kiro_model_id(None) is None
     assert sync.kiro_model_id("inherit") is None
     with pytest.raises(sync.SourceError, match="unknown model tier"):
@@ -166,7 +169,7 @@ def test_kiro_id_is_claude_tier_version(kiro_version):
 def test_kiro_agent_gets_the_id_for_its_tier(kiro_version):
     meta = {"name": "a", "description": "d", "model": "opus"}
     assert json.loads(sync.kiro_agent(meta, "x\n", Path("a.md"))[0])["model"] == (
-        "claude-opus-9.9"
+        "claude-opus-9.1"
     )
 
 
@@ -174,20 +177,6 @@ def test_kiro_agent_has_no_model_without_a_tier():
     for model in (None, "inherit"):
         meta = {"name": "a", "description": "d", "model": model}
         assert "model" not in json.loads(sync.kiro_agent(meta, "x\n", Path("a.md"))[0])
-
-
-def test_the_shipped_kiro_files_use_the_expected_ids():
-    """The ids are the ones `/model` lists in Kiro."""
-    expected = {
-        "opus": "claude-opus-5.5",
-        "sonnet": "claude-sonnet-5.5",
-        "haiku": "claude-haiku-5.5",
-    }
-    assert {t: sync.kiro_model_id(t) for t in sync.TIERS} == expected
-    for meta, _, _ in sync.load_agents():
-        path = sync.ROOT / ".kiro/agents" / f"{meta['name']}.json"
-        if path.exists():
-            assert json.loads(path.read_text())["model"] == expected[meta["model"]]
 
 
 def test_unknown_tier_in_an_agent_is_an_error(tmp_path, monkeypatch):
@@ -241,12 +230,12 @@ def test_steps_use_their_step_tier_then_their_agents_tier(kiro_version):
     steps = model_steps()
     sync.apply_models(steps, TIER_BY_AGENT)
     assert model_ids(steps) == {
-        "scope": "claude-haiku-9.9",
-        "system": "claude-opus-9.9",  # the agent's tier
-        "override": "claude-opus-9.9",  # the step's tier beats the agent's sonnet
+        "scope": "claude-haiku-4.5",
+        "system": "claude-opus-9.1",  # the agent's tier
+        "override": "claude-opus-9.1",  # the step's tier beats the agent's sonnet
         "keep": None,  # inherit beats the agent's tier
-        "branch": "claude-sonnet-9.9",  # inside parallel
-        "nested": "claude-opus-9.9",  # inside sequence
+        "branch": "claude-sonnet-9.2",  # inside parallel
+        "nested": "claude-opus-9.1",  # inside sequence
     }
 
 
@@ -268,11 +257,11 @@ def test_the_real_workflow_and_agents_get_their_models(kiro_version):
     walk(recipe["steps"])
     assert seen
     for step_id, (agent, model_id) in seen.items():
-        assert model_id == f"claude-{tiers[agent]}-9.9", step_id
+        assert model_id == f"claude-{tiers[agent]}-{VERSIONS[tiers[agent]]}", step_id
     assert {a for a, _ in seen.values()} >= {"system-modeler", "threat-analyst"}
 
     modeler = json.loads(files[Path(".kiro/agents/system-modeler.json")])
-    assert modeler["model"] == "claude-opus-9.9"
+    assert modeler["model"] == "claude-opus-9.1"
     assert "model: opus\n" in files[Path(".claude/agents/system-modeler.md")]
 
 
@@ -299,3 +288,30 @@ def test_recipe_accepts_a_step_model():
             Path("r.yaml"),
             {"a"},
         )
+
+
+def test_the_shipped_versions_file_is_valid():
+    assert set(sync.load_model_versions()) == set(sync.TIERS)
+
+
+@pytest.mark.parametrize(
+    "text, error",
+    [
+        ("opus: '5.5'\nsonnet: '5.5'\n", "needs exactly these tiers"),
+        ("opus: '5.5'\nsonnet: '5.5'\nhaiku: '5.5'\ngpt: '1'\n", "needs exactly"),
+        ("opus: 5.5\nsonnet: '5.5'\nhaiku: '5.5'\n", "quoted version"),
+        ("opus: 'latest'\nsonnet: '5.5'\nhaiku: '5.5'\n", "quoted version"),
+        ("- opus\n", "must map each tier"),
+    ],
+)
+def test_bad_versions_file(tmp_path, monkeypatch, text, error):
+    (tmp_path / "models.yaml").write_text(text)
+    monkeypatch.setattr(sync, "SRC", tmp_path)
+    with pytest.raises(sync.SourceError, match=error):
+        sync.load_model_versions()
+
+
+def test_a_missing_versions_file_is_an_error(tmp_path, monkeypatch):
+    monkeypatch.setattr(sync, "SRC", tmp_path)
+    with pytest.raises(sync.SourceError, match="models.yaml"):
+        sync.load_model_versions()

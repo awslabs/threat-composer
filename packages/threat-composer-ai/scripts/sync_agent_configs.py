@@ -6,6 +6,7 @@ Source (agent-src/):
   skills/<name>/SKILL.md    One skill. Other files in the folder are copied.
   partials/*.md             Text that agents and skills include.
   workflows/*.workflow.yaml Kiro workflow recipes.
+  models.yaml               The version of each model tier, for Kiro ids.
 
 Output:
   .claude/agents/<name>.md, .claude/skills/<name>/
@@ -19,7 +20,8 @@ Agent frontmatter in the source:
   skills              Skills the agent writes with.
   targets             Optional: [claude], [kiro] or both (the default).
   model               Optional model tier: opus, sonnet or haiku. Claude Code
-                      gets the alias. Kiro gets claude-<tier>-<KIRO_MODEL_VERSION>.
+                      gets the alias. Kiro gets claude-<tier>-<version>, with the
+                      version of each tier in agent-src/models.yaml.
                       Without it the agent uses the model of the session.
 
 A workflow step may also set `model` (a tier, or `inherit`). It overrides the
@@ -67,12 +69,9 @@ KIRO_TOOLS = {
 # Model tiers. Claude Code accepts these names as they are.
 TIERS = ("opus", "sonnet", "haiku")
 
-# The Kiro model id of a tier is claude-<tier>-<version>, for example
-# claude-sonnet-5.5, as `/model` lists it in Kiro. Kiro does not fall back from
-# an unknown id: the first call of the agent or step fails. Change the version
-# here when you move all agents to a newer Claude family, and check that
-# `/model` in Kiro lists the three ids.
-KIRO_MODEL_VERSION = "5.5"
+# The Kiro model id of a tier is claude-<tier>-<version>. The version of each
+# tier is in agent-src/models.yaml, because the families are released apart.
+MODEL_VERSION = re.compile(r"^\d+(\.\d+)?$")
 
 KIRO_AGENT_SCHEMA = "https://json.schemastore.org/kiro-agent.json"
 
@@ -219,13 +218,33 @@ def claude_agent(meta: dict, body: str, path: Path) -> str:
     return "\n".join(lines) + "\n---\n" + render_body(body, "claude", path)
 
 
+def load_model_versions() -> dict[str, str]:
+    """The version of each tier from agent-src/models.yaml."""
+    path = SRC / "models.yaml"
+    try:
+        data = yaml.safe_load(path.read_text())
+    except OSError as e:
+        raise SourceError(f"{path}: {e.strerror}") from e
+    if not isinstance(data, dict):
+        raise SourceError(f"{path}: must map each tier to a version")
+    if set(data) != set(TIERS):
+        raise SourceError(f"{path}: needs exactly these tiers: {', '.join(TIERS)}")
+    for tier, version in data.items():
+        if not isinstance(version, str) or not MODEL_VERSION.match(version):
+            raise SourceError(
+                f'{path}: {tier} must be a quoted version such as "5.5", '
+                f"not {version!r}"
+            )
+    return data
+
+
 def kiro_model_id(tier: str | None) -> str | None:
     """The Kiro id for a tier, or None for no tier (inherit the session)."""
     if not tier or tier == "inherit":
         return None
     if tier not in TIERS:
         raise SourceError(f"unknown model tier {tier!r}")
-    return f"claude-{tier}-{KIRO_MODEL_VERSION}"
+    return f"claude-{tier}-{load_model_versions()[tier]}"
 
 
 def kiro_agent(meta: dict, body: str, path: Path) -> tuple[str, str]:
