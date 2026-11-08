@@ -1196,7 +1196,7 @@ def test_only_one_of_two_writers_with_the_same_hash_succeeds(tmp_path, model):
     outcomes: list[str] = []
     barrier = threading.Barrier(4)
 
-    def writer(priority):
+    def writer(comment):
         barrier.wait()
         try:
             call(
@@ -1204,7 +1204,7 @@ def test_only_one_of_two_writers_with_the_same_hash_succeeds(tmp_path, model):
                 "tm_patch_threat",
                 model=MODEL,
                 threat="T1",
-                changes={"priority": priority},
+                changes={"comments": comment},
                 expected_hash=h0,
             )
             outcomes.append("ok")
@@ -1213,16 +1213,16 @@ def test_only_one_of_two_writers_with_the_same_hash_succeeds(tmp_path, model):
                 "stale" if "changed since you read it" in str(e) else str(e)
             )
 
-    threads = [
-        threading.Thread(target=writer, args=(p,))
-        for p in ("Low", "Medium", "High", "Low")
-    ]
+    # Every writer changes the comment to a different value. A write that left
+    # the file byte-identical would keep the hash valid, so none may do that.
+    comments = [f"writer {i}" for i in range(4)]
+    threads = [threading.Thread(target=writer, args=(c,)) for c in comments]
     for t in threads:
         t.start()
     for t in threads:
         t.join()
     assert sorted(outcomes) == ["ok", "stale", "stale", "stale"]
-    assert meta(read(tmp_path)["threats"][0], "Priority") in ("Low", "Medium", "High")
+    assert meta(read(tmp_path)["threats"][0], "Comments") in comments
 
 
 def test_hash_ignores_nothing_in_the_file(server, tmp_path, model):
