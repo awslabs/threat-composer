@@ -434,7 +434,10 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
     def tm_coverage_report(model: ModelPath) -> dict[str, Any]:
         """Find gaps: elements and flows with no threats, missing STRIDE categories per
         element, boundary-crossing flows with no threats, High/Medium threats with no
-        mitigation, unlinked items and dangling links. Run before finishing."""
+        mitigation, unlinked items and dangling links. Run before finishing.
+        Also lists threats that may be ready to resolve because all their
+        mitigations are resolved (resolution_candidates). This is advice: it
+        changes no status, and you decide."""
         doc, file_hash = read_model_hashed(model)
         return {**coverage_report(doc, load_system(model)), "hash": file_hash}
 

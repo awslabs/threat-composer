@@ -10,6 +10,9 @@ from typing import Any
 from .system_model import STRIDE_BY_KIND, SystemModel
 
 IGNORED_STATUS = "threatResolvedNotUseful"
+THREAT_RESOLVED = "threatResolved"
+MITIGATION_RESOLVED = "mitigationResolved"
+MITIGATION_WILL_NOT_ACTION = "mitigationResolvedWillNotAction"
 
 
 def _meta(item: dict[str, Any], key: str) -> Any:
@@ -36,6 +39,62 @@ def link_problems(doc: dict[str, Any]) -> list[str]:
         if x.get("linkedId") not in target:
             out.append(f"assumptionLink: unknown {x.get('type')} {x.get('linkedId')}")
     return out
+
+
+def resolution_report(
+    doc: dict[str, Any], threats: list[dict[str, Any]]
+) -> dict[str, list[dict[str, Any]]]:
+    """Compare threat status with the status of the threat's mitigations.
+
+    Advisory only: Threat Composer does not tie the two together, and a threat
+    can be resolved by accepting the risk. Nothing here changes a status.
+    """
+    status = {m["id"]: m.get("status") for m in doc.get("mitigations") or []}
+    linked: dict[str, list[str]] = {}
+    for x in doc.get("mitigationLinks") or []:
+        linked.setdefault(x["linkedId"], []).append(x["mitigationId"])
+
+    def row(t: dict[str, Any], **extra: Any) -> dict[str, Any]:
+        return {
+            "id": t["id"],
+            "numericId": t["numericId"],
+            "status": t.get("status"),
+            **extra,
+        }
+
+    candidates, accepted, resolved_open = [], [], []
+    for t in threats:
+        states = [status.get(m) for m in linked.get(t["id"], []) if m in status]
+        if not states:
+            continue
+        resolved = t.get("status") == THREAT_RESOLVED
+        if all(s == MITIGATION_RESOLVED for s in states):
+            if not resolved:
+                candidates.append(row(t, mitigations=len(states)))
+        elif all(
+            s in (MITIGATION_RESOLVED, MITIGATION_WILL_NOT_ACTION) for s in states
+        ):
+            if not resolved:
+                accepted.append(
+                    row(t, will_not_action=states.count(MITIGATION_WILL_NOT_ACTION))
+                )
+        elif resolved:
+            resolved_open.append(
+                row(
+                    t,
+                    open_mitigations=[
+                        m
+                        for m in linked[t["id"]]
+                        if status.get(m)
+                        not in (MITIGATION_RESOLVED, MITIGATION_WILL_NOT_ACTION)
+                    ],
+                )
+            )
+    return {
+        "resolution_candidates": candidates,
+        "resolution_candidates_with_will_not_action": accepted,
+        "resolved_threats_with_open_mitigations": resolved_open,
+    }
 
 
 def coverage_report(doc: dict[str, Any], system: SystemModel | None) -> dict[str, Any]:
@@ -72,6 +131,7 @@ def coverage_report(doc: dict[str, Any], system: SystemModel | None) -> dict[str
             if a["id"] not in {x["assumptionId"] for x in assumption_links}
         ],
         "threats_without_elements": [],
+        **resolution_report(doc, threats),
     }
 
     if system is None:

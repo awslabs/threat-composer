@@ -102,6 +102,10 @@ The `tm_*` and `sys_*` MCP tools build a threat model one item at a time (see `s
 
 Both take `model`, `kind` (`threat`, `mitigation` or `assumption`), `ids` and `tags`, and return `{"updated": n}`. Each tag is 1 to 30 characters after whitespace is stripped. If an id is unknown or a tag is invalid, nothing changes. Use these instead of `tm_update_mitigation` to change tags: `tm_update_mitigation` replaces the whole mitigation, including its threat links.
 
+### Resolution candidates
+
+`tm_coverage_report` also compares each threat's status with the status of its mitigations. `resolution_candidates` lists open threats whose linked mitigations are all `mitigationResolved`. `resolution_candidates_with_will_not_action` lists open threats where the rest are resolved and at least one is `mitigationResolvedWillNotAction`; that closes the item without reducing the risk, so a person should decide. `resolved_threats_with_open_mitigations` lists resolved threats that still have an open mitigation. Threat Composer links neither status to the other, so these lists are advice and nothing changes a status.
+
 ### Detecting a stale model
 
 `tm_get`, `tm_get_item`, `tm_validate`, `tm_coverage_report` and every `tm_*` write return `hash`, a short hash of the `.tc.json` file. Every `tm_*` write also takes `expected_hash`. If the file has changed since that hash (another process, a merge, a checkout), the write fails and changes nothing. Without `expected_hash`, writes work as before. The `sys_*` tools do not use hashes yet.

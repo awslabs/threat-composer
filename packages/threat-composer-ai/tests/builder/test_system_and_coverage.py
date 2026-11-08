@@ -352,3 +352,66 @@ def test_viewer_data_carries_nesting_and_plane(nested):
     flows = {f["id"]: f for f in data["flows"]}
     assert flows["DF1"]["within"] is None and flows["DF2"]["within"] == "ACCT"
     assert flows["DF3"]["plane"] == "control" and flows["DF2"]["plane"] is None
+
+
+def _resolution_doc():
+    """Four threats: all mitigations resolved, one will-not-action, one open,
+    and one with no mitigation."""
+    doc = ops.empty_model("x")
+    threat = ops.ThreatInput(
+        threat_source="actor", threat_action="act", stride=["S"], priority="Low"
+    )
+    ops.add_threats(doc, [threat] * 5)
+    t = [x["id"] for x in doc["threats"]]
+    for i, status in enumerate(
+        [
+            "mitigationResolved",
+            "mitigationResolvedWillNotAction",
+            "mitigationInProgress",
+            "mitigationResolved",
+        ]
+    ):
+        ops.add_mitigations(
+            doc,
+            [ops.MitigationInput(content=f"m{i}", threat_ids=[t[i]], status=status)],
+        )
+    return doc, t
+
+
+def test_resolution_candidates_are_advisory_and_split_by_mitigation_status():
+    doc, t = _resolution_doc()
+    # T4 is already resolved but its mitigation is resolved too: not a candidate.
+    doc["threats"][3]["status"] = "threatResolved"
+    # T3 is resolved while its mitigation is still in progress.
+    doc["threats"][2]["status"] = "threatResolved"
+    before = [x["status"] for x in doc["threats"]]
+
+    report = coverage_report(doc, None)
+
+    assert [r["id"] for r in report["resolution_candidates"]] == [t[0]]
+    assert [r["id"] for r in report["resolution_candidates_with_will_not_action"]] == [
+        t[1]
+    ]
+    assert (
+        report["resolution_candidates_with_will_not_action"][0]["will_not_action"] == 1
+    )
+    assert [r["id"] for r in report["resolved_threats_with_open_mitigations"]] == [t[2]]
+    # T5 has no mitigation, so it appears in none of the three lists.
+    listed = {
+        r["id"]
+        for key in (
+            "resolution_candidates",
+            "resolution_candidates_with_will_not_action",
+            "resolved_threats_with_open_mitigations",
+        )
+        for r in report[key]
+    }
+    assert t[4] not in listed
+    assert [x["status"] for x in doc["threats"]] == before  # nothing is changed
+
+
+def test_resolution_report_skips_ignored_threats():
+    doc, t = _resolution_doc()
+    doc["threats"][0]["status"] = "threatResolvedNotUseful"
+    candidates = coverage_report(doc, None)["resolution_candidates"]
+    assert [r["id"] for r in candidates] == [t[3]]  # T1 is ignored, T4 is not
