@@ -595,8 +595,12 @@ def register_builder_tools(mcp: FastMCP, workspace: Workspace | None = None) -> 
         element, boundary-crossing flows with no threats, High/Medium threats with no
         mitigation, unlinked items and dangling links. Run before finishing.
         Also lists threats that may be ready to resolve because all their
-        mitigations are resolved (resolution_candidates). This is advice: it
-        changes no status, and you decide."""
+        mitigations are resolved (resolution_candidates).
+        `mitigation_plan.order` ranks the open mitigations by what to implement
+        first: the weight of the threats each one newly covers (High 9, Medium 3,
+        Low 1), greedy, so a mitigation that adds nothing new ranks last.
+        `mitigation_plan.uncovered_threats` need a new mitigation. These are
+        advice: they change no status, and you decide."""
         doc, file_hash = read_model_hashed(model)
         return {**coverage_report(doc, load_system(model)), "hash": file_hash}
 

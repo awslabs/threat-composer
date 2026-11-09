@@ -119,6 +119,17 @@ Every `tm_*` write, and `sys_upsert`, `sys_remove` and `sys_render`, takes `dry_
 
 `tm_coverage_report` also compares each threat's status with the status of its mitigations. `resolution_candidates` lists open threats whose linked mitigations are all `mitigationResolved`. `resolution_candidates_with_will_not_action` lists open threats where the rest are resolved and at least one is `mitigationResolvedWillNotAction`; that closes the item without reducing the risk, so a person should decide. `resolved_threats_with_open_mitigations` lists resolved threats that still have an open mitigation. Threat Composer links neither status to the other, so these lists are advice and nothing changes a status.
 
+### Mitigation plan
+
+`tm_coverage_report` returns `mitigation_plan`, the order in which to implement the open mitigations (`mitigationIdentified` or `mitigationInProgress`). It is a greedy weighted cover:
+
+1. Each open threat has a weight from its priority: High 9, Medium 3, Low 1 (no priority counts as Medium). Resolved and ignored threats have none.
+2. A threat counts as covered when a `mitigationResolved` mitigation (an existing control) is linked to it.
+3. Each round picks the open mitigation with the highest gain: the weight of the threats it would cover for the first time, plus a quarter of the weight of threats that already have a control. Ties go to a mitigation that is in progress, then to one that touches more open threats, then to the lower number.
+4. The pick then counts as a control on its threats, and the next round starts.
+
+A mitigation that only adds a second control to threats already covered ranks last. Each row has `rank`, `score`, `covers_new`, `also_reduces` and `cumulative_weight_covered_pct`, so you can stop at the rank where the gain stops being worth the effort. `uncovered_threats` lists open threats with no usable mitigation; they need a new one. `weight_covered_before_plan_pct` is the share already covered by existing controls. The plan does not know the cost of a mitigation, and it changes nothing.
+
 ### Detecting a stale model
 
 `tm_get`, `tm_get_item`, `tm_validate`, `tm_coverage_report` and every `tm_*` write return `hash`, a short hash of the `.tc.json` file. Every `tm_*` write also takes `expected_hash`. If the file has changed since that hash (another process, a merge, a checkout), the write fails and changes nothing. Without `expected_hash`, writes work as before. The `sys_*` tools do not use hashes yet.

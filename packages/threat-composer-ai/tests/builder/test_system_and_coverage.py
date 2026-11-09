@@ -415,3 +415,75 @@ def test_resolution_report_skips_ignored_threats():
     doc["threats"][0]["status"] = "threatResolvedNotUseful"
     candidates = coverage_report(doc, None)["resolution_candidates"]
     assert [r["id"] for r in candidates] == [t[3]]  # T1 is ignored, T4 is not
+
+
+def _plan_doc():
+    """T1 High, T2 Medium, T3 Low, T4 High (existing control), T5 High (no
+    mitigation). M1 covers T1+T2, M2 covers only T3, M3 covers T1 and T4 (T4
+    already controlled), M4 is in progress and covers T3."""
+    doc = ops.empty_model("App")
+    t = ops.add_threats(
+        doc,
+        [
+            _threat([], ["S"], "High"),
+            _threat([], ["T"], "Medium"),
+            _threat([], ["R"], "Low"),
+            _threat([], ["I"], "High"),
+            _threat([], ["D"], "High"),
+        ],
+    )["added"]
+    ids = [x["id"] for x in t]
+
+    def mit(content, threats, **kw):
+        return ops.MitigationInput(
+            content=content, threat_ids=[ids[i] for i in threats], **kw
+        )
+
+    ops.add_mitigations(
+        doc,
+        [
+            mit("M1", [0, 1]),
+            mit("M2", [2]),
+            mit("M3", [0, 3]),
+            mit("M4", [2], status="mitigationInProgress"),
+            mit("existing", [3], existing=True),
+        ],
+    )
+    return doc, ids
+
+
+def test_mitigation_plan_orders_by_marginal_gain():
+    doc, ids = _plan_doc()
+    plan = coverage_report(doc, None)["mitigation_plan"]
+    order = plan["order"]
+    # Round 1: M1 gains 9+3=12; M3 gains 9 (T1) + 0.25*9 (T4 is controlled)
+    # = 11.25. Round 2: M3 gains 0.25*9 twice = 4.5, M4 gains 1 (T3).
+    # Round 3: M4 gains 1 (T3). Round 4: M2 only reduces risk further (0.25).
+    assert [r["content"] for r in order] == ["M1", "M3", "M4", "M2"]
+    assert [r["rank"] for r in order] == [1, 2, 3, 4]
+    assert [r["score"] for r in order] == [12, 4.5, 1, 0.25]
+    assert [t["numericId"] for t in order[0]["covers_new"]] == [1, 2]
+    assert order[1]["covers_new"] == []
+    assert [t["numericId"] for t in order[1]["also_reduces"]] == [1, 4]
+    assert order[3]["covers_new"] == []
+    assert [t["numericId"] for t in order[3]["also_reduces"]] == [3]
+    # T4 starts covered by the existing control; T5 has nothing
+    assert plan["weight_covered_before_plan_pct"] == round(100 * 9 / 31)
+    assert [t["numericId"] for t in plan["uncovered_threats"]] == [5]
+    assert order[-1]["cumulative_weight_covered_pct"] == round(100 * 22 / 31)
+
+
+def test_mitigation_plan_skips_closed_work():
+    doc, ids = _plan_doc()
+    ops.set_status(doc, "threat", [ids[1]], "threatResolved")
+    ops.set_status(
+        doc,
+        "mitigation",
+        [doc["mitigations"][1]["id"]],
+        "mitigationResolvedWillNotAction",
+    )
+    plan = coverage_report(doc, None)["mitigation_plan"]
+    assert "M2" not in [r["content"] for r in plan["order"]]
+    # T2 is resolved, so M1 gains only 9 (T1). M3 gains 9 + 0.25*9.
+    assert plan["order"][0]["content"] == "M3"
+    assert [t["numericId"] for t in plan["order"][0]["covers_new"]] == [1]

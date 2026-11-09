@@ -204,6 +204,8 @@ Call `tm_validate` and `tm_coverage_report`. Then give the user:
   assumptions
 - the High priority threats that have no existing control, with their
   mitigations
+- the first five to ten mitigations of `mitigation_plan.order`, in rank
+  order, with the threats each one covers, and the `uncovered_threats`
 - remaining gaps from the coverage report, with a reason for each one you
   accept
 - the assumptions that need the user to confirm them

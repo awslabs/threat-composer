@@ -13,6 +13,16 @@ IGNORED_STATUS = "threatResolvedNotUseful"
 THREAT_RESOLVED = "threatResolved"
 MITIGATION_RESOLVED = "mitigationResolved"
 MITIGATION_WILL_NOT_ACTION = "mitigationResolvedWillNotAction"
+MITIGATION_IN_PROGRESS = "mitigationInProgress"
+MITIGATION_OPEN = ("mitigationIdentified", MITIGATION_IN_PROGRESS)
+
+# A High threat is worth three Mediums and nine Lows. A threat with no priority
+# is treated as Medium, so an unrated threat is not ignored.
+PRIORITY_WEIGHT = {"High": 9, "Medium": 3, "Low": 1}
+DEFAULT_WEIGHT = PRIORITY_WEIGHT["Medium"]
+# A threat that already has a control still gains from a second one, but less.
+REDUNDANT_FACTOR = 0.25
+CONTROL_TYPES = ("Preventative", "Detective", "Corrective")
 
 
 def _meta(item: dict[str, Any], key: str) -> Any:
@@ -97,6 +107,104 @@ def resolution_report(
     }
 
 
+def mitigation_plan(
+    doc: dict[str, Any], threats: list[dict[str, Any]]
+) -> dict[str, Any]:
+    """Recommend the order in which to implement the open mitigations.
+
+    Greedy weighted cover. Each open threat has a weight from its priority. Each
+    round picks the open mitigation with the highest marginal gain: the weight
+    of the threats it would cover for the first time, plus REDUNDANT_FACTOR of
+    the weight of threats that already have a control. A threat counts as having
+    a control when a mitigationResolved mitigation (an existing control) is
+    linked to it, or an earlier pick in this plan covers it. Ties go to work
+    already in progress, then to the mitigation that touches more open threats,
+    then to the lower item number.
+
+    Advice only: it changes nothing. It does not know the cost of a mitigation.
+    """
+    open_threats = {t["id"]: t for t in threats if t.get("status") != THREAT_RESOLVED}
+    weight = {
+        i: PRIORITY_WEIGHT.get(_meta(t, "Priority"), DEFAULT_WEIGHT)
+        for i, t in open_threats.items()
+    }
+    mitigations = {m["id"]: m for m in doc.get("mitigations") or []}
+    by_mitigation: dict[str, list[str]] = {}
+    covered: set[str] = set()
+    for x in doc.get("mitigationLinks") or []:
+        m, t = mitigations.get(x["mitigationId"]), x["linkedId"]
+        if m is None or t not in open_threats:
+            continue
+        if m.get("status") == MITIGATION_RESOLVED:
+            covered.add(t)
+        elif m.get("status") in MITIGATION_OPEN:
+            by_mitigation.setdefault(m["id"], []).append(t)
+
+    total = sum(weight.values())
+    already = sum(weight[t] for t in covered)
+
+    def gain(m_id: str) -> float:
+        return sum(
+            weight[t] * (REDUNDANT_FACTOR if t in covered else 1)
+            for t in by_mitigation[m_id]
+        )
+
+    def brief(t_id: str) -> dict[str, Any]:
+        t = open_threats[t_id]
+        return {
+            "id": t_id,
+            "numericId": t["numericId"],
+            "priority": _meta(t, "Priority"),
+        }
+
+    plan: list[dict[str, Any]] = []
+    remaining = set(by_mitigation)
+    newly = 0.0
+    while remaining:
+        best = max(
+            remaining,
+            key=lambda i: (
+                gain(i),
+                mitigations[i].get("status") == MITIGATION_IN_PROGRESS,
+                len(by_mitigation[i]),
+                -mitigations[i]["numericId"],
+            ),
+        )
+        remaining.discard(best)
+        m = mitigations[best]
+        first = [t for t in by_mitigation[best] if t not in covered]
+        newly += sum(weight[t] for t in first)
+        plan.append(
+            {
+                "rank": len(plan) + 1,
+                "id": best,
+                "numericId": m["numericId"],
+                "content": m["content"],
+                "status": m.get("status"),
+                "control_type": next(
+                    (c for c in m.get("tags") or [] if c in CONTROL_TYPES), None
+                ),
+                "score": gain(best),
+                "covers_new": [brief(t) for t in first],
+                "also_reduces": [brief(t) for t in by_mitigation[best] if t in covered],
+                "cumulative_weight_covered_pct": (
+                    round(100 * (already + newly) / total) if total else 100
+                ),
+            }
+        )
+        covered.update(first)
+
+    return {
+        "order": plan,
+        # Open threats that no resolved or open mitigation covers, even after the
+        # whole plan. They need a new mitigation, so they are not in `order`.
+        "uncovered_threats": [brief(t) for t in open_threats if t not in covered],
+        "weight_covered_before_plan_pct": (
+            round(100 * already / total) if total else 100
+        ),
+    }
+
+
 def coverage_report(doc: dict[str, Any], system: SystemModel | None) -> dict[str, Any]:
     threats = [t for t in doc.get("threats") or [] if t.get("status") != IGNORED_STATUS]
     mitigation_links = doc.get("mitigationLinks") or []
@@ -132,6 +240,7 @@ def coverage_report(doc: dict[str, Any], system: SystemModel | None) -> dict[str
         ],
         "threats_without_elements": [],
         **resolution_report(doc, threats),
+        "mitigation_plan": mitigation_plan(doc, threats),
     }
 
     if system is None:
