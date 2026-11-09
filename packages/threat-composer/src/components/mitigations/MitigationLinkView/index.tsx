@@ -15,10 +15,17 @@
  ******************************************************************************************************************** */
 import { SpaceBetween } from '@cloudscape-design/components';
 import Autosuggest from '@cloudscape-design/components/autosuggest';
+import Badge from '@cloudscape-design/components/badge';
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
-import TokenGroup from '@cloudscape-design/components/token-group';
 import React, { FC, PropsWithChildren, useMemo } from 'react';
+import { MITIGATION_STATUS_RESOLVED } from '../../../configs';
+import { MITIGATION_STATUS_COLOR_MAPPING } from '../../../configs/status';
 import { Mitigation } from '../../../customTypes';
+import mitigationStatus from '../../../data/status/mitigationStatus.json';
+import standardizeNumericId from '../../../utils/standardizeNumericId';
+import LinkedEntityItem, { getEntityComments } from '../../generic/LinkedEntityItem';
+
+const STATUS_BY_VALUE = new Map(mitigationStatus.map(s => [s.value, s]));
 
 export interface MitigationLinkProps {
   variant?: ExpandableSectionProps['variant'];
@@ -26,6 +33,8 @@ export interface MitigationLinkProps {
   mitigationList: Mitigation[];
   onAddMitigationLink: (mitigationId: string) => void;
   onRemoveMitigationLink: (mitigationId: string) => void;
+  /** When set, the mitigation id is a link that opens the mitigation in the mitigations view. */
+  onViewMitigation?: (mitigationId: string) => void;
 }
 
 const MitigationLinkComponent: FC<PropsWithChildren<MitigationLinkProps>> = ({
@@ -34,6 +43,7 @@ const MitigationLinkComponent: FC<PropsWithChildren<MitigationLinkProps>> = ({
   mitigationList,
   onAddMitigationLink,
   onRemoveMitigationLink,
+  onViewMitigation,
   children,
 }) => {
   const [searchValue, setSearchValue] = React.useState('');
@@ -41,6 +51,10 @@ const MitigationLinkComponent: FC<PropsWithChildren<MitigationLinkProps>> = ({
   const linkedMitigations = useMemo(() => {
     return mitigationList.filter(al => linkedMitigationIds.includes(al.id));
   }, [linkedMitigationIds, mitigationList]);
+
+  const resolvedCount = useMemo(
+    () => linkedMitigations.filter(x => x.status === MITIGATION_STATUS_RESOLVED).length,
+    [linkedMitigations]);
 
   const filteredMitigations = useMemo(() => {
     const mitigations = mitigationList.filter(x => !linkedMitigationIds.includes(x.id));
@@ -55,7 +69,7 @@ const MitigationLinkComponent: FC<PropsWithChildren<MitigationLinkProps>> = ({
   return (<ExpandableSection
     variant={variant}
     headingTagOverride={variant === 'container' ? 'h3' : undefined}
-    headerText={`Linked mitigations (${linkedMitigations.length})`}>
+    headerText={`Linked mitigations (${linkedMitigations.length})${linkedMitigations.length ? ` · ${resolvedCount} resolved` : ''}`}>
     <SpaceBetween direction='vertical' size="l">
       <div>
         <Autosuggest
@@ -74,22 +88,19 @@ const MitigationLinkComponent: FC<PropsWithChildren<MitigationLinkProps>> = ({
           placeholder="Search mitigation"
           empty="No matches found"
         />
-        <div
-          style={{
-            display: 'flex',
-          }}
-        >
-          <TokenGroup
-            items={
-              linkedMitigations.map(x => ({
-                label: x.content,
-                dismissLabel: `Unlink mitigation ${x.numericId}`,
-              }))
-            }
-            onDismiss={({ detail: { itemIndex } }) => {
-              onRemoveMitigationLink(linkedMitigations[itemIndex].id);
-            }}
-          />
+        <div>
+          {linkedMitigations.map(x => (<LinkedEntityItem
+            key={x.id}
+            displayId={`M-${standardizeNumericId(x.numericId)}`}
+            content={x.content}
+            status={<Badge color={MITIGATION_STATUS_COLOR_MAPPING[x.status || 'NotSet'] || 'grey'}>
+              {(x.status && STATUS_BY_VALUE.get(x.status)?.label) || 'Status Not Set'}
+            </Badge>}
+            comments={getEntityComments(x)}
+            onNavigate={onViewMitigation && (() => onViewMitigation(x.id))}
+            dismissLabel={`Unlink mitigation ${x.numericId}`}
+            onDismiss={() => onRemoveMitigationLink(x.id)}
+          />))}
         </div>
       </div>
       {children}

@@ -15,9 +15,10 @@
  ******************************************************************************************************************** */
 import Autosuggest from '@cloudscape-design/components/autosuggest';
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
-import TokenGroup from '@cloudscape-design/components/token-group';
 import React, { FC, useMemo } from 'react';
 import { Assumption } from '../../../customTypes';
+import standardizeNumericId from '../../../utils/standardizeNumericId';
+import LinkedEntityItem, { getEntityComments } from '../../generic/LinkedEntityItem';
 
 export interface AssumptionLinkProps {
   variant?: ExpandableSectionProps['variant'];
@@ -25,6 +26,8 @@ export interface AssumptionLinkProps {
   assumptionList: Assumption[];
   onAddAssumptionLink: (assumptionId: string) => void;
   onRemoveAssumptionLink: (assumptionId: string) => void;
+  /** When set, the assumption id is a link that opens the assumption in the assumptions view. */
+  onViewAssumption?: (assumptionId: string) => void;
 }
 
 const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
@@ -32,6 +35,7 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
   assumptionList,
   onAddAssumptionLink,
   onRemoveAssumptionLink,
+  onViewAssumption,
   variant,
 }) => {
   const [searchValue, setSearchValue] = React.useState('');
@@ -70,17 +74,17 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
       placeholder="Search assumption"
       empty="No matches found"
     />
-    <TokenGroup
-      items={
-        linkedAssumptions.map(x => ({
-          label: x.content,
-          dismissLabel: `Unlink assumption ${x.numericId}`,
-        }))
-      }
-      onDismiss={({ detail: { itemIndex } }) => {
-        onRemoveAssumptionLink(linkedAssumptions[itemIndex].id);
-      }}
-    />
+    <div>
+      {linkedAssumptions.map(x => (<LinkedEntityItem
+        key={x.id}
+        displayId={`A-${standardizeNumericId(x.numericId)}`}
+        content={x.content}
+        comments={getEntityComments(x)}
+        onNavigate={onViewAssumption && (() => onViewAssumption(x.id))}
+        dismissLabel={`Unlink assumption ${x.numericId}`}
+        onDismiss={() => onRemoveAssumptionLink(x.id)}
+      />))}
+    </div>
   </ExpandableSection>);
 };
 

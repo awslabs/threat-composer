@@ -23,11 +23,13 @@ import AssumptionLinkView from '../AssumptionLinkView';
 export interface AssumptionLinkProps {
   linkedEntityId: string;
   type: AssumptionLink['type'];
+  onViewAssumption?: (assumptionId: string) => void;
 }
 
 const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
   linkedEntityId,
   type,
+  onViewAssumption,
 }) => {
   const { assumptionList, saveAssumption } = useAssumptionsContext();
   const [assumptionLinks, setAssumptionLinks] = useState<AssumptionLink[]>([]);
@@ -70,6 +72,7 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
     linkedAssumptionIds={assumptionLinks.map(al => al.assumptionId) || []}
     onAddAssumptionLink={handleAddAssumptionLink}
     onRemoveAssumptionLink={(assumptionId) => removeAssumptionLink(assumptionId, linkedEntityId)}
+    onViewAssumption={onViewAssumption}
   />);
 };
 

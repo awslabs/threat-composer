@@ -22,10 +22,12 @@ import MitigationLinkView from '../MitigationLinkView';
 
 export interface MitigationLinkProps {
   linkedEntityId: string;
+  onViewMitigation?: (mitigationId: string) => void;
 }
 
 const MitigationLinkComponent: FC<MitigationLinkProps> = ({
   linkedEntityId,
+  onViewMitigation,
 }) => {
   const { mitigationList, saveMitigation } = useMitigationsContext();
   const [mitigationLinks, setMitigationLinks] = useState<MitigationLink[]>([]);
@@ -62,6 +64,7 @@ const MitigationLinkComponent: FC<MitigationLinkProps> = ({
     linkedMitigationIds={mitigationLinks.map(ml => ml.mitigationId)}
     onAddMitigationLink={handleAddMitigationLink}
     onRemoveMitigationLink={(mitigationId) => removeMitigationLink(mitigationId, linkedEntityId)}
+    onViewMitigation={onViewMitigation}
   />);
 };
 

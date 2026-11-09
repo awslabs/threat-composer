@@ -14,9 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { AssumptionList as AssumptionListComponent } from '@aws/threat-composer';
+import { useLocation } from 'react-router-dom';
 
 const AssumptionList = () => {
-  return <AssumptionListComponent />;
+  const { state } = useLocation();
+  return <AssumptionListComponent initialFilter={state?.filter} />;
 };
 
 export default AssumptionList;

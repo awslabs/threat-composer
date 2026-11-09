@@ -36,3 +36,10 @@ export const AssumptionLinkSchema = EntityLinkBaseSchema.extend({
 
 export type AssumptionLink = z.infer<typeof AssumptionLinkSchema>;
 
+
+export interface AssumptionListFilter {
+  /**
+   * Show only the assumption with this id.
+   */
+  id?: string;
+}
