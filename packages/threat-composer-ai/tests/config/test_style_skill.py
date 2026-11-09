@@ -54,11 +54,14 @@ def write_skill(directory: Path, text: str = SKILL) -> Path:
     return directory
 
 
-def test_missing_skill_gives_install_instructions():
-    with pytest.raises(ss.StyleSkillError) as e:
-        ss.get_style_skill()
-    assert ss.INSTALL_COMMAND in str(e.value)
-    assert f"{ss.ENV_VAR}=none" in str(e.value)
+def test_missing_skill_warns_and_runs_without_the_rules(caplog):
+    with caplog.at_level("WARNING", logger=ss.logger.name):
+        assert ss.get_style_skill() is None
+    assert ss.writing_rules_section() == ""
+    assert ss.provenance() == {"skill": "not found"}
+    [record] = caplog.records  # once: the lookup is cached
+    assert ss.INSTALL_COMMAND in record.getMessage()
+    assert f"{ss.ENV_VAR}=none" in record.getMessage()
 
 
 def test_opt_out(monkeypatch):
@@ -151,9 +154,10 @@ def test_prose_agents_get_the_rules(tmp_path):
         assert text.index("WRITING RULES") < text.index("FINAL RESPONSE")
 
 
-def test_runner_refuses_to_start_without_the_skill(tmp_path):
+def test_runner_refuses_a_skill_path_that_does_not_exist(monkeypatch, tmp_path):
     from threat_composer_ai.core.runner import WorkflowRunner
 
+    monkeypatch.setenv(ss.ENV_VAR, str(tmp_path / "typo"))
     runner = WorkflowRunner.__new__(WorkflowRunner)  # setup() checks the skill first
     ok, message = runner.setup(invocation_args={}, skip_validation=True)
     assert not ok and ss.INSTALL_COMMAND in message

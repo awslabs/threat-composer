@@ -188,9 +188,11 @@ class WorkflowRunner:
             (success: bool, error_message: str | None)
         """
         try:
-            # 0. Writing skill (required unless disabled; see config/style_skill.py).
-            #    Checked even with skip_validation: it is part of the output
-            #    specification, not an environment check.
+            # 0. Writing skill (see config/style_skill.py). Not found in the default
+            #    places: a warning, and the run goes on. A skill path that is wrong
+            #    or a skill that is not the expected one: an error. Checked even
+            #    with skip_validation: it is part of the output specification,
+            #    not an environment check.
             try:
                 get_style_skill()
             except StyleSkillError as e:

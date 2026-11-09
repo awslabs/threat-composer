@@ -20,11 +20,14 @@ sections do not apply to an agent that writes through tools.
 """
 
 import hashlib
+import logging
 import os
 import re
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 ENV_VAR = "THREAT_COMPOSER_AI_STYLE_SKILL"
 DISABLED_VALUES = {"none", "off", "disabled"}
@@ -138,9 +141,12 @@ def load(path: Path) -> StyleSkill:
 
 @lru_cache(maxsize=1)
 def get_style_skill() -> StyleSkill | None:
-    """The writing skill, or None when it is disabled.
+    """The writing skill, or None when it is disabled or cannot be found.
 
-    Raises StyleSkillError with install instructions when it cannot be found.
+    Not finding the skill in the default places is a warning in the log: the run
+    goes on without the writing rules, so a setup that worked before still works.
+    It is an error when ENV_VAR names a skill that is not there, and when a skill
+    is found but is not the expected one: the user asked for those rules.
     """
     if is_disabled():
         return None
@@ -149,12 +155,16 @@ def get_style_skill() -> StyleSkill | None:
         if path.is_file():
             return load(path)
     looked = ", ".join(str(p) for p in candidates)
-    raise StyleSkillError(
+    message = (
         f"The {SKILL_NAME} writing skill was not found (looked in: {looked}).\n"
         f"Install it with:\n  {INSTALL_COMMAND}\n"
         f"or set {ENV_VAR} to its directory. To run without the writing rules, "
         f"set {ENV_VAR}=none."
     )
+    if os.environ.get(ENV_VAR, "").strip():
+        raise StyleSkillError(message)
+    logger.warning("Continuing without the %s writing rules. %s", SKILL_NAME, message)
+    return None
 
 
 def writing_rules_section() -> str:
@@ -165,4 +175,6 @@ def writing_rules_section() -> str:
 
 def provenance() -> dict[str, str]:
     skill = get_style_skill()
-    return skill.provenance() if skill else {"skill": "disabled"}
+    if skill:
+        return skill.provenance()
+    return {"skill": "disabled" if is_disabled() else "not found"}
