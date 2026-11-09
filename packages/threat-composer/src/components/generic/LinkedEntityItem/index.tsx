@@ -14,13 +14,13 @@
   limitations under the License.
  ******************************************************************************************************************** */
 /** @jsxImportSource @emotion/react */
+import Badge, { BadgeProps } from '@cloudscape-design/components/badge';
 import Button from '@cloudscape-design/components/button';
 import Link from '@cloudscape-design/components/link';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { FC, ReactNode } from 'react';
 import { METADATA_KEY_COMMENTS } from '../../../configs/metadata';
-import { EntityBase } from '../../../customTypes';
 
 const styles = {
   item: css({
@@ -47,10 +47,25 @@ const styles = {
  * The text of the entity's "Comments" metadata, if any. Used as the hover text of a linked entity
  * so that it adds information instead of repeating the content that is already displayed.
  */
-export const getEntityComments = (entity: Pick<EntityBase, 'metadata'>): string | undefined => {
+export const getEntityComments = (entity: { metadata?: ReadonlyArray<{ key: string; value: unknown }> }): string | undefined => {
   const comments = entity.metadata?.find(m => m.key === METADATA_KEY_COMMENTS)?.value;
   return typeof comments === 'string' && comments.trim() ? comments : undefined;
 };
+
+export interface LinkedEntityStatusProps {
+  status?: string;
+  options: ReadonlyArray<{ value: string; label: string }>;
+  colorMapping: { [status: string]: BadgeProps['color'] };
+}
+
+/**
+ * A read-only status badge. It has the same label and colour as the badge on the entity's own card.
+ */
+export const LinkedEntityStatus: FC<LinkedEntityStatusProps> = ({ status, options, colorMapping }) => (
+  <Badge color={colorMapping[status || 'NotSet'] || 'grey'}>
+    {(status && options.find(o => o.value === status)?.label) || 'Status Not Set'}
+  </Badge>
+);
 
 export interface LinkedEntityItemProps {
   /** The displayed id, e.g. M-0015. */

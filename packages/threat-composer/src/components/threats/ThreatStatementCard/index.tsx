@@ -22,7 +22,7 @@ import { CancelableEventHandler } from '@cloudscape-design/components/internal/e
 import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useCallback, useMemo } from 'react';
 import { THREAT_STATUS_COLOR_MAPPING } from '../../../configs/status';
-import { TemplateThreatStatement, ViewNavigationEvent } from '../../../customTypes';
+import { TemplateThreatStatement } from '../../../customTypes';
 import threatStatus from '../../../data/status/threatStatus.json';
 import AssumptionLink from '../../assumptions/AssumptionLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';
@@ -42,8 +42,6 @@ export interface ThreatStatementCardProps {
   onEditMetadata: (statement: TemplateThreatStatement, key: string, value: string | string[] | undefined) => void;
   onAddTagToStatement?: (statement: TemplateThreatStatement, tag: string) => void;
   onRemoveTagFromStatement?: (statement: TemplateThreatStatement, tag: string) => void;
-  onMitigationView?: ViewNavigationEvent['onMitigationView'];
-  onAssumptionView?: ViewNavigationEvent['onAssumptionView'];
 }
 
 const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
@@ -56,8 +54,6 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
   onRemoveTagFromStatement,
   onEditStatementStatus,
   onEditMetadata,
-  onMitigationView,
-  onAssumptionView,
 }) => {
   const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(({ detail }) => {
     switch (detail.id) {
@@ -121,12 +117,10 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
         {showLinkedEntities && <SpaceBetween direction='vertical' size='s'>
           <MitigationLink
             linkedEntityId={statement.id}
-            onViewMitigation={onMitigationView}
           />
           <AssumptionLink
             linkedEntityId={statement.id}
             type='Threat'
-            onViewAssumption={onAssumptionView}
           />
         </SpaceBetween>}
       </ColumnLayout>

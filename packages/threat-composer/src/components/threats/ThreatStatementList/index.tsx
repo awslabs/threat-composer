@@ -93,15 +93,11 @@ const ContentLayout: FC<PropsWithChildren<ContentLayoutProps & {
 export interface ThreatStatementListProps {
   initialFilter?: ThreatStatementListFilter;
   onThreatEditorView?: ViewNavigationEvent['onThreatEditorView'];
-  onMitigationView?: ViewNavigationEvent['onMitigationView'];
-  onAssumptionView?: ViewNavigationEvent['onAssumptionView'];
 }
 
 const ThreatStatementList: FC<ThreatStatementListProps> = ({
   initialFilter,
   onThreatEditorView,
-  onMitigationView,
-  onAssumptionView,
 }) => {
   const {
     statementList,
@@ -534,8 +530,6 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
           onAddTagToStatement={handleAddTagToStatement}
           onRemoveTagFromStatement={handleRemoveTagFromStatement}
           showLinkedEntities={composerMode === 'Full'}
-          onMitigationView={onMitigationView}
-          onAssumptionView={onAssumptionView}
         />))
       }
     </SpaceBetween >

@@ -16,19 +16,19 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import { useMitigationLinksContext } from '../../../contexts/MitigationLinksContext/context';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
+import { useViewNavigationContext } from '../../../contexts/ViewNavigationContext/context';
 import { MitigationLink } from '../../../customTypes';
 import getNewMitigation from '../../../utils/getNewMitigation';
 import MitigationLinkView from '../MitigationLinkView';
 
 export interface MitigationLinkProps {
   linkedEntityId: string;
-  onViewMitigation?: (mitigationId: string) => void;
 }
 
 const MitigationLinkComponent: FC<MitigationLinkProps> = ({
   linkedEntityId,
-  onViewMitigation,
 }) => {
+  const { onMitigationView } = useViewNavigationContext();
   const { mitigationList, saveMitigation } = useMitigationsContext();
   const [mitigationLinks, setMitigationLinks] = useState<MitigationLink[]>([]);
 
@@ -64,7 +64,7 @@ const MitigationLinkComponent: FC<MitigationLinkProps> = ({
     linkedMitigationIds={mitigationLinks.map(ml => ml.mitigationId)}
     onAddMitigationLink={handleAddMitigationLink}
     onRemoveMitigationLink={(mitigationId) => removeMitigationLink(mitigationId, linkedEntityId)}
-    onViewMitigation={onViewMitigation}
+    onViewMitigation={onMitigationView}
   />);
 };
 

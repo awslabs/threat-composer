@@ -16,6 +16,7 @@
 import { FC, useEffect, useState } from 'react';
 import { useMitigationLinksContext } from '../../../contexts/MitigationLinksContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
+import { useViewNavigationContext } from '../../../contexts/ViewNavigationContext/context';
 import { MitigationLink } from '../../../customTypes';
 import ThreatLinkView from '../../threats/ThreatLinkView';
 
@@ -27,6 +28,7 @@ const MitigationThreatLinkComponent: FC<MitigationThreatLinkProps> = ({
   mitigationId,
 }) => {
   const { statementList } = useThreatsContext();
+  const { onThreatEditorView } = useViewNavigationContext();
   const [mitigationLinks, setMitigationLinks] = useState<MitigationLink[]>([]);
 
   const { getMitigtaionThreatLinks } = useMitigationLinksContext();
@@ -42,6 +44,7 @@ const MitigationThreatLinkComponent: FC<MitigationThreatLinkProps> = ({
   } = useMitigationLinksContext();
 
   return (<ThreatLinkView
+    onViewThreat={onThreatEditorView}
     threatList={statementList}
     linkedThreatIds={mitigationLinks.map(ml => ml.linkedId)}
     onAddThreatLink={(threatId) => addMitigationLink({

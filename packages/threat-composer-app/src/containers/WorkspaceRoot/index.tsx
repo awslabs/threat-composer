@@ -23,6 +23,8 @@ import {
 import { useCallback, FC } from 'react';
 import { useNavigate, useParams, useSearchParams, Outlet } from 'react-router-dom';
 import {
+  ROUTE_ASSUMPTION_LIST_PATH,
+  ROUTE_MITIGATION_LIST_PATH,
   ROUTE_THREAT_EDITOR_PATH,
   ROUTE_THREAT_LIST_PATH,
   ROUTE_WORKSPACE_HOME,
@@ -53,6 +55,18 @@ const WorkspaceRoot: FC = () => {
     });
   }, [navigate, workspaceId, searchParams]);
 
+  const handleMitigationView = useCallback((mitigationId: string) => {
+    void navigate(generateUrl(ROUTE_MITIGATION_LIST_PATH, searchParams, workspaceId), {
+      state: { filter: { id: mitigationId } },
+    });
+  }, [navigate, workspaceId, searchParams]);
+
+  const handleAssumptionView = useCallback((assumptionId: string) => {
+    void navigate(generateUrl(ROUTE_ASSUMPTION_LIST_PATH, searchParams, workspaceId), {
+      state: { filter: { id: assumptionId } },
+    });
+  }, [navigate, workspaceId, searchParams]);
+
   const handleWorkspaceChanged = useCallback((newWorkspaceId: string) => {
     const url = generateUrl(ROUTE_WORKSPACE_HOME, searchParams, newWorkspaceId);
     void navigate(url);
@@ -70,6 +84,8 @@ const WorkspaceRoot: FC = () => {
             requiredGlobalSetupContext={false}
             onThreatEditorView={handleThreatEditorView}
             onThreatListView={handleThreatListView}
+            onMitigationView={handleMitigationView}
+            onAssumptionView={handleAssumptionView}
           >
             <AppLayout>
               <Outlet />

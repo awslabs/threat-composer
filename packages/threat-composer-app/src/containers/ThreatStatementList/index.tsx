@@ -15,7 +15,7 @@
  ******************************************************************************************************************** */
 import { ThreatStatementList as ThreatStatementListComponent } from '@aws/threat-composer';
 import { useLocation } from 'react-router-dom';
-import { ROUTE_ASSUMPTION_LIST, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR } from '../../config/routes';
+import { ROUTE_THREAT_EDITOR } from '../../config/routes';
 import useNavigateView from '../../hooks/useNavigationView';
 
 const ThreatStatementList = () => {
@@ -29,12 +29,6 @@ const ThreatStatementList = () => {
       state: {
         idToCopy,
       },
-    })}
-    onMitigationView={(mitigationId: string) => handleNavigateView(ROUTE_MITIGATION_LIST, undefined, undefined, undefined, {
-      state: { filter: { id: mitigationId } },
-    })}
-    onAssumptionView={(assumptionId: string) => handleNavigateView(ROUTE_ASSUMPTION_LIST, undefined, undefined, undefined, {
-      state: { filter: { id: assumptionId } },
     })}
   />;
 };
