@@ -31,7 +31,7 @@ dependencies = [
   "rich",
   "sarif-om",
   "strands-agents>=1.0,<2",
-  "strands-agents-tools>=0.2,<1"
+  "strands-agents-tools>=0.2,<0.9"
 ]
 
   [project.scripts]
