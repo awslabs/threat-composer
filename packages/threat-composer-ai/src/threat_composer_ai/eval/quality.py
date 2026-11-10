@@ -60,7 +60,6 @@ DEFAULT_EDGES = [
     ["threats", "mitigations"],
     ["mitigations", "threat_model"],
     ["architecture", "architecture_diagram"],
-    ["dataflow", "dataflow_diagram"],
 ]
 # Settings that must come from the CLI's defaults. See DefaultsExercised. aws_region
 # is excluded: it is deployment configuration, and in CI it comes from the environment.
@@ -74,7 +73,6 @@ DEFAULT_NODES = [
     "architecture",
     "architecture_diagram",
     "dataflow",
-    "dataflow_diagram",
     "threats",
     "mitigations",
     "threat_model",

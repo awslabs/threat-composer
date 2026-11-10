@@ -2,7 +2,6 @@
 
 from .threat_composer_assemble_tc_v1_model import threat_composer_assemble_tc_v1_model
 from .threat_composer_dia_architecture import threat_composer_dia_architecture
-from .threat_composer_dia_dfd import threat_composer_dia_dfd
 from .threat_composer_dia_examples import threat_composer_dia_examples
 from .threat_composer_dia_list_icons import threat_composer_dia_list_icons
 from .threat_composer_generate_uuid4 import (
@@ -16,10 +15,10 @@ from .threat_composer_svg_to_data_url import threat_composer_svg_to_data_url
 from .threat_composer_validate_tc_v1_schema import threat_composer_validate_tc_v1_schema
 from .threat_composer_workdir_file_read import threat_composer_workdir_file_read
 from .threat_composer_workdir_file_write import threat_composer_workdir_file_write
+from .threat_composer_write_dataflow import threat_composer_write_dataflow
 
 __all__ = [
     "threat_composer_dia_architecture",
-    "threat_composer_dia_dfd",
     "threat_composer_dia_examples",
     "threat_composer_dia_list_icons",
     "threat_composer_svg_to_data_url",
@@ -30,4 +29,5 @@ __all__ = [
     "threat_composer_assemble_tc_v1_model",
     "threat_composer_workdir_file_write",
     "threat_composer_workdir_file_read",
+    "threat_composer_write_dataflow",
 ]

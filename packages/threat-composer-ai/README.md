@@ -30,6 +30,7 @@ threat-composer-ai-mcp
 - UV package manager
 - AWS credentials (for Bedrock access)
 - Graphviz (for diagram generation)
+- The asd-ste100 writing skill (see below)
 
 **⚠️ Cost Note**: This tool uses Amazon Bedrock for AI inference, which incurs costs. By default, it uses Claude Sonnet 4 with standard on-demand pricing. See [Bedrock Pricing](https://aws.amazon.com/bedrock/pricing/) for details.
 
@@ -55,6 +56,24 @@ dot -V
 
 For more information, see: https://graphviz.org/download/
 
+#### Installing the asd-ste100 writing skill
+
+The agents write the text of the threat model with the rules of ASD-STE100 Simplified Technical English. The rules come from the [asd-ste100 skill](https://github.com/danyuchn/asd-ste100-skill). The CLI, the MCP workflow and the Claude Code `/threat-model` skill all use it. The Claude Code and Kiro agents stop if it is missing. The CLI and the MCP workflow log a warning and run without the writing rules.
+
+Install it in the default location:
+
+```bash
+git clone https://github.com/danyuchn/asd-ste100-skill ~/.claude/skills/asd-ste100
+```
+
+The tools look for the skill in this order:
+
+1. `THREAT_COMPOSER_AI_STYLE_SKILL`, if you set it to the skill directory or to its `SKILL.md`.
+2. `~/.claude/skills/asd-ste100/SKILL.md`.
+3. A copy that your Claude organization synced to `~/.claude/skills/synced/`.
+
+To run without the writing rules and without the warning, set `THREAT_COMPOSER_AI_STYLE_SKILL=none`. If you set the variable to a path with no skill, the run fails. Each run records the skill path, version and file hash in `config/run-metadata.json`; a run without the rules records `disabled` or `not found`.
+
 ### Setup
 
 ```bash
@@ -67,6 +86,134 @@ uv sync
 # Run tools locally
 uv run threat-composer-ai-cli /path/to/codebase
 uv run threat-composer-ai-mcp
+```
+
+## MCP builder tools
+
+The `tm_*` and `sys_*` MCP tools build a threat model one item at a time (see `src/threat_composer_ai/mcp/builder_tools.py`). Set `THREAT_COMPOSER_AI_MCP_TOOLS=builder` to expose only these tools. Every write validates the whole document and changes nothing if it would become invalid.
+
+| Tool | Purpose |
+| --- | --- |
+| `tm_get` | Compact view of the model. Each threat shows its `elements` (the tags that are system model ids) apart from its other `tags`. Filter with `priority`, `element`, `threat_status` and `mitigation_status`. A threat filter also limits mitigations to those linked to a selected threat. |
+| `tm_get_item` | Everything stored on one threat, mitigation or assumption (all metadata, including comments, evidence and custom keys), with the items linked to it. Name the item by id or number: `T17`, `M19`, `A44`. |
+| `tm_patch_threat`, `tm_patch_mitigation`, `tm_patch_assumption` | Change only the fields you set. Everything else stays: id, number, links, tags, other metadata and `custom:agent`. Changing a threat's grammar fields composes the statement again. `metadata` sets `custom:` keys (`null` deletes one), for example `custom:verified_at`. An assumption keeps its number, so use `tm_patch_assumption` instead of removing and adding it. `tm_update_threat` and `tm_update_mitigation` still replace the whole item. |
+| `tm_search` | Find text in every field: threat grammar fields, mitigation and assumption content, tags, all metadata, section descriptions and the system model. Each match gives the kind, id, number, field and a snippet. Plain text or `regex`; `kinds` and `limit` narrow it. |
+| `tm_edit_section` | Replace exact text in a section description (`old` to `new`). It fails, and changes nothing, if `old` matches nothing, or matches more than once and `replace_all` is not set. |
+| `tm_remove` | Delete items by id or number, and the links to them. If other text mentions a removed item (`T17`, `assumption 43`, its id), nothing is removed and the mentions are listed. Fix the text, or pass `force`. |
+| `tm_add_tags` | Add tags to threats, mitigations or assumptions, for example `task:3.2`. Changes only `tags`; content, status, metadata and links stay the same. A tag the item already has is not added again. |
+| `tm_remove_tags` | Remove tags from threats, mitigations or assumptions. Changes only `tags`. A tag the item does not have is ignored. |
+
+Both take `model`, `kind` (`threat`, `mitigation` or `assumption`), `ids` and `tags`, and return `{"updated": n}`. Each tag is 1 to 30 characters after whitespace is stripped. If an id is unknown or a tag is invalid, nothing changes. Use these instead of `tm_update_mitigation` to change tags: `tm_update_mitigation` replaces the whole mitigation, including its threat links.
+
+### Dry runs
+
+Every `tm_*` write, and `sys_upsert`, `sys_remove` and `sys_render`, takes `dry_run`. The change runs in memory and is checked in full, so the same errors appear, and a stale `expected_hash` still fails. Nothing is written. The result has `dry_run: true` and `changes`, a list of field-level differences:
+
+- `{"op": "change", "item": "T17", "fields": {"status": {"before": ..., "after": ...}}}`. Tags show `added` and `removed`. Metadata fields are named `metadata:<key>`. Long text is cut to 300 characters and images show `changed`.
+- `{"op": "add" | "remove", "item": "M19", "text": ...}` for items, zones, elements and flows.
+- `{"op": "link" | "unlink", "link": "M19 -> T3"}` for links.
+
+`sys_render` with `dry_run` shows the change to the dataflow text. It renders no diagram and writes no file.
+
+### Resolution candidates
+
+`tm_coverage_report` also compares each threat's status with the status of its mitigations. `resolution_candidates` lists open threats whose linked mitigations are all `mitigationResolved`. `resolution_candidates_with_will_not_action` lists open threats where the rest are resolved and at least one is `mitigationResolvedWillNotAction`; that closes the item without reducing the risk, so a person should decide. `resolved_threats_with_open_mitigations` lists resolved threats that still have an open mitigation. Threat Composer links neither status to the other, so these lists are advice and nothing changes a status.
+
+### Mitigation plan
+
+`tm_coverage_report` returns `mitigation_plan`, the order in which to implement the open mitigations (`mitigationIdentified` or `mitigationInProgress`). It is a greedy weighted cover:
+
+1. Each open threat has a weight from its priority: High 9, Medium 3, Low 1 (no priority counts as Medium). Resolved and ignored threats have none.
+2. A threat counts as covered when a `mitigationResolved` mitigation (an existing control) is linked to it.
+3. Each round picks the open mitigation with the highest gain: the weight of the threats it would cover for the first time, plus a quarter of the weight of threats that already have a control. Ties go to a mitigation that is in progress, then to one that touches more open threats, then to the lower number.
+4. The pick then counts as a control on its threats, and the next round starts.
+
+A mitigation that only adds a second control to threats already covered ranks last. Each row has `rank`, `score`, `covers_new`, `also_reduces` and `cumulative_weight_covered_pct`, so you can stop at the rank where the gain stops being worth the effort. `uncovered_threats` lists open threats with no usable mitigation; they need a new one. `weight_covered_before_plan_pct` is the share already covered by existing controls. The plan does not know the cost of a mitigation, and it changes nothing.
+
+### Detecting a stale model
+
+`tm_get`, `tm_get_item`, `tm_validate`, `tm_coverage_report` and every `tm_*` write return `hash`, a short hash of the `.tc.json` file. Every `tm_*` write also takes `expected_hash`. If the file has changed since that hash (another process, a merge, a checkout), the write fails and changes nothing. Without `expected_hash`, writes work as before. The `sys_*` tools do not use hashes yet.
+
+## Claude Code and Kiro agents
+
+The agents, the `threat-model` skill and the Kiro workflow recipe come from one source in `agent-src/`. Do not edit the generated files in `.claude/` and `.kiro/`. Change `agent-src/`, then run:
+
+```bash
+uv run python scripts/sync_agent_configs.py          # write .claude/ and .kiro/
+uv run python scripts/sync_agent_configs.py --check  # exit 1 if they are out of date
+```
+
+### Models
+
+Each agent sets a model tier, `opus`, `sonnet` or `haiku`, in its `agent-src` frontmatter. Without one, an agent uses the model of the session, which is usually the most costly. The tiers now are:
+
+| Agent | Tier | Why |
+| --- | --- | --- |
+| `system-modeler` | `opus` | It runs once, and every later step depends on its trust zones and boundaries. |
+| `threat-analyst` | `sonnet` | Several run in parallel, so this is where most of the tokens go. Its prompt requires `path:line` evidence. |
+| `defender` | `sonnet` | Smaller volume. Spot-check controls that it marks `existing`. |
+| `threat-model-coordinator` | `sonnet` | Checkpoints and planning, with few tokens. |
+
+Claude Code gets the tier as the `model:` alias, which always means the latest version of that family. Kiro needs a concrete id, `claude-<tier>-<version>` (for example `claude-sonnet-5.5`). The families are released separately, so `agent-src/models.yaml` holds a version for each tier. When a family has a new version, change its line, check that `/model` in Kiro lists the id, and run the sync script. Kiro does not fall back from an unknown id: the first call fails.
+
+In a Kiro workflow, the model of a step is chosen in this order: the step's `modelId`, the workflow's `modelId`, the model of the session, then the agent's `model`. The agent's `model` is the last fallback. So the script also writes each step's `modelId` from its agent's tier. A step in `workflow.yaml` can set `model: <tier>` or `model: inherit` to override its agent, for example to run one analyst step on Opus. Write the tier, not `modelId`: the script checks it and maps it.
+
+A test runs the check, so a stale file fails the test suite. The script writes:
+
+| Output | Claude Code | Kiro |
+| --- | --- | --- |
+| Agents | `.claude/agents/*.md` | `.kiro/agents/*.json`, with prompts in `.kiro/agent-prompts/*.md` |
+| `threat-model` skill | `.claude/skills/threat-model/` | `.kiro/skills/threat-model/` |
+| Workflow recipe | none | `.kiro/workflows/threat-model.workflow.json` |
+| MCP server | `.mcp.json` (the source) | `.kiro/settings/mcp.json` |
+
+In Kiro, install the asd-ste100 skill in `~/.kiro/skills/asd-ste100`. To run the recipe, turn on workflows, then run `/workflow run threat-model` in Kiro CLI or `/workflow-run` in Kiro IDE. Before the first run, ask Kiro to run `validate_workflow` on the recipe. The run pauses twice, to confirm the system model and to review the threats. Answer in the paused step's session.
+
+### Install into a project or your home directory
+
+`scripts/install_agents.py` copies the generated agents, the `threat-model` skill and the Kiro workflow, and registers the MCP server. It uses only the Python standard library.
+
+```bash
+python3 scripts/install_agents.py --project ~/src/app    # .claude/, .kiro/ and .mcp.json in that project
+python3 scripts/install_agents.py --scope user           # ~/.claude and ~/.kiro
+python3 scripts/install_agents.py --tool kiro --dry-run  # show the changes, write nothing
+python3 scripts/install_agents.py --install-style-skill  # also clone asd-ste100 if it is missing
+python3 scripts/install_agents.py --uninstall
+```
+
+To install without a checkout, run the wrapper from a URL. It keeps a shallow, sparse checkout in `~/.local/share/threat-composer` and runs `install_agents.py` from it with your arguments. Running it again updates both. It needs `git` 2.25 or later and `python3` 3.9 or later.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/awslabs/threat-composer/main/packages/threat-composer-ai/scripts/install.sh | sh -s -- --project ~/src/app
+```
+
+Set `THREAT_COMPOSER_REF` for another branch or tag, `THREAT_COMPOSER_HOME` for another checkout directory, and `THREAT_COMPOSER_REPO` for a fork. Read the script before you pipe it to a shell. The checkout is only for the installer: the wrapper discards local changes in it.
+
+- The MCP entry runs `uv run --project <this checkout> threat-composer-ai-mcp` from the root of the git repository where the session starts, so the models go in that repository's `threat-models/`. Move or delete this checkout and the entry stops working.
+- It merges the entry into `.mcp.json` (Claude Code, project), `<root>/.kiro/settings/mcp.json` (Kiro) and, for the Claude Code user scope, runs `claude mcp add-json --scope user`. It keeps your other servers. If a JSON file is invalid, it stops and changes nothing in that file.
+- Run it again to update. It overwrites the files it installs and leaves other files alone. `--no-mcp` skips the MCP entry.
+- The Kiro workflow reads its own recipe from `.kiro/workflows/` in the workspace, so use the project scope for it.
+
+### Resume or update a threat model
+
+The `threat-model` skill and the workflow have three modes:
+
+- **new**: the model does not exist. Do every step.
+- **resume**: the model is incomplete. Start at the first stage with work left: the system model if it has no elements, the threats if a target has none, the mitigations if a High or Medium threat has none, otherwise the report.
+- **update**: the system changed. The system-modeler keeps the ids that still exist and reports the ids it added, changed and removed. The analysts look only at the added and changed ids and their flows. At the threat checkpoint you keep, change or dismiss the threats on changed and removed ids. The defender works only on new and affected threats.
+
+Prompts for the skill (`/threat-model` in Claude Code or Kiro):
+
+```text
+/threat-model Resume threat-models/app.tc.json for this repository.
+/threat-model Update threat-models/app.tc.json. The system changed since commit abc1234.
+/threat-model Update threat-models/app.tc.json. We added an SQS queue between the API and the worker.
+```
+
+For the workflow, set `mode` to `new`, `resume` or `update`, and set `changes` to the change description, a commit, or `none`:
+
+```text
+/workflow run threat-model --target . --model app.tc.json --mode update --changes "since commit abc1234" --context "none"
 ```
 
 ## Project Structure

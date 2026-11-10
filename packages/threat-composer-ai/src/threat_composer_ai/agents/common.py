@@ -405,10 +405,6 @@ def get_agent_model_config(
             "temperature": 0.5,  # More creative for discovering patterns
             "max_tokens": 32768,
         },
-        "dataflow_diagram": {
-            "temperature": 0.1,  # Very focused
-            "max_tokens": 100_000,  # Passing around a bunch of things
-        },
         "threats": {
             "temperature": 0.2,  # Very focused for systematic STRIDE analysis
             "max_tokens": 100_000,  # Largest output in the pipeline

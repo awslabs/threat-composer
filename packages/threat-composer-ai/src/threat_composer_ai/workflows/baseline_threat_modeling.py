@@ -22,7 +22,6 @@ from ..agents import (
     create_architecture_agent,
     create_architecture_diagram_agent,
     create_dataflow_agent,
-    create_dataflow_diagram_agent,
     create_mitigations_agent,
     create_threat_model_agent,
     create_threats_agent,
@@ -115,18 +114,16 @@ def create_baseline_threat_modeling_workflow(
         - application_info: Gathers basic application context and requirements
         - architecture: Analyzes system architecture and components
         - architecture_diagram: Generates visual architecture representations
-        - dataflow: Identifies data flows and trust boundaries
-        - dataflow_diagram: Creates data flow diagrams
+        - dataflow: Identifies data flows and trust boundaries, and writes the
+          data flow diagram from them
         - threats: Performs STRIDE analysis and threat identification
         - mitigations: Develops mitigation strategies for identified threats
         - threat_model: Synthesizes results into Threat Composer schema format
 
     Execution Flow:
         application_info → architecture → dataflow → threats → mitigations
-                     ↓           ↓
-        architecture_diagram  dataflow_diagram
-                     ↓           ↓
-                  threat_model ←←←←
+                     ↓                                         ↓
+        architecture_diagram ──────────────────────────→ threat_model
 
     Args:
         config (Optional[AppConfig]): Application configuration object containing:
@@ -168,7 +165,7 @@ def create_baseline_threat_modeling_workflow(
     Note:
         - The workflow uses conditional edges to ensure the threat_model node
           only executes after all dependencies (architecture_diagram,
-          dataflow_diagram, mitigations) are complete
+          mitigations) are complete
         - Graph execution includes safeguards against infinite loops and
           timeout protection
         - Agent context is cleared before workflow-level logging to prevent
@@ -183,7 +180,6 @@ def create_baseline_threat_modeling_workflow(
         config, previous_session_path
     )
     dataflow = create_dataflow_agent(config, previous_session_path)
-    dataflow_diagram = create_dataflow_diagram_agent(config, previous_session_path)
     threats = create_threats_agent(config, previous_session_path)
     mitigations = create_mitigations_agent(config, previous_session_path)
     threat_model = create_threat_model_agent(config, previous_session_path)
@@ -196,7 +192,6 @@ def create_baseline_threat_modeling_workflow(
     builder.add_node(architecture, "architecture")
     builder.add_node(architecture_diagram, "architecture_diagram")
     builder.add_node(dataflow, "dataflow")
-    builder.add_node(dataflow_diagram, "dataflow_diagram")
     builder.add_node(threats, "threats")
     builder.add_node(mitigations, "mitigations")
     builder.add_node(threat_model, "threat_model")
@@ -204,7 +199,7 @@ def create_baseline_threat_modeling_workflow(
     # Create conditional dependency checker for threat_model
     # threat_model should only execute when ALL of its dependencies are complete
     threat_model_condition = create_dependency_condition(
-        ["architecture_diagram", "dataflow_diagram", "mitigations"]
+        ["architecture_diagram", "mitigations"]
     )
 
     # Edges for the graph
@@ -214,12 +209,8 @@ def create_baseline_threat_modeling_workflow(
     builder.add_edge("threats", "mitigations")
 
     builder.add_edge("architecture", "architecture_diagram")
-    builder.add_edge("dataflow", "dataflow_diagram")
 
     # Replace direct edges with conditional edges to ensure threat_model waits for all dependencies
-    builder.add_edge(
-        "dataflow_diagram", "threat_model", condition=threat_model_condition
-    )
     builder.add_edge(
         "architecture_diagram", "threat_model", condition=threat_model_condition
     )

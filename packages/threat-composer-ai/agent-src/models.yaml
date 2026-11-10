@@ -1,0 +1,15 @@
+# The Claude version of each model tier, for Kiro.
+#
+# Kiro needs a concrete model id, claude-<tier>-<version>, for example
+# claude-sonnet-5.5. The families are released separately, so each tier has its
+# own version. Change one line when that family has a new version, then check
+# that `/model` in Kiro lists the id and run scripts/sync_agent_configs.py.
+#
+# Claude Code does not read this file. It gets the tier name as an alias
+# (opus, sonnet, haiku), which always means the latest version.
+#
+# Kiro does not fall back from an unknown id: the first call of the agent or
+# workflow step fails.
+opus: "5.5"
+sonnet: "5.5"
+haiku: "5.5"

@@ -54,6 +54,7 @@ Without the extension, you can still view and edit the generated JSON files as t
 - UV package manager
 - AWS credentials configured (for CLI tool and MCP workflow execution - Bedrock access required)
 - Graphviz (for diagram generation)
+- The asd-ste100 writing skill (see below)
 
 ### ⚠️ Cost Considerations
 
@@ -97,6 +98,24 @@ dot -V
 ```
 
 For more information, see: https://graphviz.org/download/
+
+#### Installing the asd-ste100 writing skill
+
+The agents write the text of the threat model with the rules of ASD-STE100 Simplified Technical English. The rules come from the [asd-ste100 skill](https://github.com/danyuchn/asd-ste100-skill). The CLI, the MCP workflow and the Claude Code `/threat-model` skill all use it. The Claude Code and Kiro agents stop if it is missing. The CLI and the MCP workflow log a warning and run without the writing rules.
+
+Install it in the default location:
+
+```bash
+git clone https://github.com/danyuchn/asd-ste100-skill ~/.claude/skills/asd-ste100
+```
+
+The tools look for the skill in this order:
+
+1. `THREAT_COMPOSER_AI_STYLE_SKILL`, if you set it to the skill directory or to its `SKILL.md`.
+2. `~/.claude/skills/asd-ste100/SKILL.md`.
+3. A copy that your Claude organization synced to `~/.claude/skills/synced/`.
+
+To run without the writing rules and without the warning, set `THREAT_COMPOSER_AI_STYLE_SKILL=none`. If you set the variable to a path with no skill, the run fails. Each run records the skill path, version and file hash in `config/run-metadata.json`; a run without the rules records `disabled` or `not found`.
 
 ### Install with uv tool install (Recommended)
 

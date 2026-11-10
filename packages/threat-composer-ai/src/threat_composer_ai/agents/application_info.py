@@ -9,6 +9,7 @@ import os
 from strands import Agent
 
 from ..config import AppConfig
+from ..config.style_skill import writing_rules_section
 from ..tools import (
     threat_composer_generate_uuid4,
     threat_composer_generate_uuid4_with_guidance,
@@ -125,6 +126,8 @@ def create_system_prompt(config: AppConfig):
     - Deployment environment
 
     Remember: Be explicit about what you're assuming vs. what you can definitively determine from the code.
+
+    {writing_rules_section()}
 
     FINAL RESPONSE:
     1. Your final reponse must be a single line. No formatting."""
