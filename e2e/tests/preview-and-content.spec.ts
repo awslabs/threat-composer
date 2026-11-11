@@ -16,6 +16,7 @@ import {
 } from '../fixtures/app';
 import { cs } from '../fixtures/cloudscape';
 import { DEFAULT_WORKSPACE } from '../fixtures/routes';
+import { workspaceSelect } from '../fixtures/selectors';
 
 /**
  * The Print button, the import Preview button, and the diagram image controls.
@@ -195,6 +196,29 @@ test.describe('diagram images', () => {
     expect(await saved.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
 
     fs.rmSync(pngPath, { force: true });
+  });
+
+  test('the example workspace shows its diagrams in the threat model report', async ({ page }) => {
+    // The bundled Threat Composer example stores both diagrams as base64 PNGs,
+    // and the report renders them through markdown.
+    await gotoWorkspace(page, DEFAULT_WORKSPACE, 'dashboard');
+    await workspaceSelect(page).click();
+    await page.getByRole('option', { name: 'Threat Composer', exact: true }).click();
+    await waitForAppShell(page);
+
+    await navigateVia(page, 'Threat model');
+    await expect(page.getByRole('button', { name: 'Copy as Markdown' })).toBeVisible();
+
+    for (const alt of ['Architecture Diagram', 'Dataflow Diagram']) {
+      const img = page.getByRole('main').locator(`img[alt="${alt}"]`);
+      await expect(img).toHaveCount(1);
+      await expect(img).toHaveAttribute('src', /^data:image\/png;base64,/);
+      await expect
+        .poll(() => img.evaluate((el: HTMLImageElement) => el.naturalWidth), {
+          message: `the ${alt} should actually decode`,
+        })
+        .toBeGreaterThan(0);
+    }
   });
 
   test('an SVG upload skips compression and still works', async ({ page }) => {

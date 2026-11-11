@@ -19,12 +19,24 @@ import TextContent from '@cloudscape-design/components/text-content';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
 import { FC } from 'react';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { defaultUrlTransform, UrlTransform } from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 
 const externalPattern = /^((https?):\/\/)/;
+
+const dataImagePattern = /^data:image\/[a-z0-9.+-]+;base64,/i;
+
+/**
+ * Keeps base64 images, which diagrams are stored as. Other URLs use the default filter.
+ */
+const urlTransform: UrlTransform = (url, key, node) => {
+  if (key === 'src' && node.tagName === 'img' && dataImagePattern.test(url)) {
+    return url;
+  }
+  return defaultUrlTransform(url);
+};
 
 export interface MarkdownViewerProps {
   children: string;
@@ -116,7 +128,13 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({
   return (
     <div css={styles}>
       <TextContent {...props}>
-        <ReactMarkdown remarkPlugins={[gfm, frontmatter]} rehypePlugins={allowHtml ? [rehypeRaw] : []} components={components} children={children} />
+        <ReactMarkdown
+          remarkPlugins={[gfm, frontmatter]}
+          rehypePlugins={allowHtml ? [rehypeRaw] : []}
+          components={components}
+          urlTransform={urlTransform}
+          children={children}
+        />
       </TextContent>
     </div>
   );
