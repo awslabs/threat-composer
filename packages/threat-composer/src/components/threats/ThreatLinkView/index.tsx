@@ -15,15 +15,20 @@
  ******************************************************************************************************************** */
 import Autosuggest from '@cloudscape-design/components/autosuggest';
 import ExpandableSection from '@cloudscape-design/components/expandable-section';
-import TokenGroup from '@cloudscape-design/components/token-group';
 import React, { FC, useMemo } from 'react';
+import { THREAT_STATUS_COLOR_MAPPING } from '../../../configs/status';
 import { TemplateThreatStatement } from '../../../customTypes';
+import threatStatus from '../../../data/status/threatStatus.json';
+import standardizeNumericId from '../../../utils/standardizeNumericId';
+import LinkedEntityItem, { getEntityComments, LinkedEntityStatus } from '../../generic/LinkedEntityItem';
 
 export interface ThreatLinkProps {
   linkedThreatIds: string[];
   threatList: TemplateThreatStatement[];
   onAddThreatLink: (threatId: string) => void;
   onRemoveThreatLink: (threatId: string) => void;
+  /** When set, the threat id is a link that opens the threat in the threat editor. */
+  onViewThreat?: (threatId: string) => void;
 }
 
 const ThreatLinkComponent: FC<ThreatLinkProps> = ({
@@ -31,6 +36,7 @@ const ThreatLinkComponent: FC<ThreatLinkProps> = ({
   threatList,
   onAddThreatLink,
   onRemoveThreatLink,
+  onViewThreat,
 }) => {
   const [searchValue, setSearchValue] = React.useState('');
 
@@ -64,22 +70,21 @@ const ThreatLinkComponent: FC<ThreatLinkProps> = ({
       placeholder="Search threat"
       empty="No matches found"
     />
-    <div
-      style={{
-        display: 'flex',
-      }}
-    >
-      <TokenGroup
-        items={
-          linkedThreats.map(x => ({
-            label: x.statement,
-            dismissLabel: `Unlink threat ${x.numericId}`,
-          }))
-        }
-        onDismiss={({ detail: { itemIndex } }) => {
-          onRemoveThreatLink(linkedThreats[itemIndex].id);
-        }}
-      />
+    <div>
+      {linkedThreats.map(x => (<LinkedEntityItem
+        key={x.id}
+        displayId={`T-${standardizeNumericId(x.numericId)}`}
+        content={x.statement || ''}
+        status={<LinkedEntityStatus
+          status={x.status}
+          options={threatStatus}
+          colorMapping={THREAT_STATUS_COLOR_MAPPING}
+        />}
+        comments={getEntityComments(x)}
+        onNavigate={onViewThreat && (() => onViewThreat(x.id))}
+        dismissLabel={`Unlink threat ${x.numericId}`}
+        onDismiss={() => onRemoveThreatLink(x.id)}
+      />))}
     </div>
   </ExpandableSection>);
 };

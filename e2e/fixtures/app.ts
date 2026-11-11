@@ -485,7 +485,7 @@ export async function chooseExistingFromAutosuggest(
 
 /** Link a mitigation from inside the threat editor, creating it if new. */
 export async function linkMitigationFromEditor(page: Page, content: string): Promise<void> {
-  await expandSection(page, /^Linked mitigations \(\d+\)$/);
+  await expandSection(page, /^Linked mitigations \(\d+\)(?: · \d+ resolved)?$/);
   const search = page.getByPlaceholder('Search mitigation');
   await createViaAutosuggest(page, search, content);
 }

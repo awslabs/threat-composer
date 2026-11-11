@@ -17,6 +17,7 @@ import { FC, useEffect, useState, useCallback } from 'react';
 import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
+import { useViewNavigationContext } from '../../../contexts/ViewNavigationContext/context';
 import { AssumptionLink } from '../../../customTypes';
 import AssumptionLinkView from '../AssumptionLinkView';
 
@@ -29,6 +30,7 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
   linkedEntityId,
   type,
 }) => {
+  const { onAssumptionView } = useViewNavigationContext();
   const { assumptionList, saveAssumption } = useAssumptionsContext();
   const [assumptionLinks, setAssumptionLinks] = useState<AssumptionLink[]>([]);
 
@@ -70,6 +72,7 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
     linkedAssumptionIds={assumptionLinks.map(al => al.assumptionId) || []}
     onAddAssumptionLink={handleAddAssumptionLink}
     onRemoveAssumptionLink={(assumptionId) => removeAssumptionLink(assumptionId, linkedEntityId)}
+    onViewAssumption={onAssumptionView}
   />);
 };
 

@@ -20,3 +20,25 @@
  * with TypeScript. Component tests rely on these.
  */
 import '@testing-library/jest-dom/vitest';
+
+/**
+ * jsdom does not implement `window.matchMedia`. Cloudscape layout components and the
+ * `useMediaQuery` hooks call it, so lists and cards cannot render without a stub.
+ * The stub reports that no query matches, which is the desktop layout.
+ */
+if (typeof window !== 'undefined' && typeof window.matchMedia !== 'function') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    configurable: true,
+    value: (query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    }),
+  });
+}
