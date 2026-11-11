@@ -1,23 +1,31 @@
 """
-Data Flow Diagram generation tool using mingrammer/diagrams library.
+Data Flow Diagram generation tool.
 
-This tool executes Python code that defines a DFD diagram using custom
-DFD node classes and the diagrams library, then outputs an SVG file.
-
-Security: Only diagram-related classes are exposed in the execution namespace.
-No access to os, subprocess, file operations, or other dangerous modules.
+Takes the DFD as structured data and draws it with the custom DFD node classes.
 """
 
+from collections import Counter
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any, Literal
 
+from diagrams import Node
+from pydantic import Field, StringConstraints
 from strands.types.tools import ToolResult, ToolUse
 
 from threat_composer_ai.config import get_global_config
 from threat_composer_ai.tools.threat_composer_dia_common import (
-    execute_diagram_code,
-    get_base_builtins,
-    get_core_diagram_classes,
+    MAX_EDGES,
+    MAX_GROUPS,
+    MAX_NODES,
+    DiagramSpec,
+    EdgeSpec,
+    GroupSpec,
+    Id,
+    Label,
+    NodeSpec,
+    run_diagram_tool,
+    safe_label,
+    tool_input_schema,
 )
 from threat_composer_ai.tools.threat_composer_dia_nodes import (
     Datastore,
@@ -27,89 +35,106 @@ from threat_composer_ai.tools.threat_composer_dia_nodes import (
     TrustBoundary,
 )
 
+NODE_CLASSES = {
+    "human_actor": HumanActor,
+    "external_entity": ExternalEntity,
+    "process": Process,
+    "datastore": Datastore,
+}
+
+FLOW_ID_PATTERN = r"^DF[0-9]{1,4}$"
+
+
+class DfdElement(NodeSpec):
+    type: Literal["human_actor", "external_entity", "process", "datastore"] = Field(
+        description="Element shape"
+    )
+    trust_boundary: Id | None = Field(
+        default=None, description="Id of the trust boundary that holds the element"
+    )
+
+
+class DfdFlow(EdgeSpec):
+    id: Annotated[str, StringConstraints(strip_whitespace=True)] = Field(
+        pattern=FLOW_ID_PATTERN,
+        description="Data flow id from the dataflow description: DF1, DF2, ...",
+    )
+    label: Label = Field(description="Short description of the data, without the DF id")
+
+    def text(self) -> str:
+        label = self.label
+        # Don't draw the id twice when the label already starts with it.
+        prefix = f"{self.id}:"
+        if label.startswith(prefix):
+            label = label[len(prefix) :].strip()
+        return f"{self.id}: {label}" if label else self.id
+
+
+class DfdSpec(DiagramSpec):
+    trust_boundaries: list[GroupSpec] = Field(
+        default_factory=list,
+        max_length=MAX_GROUPS,
+        description="Dashed trust zones. Set parent to nest one in another.",
+    )
+    elements: list[DfdElement] = Field(
+        max_length=MAX_NODES, description="Actors, processes and data stores"
+    )
+    flows: list[DfdFlow] = Field(
+        max_length=MAX_EDGES, description="One entry per data flow"
+    )
+
+    def groups(self) -> list[GroupSpec]:
+        return self.trust_boundaries
+
+    def nodes(self) -> list[tuple[NodeSpec, str | None]]:
+        return [(e, e.trust_boundary) for e in self.elements]
+
+    def links(self) -> list[EdgeSpec]:
+        return self.flows
+
+    def problems(self) -> list[str]:
+        problems = super().problems()
+        counts = Counter(f.id for f in self.flows)
+        problems += [
+            f"duplicate flow id '{i}'" for i, n in sorted(counts.items()) if n > 1
+        ]
+        return problems
+
+
 TOOL_SPEC = {
     "name": "threat_composer_dia_dfd",
-    "description": """Execute Python code to generate a Data Flow Diagram (DFD) as SVG.
+    "description": """Draw a Data Flow Diagram (DFD) as SVG from structured data.
 
-IMPORTANT: All DFD classes are pre-imported and available directly. DO NOT write import statements.
-Just use the class names directly.
+Give every element and trust boundary a short unique id. Flows and nesting refer to those ids.
 
-NODE CONSTRUCTOR RULES:
-- All node classes take ONLY a label string: `Process("My Service")`, `Datastore("DB")`
-- Do NOT pass extra positional arguments: `Process("label", "type")` is WRONG
+- elements: type is human_actor, external_entity, process or datastore. Set trust_boundary to the id of the boundary that holds it, or leave it out.
+- trust_boundaries: dashed zones. Set parent to nest one boundary in another.
+- flows: one per data flow. id is the DF identifier from the dataflow description (DF1, DF2, ...) and must be unique. label is the description; the diagram shows "DF1: <label>".
 
-Available DFD node classes:
-- ExternalEntity: Rectangle representing external actors/systems
-- HumanActor: Stick figure representing human users
-- Process: Oval representing processing/transformation
-- Datastore: Cylinder representing data storage
-- TrustBoundary: Dashed rectangle cluster for trust zones (use as context manager)
-- Diagram: Container for the diagram (use as context manager)
-- Edge: Arrow representing data flow between nodes
-- Cluster: Generic grouping container
-
-CRITICAL CONNECTION RULES:
-- You CAN connect a single node to a list: `api >> [svc1, svc2]`
-- You CAN connect a list to a single node: `[svc1, svc2] >> db`
-- You CANNOT connect TO a list with Edge labels: `node >> Edge(label="x") >> [a, b]` FAILS
-- For labeled connections to multiple nodes, connect individually or use a loop:
-  ```python
-  for server in servers:
-      api >> Edge(label="Request") >> server
-  ```
-
-Example code (note: NO imports needed):
-```python
-with Diagram("System DFD", show=False, direction="LR"):
-    user = HumanActor("User")
-
-    with TrustBoundary("DMZ"):
-        api = Process("API Gateway")
-
-    with TrustBoundary("Internal"):
-        service = Process("Backend Service")
-        db = Datastore("Database")
-
-    user >> Edge(label="DF1: Request") >> api
-    api >> Edge(label="DF2: Forward") >> service
-    service >> Edge(label="DF3: Query") >> db
-```
+Example:
+{
+  "title": "My System DFD",
+  "direction": "LR",
+  "trust_boundaries": [{"id": "internal", "label": "Internal"}],
+  "elements": [
+    {"id": "user", "type": "human_actor", "label": "User"},
+    {"id": "api", "type": "process", "label": "API", "trust_boundary": "internal"},
+    {"id": "db", "type": "datastore", "label": "Database", "trust_boundary": "internal"}
+  ],
+  "flows": [
+    {"id": "DF1", "source": "user", "target": "api", "label": "Request"},
+    {"id": "DF2", "source": "api", "target": "db", "label": "Query"}
+  ]
+}
 
 The output SVG file path is determined automatically from configuration.
 """,
-    "inputSchema": {
-        "type": "object",
-        "properties": {
-            "code": {
-                "type": "string",
-                "description": "Python code defining the DFD diagram using diagrams library and custom DFD nodes",
-            },
-        },
-        "required": ["code"],
-    },
+    "inputSchema": tool_input_schema(DfdSpec),
 }
 
 
-def _get_restricted_namespace() -> dict[str, Any]:
-    """
-    Create a restricted namespace for executing DFD diagram code.
-
-    Only exposes diagram-related classes and custom DFD nodes for safety.
-    No access to os, subprocess, file operations, etc.
-    """
-    namespace = get_core_diagram_classes()
-
-    # Add custom DFD node classes
-    namespace["ExternalEntity"] = ExternalEntity
-    namespace["HumanActor"] = HumanActor
-    namespace["Process"] = Process
-    namespace["Datastore"] = Datastore
-    namespace["TrustBoundary"] = TrustBoundary
-
-    # Add builtins (no __import__ for DFD - uses predefined nodes only)
-    namespace["__builtins__"] = get_base_builtins()
-
-    return namespace
+def _make_node(element: DfdElement) -> Node:
+    return NODE_CLASSES[element.type](safe_label(element.label))
 
 
 def _get_output_path() -> Path:
@@ -126,11 +151,12 @@ def _get_output_path() -> Path:
 
 
 def threat_composer_dia_dfd(tool: ToolUse, **kwargs: Any) -> ToolResult:
-    """Execute Python diagram code and generate SVG output."""
-    return execute_diagram_code(
+    """Draw the DFD from structured data and write the SVG."""
+    return run_diagram_tool(
         tool=tool,
         diagram_type="DFD",
         output_path=_get_output_path(),
-        namespace=_get_restricted_namespace(),
-        **kwargs,
+        spec_cls=DfdSpec,
+        make_node=_make_node,
+        cluster_cls=TrustBoundary,
     )

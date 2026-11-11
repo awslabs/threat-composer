@@ -3,7 +3,6 @@
 from .threat_composer_assemble_tc_v1_model import threat_composer_assemble_tc_v1_model
 from .threat_composer_dia_architecture import threat_composer_dia_architecture
 from .threat_composer_dia_dfd import threat_composer_dia_dfd
-from .threat_composer_dia_examples import threat_composer_dia_examples
 from .threat_composer_dia_list_icons import threat_composer_dia_list_icons
 from .threat_composer_generate_uuid4 import (
     threat_composer_generate_uuid4,
@@ -20,7 +19,6 @@ from .threat_composer_workdir_file_write import threat_composer_workdir_file_wri
 __all__ = [
     "threat_composer_dia_architecture",
     "threat_composer_dia_dfd",
-    "threat_composer_dia_examples",
     "threat_composer_dia_list_icons",
     "threat_composer_svg_to_data_url",
     "threat_composer_generate_uuid4",
