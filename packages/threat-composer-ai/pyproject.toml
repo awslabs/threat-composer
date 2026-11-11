@@ -12,7 +12,6 @@ description = "AI-powered automated threat modeling for codebases"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-  "bandit",
   "boto3",
   "botocore[crt]",
   "click",
@@ -28,6 +27,7 @@ dependencies = [
   "opentelemetry-sdk",
   "pathspec",
   "psutil",
+  "pydantic>=2,<3",
   "rich",
   "sarif-om",
   "strands-agents>=1.0,<2",
@@ -58,6 +58,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+  "bandit",
   "pytest>=9.0.3",
   "pytest-mock",
   "pytest-cov",

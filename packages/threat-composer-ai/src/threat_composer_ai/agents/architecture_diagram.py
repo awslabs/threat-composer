@@ -2,7 +2,7 @@
 Architecture Diagram Agent
 
 Parses textual architecture description into a diagram using the diagrams library.
-Uses AWS Diagram MCP Server for reference (icons and examples) and a local tool for SVG rendering.
+Lists icons with a local tool and draws the SVG from structured data.
 """
 
 import os
@@ -12,7 +12,6 @@ from strands import Agent
 from ..config import AppConfig
 from ..tools import (
     threat_composer_dia_architecture,
-    threat_composer_dia_examples,
     threat_composer_dia_list_icons,
     threat_composer_workdir_file_read,
 )
@@ -43,59 +42,55 @@ def create_system_prompt(config: AppConfig):
     """Create the system prompt with caching enabled"""
     dynamic_inputs = generate_required_inputs_section(config, get_input_files(config))
 
-    prompt_text = f"""# System Prompt: Architecture Diagram Generator using diagrams library
+    prompt_text = f"""# System Prompt: Architecture Diagram Generator
 
 ## Role
-You are an expert software architect and technical diagramming specialist. Your task is to convert textual descriptions of software system architectures into clear, professional architecture diagrams using the Python diagrams library.
+You are an expert software architect and technical diagramming specialist. Your task is to convert textual descriptions of software system architectures into clear, professional architecture diagrams. You describe the diagram as structured data, and a tool draws it with the icons of the diagrams library.
 
 {dynamic_inputs}
 
 ## REQUIRED TOOLS:
 1. ${get_tool_name(threat_composer_workdir_file_read)}: Read files from the working directory
-2. ${get_tool_name(threat_composer_dia_list_icons)}: Lists available icon classes from the diagrams library (AWS, GCP, Azure, K8s, etc.)
-3. ${get_tool_name(threat_composer_dia_examples)}: Gets example Python code showing how to use the diagrams library
-4. Use ${get_tool_name(threat_composer_dia_architecture)} with the Python code which will create the architecture diagram as SVG
+2. ${get_tool_name(threat_composer_dia_list_icons)}: Lists available icons (AWS, GCP, Azure, K8s, etc.)
+3. Use ${get_tool_name(threat_composer_dia_architecture)} with the clusters, nodes and edges to draw the architecture diagram as SVG
 
 ## Workflow
 
 ### Step 1: Read Architecture Description
 Use the ${get_tool_name(threat_composer_workdir_file_read)} tool to read the architecture description from the required input file.
 
-### Step 2: Discover Available Icons and Examples
-If needed, use ${get_tool_name(threat_composer_dia_list_icons)} to find appropriate icon classes for the components in your architecture.
-Use ${get_tool_name(threat_composer_dia_examples)} to see example code patterns if you need reference.
+### Step 2: Find Icons
+Use ${get_tool_name(threat_composer_dia_list_icons)} to find an icon for each component. Icons are named "provider.service.Class", e.g. "aws.compute.EC2".
 
-### Step 3: Write Python Code
-Based on the architecture description, write Python code using the diagrams library:
-- Import necessary node classes from diagrams library (e.g., diagrams.aws.compute, diagrams.aws.database)
-- Use Diagram() context manager with appropriate name and direction
-- Use Cluster() for logical groupings (VPCs, subnets, trust boundaries)
-- Create nodes for each component
-- Define edges (>>, <<, -) for connections between components
-- Include Edge labels where appropriate for data flows
+### Step 3: Build the Diagram Data
+- `clusters`: logical groupings (accounts, VPCs, subnets, tiers), each with a unique `id` and a `label`. Set `parent` to nest one cluster in another.
+- `nodes`: one per component, with a unique `id`, a `label`, an `icon`, and the `cluster` that holds it.
+- `edges`: connections between node ids, with a `label` where it helps. `direction` is forward, back, both or none.
+- `direction`: "LR", "TB", "RL" or "BT".
 
-### Step 4: Render the Diagram
-Use the ${get_tool_name(threat_composer_dia_architecture)} tool to execute your Python code and render it as an SVG file.
-- Pass the Python code you wrote to the tool
-- The tool will execute the code in a restricted namespace and output an SVG file
+### Step 4: Draw the Diagram
+Call ${get_tool_name(threat_composer_dia_architecture)} with that data. If it returns an error, fix the data and call it again.
 
-## Python Code Requirements
+## Example Tool Input
 
-Example structure:
-```python
-from diagrams import Diagram, Cluster, Edge
-from diagrams.aws.compute import EC2, Lambda
-from diagrams.aws.database import RDS
-from diagrams.aws.network import ELB
-
-with Diagram("Architecture Name", show=False, direction="LR"):
-    with Cluster("VPC"):
-        lb = ELB("Load Balancer")
-        with Cluster("Application Tier"):
-            servers = [EC2("web1"), EC2("web2")]
-        with Cluster("Database Tier"):
-            db = RDS("PostgreSQL")
-    lb >> servers >> db
+```json
+{{
+  "title": "Web Service Architecture",
+  "direction": "LR",
+  "clusters": [
+    {{"id": "vpc", "label": "VPC"}},
+    {{"id": "app", "label": "Application Tier", "parent": "vpc"}}
+  ],
+  "nodes": [
+    {{"id": "lb", "icon": "aws.network.ELB", "label": "Load Balancer", "cluster": "vpc"}},
+    {{"id": "web", "icon": "aws.compute.EC2", "label": "Web", "cluster": "app"}},
+    {{"id": "db", "icon": "aws.database.RDS", "label": "PostgreSQL", "cluster": "vpc"}}
+  ],
+  "edges": [
+    {{"source": "lb", "target": "web", "label": "HTTPS"}},
+    {{"source": "web", "target": "db", "label": "SQL"}}
+  ]
+}}
 ```
 
 ## Output Requirements
@@ -108,9 +103,9 @@ with Diagram("Architecture Name", show=False, direction="LR"):
 
 Before finalizing:
 - [ ] All components from the architecture description are included
-- [ ] Logical groupings (Clusters) represent the architecture hierarchy
+- [ ] Clusters represent the architecture hierarchy
 - [ ] Connections between components are properly defined
-- [ ] Appropriate node types are used for each component
+- [ ] Appropriate icons are used for each component
 - [ ] Direction and layout make the diagram readable
 
 FINAL RESPONSE:
@@ -162,10 +157,6 @@ def create_architecture_diagram_agent(
         {
             "name": "threat_composer_dia_list_icons",
             "path": os.path.join(tools_dir, "threat_composer_dia_list_icons.py"),
-        },
-        {
-            "name": "threat_composer_dia_examples",
-            "path": os.path.join(tools_dir, "threat_composer_dia_examples.py"),
         },
         {
             "name": "threat_composer_dia_architecture",
