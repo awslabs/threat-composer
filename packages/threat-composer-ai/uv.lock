@@ -4595,7 +4595,7 @@ requires-dist = [
     { name = "sentence-transformers", marker = "extra == 'consistency'" },
     { name = "strands-agents", specifier = ">=1.0,<2" },
     { name = "strands-agents-evals", marker = "extra == 'eval'" },
-    { name = "strands-agents-tools", specifier = ">=0.2,<1" },
+    { name = "strands-agents-tools", specifier = ">=0.2,<0.9" },
 ]
 provides-extras = ["eval", "consistency"]
 
