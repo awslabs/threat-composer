@@ -60,10 +60,15 @@ def load_gitignore_patterns(
                     adjusted_patterns = []
                     for pattern in patterns:
                         if pattern.startswith("!"):
-                            # Negation pattern
-                            adjusted_patterns.append(f"!{relative_dir}/{pattern[1:]}")
+                            # Negation pattern - strip leading '/' since the
+                            # relative_dir prefix already anchors the pattern
+                            clean = pattern[1:].lstrip("/")
+                            adjusted_patterns.append(f"!{relative_dir}/{clean}")
                         else:
-                            adjusted_patterns.append(f"{relative_dir}/{pattern}")
+                            # Strip leading '/' from anchored patterns (e.g. "/node_modules")
+                            # since prepending relative_dir already provides anchoring
+                            clean = pattern.lstrip("/")
+                            adjusted_patterns.append(f"{relative_dir}/{clean}")
                     all_patterns.extend(adjusted_patterns)
                 else:
                     all_patterns.extend(patterns)
@@ -134,11 +139,48 @@ def get_hardcoded_exclusions(working_directory: Path) -> pathspec.PathSpec:
     return pathspec.PathSpec.from_lines("gitwildmatch", hardcoded_patterns)
 
 
+def _negated_prefixes(gitignore_spec: pathspec.PathSpec | None) -> set[str]:
+    """Extract directory prefixes that have negation patterns underneath them.
+
+    If a gitignore contains '!node_modules/special-package', we must not prune
+    'node_modules' during the walk — the negation needs the full file list to apply.
+
+    Returns all ancestor directory paths of negated patterns so that pruning
+    checks at any depth will find a match. For example, '!subdir/node_modules/pkg'
+    produces {'subdir', 'subdir/node_modules'}.
+
+    Note: This accesses pathspec internal attributes (pattern.regex, pattern.pattern)
+    which are not part of the public API. Defensive getattr calls are used to avoid
+    breakage on pathspec version bumps. Tested against pathspec >=0.11.
+    """
+    if not gitignore_spec:
+        return set()
+    prefixes = set()
+    for pattern in gitignore_spec.patterns:
+        if getattr(pattern, "regex", None) and getattr(pattern, "pattern", None):
+            raw = getattr(pattern, "pattern", "")
+            if raw.startswith("!"):
+                clean = raw[1:].lstrip("/")
+                parts = clean.split("/")
+                # Add ancestor directory paths (exclude the leaf which is typically
+                # a file or the target itself, not a directory to preserve)
+                for i in range(1, len(parts)):
+                    prefixes.add("/".join(parts[:i]))
+    return prefixes
+
+
 def collect_files(
-    directory: Path, include_hidden: bool, follow_symlinks: bool
+    directory: Path,
+    include_hidden: bool,
+    follow_symlinks: bool,
+    gitignore_spec: pathspec.PathSpec | None = None,
+    hardcoded_spec: pathspec.PathSpec | None = None,
 ) -> list[Path]:
-    """Collect all files in the directory tree."""
+    """Collect all files in the directory tree, pruning ignored directories during walk."""
     files = []
+    # Pre-compute directories that have negation patterns referencing their contents.
+    # These directories must NOT be pruned so the negation can be evaluated file-by-file.
+    negated = _negated_prefixes(gitignore_spec)
 
     try:
         for root, dirs, filenames in os.walk(directory, followlinks=follow_symlinks):
@@ -149,6 +191,33 @@ def collect_files(
             if not include_hidden:
                 # Remove any directory that starts with a dot
                 dirs[:] = [d for d in dirs if not d.startswith(".")]
+
+            # Prune directories that match gitignore or hardcoded exclusion patterns.
+            # This prevents os.walk from descending into ignored directories (e.g.
+            # node_modules), avoiding the cost of traversing potentially tens of
+            # thousands of files that would be filtered out later anyway.
+            # Directories with negation patterns underneath them are kept so that
+            # the negation can be evaluated file-by-file during the filter pass.
+            if gitignore_spec or hardcoded_spec:
+                surviving_dirs = []
+                for d in dirs:
+                    try:
+                        rel_dir = str((root_path / d).relative_to(directory)).replace(
+                            "\\", "/"
+                        )
+                    except ValueError:
+                        surviving_dirs.append(d)
+                        continue
+                    # Don't prune if any negation pattern references this directory
+                    if rel_dir in negated:
+                        surviving_dirs.append(d)
+                        continue
+                    if gitignore_spec and gitignore_spec.match_file(rel_dir + "/"):
+                        continue
+                    if hardcoded_spec and hardcoded_spec.match_file(rel_dir + "/"):
+                        continue
+                    surviving_dirs.append(d)
+                dirs[:] = surviving_dirs
 
             # Add files
             for filename in filenames:
@@ -257,8 +326,10 @@ def threat_composer_list_workdir_files_gitignore_filtered(
         # Get hardcoded exclusions
         hardcoded_spec = get_hardcoded_exclusions(directory)
 
-        # Collect all files
-        all_files = collect_files(directory, include_hidden, follow_symlinks)
+        # Collect all files, pruning ignored directories during the walk
+        all_files = collect_files(
+            directory, include_hidden, follow_symlinks, gitignore_spec, hardcoded_spec
+        )
 
         # Filter files against patterns
         filtered_files = []
