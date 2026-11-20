@@ -19,10 +19,13 @@ import Button from '@cloudscape-design/components/button';
 import Link from '@cloudscape-design/components/link';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useId } from 'react';
 import { METADATA_KEY_COMMENTS } from '../../../configs/metadata';
 
 const styles = {
+  listItem: css({
+    listStyle: 'none',
+  }),
   item: css({
     display: 'flex',
     alignItems: 'flex-start',
@@ -78,6 +81,10 @@ export interface LinkedEntityItemProps {
   onNavigate?: () => void;
   dismissLabel: string;
   onDismiss: () => void;
+  /** The number of items in the list this item belongs to. Set by LinkedEntityList. */
+  setSize?: number;
+  /** The 1-based position of this item in the list. Set by LinkedEntityList. */
+  position?: number;
 }
 
 const LinkedEntityItem: FC<LinkedEntityItemProps> = ({
@@ -88,27 +95,37 @@ const LinkedEntityItem: FC<LinkedEntityItemProps> = ({
   onNavigate,
   dismissLabel,
   onDismiss,
+  setSize,
+  position,
 }) => {
-  return (<div css={styles.item}>
-    <div css={styles.body} title={comments}>
-      {onNavigate ? (<Link
-        href='#'
-        variant='secondary'
-        onFollow={(event) => {
-          event.preventDefault();
-          onNavigate();
-        }}
-      >{displayId}</Link>) : <b>{displayId}</b>}
-      {status}
-      <span>{content}</span>
+  const idElementId = useId();
+  const contentElementId = useId();
+  // The item is a group named by its id and content, so a screen reader announces them
+  // when focus enters the item, and "N of M" comes from the surrounding list.
+  return (<li css={styles.listItem} aria-setsize={setSize} aria-posinset={position}>
+    <div css={styles.item} role='group' aria-labelledby={`${idElementId} ${contentElementId}`}>
+      <div css={styles.body} title={comments}>
+        <span id={idElementId}>
+          {onNavigate ? (<Link
+            href='#'
+            variant='secondary'
+            onFollow={(event) => {
+              event.preventDefault();
+              onNavigate();
+            }}
+          >{displayId}</Link>) : <b>{displayId}</b>}
+        </span>
+        {status}
+        <span id={contentElementId}>{content}</span>
+      </div>
+      <Button
+        variant='icon'
+        iconName='close'
+        ariaLabel={dismissLabel}
+        onClick={onDismiss}
+      />
     </div>
-    <Button
-      variant='icon'
-      iconName='close'
-      ariaLabel={dismissLabel}
-      onClick={onDismiss}
-    />
-  </div>);
+  </li>);
 };
 
 export default LinkedEntityItem;

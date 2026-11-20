@@ -14,15 +14,16 @@
   limitations under the License.
  ******************************************************************************************************************** */
 import { SpaceBetween } from '@cloudscape-design/components';
-import Autosuggest from '@cloudscape-design/components/autosuggest';
+import Autosuggest, { AutosuggestProps } from '@cloudscape-design/components/autosuggest';
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
-import React, { FC, PropsWithChildren, useMemo } from 'react';
+import React, { FC, PropsWithChildren, useCallback, useMemo, useRef } from 'react';
 import { MITIGATION_STATUS_RESOLVED } from '../../../configs';
 import { MITIGATION_STATUS_COLOR_MAPPING } from '../../../configs/status';
 import { Mitigation } from '../../../customTypes';
 import mitigationStatus from '../../../data/status/mitigationStatus.json';
 import standardizeNumericId from '../../../utils/standardizeNumericId';
-import LinkedEntityItem, { getEntityComments, LinkedEntityStatus } from '../../generic/LinkedEntityItem';
+import { getEntityComments, LinkedEntityStatus } from '../../generic/LinkedEntityItem';
+import LinkedEntityList from '../../generic/LinkedEntityList';
 
 export interface MitigationLinkProps {
   variant?: ExpandableSectionProps['variant'];
@@ -44,6 +45,8 @@ const MitigationLinkComponent: FC<PropsWithChildren<MitigationLinkProps>> = ({
   children,
 }) => {
   const [searchValue, setSearchValue] = React.useState('');
+  const searchRef = useRef<AutosuggestProps.Ref>(null);
+  const focusSearch = useCallback(() => searchRef.current?.focus(), []);
 
   const linkedMitigations = useMemo(() => {
     return mitigationList.filter(al => linkedMitigationIds.includes(al.id));
@@ -70,6 +73,7 @@ const MitigationLinkComponent: FC<PropsWithChildren<MitigationLinkProps>> = ({
     <SpaceBetween direction='vertical' size="l">
       <div>
         <Autosuggest
+          ref={searchRef}
           onChange={({ detail }) => setSearchValue(detail.value)}
           value={searchValue}
           options={filteredMitigations.map(x => ({
@@ -85,22 +89,23 @@ const MitigationLinkComponent: FC<PropsWithChildren<MitigationLinkProps>> = ({
           placeholder="Search mitigation"
           empty="No matches found"
         />
-        <div>
-          {linkedMitigations.map(x => (<LinkedEntityItem
-            key={x.id}
-            displayId={`M-${standardizeNumericId(x.numericId)}`}
-            content={x.content}
-            status={<LinkedEntityStatus
+        <LinkedEntityList
+          onFocusFallback={focusSearch}
+          items={linkedMitigations.map(x => ({
+            id: x.id,
+            displayId: `M-${standardizeNumericId(x.numericId)}`,
+            content: x.content,
+            status: <LinkedEntityStatus
               status={x.status}
               options={mitigationStatus}
               colorMapping={MITIGATION_STATUS_COLOR_MAPPING}
-            />}
-            comments={getEntityComments(x)}
-            onNavigate={onViewMitigation && (() => onViewMitigation(x.id))}
-            dismissLabel={`Unlink mitigation ${x.numericId}`}
-            onDismiss={() => onRemoveMitigationLink(x.id)}
-          />))}
-        </div>
+            />,
+            comments: getEntityComments(x),
+            onNavigate: onViewMitigation && (() => onViewMitigation(x.id)),
+            dismissLabel: `Unlink mitigation ${x.numericId}`,
+            onDismiss: () => onRemoveMitigationLink(x.id),
+          }))}
+        />
       </div>
       {children}
     </SpaceBetween>
