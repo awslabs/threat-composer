@@ -137,7 +137,7 @@ test.describe('end-to-end threat model creation', () => {
 
     // Links and metadata, created from inside the editor.
     await linkMitigationFromEditor(page, 'Reject authorisation requests with a reused nonce.');
-    await expect(page.getByRole('button', { name: /^Linked mitigations \(1\)$/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Linked mitigations \(1\)(?: · \d+ resolved)?$/ })).toBeVisible();
 
     await linkAssumptionFromEditor(page, 'Nonces are stored for at least 24 hours.');
     await expect(page.getByRole('button', { name: /^Linked assumptions \(1\)$/ })).toBeVisible();

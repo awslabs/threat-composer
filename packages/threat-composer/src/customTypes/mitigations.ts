@@ -44,6 +44,10 @@ export const MitigationLinkSchema = EntityLinkBaseSchema.extend({
 export type MitigationLink = z.infer<typeof MitigationLinkSchema>;
 
 export interface MitigationListFilter {
+  /**
+   * Show only the mitigation with this id.
+   */
+  id?: string;
   status?: (typeof MITIGATION_STATUS_IDENTIFIED
     | typeof MITIGATION_STATUS_IN_PROGRESS
     | typeof MITIGATION_STATUS_RESOLVED

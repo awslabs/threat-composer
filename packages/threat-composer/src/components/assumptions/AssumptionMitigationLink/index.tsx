@@ -16,6 +16,7 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
+import { useViewNavigationContext } from '../../../contexts/ViewNavigationContext/context';
 import { AssumptionLink } from '../../../customTypes';
 import getNewMitigation from '../../../utils/getNewMitigation';
 import MitigationLinkView from '../../mitigations/MitigationLinkView';
@@ -28,6 +29,7 @@ const AssumptionThreatLinkComponent: FC<AssumptionThreatLinkProps> = ({
   assumptionId,
 }) => {
   const { mitigationList, saveMitigation } = useMitigationsContext();
+  const { onMitigationView } = useViewNavigationContext();
   const [assumptionLinks, setAssumptionLinks] = useState<AssumptionLink[]>([]);
 
   const { getAssumptionEntityLinks } = useAssumptionLinksContext();
@@ -60,6 +62,7 @@ const AssumptionThreatLinkComponent: FC<AssumptionThreatLinkProps> = ({
   }, [assumptionId, mitigationList, addAssumptionLink, saveMitigation]);
 
   return (<MitigationLinkView
+    onViewMitigation={onMitigationView}
     mitigationList={mitigationList}
     linkedMitigationIds={assumptionLinks.map(ml => ml.linkedId)}
     onAddMitigationLink={handleAddMitigationLink}

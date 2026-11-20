@@ -13,11 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Autosuggest from '@cloudscape-design/components/autosuggest';
+import Autosuggest, { AutosuggestProps } from '@cloudscape-design/components/autosuggest';
 import ExpandableSection, { ExpandableSectionProps } from '@cloudscape-design/components/expandable-section';
-import TokenGroup from '@cloudscape-design/components/token-group';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useCallback, useMemo, useRef } from 'react';
 import { Assumption } from '../../../customTypes';
+import standardizeNumericId from '../../../utils/standardizeNumericId';
+import { getEntityComments } from '../../generic/LinkedEntityItem';
+import LinkedEntityList from '../../generic/LinkedEntityList';
 
 export interface AssumptionLinkProps {
   variant?: ExpandableSectionProps['variant'];
@@ -25,6 +27,8 @@ export interface AssumptionLinkProps {
   assumptionList: Assumption[];
   onAddAssumptionLink: (assumptionId: string) => void;
   onRemoveAssumptionLink: (assumptionId: string) => void;
+  /** When set, the assumption id is a link that opens the assumption in the assumptions view. */
+  onViewAssumption?: (assumptionId: string) => void;
 }
 
 const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
@@ -32,9 +36,12 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
   assumptionList,
   onAddAssumptionLink,
   onRemoveAssumptionLink,
+  onViewAssumption,
   variant,
 }) => {
   const [searchValue, setSearchValue] = React.useState('');
+  const searchRef = useRef<AutosuggestProps.Ref>(null);
+  const focusSearch = useCallback(() => searchRef.current?.focus(), []);
 
   const linkedAssumptions = useMemo(() => {
     return assumptionList.filter(al => linkedAssumptionIds.includes(al.id));
@@ -55,6 +62,7 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
     headingTagOverride={variant === 'container' ? 'h3' : undefined}
     headerText={`Linked assumptions (${linkedAssumptions.length})`}>
     <Autosuggest
+      ref={searchRef}
       onChange={({ detail }) => setSearchValue(detail.value)}
       value={searchValue}
       options={filteredAssumptions.map(x => ({
@@ -70,16 +78,17 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
       placeholder="Search assumption"
       empty="No matches found"
     />
-    <TokenGroup
-      items={
-        linkedAssumptions.map(x => ({
-          label: x.content,
-          dismissLabel: `Unlink assumption ${x.numericId}`,
-        }))
-      }
-      onDismiss={({ detail: { itemIndex } }) => {
-        onRemoveAssumptionLink(linkedAssumptions[itemIndex].id);
-      }}
+    <LinkedEntityList
+      onFocusFallback={focusSearch}
+      items={linkedAssumptions.map(x => ({
+        id: x.id,
+        displayId: `A-${standardizeNumericId(x.numericId)}`,
+        content: x.content,
+        comments: getEntityComments(x),
+        onNavigate: onViewAssumption && (() => onViewAssumption(x.id)),
+        dismissLabel: `Unlink assumption ${x.numericId}`,
+        onDismiss: () => onRemoveAssumptionLink(x.id),
+      }))}
     />
   </ExpandableSection>);
 };

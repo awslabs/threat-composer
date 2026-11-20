@@ -16,6 +16,7 @@
 import { FC, useEffect, useState } from 'react';
 import { useAssumptionLinksContext } from '../../../contexts/AssumptionLinksContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
+import { useViewNavigationContext } from '../../../contexts/ViewNavigationContext/context';
 import { AssumptionLink } from '../../../customTypes';
 import ThreatLinkView from '../../threats/ThreatLinkView';
 
@@ -27,6 +28,7 @@ const AssumptionThreatLinkComponent: FC<AssumptionThreatLinkProps> = ({
   assumptionId,
 }) => {
   const { statementList } = useThreatsContext();
+  const { onThreatEditorView } = useViewNavigationContext();
   const [assumptionLinks, setAssumptionLinks] = useState<AssumptionLink[]>([]);
 
   const { getAssumptionEntityLinks } = useAssumptionLinksContext();
@@ -42,6 +44,7 @@ const AssumptionThreatLinkComponent: FC<AssumptionThreatLinkProps> = ({
   } = useAssumptionLinksContext();
 
   return (<ThreatLinkView
+    onViewThreat={onThreatEditorView}
     threatList={statementList}
     linkedThreatIds={assumptionLinks.map(ml => ml.linkedId)}
     onAddThreatLink={(threatId) => addAssumptionLink({

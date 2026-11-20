@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Grid from '@cloudscape-design/components/grid';
@@ -25,6 +26,7 @@ import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../c
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { AssumptionLink, Mitigation, MitigationLink, MitigationListFilter } from '../../../customTypes';
 import mitigationStatus from '../../../data/status/mitigationStatus.json';
+import standardizeNumericId from '../../../utils/standardizeNumericId';
 import ContentLayout from '../../generic/ContentLayout';
 import { GenericEntityCreationCardRefProps } from '../../generic/GenericEntityCreationCard';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
@@ -67,6 +69,8 @@ const MitigationList: FC<MitigationListProps> = ({
 
   const [filteringText, setFilteringText] = useState('');
 
+  const [selectedId, setSelectedId] = useState<string | undefined>(initialFilter?.id);
+
   const [
     selectedTags,
     setSelectedTags,
@@ -100,14 +104,16 @@ const MitigationList: FC<MitigationListProps> = ({
       && selectedLinkedThreatsFilter === ALL
       && selectedTags.length === 0
       && selectedStatus.length === 0
+      && !selectedId
     );
-  }, [filteringText, selectedTags, selectedStatus,
+  }, [filteringText, selectedTags, selectedStatus, selectedId,
     selectedLinkedThreatsFilter, selectedLinkedAssumptionsFilter]);
 
   const handleClearFilter = useCallback(() => {
     setFilteringText('');
     setSelectedTags([]);
     setSelectedStatus([]);
+    setSelectedId(undefined);
     setSelectedLinkedAssumptionsFilter(ALL);
     setSelectedLinkedThreatsFilter(ALL);
   }, []);
@@ -140,6 +146,10 @@ const MitigationList: FC<MitigationListProps> = ({
 
   const filteredList = useMemo(() => {
     let output = mitigationList;
+
+    if (selectedId) {
+      output = output.filter(st => st.id === selectedId);
+    }
 
     if (filteringText) {
       output = output.filter(st => st.content && st.content.toLowerCase().indexOf(filteringText.toLowerCase()) >= 0);
@@ -176,7 +186,7 @@ const MitigationList: FC<MitigationListProps> = ({
     output = output.sort((op1, op2) => (op2.displayOrder || Number.MAX_VALUE) - (op1.displayOrder || Number.MAX_VALUE));
 
     return output;
-  }, [filteringText, mitigationList, selectedTags, selectedStatus,
+  }, [filteringText, mitigationList, selectedTags, selectedStatus, selectedId,
     assumptionLinkList, mitigationLinkList,
     selectedLinkedAssumptionsFilter, selectedLinkedThreatsFilter]);
 
@@ -239,6 +249,10 @@ const MitigationList: FC<MitigationListProps> = ({
               setFilteringText(detail.filteringText)
             }
           />
+          {selectedId && <Box variant='small'>
+            Showing only mitigation M-{standardizeNumericId(mitigationList.find(x => x.id === selectedId)?.numericId)}.
+            Clear filters to show all mitigations.
+          </Box>}
           <Grid
             gridDefinition={[
               { colspan: { default: 12, xs: 5 } },

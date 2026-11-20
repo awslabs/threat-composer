@@ -29,6 +29,7 @@ import MitigationPacksContextProvider from '../MitigationPacksContext';
 import MitigationsContextProvider from '../MitigationsContext';
 import ThreatPacksContextProvider from '../ThreatPacksContext';
 import ThreatsContextProvider from '../ThreatsContext';
+import ViewNavigationContextProvider from '../ViewNavigationContext';
 
 export interface WorkspaceContextAggregatorProps extends ViewNavigationEvent {
   workspaceId: string | null;
@@ -42,8 +43,16 @@ export interface WorkspaceContextAggregatorProps extends ViewNavigationEvent {
 const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggregatorProps>> = ({
   children,
   workspaceId,
+  onThreatEditorView,
+  onMitigationView,
+  onAssumptionView,
 }) => {
   return (
+    <ViewNavigationContextProvider
+      onThreatEditorView={onThreatEditorView}
+      onMitigationView={onMitigationView}
+      onAssumptionView={onAssumptionView}
+    >
     <ThreatsContextProvider
       workspaceId={workspaceId || null}
     >
@@ -73,6 +82,7 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
         </AssumptionsContextProvider >
       </MitigationsContextProvider>
     </ThreatsContextProvider>
+    </ViewNavigationContextProvider>
   );
 };
 

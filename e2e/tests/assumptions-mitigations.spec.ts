@@ -116,13 +116,13 @@ test.describe('linking between threats, assumptions and mitigations', () => {
     await addSimpleEntity(page, 'assumption', 'Backups are encrypted at rest.');
 
     const card = entityCard(page, 'Assumption', 1);
-    await card.getByRole('button', { name: /^Linked mitigations \(0\)$/ }).click();
+    await card.getByRole('button', { name: /^Linked mitigations \(0\)(?: · \d+ resolved)?$/ }).click();
 
     const search = card.getByPlaceholder('Search mitigation');
     // Free text in this field creates a brand-new mitigation.
     await createViaAutosuggest(page, search, 'Enable KMS key rotation');
 
-    await expect(card.getByRole('button', { name: /^Linked mitigations \(1\)$/ })).toBeVisible();
+    await expect(card.getByRole('button', { name: /^Linked mitigations \(1\)(?: · \d+ resolved)?$/ })).toBeVisible();
 
     await navigateVia(page, 'Mitigations');
     await expect(page.getByRole('heading', { name: /^Mitigations \(1\)/ })).toBeVisible();
@@ -134,14 +134,14 @@ test.describe('linking between threats, assumptions and mitigations', () => {
     await gotoWorkspace(page, DEFAULT_WORKSPACE, 'threats');
     await page.getByRole('button', { name: 'Add new threat' }).click();
 
-    await expandSection(page, /^Linked mitigations \(0\)$/);
+    await expandSection(page, /^Linked mitigations \(0\)(?: · \d+ resolved)?$/);
     const search = page.getByPlaceholder('Search mitigation');
     await createViaAutosuggest(page, search, 'Rate-limit the login endpoint');
-    await expect(page.getByRole('button', { name: /^Linked mitigations \(1\)$/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Linked mitigations \(1\)(?: · \d+ resolved)?$/ })).toBeVisible();
 
     // Token dismiss labels are numbered by the entity's numericId.
     await page.getByRole('button', { name: /^Unlink mitigation \d+$/ }).click();
-    await expect(page.getByRole('button', { name: /^Linked mitigations \(0\)$/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Linked mitigations \(0\)(?: · \d+ resolved)?$/ })).toBeVisible();
   });
 
   test('linked-entity filters separate threats with and without mitigations', async ({ page }) => {
@@ -151,7 +151,7 @@ test.describe('linking between threats, assumptions and mitigations', () => {
     await page.getByRole('button', { name: 'Add new threat' }).click();
     await page.getByRole('button', { name: 'threat source', exact: true }).click();
     await page.getByPlaceholder('Enter threat source').fill('mitigated actor');
-    await expandSection(page, /^Linked mitigations \(0\)$/);
+    await expandSection(page, /^Linked mitigations \(0\)(?: · \d+ resolved)?$/);
     const mitSearch = page.getByPlaceholder('Search mitigation');
     await createViaAutosuggest(page, mitSearch, 'A real mitigation');
     await page.getByRole('button', { name: /^(Add to list|Add to workspace .+)$/ }).click();

@@ -13,17 +13,23 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import Autosuggest from '@cloudscape-design/components/autosuggest';
+import Autosuggest, { AutosuggestProps } from '@cloudscape-design/components/autosuggest';
 import ExpandableSection from '@cloudscape-design/components/expandable-section';
-import TokenGroup from '@cloudscape-design/components/token-group';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useCallback, useMemo, useRef } from 'react';
+import { THREAT_STATUS_COLOR_MAPPING } from '../../../configs/status';
 import { TemplateThreatStatement } from '../../../customTypes';
+import threatStatus from '../../../data/status/threatStatus.json';
+import standardizeNumericId from '../../../utils/standardizeNumericId';
+import { getEntityComments, LinkedEntityStatus } from '../../generic/LinkedEntityItem';
+import LinkedEntityList from '../../generic/LinkedEntityList';
 
 export interface ThreatLinkProps {
   linkedThreatIds: string[];
   threatList: TemplateThreatStatement[];
   onAddThreatLink: (threatId: string) => void;
   onRemoveThreatLink: (threatId: string) => void;
+  /** When set, the threat id is a link that opens the threat in the threat editor. */
+  onViewThreat?: (threatId: string) => void;
 }
 
 const ThreatLinkComponent: FC<ThreatLinkProps> = ({
@@ -31,8 +37,11 @@ const ThreatLinkComponent: FC<ThreatLinkProps> = ({
   threatList,
   onAddThreatLink,
   onRemoveThreatLink,
+  onViewThreat,
 }) => {
   const [searchValue, setSearchValue] = React.useState('');
+  const searchRef = useRef<AutosuggestProps.Ref>(null);
+  const focusSearch = useCallback(() => searchRef.current?.focus(), []);
 
   const linkedThreats = useMemo(() => {
     return threatList.filter(al => linkedThreatIds.includes(al.id));
@@ -49,6 +58,7 @@ const ThreatLinkComponent: FC<ThreatLinkProps> = ({
 
   return (<ExpandableSection headerText={`Linked threats (${linkedThreats.length})`}>
     <Autosuggest
+      ref={searchRef}
       onChange={({ detail }) => setSearchValue(detail.value)}
       value={searchValue}
       options={filteredThreats.map(x => ({
@@ -64,23 +74,23 @@ const ThreatLinkComponent: FC<ThreatLinkProps> = ({
       placeholder="Search threat"
       empty="No matches found"
     />
-    <div
-      style={{
-        display: 'flex',
-      }}
-    >
-      <TokenGroup
-        items={
-          linkedThreats.map(x => ({
-            label: x.statement,
-            dismissLabel: `Unlink threat ${x.numericId}`,
-          }))
-        }
-        onDismiss={({ detail: { itemIndex } }) => {
-          onRemoveThreatLink(linkedThreats[itemIndex].id);
-        }}
-      />
-    </div>
+    <LinkedEntityList
+      onFocusFallback={focusSearch}
+      items={linkedThreats.map(x => ({
+        id: x.id,
+        displayId: `T-${standardizeNumericId(x.numericId)}`,
+        content: x.statement || '',
+        status: <LinkedEntityStatus
+          status={x.status}
+          options={threatStatus}
+          colorMapping={THREAT_STATUS_COLOR_MAPPING}
+        />,
+        comments: getEntityComments(x),
+        onNavigate: onViewThreat && (() => onViewThreat(x.id)),
+        dismissLabel: `Unlink threat ${x.numericId}`,
+        onDismiss: () => onRemoveThreatLink(x.id),
+      }))}
+    />
   </ExpandableSection>);
 };
 

@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Grid from '@cloudscape-design/components/grid';
@@ -21,8 +22,9 @@ import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState, useRef } from 'react';
 import { useAssumptionLinksContext } from '../../../contexts';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
-import { Assumption, AssumptionLink } from '../../../customTypes';
+import { Assumption, AssumptionLink, AssumptionListFilter } from '../../../customTypes';
 import { addTagToEntity, removeTagFromEntity } from '../../../utils/entityTag';
+import standardizeNumericId from '../../../utils/standardizeNumericId';
 import ContentLayout from '../../generic/ContentLayout';
 import { GenericEntityCreationCardRefProps } from '../../generic/GenericEntityCreationCard';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
@@ -30,7 +32,13 @@ import TagSelector from '../../generic/TagSelector';
 import AssumptionCard from '../AssumptionCard';
 import AssumptionCreationCard from '../AssumptionCreationCard';
 
-const AssumptionList: FC = () => {
+export interface AssumptionListProps {
+  initialFilter?: AssumptionListFilter;
+}
+
+const AssumptionList: FC<AssumptionListProps> = ({
+  initialFilter,
+}) => {
   const {
     assumptionList,
     removeAssumption,
@@ -44,6 +52,8 @@ const AssumptionList: FC = () => {
   } = useAssumptionLinksContext();
 
   const [filteringText, setFilteringText] = useState('');
+
+  const [selectedId, setSelectedId] = useState<string | undefined>(initialFilter?.id);
 
   const [
     selectedTags,
@@ -78,6 +88,10 @@ const AssumptionList: FC = () => {
   const filteredList = useMemo(() => {
     let output = assumptionList;
 
+    if (selectedId) {
+      output = output.filter(st => st.id === selectedId);
+    }
+
     if (filteringText) {
       output = output.filter(st => st.content && st.content.toLowerCase().indexOf(filteringText.toLowerCase()) >= 0);
     }
@@ -107,7 +121,7 @@ const AssumptionList: FC = () => {
     output = output.sort((op1, op2) => (op2.displayOrder || Number.MAX_VALUE) - (op1.displayOrder || Number.MAX_VALUE));
 
     return output;
-  }, [filteringText, assumptionList, selectedTags,
+  }, [filteringText, assumptionList, selectedTags, selectedId,
     assumptionLinkList,
     selectedLinkedMitigationFilter, selectedLinkedThreatsFilter]);
 
@@ -115,8 +129,9 @@ const AssumptionList: FC = () => {
     return (filteringText === ''
       && selectedLinkedMitigationFilter === ALL
       && selectedLinkedThreatsFilter === ALL
-      && selectedTags.length === 0);
-  }, [filteringText, selectedTags, selectedLinkedThreatsFilter, selectedLinkedThreatsFilter]);
+      && selectedTags.length === 0
+      && !selectedId);
+  }, [filteringText, selectedTags, selectedId, selectedLinkedMitigationFilter, selectedLinkedThreatsFilter]);
 
   const allTags = useMemo(() => {
     return assumptionList
@@ -128,6 +143,7 @@ const AssumptionList: FC = () => {
   const handleClearFilter = useCallback(() => {
     setFilteringText('');
     setSelectedTags([]);
+    setSelectedId(undefined);
     setSelectedLinkedMitigationFilter(ALL);
     setSelectedLinkedThreatsFilter(ALL);
   }, []);
@@ -190,6 +206,10 @@ const AssumptionList: FC = () => {
               setFilteringText(detail.filteringText)
             }
           />
+          {selectedId && <Box variant='small'>
+            Showing only assumption A-{standardizeNumericId(assumptionList.find(x => x.id === selectedId)?.numericId)}.
+            Clear filters to show all assumptions.
+          </Box>}
           <Grid
             gridDefinition={[
               { colspan: { default: 12, xs: 3 } },
